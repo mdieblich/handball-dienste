@@ -1,5 +1,4 @@
 <?php
-
 require_once "email.php";
 
 /*
@@ -24,10 +23,7 @@ $result = $mysqli->query($sql);
 if ($result->num_rows > 0) {
   // output data of each row
   while($email = $result->fetch_assoc()) {
-    $inhalt = $email["inhalt"];
-
     $emailObj = new Email($email["inhalt"]);
-    
     echo $emailObj->getDebugOutput();
   }
 } else {
