@@ -1,7 +1,7 @@
 <?php
-require_once "email.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/email.php";
 
-$mysqli = require_once "db_connect.php";
+$mysqli = require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
 
 $sql = "SELECT * FROM email_inbox";
 $result = $mysqli->query($sql);
