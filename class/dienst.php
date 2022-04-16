@@ -10,31 +10,28 @@ class Dienst {
         return $this->assoc_array["id"];
     }
 
-    public function getMannschaft(): int {
-        return $this->assoc_array["Mannschaft"];
+    public function getSpiel(): int {
+        return $this->assoc_array["spiel"];
     }
     
-    public function getGegner(): string {
-        return $this->assoc_array["Gegner"];
+    public function getDienstart(): string {
+        return $this->assoc_array["dienstart"];
+    }
+    
+    public function getMannschaft(): string {
+        return $this->assoc_array["mannschaft"];
     }
 
-    public function isHeimspiel(): bool {
-        return $this->assoc_array["Heimspiel"] != "0";
+    public function getPerson(): ?string {
+        return $this->assoc_array["person"];
     }
-    
+
     public function getDebugOutput(): string {
         return 
             "<div>".
-            $this->getNuligaID().". <b>".$this->getSpielnameDebugOutput()."</b>".
+            "<b>".$this->getSpiel().". </b>".$this->getDienstart().": ".
+            "Mannschaft ".$this->getMannschaft().", Person ".$this->getPerson()."".
             "</div>";
-    }
-
-    private function getSpielnameDebugOutput(): string {
-        if($this->isHeimspiel()){
-            return $this->getMannschaft()." gegen ".$this->getGegner();
-        } 
-        return $this->getGegner()." gegen ".$this->getMannschaft();
-
     }
 }
 ?>
