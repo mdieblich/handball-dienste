@@ -7,12 +7,11 @@ $result = $mysqli->query($sql);
 
 $personen = array();
 if ($result->num_rows > 0) {
-  // output data of each row
   while($person = $result->fetch_assoc()) {
-    array_push($personen, new Person($person));
+    $personObj = new Person($person);
+    $personen[$personObj->getID()] = $personObj;
   }
 }
-
 
 return $personen;
 ?>

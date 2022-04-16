@@ -7,12 +7,11 @@ $result = $mysqli->query($sql);
 
 $mannschaften = array();
 if ($result->num_rows > 0) {
-  // output data of each row
   while($mannschaft = $result->fetch_assoc()) {
-    array_push($mannschaften, new Mannschaft($mannschaft));
+    $mannschaftObj = new Mannschaft($mannschaft);
+    $mannschaften[$mannschaftObj->getID()] = $mannschaftObj;
   }
 }
-
 
 return $mannschaften;
 ?>
