@@ -42,17 +42,5 @@ function createVALUESForDienstart(Spiel $spiel, string $dienstArt, array $mannsc
     return "(".$spiel->getNuligaID().", '".$dienstArt."', ".$dienstMannschaftID.", ".$dienstID.")";
 }
 
-// $sql = "SELECT * FROM mannschaft";
-// $result = $mysqli->query($sql);
-
-// if ($result->num_rows > 0) {
-//   // output data of each row
-//   while($mannschaft = $result->fetch_assoc()) {
-//     $mannschaftObj = new Mannschaft($mannschaft);
-//     echo $mannschaftObj->getDebugOutput();
-//   }
-// } else {
-//   echo "0 results";
-// }
 $mysqli->close();
 ?>
