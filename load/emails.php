@@ -1,20 +1,17 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/class/email.php";
-
-$mysqli = require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
 
 $sql = "SELECT * FROM email_inbox";
 $result = $mysqli->query($sql);
 
+$emails = array();
 if ($result->num_rows > 0) {
   // output data of each row
   while($email = $result->fetch_assoc()) {
-    $emailObj = new Email($email["inhalt"]);
-    echo $emailObj->getDebugOutput();
+    array_push($emails, new Email($email));
   }
-} else {
-  echo "0 results";
 }
 
-$mysqli->close();
+return $emails;
 ?>

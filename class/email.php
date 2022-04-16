@@ -7,8 +7,8 @@ class Email {
 
     private $content;
 
-    public function __construct(string $content){
-        $this->content = $content;
+    public function __construct(array $assoc_array){
+        $this->content = $assoc_array["inhalt"];
     }
 
     public function getSpielNummer(): ?int {
