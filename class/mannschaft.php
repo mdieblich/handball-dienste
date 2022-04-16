@@ -27,6 +27,10 @@ class Mannschaft {
         return count($this->spieler) > 0;
     }
 
+    public function getRandomSpielerID(): int {
+        return array_rand($this->spieler);
+    }
+
     public function addSpieler(Person $spieler){
         $this->spieler[$spieler->getID()] = $spieler;
     }
