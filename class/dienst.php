@@ -1,4 +1,7 @@
 <?php
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/class/person.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/class/mannschaft.php";
+
 class Dienst {
     private $assoc_array;
 
@@ -26,12 +29,32 @@ class Dienst {
         return $this->assoc_array["person"];
     }
 
-    public function getDebugOutput(): string {
+    public function getDebugOutput($mannschaften = array()): string {
         return 
             "<div>".
             "<b>".$this->getSpiel().". </b>".$this->getDienstart().": ".
-            "Mannschaft ".$this->getMannschaft().", Person ".$this->getPerson()."".
+            $this->getAnsetzungDebugOutput($mannschaften).
             "</div>";
     }
+
+    private function getAnsetzungDebugOutput($mannschaften): string {
+
+        $mannschaftDebugOutput = $this->getMannschaft();
+        $spielerDebugOuput = $this->getPerson();
+
+        if(array_key_exists($this->getMannschaft(), $mannschaften)){
+            $mannschaft = $mannschaften[$this->getMannschaft()];
+            $mannschaftDebugOutput = $mannschaft->getName();
+            $spieler = $mannschaft->getSpieler($this->getPerson());
+            if(!empty($spieler)){
+                return $spielerDebugOuput = $spieler->getName();
+            }
+        }
+        return 
+            "Mannschaft ".$mannschaftDebugOutput.", ".
+            "Person ".$spielerDebugOuput;
+
+    }
+
 }
 ?>
