@@ -1,4 +1,5 @@
 <?php
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/class/person.php";
 
 require_once "person.php";
 
@@ -29,6 +30,13 @@ class Mannschaft {
 
     public function getRandomSpielerID(): int {
         return array_rand($this->spieler);
+    }
+
+    public function getSpieler(?int $id): ?Person {
+        if(array_key_exists($id, $this->spieler)){
+            return $this->spieler[$id];
+        }
+        return null;
     }
 
     public function addSpieler(Person $spieler){
