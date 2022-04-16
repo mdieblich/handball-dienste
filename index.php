@@ -1,4 +1,7 @@
 <?php
+
+require_once "email.php";
+
 /*
 * Change the value of $password if you have set a password on the root userid
 * Change NULL to port number to use DBMS other than the default using port 3306
@@ -28,28 +31,17 @@ function getLineWithString($inhalt, $str): ?string {
     return null;
 } 
 
-
-function getSpielNummer($inhalt): ?int{
-  $spielnummer_suche = "/BISHER: Nr\. (\d*),.*Turnerkreis Nippes.*/";
-  $spielnummer_gefunden = preg_match(
-    $spielnummer_suche,
-    $inhalt, 
-  $matches);
-  if($spielnummer_gefunden){
-    return $matches[1];
-  }
-  return null;
-}
-
 if ($result->num_rows > 0) {
   // output data of each row
   while($email = $result->fetch_assoc()) {
     $inhalt = $email["inhalt"];
 
+    $emailObj = new Email($email["inhalt"]);
+
     $bisher_zeile = getLineWithString($inhalt, "BISHER");
     
     echo "<div>";
-    echo "<b>Spielnummer:</b> ".getSpielNummer($inhalt);
+    echo "<b>Spielnummer:</b> ".$emailObj->getSpielNummer();
     echo "<pre style='padding-left:1em; font-style:italic'>".$bisher_zeile."</pre>\n";
     echo "</div>";
   }
