@@ -21,28 +21,16 @@ if ($mysqli->connect_error) {
 $sql = "SELECT * FROM email_inbox";
 $result = $mysqli->query($sql);
 
-function getLineWithString($inhalt, $str): ?string {
-  $lines = preg_split("/\r\n|\n|\r/", $inhalt);
-    foreach ($lines as $lineNumber => $line) {
-        if (strpos($line, $str) !== false) {
-            return $line;
-        }
-    }
-    return null;
-} 
-
 if ($result->num_rows > 0) {
   // output data of each row
   while($email = $result->fetch_assoc()) {
     $inhalt = $email["inhalt"];
 
     $emailObj = new Email($email["inhalt"]);
-
-    $bisher_zeile = getLineWithString($inhalt, "BISHER");
     
     echo "<div>";
     echo "<b>Spielnummer:</b> ".$emailObj->getSpielNummer();
-    echo "<pre style='padding-left:1em; font-style:italic'>".$bisher_zeile."</pre>\n";
+    echo "<pre style='padding-left:1em; font-style:italic'>".$emailObj->getBisherZeile()."</pre>\n";
     echo "</div>";
   }
 } else {

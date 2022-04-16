@@ -7,7 +7,7 @@ class Email {
     }
 
 
-    public function getSpielNummer(): ?int{
+    public function getSpielNummer(): ?int {
         $spielnummer_suche = "/BISHER: Nr\. (\d*),.*Turnerkreis Nippes.*/";
         $spielnummer_gefunden = preg_match(
           $spielnummer_suche,
@@ -17,8 +17,17 @@ class Email {
           return $matches[1];
         }
         return null;
-      }
-      
+    }
+
+    public function getBisherZeile(): ?string {
+        $lines = preg_split("/\r\n|\n|\r/", $this->content);
+        foreach ($lines as $lineNumber => $line) {
+            if (strpos($line, "BISHER") !== false) {
+                return $line;
+            }
+        }
+        return null;
+    }
 
 }
 ?>
