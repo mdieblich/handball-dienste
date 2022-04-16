@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/email.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/class/email.php";
 
 $mysqli = require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
 

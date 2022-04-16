@@ -1,5 +1,5 @@
 <?php
-require_once "mannschaft.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/class/mannschaft.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
 
 foreach(require_once "load/mannschaften.php" as $mannschaft){
