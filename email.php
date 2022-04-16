@@ -29,5 +29,13 @@ class Email {
         return null;
     }
 
+    public function getDebugOutput(): string {
+        return 
+            "<div>".
+            "<b>Spielnummer:</b> ".$this->getSpielNummer().
+            "<pre style='padding-left:1em; font-style:italic'>".$this->getBisherZeile()."</pre>\n".
+            "</div>";
+    }
+
 }
 ?>

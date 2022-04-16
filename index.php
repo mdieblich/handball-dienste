@@ -28,10 +28,7 @@ if ($result->num_rows > 0) {
 
     $emailObj = new Email($email["inhalt"]);
     
-    echo "<div>";
-    echo "<b>Spielnummer:</b> ".$emailObj->getSpielNummer();
-    echo "<pre style='padding-left:1em; font-style:italic'>".$emailObj->getBisherZeile()."</pre>\n";
-    echo "</div>";
+    echo $emailObj->getDebugOutput();
   }
 } else {
   echo "0 results";
