@@ -13,5 +13,10 @@ if ($result->num_rows > 0) {
   }
 }
 
+$personen = require $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/personen.php";
+foreach($personen as $person){
+  $mannschaften[$person->getHauptmannschaft()]->addSpieler($person);
+}
+
 return $mannschaften;
 ?>
