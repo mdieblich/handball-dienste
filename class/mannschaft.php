@@ -23,6 +23,10 @@ class Mannschaft {
         return $this->assoc_array["Liga"];
     }
 
+    public function hasSpieler(): bool {
+        return count($this->spieler) > 0;
+    }
+
     public function addSpieler(Person $spieler){
         $this->spieler[$spieler->getID()] = $spieler;
     }
