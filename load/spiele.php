@@ -9,7 +9,7 @@ $spiele = array();
 if ($result->num_rows > 0) {
   while($spiel = $result->fetch_assoc()) {
     $spielObj = new Spiel($spiel);
-    $spiele[$spielObj->getNuligaID()] = $spielObj;
+    $spiele[$spielObj->getID()] = $spielObj;
   }
 }
 

@@ -39,7 +39,7 @@ function createVALUESForDienstart(Spiel $spiel, string $dienstArt, array $mannsc
     if($dienstMannschaft->hasSpieler()){
         $dienstID = $dienstMannschaft->getRandomSpielerID();
     }
-    return "(".$spiel->getNuligaID().", '".$dienstArt."', ".$dienstMannschaftID.", ".$dienstID.")";
+    return "(".$spiel->getID().", '".$dienstArt."', ".$dienstMannschaftID.", ".$dienstID.")";
 }
 
 $mysqli->close();

@@ -1,5 +1,5 @@
 <?php
-class Spiel {
+class Dienst {
     private $assoc_array;
 
     public function __construct(array $assoc_array){
@@ -8,9 +8,6 @@ class Spiel {
 
     public function getID(): int {
         return $this->assoc_array["id"];
-    }
-    public function getNuligaID(): int {
-        return $this->assoc_array["nuliga_id"];
     }
 
     public function getMannschaft(): int {
