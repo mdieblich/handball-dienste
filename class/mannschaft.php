@@ -30,8 +30,17 @@ class Mannschaft {
     public function getDebugOutput(): string {
         return 
             "<div>".
-            $this->getID().". <b>".$this->getName()."</b>: ".$this->getLiga().
+            $this->getID().". <b>".$this->getName()."</b>: ".$this->getLiga()."<br>".
+            $this->getSpielerListeDebugOutput().
             "</div>";
+    }
+
+    private function getSpielerListeDebugOutput(): string {
+        $spielerListe = "";
+        foreach($this->spieler as $spieler) {
+            $spielerListe .= "<li>".$spieler->getName()."</li>\n";
+        }
+        return "<ul>".$spielerListe."</ul>";
     }
 }
 ?>
