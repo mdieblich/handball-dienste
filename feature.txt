@@ -1,0 +1,8 @@
+Falls kein Match:
+* Email an Gernot, mit einem Link pro Mannschaft: "Dieser Mannschaft zuweisen"
+
+Konfiguration:
+* Aufbewahrungsfristen
+    erfolgreiche Emails
+    nicht-erfolgreiche Emails
+* RegEx zur Spielerkennung
