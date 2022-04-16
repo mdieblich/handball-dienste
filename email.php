@@ -1,18 +1,16 @@
 <?php
 class Email {
+
+    const SPIELNUMMER_SUCHE = "/BISHER: Nr\. (\d*),.*Turnerkreis Nippes.*/";
+
     private $content;
 
     public function __construct(string $content){
         $this->content = $content;
     }
 
-
     public function getSpielNummer(): ?int {
-        $spielnummer_suche = "/BISHER: Nr\. (\d*),.*Turnerkreis Nippes.*/";
-        $spielnummer_gefunden = preg_match(
-          $spielnummer_suche,
-          $this->content, 
-        $matches);
+        $spielnummer_gefunden = preg_match(self::SPIELNUMMER_SUCHE, $this->content, $matches);
         if($spielnummer_gefunden){
           return $matches[1];
         }
