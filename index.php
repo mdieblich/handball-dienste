@@ -11,6 +11,7 @@ $password = ''; //To be completed if you have set a password to root
 $database = 'dienstedienst'; //To be completed to connect to a database. The database must exist.
 $port = NULL; //Default must be NULL to use default port
 $mysqli = new mysqli('127.0.0.1', $user, $password, $database, $port);
+$mysqli->set_charset("utf8");
 
 if ($mysqli->connect_error) {
     die('Connect Error (' . $mysqli->connect_errno . ') '
