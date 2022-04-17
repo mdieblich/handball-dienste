@@ -7,7 +7,16 @@ $username = "dienstebot@turnerkreisnippes.de";
 $password = "9nUgcLpcRMz3fLF";
 
 $inbox = imap_open($connection, $username, $password) or die('Cannot connect to email: ' . imap_last_error());
+$ordnerVERARBEITETStatus = imap_status($inbox, $connection."VERARBEITET", SA_ALL);
+if(!$ordnerVERARBEITETStatus){
+    imap_createmailbox($inbox, $connection."VERARBEITET");
+}
+
 $emails = imap_search($inbox, 'ALL');
+if(!$emails){
+    imap_close($inbox);
+    die;
+}
 
 $insert_stmt = $mysqli->prepare("INSERT INTO email_inbox (absender, empfang, betreff, inhalt) VALUES (?,?,?,?)");
 $absender = "";
@@ -25,7 +34,10 @@ foreach($emails as $msg_number)
     $s = imap_fetchstructure($inbox, $msg_number);
     $inhalt = getpart($inbox, $msg_number, $s, 0);
     $insert_stmt->execute();
+    imap_mail_move($inbox, $msg_number, "VERARBEITET");
  }
+ imap_expunge($inbox);
+ imap_close($inbox);
  $insert_stmt->close();
 
 function getpart($mbox, $mid, $p, $part_n) {
