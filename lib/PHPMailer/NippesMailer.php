@@ -25,10 +25,6 @@ function init_nippes_mailer(): PHPMailer {
     $mail->setFrom('dienstebot@turnerkreisnippes.de', 'Nippes Bot');
     $mail->addReplyTo('no-reply@turnerkreisnippes.de');
 
-    //Content
-    $mail->isHTML(true);
-
     return $mail;
-
 }
 ?>
