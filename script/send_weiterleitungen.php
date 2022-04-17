@@ -27,7 +27,7 @@ if ($result->num_rows > 0) {
             $mail->addAddress($weiterleitung['email'], $weiterleitung['name']);
 
             //Inhalt
-            $mail->Subject = $weiterleitung['betreff'];
+            $mail->Subject = quoted_printable_decode($weiterleitung['betreff']);
             $mail->Body = 
                 "Empfangen: ".$weiterleitung['empfang']."\n".
                 "Von: ".$weiterleitung['absender']."\n".
