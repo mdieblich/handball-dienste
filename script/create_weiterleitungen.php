@@ -7,7 +7,7 @@ $emails = require $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/emails.php";
 
 $insert_stmt = $mysqli->prepare(
     "INSERT INTO weiterleitung (email, person) ".
-    "SELECT ?, person ".
+    "SELECT DISTINCT ?, person ".
     "FROM dienst LEFT JOIN spiel ON dienst.spiel=spiel.id ".
     "WHERE spiel.nuliga_id=? ".
     "AND NOT EXISTS (SELECT * FROM weiterleitung WHERE email=?)");
