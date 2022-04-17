@@ -23,9 +23,7 @@ function init_nippes_mailer(): PHPMailer {
 
     //Recipients
     $mail->setFrom('dienstebot@turnerkreisnippes.de', 'Nippes Bot');
-    $mail->addAddress('martin.dieblich@gmx.de', 'Martin Dieblich');
-    // $mail->addBCC('bcc@example.com');
-    $mail->addReplyTo('martin.dieblich@gmx.de', 'Martin Dieblich');
+    $mail->addReplyTo('no-reply@turnerkreisnippes.de');
 
     //Content
     $mail->isHTML(true);
