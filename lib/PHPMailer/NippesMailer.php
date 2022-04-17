@@ -25,7 +25,7 @@ function init_nippes_mailer(): PHPMailer {
     $mail->setFrom('dienstebot@turnerkreisnippes.de', 'Nippes Bot');
     $mail->addReplyTo('no-reply@turnerkreisnippes.de');
 
-    $mail->Charset = PHPMAILER::CHARSET_UTF8;
+    $mail->CharSet = PHPMAILER::CHARSET_UTF8;
 
     return $mail;
 }

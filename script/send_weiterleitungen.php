@@ -29,7 +29,7 @@ if ($result->num_rows > 0) {
             //Inhalt
             $mail->Subject = $weiterleitung['betreff'];
             $mail->Body = 
-                "Gesendet: ".$weiterleitung['empfang']."\n".
+                "Empfangen: ".$weiterleitung['empfang']."\n".
                 "Von: ".$weiterleitung['absender']."\n".
                 "-- Weitergeleitet durch den Nippes-Bot --\n".
                 "\n".
