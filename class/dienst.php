@@ -25,7 +25,7 @@ class Dienst {
         return $this->assoc_array["mannschaft"];
     }
 
-    public function getPerson(): ?string {
+    public function getPerson(): string {
         return $this->assoc_array["person"];
     }
 
