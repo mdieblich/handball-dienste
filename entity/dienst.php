@@ -1,6 +1,6 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/class/person.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/class/mannschaft.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/person.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/mannschaft.php";
 
 class Dienst {
     private $assoc_array;

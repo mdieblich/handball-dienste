@@ -1,6 +1,6 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/class/email.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/class/dienst.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/email.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/dienst.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
 
 $emails = require $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/emails.php";

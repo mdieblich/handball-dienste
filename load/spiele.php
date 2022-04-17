@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/class/spiel.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/spiel.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
 
 $sql = "SELECT * FROM spiel";

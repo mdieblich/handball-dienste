@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/class/email.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/email.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
 
 $sql = "SELECT * FROM email_inbox";

@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/class/person.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/person.php";
 
 require_once "person.php";
 
