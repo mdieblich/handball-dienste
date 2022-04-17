@@ -5,14 +5,22 @@ class Email {
     const HVM_LIGA_SUCHE = "/Mittelrhein.* - (.*)/";
     const HKKR_LIGA_SUCHE = "/Köln\/Rheinberg.* - (.*)/";
 
-    private $content;
+    private $assoc_array;
 
     public function __construct(array $assoc_array){
-        $this->content = $assoc_array["inhalt"];
+        $this->assoc_array = $assoc_array;
+    }
+
+    public function getID(){
+        return $this->assoc_array["id"];
+    }
+
+    public function getInhalt(){
+        return $this->assoc_array["inhalt"];
     }
 
     public function getSpielNummer(): ?int {
-        $liga_gefunden = preg_match(self::SPIELNUMMER_SUCHE, $this->content, $matches);
+        $liga_gefunden = preg_match(self::SPIELNUMMER_SUCHE, $this->getInhalt(), $matches);
         if($liga_gefunden){
           return $matches[1];
         }
@@ -20,7 +28,7 @@ class Email {
     }
 
     public function getBisherZeile(): ?string {
-        $lines = preg_split("/\r\n|\n|\r/", $this->content);
+        $lines = preg_split("/\r\n|\n|\r/", $this->getInhalt());
         foreach ($lines as $lineNumber => $line) {
             if (strpos($line, "BISHER") !== false) {
                 return $line;
@@ -30,12 +38,12 @@ class Email {
     }
 
     public function getLigaZeile(): ?string {
-        $hvm_liga_gefunden = preg_match(self::HVM_LIGA_SUCHE, $this->content, $matches);
+        $hvm_liga_gefunden = preg_match(self::HVM_LIGA_SUCHE, $this->getInhalt(), $matches);
         if($hvm_liga_gefunden){
           return $matches[1];
         }
 
-        $hkkr_liga_gefunden = preg_match(self::HKKR_LIGA_SUCHE, $this->content, $matches);
+        $hkkr_liga_gefunden = preg_match(self::HKKR_LIGA_SUCHE, $this->getInhalt(), $matches);
         if($hkkr_liga_gefunden){
           return $matches[1];
         }
