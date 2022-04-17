@@ -4,19 +4,23 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
 
 $emails = require $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/emails.php";
 
-echo "<pre>";
-foreach($emails as $email){
-    $nuligaID = $email->getSpielNummer();
-    $sql = 
-        "INSERT INTO weiterleitungen (email, person) ".
-        "SELECT ".$email->getID().", person ".
-        "FROM dienst LEFT JOIN spiel ON dienst.spiel=spiel.id ".
-        "WHERE spiel.nuliga_id=".$nuligaID." ".
-        "AND NOT EXISTS (SELECT * FROM weiterleitungen WHERE email=".$email->getID().")";
-        echo $sql."\n";
-    $result = $mysqli->query($sql);
-}
-echo "</pre>";
 
+$insert_stmt = $mysqli->prepare(
+    "INSERT INTO weiterleitungen (email, person) ".
+    "SELECT ?, person ".
+    "FROM dienst LEFT JOIN spiel ON dienst.spiel=spiel.id ".
+    "WHERE spiel.nuliga_id=? ".
+    "AND NOT EXISTS (SELECT * FROM weiterleitungen WHERE email=?)");
+
+$email_id = 0;
+$nuliga_id = 0;
+$insert_stmt->bind_param("iii", $email_id, $nuliga_id, $email_id);
+
+foreach($emails as $email){
+    $email_id = $email->getID();
+    $nuliga_id = $email->getSpielNummer();
+    $insert_stmt->execute();
+}
+$insert_stmt->close();
 $mysqli->close();
 ?>
