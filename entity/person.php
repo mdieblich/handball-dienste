@@ -11,15 +11,15 @@ class Person {
     }
 
     public function getName(): string {
-        return $this->assoc_array["Name"];
+        return $this->assoc_array["name"];
     }
     
     public function getEmail(): ?string {
-        return $this->assoc_array["Email"];
+        return $this->assoc_array["email"];
     }
     
     public function getHauptmannschaft(): string {
-        return $this->assoc_array["Hauptmannschaft"];
+        return $this->assoc_array["hauptmannschaft"];
     }
     
     public function getDebugOutput(): string {

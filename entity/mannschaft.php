@@ -17,11 +17,11 @@ class Mannschaft {
     }
 
     public function getName(): string {
-        return $this->assoc_array["Name"];
+        return $this->assoc_array["name"];
     }
     
     public function getLiga(): string {
-        return $this->assoc_array["Liga"];
+        return $this->assoc_array["liga"];
     }
 
     public function hasSpieler(): bool {

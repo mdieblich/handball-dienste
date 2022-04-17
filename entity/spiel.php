@@ -14,15 +14,15 @@ class Spiel {
     }
 
     public function getMannschaft(): int {
-        return $this->assoc_array["Mannschaft"];
+        return $this->assoc_array["mannschaft"];
     }
     
     public function getGegner(): string {
-        return $this->assoc_array["Gegner"];
+        return $this->assoc_array["gegner"];
     }
 
     public function isHeimspiel(): bool {
-        return $this->assoc_array["Heimspiel"] != "0";
+        return $this->assoc_array["heimspiel"] != "0";
     }
     
     public function getDebugOutput(): string {
