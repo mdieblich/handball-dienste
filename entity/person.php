@@ -14,6 +14,10 @@ class Person {
         return $this->assoc_array["Name"];
     }
     
+    public function getEmail(): ?string {
+        return $this->assoc_array["Email"];
+    }
+    
     public function getHauptmannschaft(): string {
         return $this->assoc_array["Hauptmannschaft"];
     }
@@ -21,7 +25,7 @@ class Person {
     public function getDebugOutput(): string {
         return 
             "<div>".
-            $this->getID().". <b>".$this->getName()."</b>: ".$this->getHauptmannschaft().
+            $this->getID().". <b>".$this->getName()."</b> (".$this->getEmail()."): ".$this->getHauptmannschaft().
             "</div>";
     }
 }
