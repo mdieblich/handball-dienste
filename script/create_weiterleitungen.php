@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/email.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/emails.php";
 
-$emails = loadAllEmails();
+$emails = loadAllNewEmails();
 
 $insert_weiterleitung = $mysqli->prepare(
     "INSERT INTO weiterleitung (email, person) ".
