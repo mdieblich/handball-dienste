@@ -1,9 +1,9 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/email.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/emails.php";
 
-$emails = require $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/emails.php";
-
+$emails = loadAllEmails();
 
 $insert_stmt = $mysqli->prepare(
     "INSERT INTO weiterleitung (email, person) ".
