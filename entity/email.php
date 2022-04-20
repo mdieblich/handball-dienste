@@ -19,6 +19,14 @@ class Email {
         return $this->assoc_array["inhalt"];
     }
 
+    public function getBetreff(){
+        return $this->assoc_array["betreff"];
+    }
+
+    public function isSpielaenderung(): bool {
+        return preg_match('/SPIELPLAN.NDERUNG/', $this->getBetreff());
+    }
+
     public function getSpielNummer(): ?int {
         $liga_gefunden = preg_match(self::SPIELNUMMER_SUCHE, $this->getInhalt(), $matches);
         if($liga_gefunden){
