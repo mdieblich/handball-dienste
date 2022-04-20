@@ -15,7 +15,7 @@ if(!$ordnerVERARBEITETStatus){
 $emails = imap_search($inbox, 'ALL');
 if(!$emails){
     imap_close($inbox);
-    die;
+    die("Keine Emails!");
 }
 
 $insert_stmt = $mysqli->prepare("INSERT INTO email_inbox (absender, empfang, betreff, inhalt) VALUES (?,?,?,?)");
@@ -33,8 +33,13 @@ foreach($emails as $msg_number)
 
     $s = imap_fetchstructure($inbox, $msg_number);
     $inhalt = getpart($inbox, $msg_number, $s, 0);
-    $insert_stmt->execute();
-    imap_mail_move($inbox, $msg_number, "VERARBEITET");
+    echo $betreff.":";
+    if($insert_stmt->execute()){    
+        echo "eingefügt!<br>\n";
+        imap_mail_move($inbox, $msg_number, "VERARBEITET");
+    } else {    
+        echo $insert_stmt->error."<br>\n";
+    }
  }
  imap_expunge($inbox);
  imap_close($inbox);
