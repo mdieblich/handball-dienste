@@ -24,7 +24,7 @@ class Email {
     }
 
     public function isSpielaenderung(): bool {
-        return preg_match('/SPIELPLAN.NDERUNG/', $this->getBetreff());
+        return preg_match("/.*SPIELPLAN.{1,2}NDERUNG.*/", $this->getBetreff());
     }
 
     public function getSpielNummer(): ?int {
