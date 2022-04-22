@@ -9,7 +9,7 @@ class DBConnection {
     const PORT = NULL; //Default must be NULL to use default port
     const CHARSET = "utf8";
 
-    private $mysqli;
+    private mysqli $mysqli;
     
     public function __construct(){
         $this->mysqli = new mysqli(self::DB_ADDRESS, self::DB_USER, self::DB_PASSWORD, self::DATABASE, self::PORT);
