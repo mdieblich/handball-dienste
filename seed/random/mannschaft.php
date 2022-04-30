@@ -1,6 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
 
+// Konfigurationen des Skriptes
 $anzahlTeams = 10;
 
 $insert_mannschaft = $mysqli->prepare(
