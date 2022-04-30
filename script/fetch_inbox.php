@@ -12,6 +12,9 @@ if(!$ordnerVERARBEITETStatus){
     imap_createmailbox($inbox, $connection."VERARBEITET");
 }
 
+
+ hier weiter in Klasse EmailInbox verschieben
+
 $emails = imap_search($inbox, 'ALL');
 if(!$emails){
     imap_close($inbox);
