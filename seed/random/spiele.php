@@ -93,7 +93,7 @@ for($spieltagCount = 0; $spieltagCount<$spieleProTeam; $spieltagCount++){
     foreach($mannschaften as $mannschaft => $name){
         $nuliga_id = 10000 * $mannschaft + $spieltagCount;
         $gegner = "Gegner von ".$name;
-        $isHeimspiel = 1; //rand(0,1);
+        $isHeimspiel = rand(0,1);
         if($isHeimspiel){
             if(count($freieHeimspielSlots) == 0){
                 die("Nicht genügend Zeitslots für Heimspiele");
