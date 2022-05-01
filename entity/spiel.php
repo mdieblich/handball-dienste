@@ -1,5 +1,11 @@
 <?php
 class Spiel {
+
+    const VORBEREITUNG_VOR_ANWURF = "PT60M";
+    const SPIELDAUER              = "PT90M";
+    const NACHBEREITUNG_NACH_ENDE = "PT60M";
+    const FAHRTZEIT_AUSWAERTS     = "PT60M";
+    
     private $assoc_array;
 
     public function __construct(array $assoc_array){
@@ -28,19 +34,24 @@ class Spiel {
     public function getAnwurf(): DateTime {
         return DateTime::createFromFormat('Y-m-d H:i:s',  $this->assoc_array["anwurf"]);
     }
+    public function getSpielEnde(): DateTime {
+        return  $this->getAnwurf()->add(new DateInterval(self::SPIELDAUER));
+    }
 
     public function getAbfahrt(): DateTime {
-        if($this->isHeimspiel()){
-            return $this->getAnwurf()->sub(new DateInterval("PT1H"));
+        $abfahrt = $this->getAnwurf()->sub(new DateInterval(self::VORBEREITUNG_VOR_ANWURF));
+        if(!$this->isHeimspiel()){
+            $abfahrt = $abfahrt->sub(new DateInterval(self::FAHRTZEIT_AUSWAERTS));
         }
-        return $this->getAnwurf()->sub(new DateInterval("PT2H"));
+        return $abfahrt;
     }
 
     public function getRueckkehr(): DateTime {
-        if($this->isHeimspiel()){
-            return $this->getAnwurf()->add(new DateInterval("PT2H30M"));
+        $rueckkehr = $this->getSpielEnde()->add(new DateInterval(self::NACHBEREITUNG_NACH_ENDE));
+        if(!$this->isHeimspiel()){
+            $rueckkehr = $rueckkehr->add(new DateInterval(self::FAHRTZEIT_AUSWAERTS));
         }
-        return $this->getAnwurf()->add(new DateInterval("PT3H30M"));
+        return $rueckkehr;
     }
 
     public function isGleichzeitig(Spiel $spiel): bool {
