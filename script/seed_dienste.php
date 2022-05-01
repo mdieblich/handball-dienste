@@ -1,6 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/spiele.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/mannschaften.php";
 
 $spiele = loadSpiele(); 
 
@@ -15,7 +16,7 @@ function mannschaftsmatrix($mannschaften): array{
     return $matrix;
 }
 
-$mannschaften = require $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/mannschaften.php";
+$mannschaften = loadMannschaftenDeep();
 $matrix = mannschaftsmatrix($mannschaften);
 
 foreach($spiele as $spiel){

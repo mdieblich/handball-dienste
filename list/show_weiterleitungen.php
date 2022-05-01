@@ -2,9 +2,10 @@
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/email.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/dienst.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/mannschaften.php";
 
 $emails = require $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/emails.php";
-$mannschaften = require $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/mannschaften.php";
+$mannschaften = loadMannschaftenDeep();
 
 foreach($emails as $email){
     echo "<b>".$email->getBisherZeile()."</b><br>";
