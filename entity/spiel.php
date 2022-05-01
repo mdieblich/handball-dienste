@@ -28,6 +28,40 @@ class Spiel {
     public function getAnwurf(): DateTime {
         return DateTime::createFromFormat('Y-m-d H:i:s',  $this->assoc_array["anwurf"]);
     }
+
+    public function getAbfahrt(): DateTime {
+        if($this->isHeimspiel()){
+            return $this->getAnwurf()->sub(new DateInterval("PT1H"));
+        }
+        return $this->getAnwurf()->sub(new DateInterval("PT2H"));
+    }
+
+    public function getRueckkehr(): DateTime {
+        if($this->isHeimspiel()){
+            return $this->getAnwurf()->add(new DateInterval("PT2H30M"));
+        }
+        return $this->getAnwurf()->add(new DateInterval("PT3H30M"));
+    }
+
+    public function isGleichzeitig(Spiel $spiel): bool {
+        $eigeneAbfahrt   = $this->getAbfahrt();
+        $eigeneRueckkehr = $this->getRueckkehr();
+        $andereAbfahrt   = $spiel->getAbfahrt();
+        $andereRueckkehr = $spiel->getRueckkehr();
+
+        if($eigeneRueckkehr > $andereAbfahrt && $andereRueckkehr > $eigeneAbfahrt){
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getSpielzeitDebugOutput(): string {
+        return 
+            $this->getAbfahrt()->format("H:i")." - ".
+            $this->getAnwurf()->format("H:i")." - ".
+            $this->getRueckkehr()->format("H:i");
+    }
     
     public function getDebugOutput(): string {
         return 
