@@ -24,6 +24,10 @@ class Spiel {
     public function isHeimspiel(): bool {
         return $this->assoc_array["heimspiel"] != "0";
     }
+
+    public function getAnwurf(): DateTime {
+        return DateTime::createFromFormat('Y-m-d H:i:s',  $this->assoc_array["anwurf"]);
+    }
     
     public function getDebugOutput(): string {
         return 
