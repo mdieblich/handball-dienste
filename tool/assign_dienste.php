@@ -16,6 +16,22 @@ function findeGleichzeitigesSpiel(Spiel $zuVergleichendesSpiel, Mannschaft $mann
     return null;
 }
 
+function zaehleDienste(Mannschaft $mannschaft): array{
+    global $spiele;
+    $anzahl = array();
+    foreach($spiele as $spiel){
+        foreach($spiel->getDienste() as $dienst){
+            if($dienst->getMannschaft() == $mannschaft->getID()){
+                if(!isset($anzahl[$dienst->getDienstart()])){
+                    $anzahl[$dienst->getDienstart()] = 0;
+                }
+                $anzahl[$dienst->getDienstart()]++;
+            }
+        }
+    }
+    return $anzahl;
+}
+
 ?>
 <script>
     function assignDienst(spiel, dienstart, mannschaft, assign){
@@ -59,7 +75,12 @@ function findeGleichzeitigesSpiel(Spiel $zuVergleichendesSpiel, Mannschaft $mann
         <th>Heimspiel</th>
 <?php
 foreach($mannschaften as $mannschaft){
-    echo "<td>".$mannschaft->getName()."</td>";
+    $anzahlDienste = zaehleDienste($mannschaft);
+    echo "<td>".$mannschaft->getName()."<br>";
+    foreach($anzahlDienste as $dienstart => $anzahl){
+        echo $dienstart.": ".$anzahl."<br>"; 
+    }
+    echo "</td>";
 }
 ?>
     </tr>
