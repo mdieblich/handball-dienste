@@ -41,7 +41,7 @@ function zaehleDienste(Mannschaft $mannschaft): array{
             if (this.readyState != 4) return;
 
             if (this.status == 200) {
-                console.log(this.responseText);
+                // alles gut!
             }
         };
         xhr.open(assign?"PUT":"DELETE", "../api/dienst.php", true);
@@ -53,18 +53,28 @@ function zaehleDienste(Mannschaft $mannschaft): array{
         //console.log(JSON.stringify(dienst));
         xhr.send(JSON.stringify(dienst));
         disableOtherCheckboxes(spiel, dienstart, mannschaft, assign);
+        setDienstCounter(dienstart, mannschaft, assign);
     }
     function disableOtherCheckboxes(spiel, dienstart, mannschaft, assign){
         checkBoxName = dienstart+"-"+spiel;
-        console.log("Suche nach " + checkBoxName + " Setze disabled auf " + !assign);
         otherCheckBoxes = document.getElementsByName(checkBoxName);
-        console.log(otherCheckBoxes);
         for(i=0; i<otherCheckBoxes.length; i++){
             otherCheckBoxes[i].disabled = assign;
         }
         // immer die aktive CheckBox aktivieren
         activeID = checkBoxName+"-"+mannschaft;
         document.getElementById(activeID).disabled = false;
+    }
+    function setDienstCounter(dienstart, mannschaft, assign){
+        id = dienstart.substring(0,1)+"-counter-"+mannschaft;
+        previousValue = parseInt(document.getElementById(id).innerText);
+        if(assign){
+            // erhöhen
+            document.getElementById(id).innerText = previousValue + 1;
+        } else{
+            // abziehen
+            document.getElementById(id).innerText = previousValue - 1;
+        }
     }
 </script>
 <table border="1" cellpadding="3" cellspacing="3">
@@ -79,7 +89,8 @@ foreach($mannschaften as $mannschaft){
     $anzahlDienste = zaehleDienste($mannschaft);
     echo "<td>".$mannschaft->getName()."<br>";
     foreach($anzahlDienste as $dienstart => $anzahl){
-        echo substr($dienstart,0,1).": ".$anzahl."<br>"; 
+        $dienstartKurz = substr($dienstart,0,1);
+        echo $dienstartKurz.": <span id=\"$dienstartKurz-counter-".$mannschaft->getID()."\">".$anzahl."</span><br>"; 
     }
     echo "</td>";
 }
