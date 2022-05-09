@@ -30,9 +30,13 @@ class Spiel {
     public function getGegner(): string {
         return $this->assoc_array["gegner"];
     }
-
+    
     public function isHeimspiel(): bool {
         return $this->assoc_array["heimspiel"] != "0";
+    }
+    
+    public function getHalle(): int {
+        return $this->assoc_array["halle"];        
     }
 
     public function getAnwurf(): DateTime {
@@ -59,13 +63,25 @@ class Spiel {
     }
 
     public function isGleichzeitig(Spiel $spiel): bool {
-        $eigeneAbfahrt   = $this->getAbfahrt();
-        $eigeneRueckkehr = $this->getRueckkehr();
-        $andereAbfahrt   = $spiel->getAbfahrt();
-        $andereRueckkehr = $spiel->getRueckkehr();
-
-        if($eigeneRueckkehr > $andereAbfahrt && $andereRueckkehr > $eigeneAbfahrt){
-            return true;
+        $gleicheHalle = $this->getHalle() == $spiel->getHalle();
+        if($gleicheHalle){
+            $eigenerAnwurf = $this->getAnwurf();
+            $eigenesEnde   = $this->getSpielEnde();
+            $andererAnwurf = $spiel->getAnwurf();
+            $anderesEnde   = $spiel->getSpielEnde();
+    
+            if($eigenesEnde > $andererAnwurf && $anderesEnde > $eigenerAnwurf){
+                return true;
+            }
+        } else {
+            $eigeneAbfahrt   = $this->getAbfahrt();
+            $eigeneRueckkehr = $this->getRueckkehr();
+            $andereAbfahrt   = $spiel->getAbfahrt();
+            $andereRueckkehr = $spiel->getRueckkehr();
+    
+            if($eigeneRueckkehr > $andereAbfahrt && $andereRueckkehr > $eigeneAbfahrt){
+                return true;
+            }
         }
 
         return false;
