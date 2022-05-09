@@ -5,6 +5,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/mannschaft.php";
 class Dienstart{
     const ZEITNEHMER = "Zeitnehmer";
     const SEKRETAER = "Sekretär";
+    const values = array(self::ZEITNEHMER, self::SEKRETAER);
 }
 
 class Dienst {
