@@ -76,10 +76,11 @@ function zaehleDienste(Mannschaft $mannschaft): array{
         }
     }
 </script>
-<table border="1" cellpadding="3" cellspacing="3">
-    <tr>
+<table border="0" cellpadding="3" cellspacing="3">
+    <tr style="background-color:#ddddff">
         <th>ID</th>
         <th>Datum</th>
+        <th>Halle</th>
         <th>Heim</th>
         <th>Auswärts</th>
 <?php
@@ -113,10 +114,11 @@ function getGleichzeitigesSpiel($zuPruefendesSpiel, $mannschaft): ?Spiel{
 foreach($spiele as $spiel){
     $zeitnehmerDienst = $spiel->getDienst("Zeitnehmer");
     $sekretaerDienst = $spiel->getDienst("Sekretär");
-    $backgroundColor = $spiel->getAnwurf()->format("w")==6?"white":"#dddddd";
+    $backgroundColor = $spiel->getAnwurf()->format("w")==6?"#eeeeee":"#eeeeff";
     echo "<tr style=\"background-color:$backgroundColor\">";
     echo "<td>".$spiel->getID()."</td>";
     echo "<td>".$spiel->getAnwurf()->format('d.m.Y H:i')."</td>";
+    echo "<td>".$spiel->getHalle()."</td>";
     if($spiel->isHeimspiel()){
         echo "<td>".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
         echo "<td>".$spiel->getGegner()."</td>";
