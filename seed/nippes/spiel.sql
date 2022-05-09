@@ -43,12 +43,12 @@ CREATE TABLE IF NOT EXISTS `spiel` (
 -- Daten für Tabelle `spiel`
 --
 
-INSERT INTO `spiel` (`id`, `nuliga_id`, `mannschaft`, `gegner`, `heimspiel`, `anwurf`) VALUES
-(1, 1653, 3, 'Polizei SV Köln V', 1, '2022-03-27 15:00:00'),
-(2, 101030, 2, 'HSV Frechen II', 1, '2022-03-05 18:00:00'),
-(3, 112003, 1, 'ASV SR Aachen ', 0, '2022-03-05 00:00:00'),
-(4, 99, 1, 'TSV Bayer Dormagen II', 1, NULL),
-(5, 2059, 5, 'Dünnwalder TV', 0, '2022-02-20 23:30:00');
+INSERT INTO `spiel` (`id`, `nuliga_id`, `mannschaft`, `gegner`, `heimspiel`, `halle`, `anwurf`) VALUES
+(1, 1653, 3, 'Polizei SV Köln V', 1, 3182, '2022-03-27 15:00:00'),
+(2, 101030, 2, 'HSV Frechen II', 1, 3182, '2022-03-05 18:00:00'),
+(3, 112003, 1, 'ASV SR Aachen ', 0, 1103, '2022-03-05 00:00:00'),
+(4, 99, 1, 'TSV Bayer Dormagen II', 1, 3182, NULL),
+(5, 2059, 5, 'Dünnwalder TV', 0, 3145, '2022-02-20 23:30:00');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,7 +1,7 @@
 CREATE TABLE `dienstedienst`.`mannschaft` ( 
     `id` INT NOT NULL AUTO_INCREMENT , 
     `name` VARCHAR(256) NOT NULL , 
-    `liga` VARCHAR/256) NULL , 
+    `liga` VARCHAR(256) NULL , 
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
 
@@ -20,6 +20,7 @@ CREATE TABLE `dienstedienst`.`spiel` (
     `mannschaft` INT NOT NULL , 
     `gegner` VARCHAR(256) NOT NULL , 
     `heimspiel` TINYINT NOT NULL DEFAULT '0' , 
+    `halle` int NOT NULL , 
     `anwurf` DATETIME NOT NULL , 
     PRIMARY KEY (`id`), 
     INDEX `index_anwurf` (`anwurf`),

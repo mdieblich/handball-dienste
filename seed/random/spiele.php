@@ -39,15 +39,16 @@ while($mannschaftRow = $result->fetch_assoc()) {
 
 // INSERT vorbereiten
 $insert_spiel = $mysqli->prepare(
-    "INSERT INTO spiel (nuliga_id, mannschaft, gegner, heimspiel, anwurf) ".
-    "VALUES (?, ?, ?, ?, ?)");
+    "INSERT INTO spiel (nuliga_id, mannschaft, gegner, heimspiel, halle, anwurf) ".
+    "VALUES (?, ?, ?, ?, ?, ?)");
 
 $nuliga_id = 0;
 $mannschaft_id = 0;
 $gegner = "";
 $isHeimspiel = 1;
+$halle = 1000; // Heimspiel-Halle
 $anwurf = "";
-$insert_spiel->bind_param("iisis", $nuliga_id, $mannschaft, $gegner, $isHeimspiel, $anwurf);
+$insert_spiel->bind_param("iisiis", $nuliga_id, $mannschaft, $gegner, $isHeimspiel, $halle, $anwurf);
 
 // Spieltage generieren
 
@@ -77,6 +78,7 @@ function createSpielZeitSlots(array $uhrzeiten, DateTime $samstag): array{
         <th>Anwurf</th>
         <th>Gegner</th>
         <th>Heimspiel?</th>
+        <th>Halle</th>
         <th>Datenbank</th>
     </tr>
     <tr>
@@ -95,6 +97,7 @@ for($spieltagCount = 0; $spieltagCount<$spieleProTeam; $spieltagCount++){
         $gegner = "Gegner von ".$name;
         $isHeimspiel = rand(0,1);
         if($isHeimspiel){
+            $halle = 1000;
             if(count($freieHeimspielSlots) == 0){
                 die("Nicht genügend Zeitslots für Heimspiele");
             }
@@ -103,6 +106,7 @@ for($spieltagCount = 0; $spieltagCount<$spieleProTeam; $spieltagCount++){
             $anwurf = $freieHeimspielSlots[$zeitSlotID]->format('Y-m-d H:i:s');
             unset($freieHeimspielSlots[$zeitSlotID]);   // Löschen, da keine Spiele gleichzeitig stattfinden können
         } else {
+            $halle = rand(2000,3000);
             $zeitSlotID = array_rand($auswaertsspielZeitSlots);
             $anwurf = $verfuegbareAuswaertsspielZeitSlots[$zeitSlotID]->format('Y-m-d H:i:s');
         }
@@ -111,6 +115,7 @@ for($spieltagCount = 0; $spieltagCount<$spieleProTeam; $spieltagCount++){
         echo "<td>$anwurf</td>";
         echo "<td>$gegner</td>";
         echo "<td>$isHeimspiel</td>";
+        echo "<td>$halle</td>";
         if($insert_spiel->execute()){
             echo "<td>Gespeichert</td>";
         }
