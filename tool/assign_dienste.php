@@ -2,6 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/mannschaften.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/spiele.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/dienst.php";
 
 $mannschaften = loadMannschaften();
 $spiele = loadSpieleDeep("1=1", "anwurf, mannschaft"); 
@@ -78,7 +79,7 @@ foreach($mannschaften as $mannschaft){
     $anzahlDienste = zaehleDienste($mannschaft);
     echo "<td>".$mannschaft->getName()."<br>";
     foreach($anzahlDienste as $dienstart => $anzahl){
-        echo $dienstart.": ".$anzahl."<br>"; 
+        echo substr($dienstart,0,1).": ".$anzahl."<br>"; 
     }
     echo "</td>";
 }
@@ -136,7 +137,7 @@ foreach($spiele as $spiel){
             echo "<input type=\"checkbox\" ".
                 "name=\"Zeitnehmer-".$spiel->getID()."\"".
                 "id=\"Zeitnehmer-$checkBoxID\" ".
-                "onclick=\"assignDienst(".$spiel->getID().",'Zeitnehmer',".$mannschaft->getID().", this.checked)\"".
+                "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::ZEITNEHMER."',".$mannschaft->getID().", this.checked)\"".
                 " $zeitnehmerChecked>".
                 "<label for=\"Zeitnehmer-$checkBoxID\">Z</label><br>";
             
@@ -153,7 +154,7 @@ foreach($spiele as $spiel){
             echo "<input type=\"checkbox\" ".
                 "name=\"Sekretär-".$spiel->getID()."\"".
                 "id=\"Sekretär-$checkBoxID\" ".
-                "onclick=\"assignDienst(".$spiel->getID().",'Sekretär',".$mannschaft->getID().", this.checked)\"".
+                "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::SEKRETAER."',".$mannschaft->getID().", this.checked)\"".
                 " $sekretaerChecked>".
                 "<label for=\"Sekretär-$checkBoxID\">S</label><br>";
             echo "</td>";

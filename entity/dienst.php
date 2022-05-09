@@ -2,6 +2,11 @@
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/person.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/mannschaft.php";
 
+class Dienstart{
+    const ZEITNEHMER = "Zeitnehmer";
+    const SEKRETAER = "Sekretär";
+}
+
 class Dienst {
     private $assoc_array;
 
