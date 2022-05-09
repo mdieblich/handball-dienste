@@ -1,8 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/person.php";
 
-require_once "person.php";
-
 class Mannschaft {
     private $assoc_array;
 
