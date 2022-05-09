@@ -113,7 +113,8 @@ function getGleichzeitigesSpiel($zuPruefendesSpiel, $mannschaft): ?Spiel{
 foreach($spiele as $spiel){
     $zeitnehmerDienst = $spiel->getDienst("Zeitnehmer");
     $sekretaerDienst = $spiel->getDienst("Sekretär");
-    echo "<tr>";
+    $backgroundColor = $spiel->getAnwurf()->format("w")==6?"white":"#dddddd";
+    echo "<tr style=\"background-color:$backgroundColor\">";
     echo "<td>".$spiel->getID()."</td>";
     echo "<td>".$spiel->getAnwurf()->format('d.m.Y H:i')."</td>";
     if($spiel->isHeimspiel()){
