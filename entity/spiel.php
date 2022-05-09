@@ -1,4 +1,6 @@
 <?php
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/dienst.php";
+
 class Spiel {
 
     const VORBEREITUNG_VOR_ANWURF = "PT60M";
@@ -7,6 +9,8 @@ class Spiel {
     const FAHRTZEIT_AUSWAERTS     = "PT60M";
     
     private $assoc_array;
+
+    private $dienste = array();
 
     public function __construct(array $assoc_array){
         $this->assoc_array = $assoc_array;
@@ -87,6 +91,21 @@ class Spiel {
         } 
         return $this->getGegner()." gegen ".$this->getMannschaft();
 
+    }
+
+    public function addDienst(Dienst $dienst){
+        $this->dienste[$dienst->getDienstart()] = $dienst;
+    }
+
+    public function getDienste(): array{
+        return $this->dienste;
+    }
+
+    public function getDienst(string $dienstart): ?Dienst{
+        if(array_key_exists($dienstart, $this->dienste)){
+            return $this->dienste[$dienstart];
+        }
+        return null;
     }
 }
 ?>
