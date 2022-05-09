@@ -1,7 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/spiel.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
-
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/dienste.php";
 
 function loadSpiele(string $whereClause="1=1", string $orderBy="id") {
   global $mysqli;
@@ -16,6 +16,14 @@ function loadSpiele(string $whereClause="1=1", string $orderBy="id") {
       $spiele[$spielObj->getID()] = $spielObj;
     }
   }
+  return $spiele;
+}
+
+function loadSpieleDeep(string $whereClause="1=1", string $orderBy="id"){
+  $spiele = loadSpiele($whereClause, $orderBy);
+  foreach( loadAllDienste() as $dienst){
+    $spiele[$dienst->getSpiel()]->addDienst($dienst);
+  } 
   return $spiele;
 }
 
