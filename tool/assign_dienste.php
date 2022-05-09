@@ -20,12 +20,12 @@ function findeGleichzeitigesSpiel(Spiel $zuVergleichendesSpiel, Mannschaft $mann
 function zaehleDienste(Mannschaft $mannschaft): array{
     global $spiele;
     $anzahl = array();
+    foreach(Dienstart::values as $dienstart){
+        $anzahl[$dienstart] = 0;
+    }
     foreach($spiele as $spiel){
         foreach($spiel->getDienste() as $dienst){
             if($dienst->getMannschaft() == $mannschaft->getID()){
-                if(!isset($anzahl[$dienst->getDienstart()])){
-                    $anzahl[$dienst->getDienstart()] = 0;
-                }
                 $anzahl[$dienst->getDienstart()]++;
             }
         }
