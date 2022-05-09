@@ -50,7 +50,6 @@ function zaehleDienste(Mannschaft $mannschaft): array{
         dienst.dienstart = dienstart;
         dienst.mannschaft = mannschaft;
         xhr.setRequestHeader('Content-Type', 'application/json');
-        //console.log(JSON.stringify(dienst));
         xhr.send(JSON.stringify(dienst));
         disableOtherCheckboxes(spiel, dienstart, mannschaft, assign);
         setDienstCounter(dienstart, mannschaft, assign);
