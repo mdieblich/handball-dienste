@@ -113,13 +113,13 @@ foreach($spiele as $spiel){
     foreach($mannschaften as $mannschaft){
         if($spiel->getMannschaft() == $mannschaft->getID()){
             // TODO Override ermöglichen, sodass dies doch möglich wird
-            echo "<td align=\"center\" title=\"Eigenes Spiel\">X</td>";
+            echo "<td align=\"center\" title=\"Eigenes Spiel\">E</td>";
             continue;
         }
         $gleichzeitigesSpiel = getGleichzeitigesSpiel($spiel, $mannschaft);
         if(isset($gleichzeitigesSpiel)) {
             // TODO Override ermöglichen, sodass dies doch möglich wird
-            echo "<td align=\"center\" title=\"Gleichzeitiges Spiel, ID ".$gleichzeitigesSpiel->getID()."\">X</td>";
+            echo "<td align=\"center\" title=\"Gleichzeitiges Spiel, ID ".$gleichzeitigesSpiel->getID()."\">G</td>";
         } else {
             $checkBoxID = $spiel->getID()."-".$mannschaft->getID();
             echo "<td>";
