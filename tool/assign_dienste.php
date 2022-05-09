@@ -80,9 +80,8 @@ function zaehleDienste(Mannschaft $mannschaft): array{
     <tr>
         <th>ID</th>
         <th>Datum</th>
-        <th>Mannschaft</th>
-        <th>Gegner</th>
-        <th>Heimspiel</th>
+        <th>Heim</th>
+        <th>Auswärts</th>
 <?php
 foreach($mannschaften as $mannschaft){
     $anzahlDienste = zaehleDienste($mannschaft);
@@ -117,9 +116,14 @@ foreach($spiele as $spiel){
     echo "<tr>";
     echo "<td>".$spiel->getID()."</td>";
     echo "<td>".$spiel->getAnwurf()->format('d.m.Y H:i')."</td>";
-    echo "<td>".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
-    echo "<td>".$spiel->getGegner()."</td>";
-    echo "<td align=\"center\">".($spiel->isHeimspiel()?"Ja":"Nein")."</td>";
+    if($spiel->isHeimspiel()){
+        echo "<td>".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
+        echo "<td>".$spiel->getGegner()."</td>";
+    }
+    else{
+        echo "<td>".$spiel->getGegner()."</td>";
+        echo "<td>".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
+    }
     foreach($mannschaften as $mannschaft){
         if($spiel->getMannschaft() == $mannschaft->getID()){
             // TODO Override ermöglichen, sodass dies doch möglich wird
