@@ -5,7 +5,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/spiele.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/dienst.php";
 
 $mannschaften = loadMannschaften();
-$spiele = loadSpieleDeep("1=1", "date(anwurf), heimspiel desc, halle desc, anwurf, mannschaft"); 
+$spiele = loadSpieleDeep("1=1", "date(anwurf), heimspiel desc, halle asc, anwurf, mannschaft"); 
 
 function findeGleichzeitigesSpiel(Spiel $zuVergleichendesSpiel, Mannschaft $mannschaft): ?Spiel{
     global $spiele;
