@@ -13,7 +13,7 @@ function assertGleichzeitig(Spiel $a, Spiel $b){
     echo "Spiel 1: ".$a->getSpielzeitDebugOutput()."\n";
     echo "Spiel 2: ".$b->getSpielzeitDebugOutput()."\n";
     echo "</pre>";
-    checkSuccess($a->isGleichzeitig($b));
+    checkSuccess($a->getZeitlicheDistanz($b)->ueberlappend);
 }
 function assertNichtGleichzeitig(Spiel $a, Spiel $b){
     global $OK, $FEHLER;
@@ -21,7 +21,7 @@ function assertNichtGleichzeitig(Spiel $a, Spiel $b){
     echo "Spiel 1: ".$a->getSpielzeitDebugOutput()."\n";
     echo "Spiel 2: ".$b->getSpielzeitDebugOutput()."\n";
     echo "</pre>";
-    checkSuccess(!$a->isGleichzeitig($b));
+    checkSuccess(!$a->getZeitlicheDistanz($b)->ueberlappend);
 }
 
 function assertTimeDiff(Spiel $a, Spiel $b, ZeitlicheDistanz $expectedTimeDiff){

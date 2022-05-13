@@ -104,7 +104,7 @@ function getGleichzeitigesSpiel($zuPruefendesSpiel, $mannschaft): ?Spiel{
         if($spiel->getMannschaft() != $mannschaft->getID()){
             continue;
         }
-        if($spiel->isGleichzeitig($zuPruefendesSpiel)){
+        if($spiel->getZeitlicheDistanz($zuPruefendesSpiel)->ueberlappend){
             return $spiel;
         }
     }

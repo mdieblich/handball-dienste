@@ -62,31 +62,6 @@ class Spiel {
         }
         return $rueckkehr;
     }
-
-    public function isGleichzeitig(Spiel $spiel): bool {
-        $gleicheHalle = $this->getHalle() == $spiel->getHalle();
-        if($gleicheHalle){
-            $eigenerAnwurf = $this->getAnwurf();
-            $eigenesEnde   = $this->getSpielEnde();
-            $andererAnwurf = $spiel->getAnwurf();
-            $anderesEnde   = $spiel->getSpielEnde();
-            
-            if($eigenesEnde > $andererAnwurf && $anderesEnde > $eigenerAnwurf){
-                return true;
-            }
-        } else {
-            $eigeneAbfahrt   = $this->getAbfahrt();
-            $eigeneRueckkehr = $this->getRueckkehr();
-            $andereAbfahrt   = $spiel->getAbfahrt();
-            $andereRueckkehr = $spiel->getRueckkehr();
-            
-            if($eigeneRueckkehr > $andereAbfahrt && $andereRueckkehr > $eigeneAbfahrt){
-                return true;
-            }
-        }
-        
-        return false;
-    }
     
     public function getZeitlicheDistanz(Spiel $spiel): ZeitlicheDistanz {
         $distanz = new ZeitlicheDistanz();
