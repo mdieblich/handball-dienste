@@ -8,27 +8,26 @@ class ZeitRaum {
         $this->start = $start;
         $this->ende = $ende;
     }
+
+    public function getZeitlicheDistanz(Zeitraum $other): ZeitlicheDistanz{
+        $distanz = new ZeitlicheDistanz();
+        $distanz->ueberlappend = $this->ende > $other->start && $other->ende > $this->start;
+        $distanz->vorher = $other->start < $this->start;
+        if($distanz->vorher){
+            // anderes Spiel ist vorher
+            $distanz->abstand = $this->start->diff($other->ende);
+        } else { 
+            // anderes Spiel ist nachher
+            $distanz->abstand = $this->ende->diff($other->start);
+        }
+        return $distanz;
+    }
 }
 
 class ZeitlicheDistanz {
     public bool $ueberlappend;
     public bool $vorher;
     public DateInterval $abstand;
-    
-    public static function fromZeitRaeumen2(ZeitRaum $a, ZeitRaum $b): ZeitlicheDistanz{
-        
-        $distanz = new ZeitlicheDistanz();
-        $distanz->ueberlappend = $a->ende > $b->start && $b->ende > $a->start;
-        $distanz->vorher = $b->start < $a->start;
-        if($distanz->vorher){
-            // anderes Spiel ist vorher
-            $distanz->abstand = $a->start->diff($b->ende);
-        } else { 
-            // anderes Spiel ist nachher
-            $distanz->abstand = $a->ende->diff($b->start);
-        }
-        return $distanz;
-    }
 
     public function getDebugOutput(): string {
         $debugOutput = ($this->vorher?"Vorher":"Nachher").", ";

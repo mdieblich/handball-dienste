@@ -82,7 +82,7 @@ class Spiel {
             $anderesSpiel = $spiel->getSpielzeit();
         }
 
-        return ZeitlicheDistanz::fromZeitRaeumen2($eigenesSpiel, $anderesSpiel);
+        return $eigenesSpiel->getZeitlicheDistanz($anderesSpiel);
     }
     
     public function getSpielzeitDebugOutput(): string {
