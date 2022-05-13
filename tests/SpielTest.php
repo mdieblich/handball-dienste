@@ -28,14 +28,12 @@ function assertTimeDiff(Spiel $a, Spiel $b, ZeitlicheDistanz $expectedTimeDiff){
     echo "<pre>";
     echo "Spiel 1: ".$a->getSpielzeitDebugOutput()."\n";
     echo "Spiel 2: ".$b->getSpielzeitDebugOutput()."\n";
-    $expectedDiffFormatted = $expectedTimeDiff->abstand->format("%Y.%M.%D %H:%I");
     // echo "Erwartet: ".$expectedDiffFormatted."\n";
     echo "Erwartet: ".$expectedTimeDiff->getDebugOutput()."\n";
     $actualTimeDiff = $a->getZeitlicheDistanz($b);
-    $actualDiffFormatted = $actualTimeDiff->abstand->format("%Y.%M.%D %H:%I");
     echo "Erhalten: ".$actualTimeDiff->getDebugOutput()."\n";
     echo "</pre>";
-    checkSuccess($actualDiffFormatted == $expectedDiffFormatted);
+    checkSuccess($actualTimeDiff->seconds == $expectedTimeDiff->seconds);
 }
 
 echo "Gleichzeitigkeit: ";
@@ -121,9 +119,8 @@ echo "30 Minuten später";
     $a = new Spiel(array("heimspiel"=>"1", "anwurf"=>"2022-05-01 15:00:00", "halle"=>"1000"));
     $b = new Spiel(array("heimspiel"=>"1", "anwurf"=>"2022-05-01 17:00:00", "halle"=>"1000"));
     $expectedTimeDiff = new ZeitlicheDistanz();
-    $expectedTimeDiff->abstand = new DateInterval("PT30M");
+    $expectedTimeDiff->seconds = 30*60;
     $expectedTimeDiff->ueberlappend = false;
-    $expectedTimeDiff->vorher = false;
     assertTimeDiff($a, $b, $expectedTimeDiff);
 }
 echo "90 Minuten früher";
@@ -132,10 +129,8 @@ echo "90 Minuten früher";
     $b = new Spiel(array("heimspiel"=>"1", "anwurf"=>"2022-05-01 12:00:00", "halle"=>"1000"));
     
     $expectedTimeDiff = new ZeitlicheDistanz();
-    $expectedTimeDiff->abstand = new DateInterval("PT1H30M");
-    $expectedTimeDiff->abstand->invert = true;
+    $expectedTimeDiff->seconds = -90*60;
     $expectedTimeDiff->ueberlappend = false;
-    $expectedTimeDiff->vorher = true;
     assertTimeDiff($a, $b, $expectedTimeDiff);
 }
 ?>

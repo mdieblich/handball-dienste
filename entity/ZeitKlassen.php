@@ -12,13 +12,11 @@ class ZeitRaum {
     public function getZeitlicheDistanz(Zeitraum $other): ZeitlicheDistanz{
         $distanz = new ZeitlicheDistanz();
         $distanz->ueberlappend = $this->ende > $other->start && $other->ende > $this->start;
-        $distanz->vorher = $other->start < $this->start;
-        if($distanz->vorher){
-            // anderes Spiel ist vorher
-            $distanz->abstand = $this->start->diff($other->ende);
-        } else { 
-            // anderes Spiel ist nachher
-            $distanz->abstand = $this->ende->diff($other->start);
+        $vorher = $other->start < $this->start;
+        if($vorher){
+            $distanz->seconds = $other->ende->getTimestamp() - $this->start->getTimestamp();
+        } else { // anderes Spiel ist nachher
+            $distanz->seconds = $other->start->getTimestamp() - $this->ende->getTimestamp();
         }
         return $distanz;
     }
@@ -26,15 +24,25 @@ class ZeitRaum {
 
 class ZeitlicheDistanz {
     public bool $ueberlappend;
-    public bool $vorher;
-    public DateInterval $abstand;
+    public int $seconds;
 
     public function getDebugOutput(): string {
-        $debugOutput = ($this->vorher?"Vorher":"Nachher").", ";
+        $debugOutput = "";
         if($this->ueberlappend){
             $debugOutput .= "(überlappend) ";
         }
-        $debugOutput .= $this->abstand->format("%r%Y.%M.%D %H:%I");
+        $debugOutput .= ($this->seconds<0)?"-":" ";
+        $restSekunden = abs($this->seconds);
+        $tage = intdiv($restSekunden, 3600*24);
+        $restSekunden = $restSekunden % (3600*24);
+        if($tage > 0) {
+            $debugOutput .= "$tage d ";
+        }
+        $stunden = intdiv($restSekunden, 3600);
+        $restSekunden %= 3600;
+        $minuten = intdiv($restSekunden, 60);
+        $restSekunden %= 60;
+        $debugOutput .= "$stunden:$minuten:$restSekunden";
         return $debugOutput;
     }
 }
