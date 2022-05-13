@@ -47,6 +47,10 @@ class Spiel {
         return  $this->getAnwurf()->add(new DateInterval(self::SPIELDAUER));
     }
 
+    public function getSpielzeit(): ZeitRaum {
+        return new Zeitraum($this->getAnwurf(), $this->getSpielEnde());
+    }
+
     public function getAbfahrt(): DateTime {
         $abfahrt = $this->getAnwurf()->sub(new DateInterval(self::VORBEREITUNG_VOR_ANWURF));
         if(!$this->isHeimspiel()){
@@ -62,26 +66,23 @@ class Spiel {
         }
         return $rueckkehr;
     }
+
+    public function getAbwesenheitsZeitraum(): ZeitRaum {
+        return new ZeitRaum($this->getAbfahrt(), $this->getRueckkehr());
+    }
     
     public function getZeitlicheDistanz(Spiel $spiel): ZeitlicheDistanz {
 
-        $eigenerStart = $this ->getAbfahrt();
-        $eigenesEnde  = $this ->getRueckkehr();
-        $andererStart = $spiel->getAbfahrt();
-        $anderesEnde  = $spiel->getRueckkehr();
-
+        $eigenesSpiel = $this->getAbwesenheitsZeitraum();
+        $anderesSpiel = $spiel->getAbwesenheitsZeitraum();
+        
         $gleicheHalle = $this->getHalle() == $spiel->getHalle();
         if($gleicheHalle){
-            $eigenerStart = $this ->getAnwurf();
-            $eigenesEnde  = $this ->getSpielEnde();
-            $andererStart = $spiel->getAnwurf();
-            $anderesEnde  = $spiel->getSpielEnde();
+            $eigenesSpiel = $this->getSpielzeit();
+            $anderesSpiel = $spiel->getSpielzeit();
         }
 
-        $eigeneSpiel = new ZeitRaum($eigenerStart, $eigenesEnde);
-        $anderesSpiel = new ZeitRaum($andererStart, $anderesEnde);
-
-        return ZeitlicheDistanz::fromZeitRaeumen2($eigeneSpiel, $anderesSpiel);
+        return ZeitlicheDistanz::fromZeitRaeumen2($eigenesSpiel, $anderesSpiel);
     }
     
     public function getSpielzeitDebugOutput(): string {
