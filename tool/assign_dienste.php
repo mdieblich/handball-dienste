@@ -180,7 +180,9 @@ foreach($spiele as $spiel){
                 }
             }
             else{
-                $tooltip = "Zeitlich nahes Spiel: ID ".$zeitlichNaehstesSpiel->getID();
+                $tooltip = "Spiel, welches zeitlich am nächsten ist\n"
+                .$zeitlichNaehstesSpiel->getAnwurf()->format("d.m.Y H:i")."\n"
+                .$zeitlichNaehstesSpiel->getGegner();
             }
         }
         $checkBoxID = $spiel->getID()."-".$mannschaft->getID();
