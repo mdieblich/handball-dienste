@@ -150,21 +150,26 @@ foreach($spiele as $spiel){
         echo "<td>".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
     }
     foreach($mannschaften as $mannschaft){
+        $backgroundColor = "inherit";
+        $textColor = "black";
         if($spiel->getMannschaft() == $mannschaft->getID()){
             // TODO Override ermöglichen, sodass dies doch möglich wird
-            echo "<td align=\"center\" title=\"Eigenes Spiel\"><br><br>E</td>";
+            $textColor = "silver";
+            echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"Eigenes Spiel\"><br><br>E</td>";
             continue;
         }
         $zeitlichNaehstesSpiel = getZeitlichNaehstesSpiel($spiel, $mannschaft);
         $zeitlicheDistanz = $spiel->getZeitlicheDistanz($zeitlichNaehstesSpiel);
         if($zeitlicheDistanz->ueberlappend) {
             // TODO Override ermöglichen, sodass dies doch möglich wird
-            echo "<td align=\"center\" title=\"Gleichzeitiges Spiel, ID ".$zeitlichNaehstesSpiel->getID()."\">";
+            // TODO Zelle mal als Klasse extrahieren
+            $textColor = "silver";
+            echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"Gleichzeitiges Spiel, ID ".$zeitlichNaehstesSpiel->getID()."\">";
             echo $zeitlicheDistanz->seconds / 3600;
             echo "<br><br>G</td>";
         } else {
             $checkBoxID = $spiel->getID()."-".$mannschaft->getID();
-            echo "<td align=\"center\" title=\"Zeitlich nahes Spiel: ID ".$zeitlichNaehstesSpiel->getID()."\">";
+            echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"Zeitlich nahes Spiel: ID ".$zeitlichNaehstesSpiel->getID()."\">";
             echo $zeitlicheDistanz->seconds / 3600;
             echo "<br>";
             $zeitnehmerChecked = "";
