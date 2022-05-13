@@ -64,36 +64,27 @@ class Spiel {
     }
     
     public function getZeitlicheDistanz(Spiel $spiel): ZeitlicheDistanz {
-        $distanz = new ZeitlicheDistanz();
         $gleicheHalle = $this->getHalle() == $spiel->getHalle();
         if($gleicheHalle){
             $eigenerAnwurf = $this->getAnwurf();
             $eigenesEnde   = $this->getSpielEnde();
             $andererAnwurf = $spiel->getAnwurf();
             $anderesEnde   = $spiel->getSpielEnde();
-            
-            $distanz->ueberlappend = $eigenesEnde > $andererAnwurf && $anderesEnde > $eigenerAnwurf;
-            $distanz->vorher = $andererAnwurf < $eigenerAnwurf;
-            if($distanz->vorher){
-                // anderes Spiel ist vorher
-                $distanz->abstand = $eigenerAnwurf->diff($anderesEnde);
-            } else { 
-                // anderes Spiel ist nachher
-                $distanz->abstand = $eigenesEnde->diff($andererAnwurf);
-            }
+
+            return ZeitlicheDistanz::fromZeitraeumen(
+                $eigenerAnwurf, $eigenesEnde,
+                $andererAnwurf, $anderesEnde
+            );
         } else{
             $eigeneAbfahrt   = $this->getAbfahrt();
             $eigeneRueckkehr = $this->getRueckkehr();
             $andereAbfahrt   = $spiel->getAbfahrt();
             $andereRueckkehr = $spiel->getRueckkehr();
             
-            $distanz->ueberlappend = $eigeneRueckkehr > $andereAbfahrt && $andereRueckkehr > $eigeneAbfahrt;
-            $distanz->vorher = $andereAbfahrt < $andereAbfahrt;
-            if($distanz->vorher){
-                $distanz->abstand = $andereRueckkehr->diff($eigeneAbfahrt);
-            } else { // anderes Spiel ist nachher
-                $distanz->abstand = $eigeneRueckkehr->diff($andereAbfahrt);
-            }
+            return ZeitlicheDistanz::fromZeitraeumen(
+                $eigeneAbfahrt, $eigeneRueckkehr,
+                $andereAbfahrt, $andereRueckkehr
+            );
         }
         return $distanz;
     }
