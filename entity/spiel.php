@@ -64,28 +64,24 @@ class Spiel {
     }
     
     public function getZeitlicheDistanz(Spiel $spiel): ZeitlicheDistanz {
+
+        $eigenerStart = $this ->getAbfahrt();
+        $eigenesEnde  = $this ->getRueckkehr();
+        $andererStart = $spiel->getAbfahrt();
+        $anderesEnde  = $spiel->getRueckkehr();
+
         $gleicheHalle = $this->getHalle() == $spiel->getHalle();
         if($gleicheHalle){
-            $eigenerAnwurf = $this->getAnwurf();
-            $eigenesEnde   = $this->getSpielEnde();
-            $andererAnwurf = $spiel->getAnwurf();
-            $anderesEnde   = $spiel->getSpielEnde();
-
-            return ZeitlicheDistanz::fromZeitraeumen(
-                $eigenerAnwurf, $eigenesEnde,
-                $andererAnwurf, $anderesEnde
-            );
-        } else{
-            $eigeneAbfahrt   = $this->getAbfahrt();
-            $eigeneRueckkehr = $this->getRueckkehr();
-            $andereAbfahrt   = $spiel->getAbfahrt();
-            $andereRueckkehr = $spiel->getRueckkehr();
-            
-            return ZeitlicheDistanz::fromZeitraeumen(
-                $eigeneAbfahrt, $eigeneRueckkehr,
-                $andereAbfahrt, $andereRueckkehr
-            );
+            $eigenerStart = $this ->getAnwurf();
+            $eigenesEnde  = $this ->getSpielEnde();
+            $andererStart = $spiel->getAnwurf();
+            $anderesEnde  = $spiel->getSpielEnde();
         }
+        
+        return ZeitlicheDistanz::fromZeitraeumen(
+            $eigenerStart, $eigenesEnde,
+            $andererStart, $anderesEnde
+        );
     }
     
     public function getSpielzeitDebugOutput(): string {
