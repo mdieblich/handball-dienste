@@ -157,70 +157,69 @@ foreach($spiele as $spiel){
         $backgroundColor = "inherit";
         $textColor = "black";
         $tooltip = "";
-        if($spiel->getMannschaft() == $mannschaft->getID()){
-            // TODO Override ermöglichen, sodass dies doch möglich wird
-            $textColor = "silver";
-            $tooltip = "Eigenes Spiel";
-            echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"$tooltip\">E</td>";
-            continue;
-        }
+        $cellcontent = "";
         $zeitlichNaehstesSpiel = getZeitlichNaehstesSpiel($spiel, $mannschaft);
         $zeitlicheDistanz = $spiel->getZeitlicheDistanz($zeitlichNaehstesSpiel);
-        if($zeitlicheDistanz->ueberlappend) {
-            // TODO Override ermöglichen, sodass dies doch möglich wird
-            // TODO Zelle mal als Klasse extrahieren
+        if($spiel->getMannschaft() == $mannschaft->getID()){
+            // TODO Warnung wegen eigenem Spiel bei Anklicken
+            $textColor = "silver";
+            $tooltip = "Eigenes Spiel";
+        } else if($zeitlicheDistanz->ueberlappend) {
+            // TODO Warnung wegen gleichzeitigem Spiel
             $textColor = "silver";
             $tooltip = "Gleichzeitiges Spiel, ID ".$zeitlichNaehstesSpiel->getID();
-            echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"$tooltip\">";
-            echo "G</td>";
         } else {
             if(isAmGleichenTag($spiel, $zeitlichNaehstesSpiel)){
                 $backgroundColor = "#ffd";
                 if($spiel->getHalle() == $zeitlichNaehstesSpiel->getHalle()){
+                    $tooltip = "Spiel am gleichen Tag\nSpiel in gleicher Halle";
                     $backgroundColor = "#dfd";
                 }
-            }
-            $checkBoxID = $spiel->getID()."-".$mannschaft->getID();
-            $tooltip = "Zeitlich nahes Spiel: ID ".$zeitlichNaehstesSpiel->getID();
-            echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"$tooltip\">";
-            echo $zeitlicheDistanz->seconds / 3600;
-            echo "<br>";
-            $zeitnehmerChecked = "";
-            if(isset($zeitnehmerDienst)){
-                if( $zeitnehmerDienst->getMannschaft() == $mannschaft->getID()){
-                    // wir haben den Dienst!
-                    $zeitnehmerChecked = "checked";
-                }
                 else{
-                    // eine andere Mannschaft hat den Dienst
-                    $zeitnehmerChecked = "disabled";
+                    $tooltip = "Spiel am gleichen Tag";
                 }
             }
-            echo "<input type=\"checkbox\" ".
-                "name=\"Zeitnehmer-".$spiel->getID()."\"".
-                "id=\"Zeitnehmer-$checkBoxID\" ".
-                "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::ZEITNEHMER."',".$mannschaft->getID().", this.checked)\"".
-                " $zeitnehmerChecked>".
-                "<label for=\"Zeitnehmer-$checkBoxID\">Z</label><br>";
-            
-            $sekretaerChecked = "";
-            if(isset($sekretaerDienst)){
-                if($sekretaerDienst->getMannschaft() == $mannschaft->getID()){
-                    // wir haben den Dienst!
-                    $sekretaerChecked = "checked";
-                } else{
-                    // eine andere Mannschaft hat den Dienst
-                    $sekretaerChecked = "disabled";
-                }
+            else{
+                $tooltip = "Zeitlich nahes Spiel: ID ".$zeitlichNaehstesSpiel->getID();
             }
-            echo "<input type=\"checkbox\" ".
-                "name=\"Sekretär-".$spiel->getID()."\"".
-                "id=\"Sekretär-$checkBoxID\" ".
-                "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::SEKRETAER."',".$mannschaft->getID().", this.checked)\"".
-                " $sekretaerChecked>".
-                "<label for=\"Sekretär-$checkBoxID\">S</label><br>";
-            echo "</td>";
         }
+        $checkBoxID = $spiel->getID()."-".$mannschaft->getID();
+        $zeitnehmerChecked = "";
+        if(isset($zeitnehmerDienst)){
+            if( $zeitnehmerDienst->getMannschaft() == $mannschaft->getID()){
+                // wir haben den Dienst!
+                $zeitnehmerChecked = "checked";
+            }
+            else{
+                // eine andere Mannschaft hat den Dienst
+                $zeitnehmerChecked = "disabled";
+            }
+        }
+        $cellcontent .= "<input type=\"checkbox\" ".
+            "name=\"Zeitnehmer-".$spiel->getID()."\"".
+            "id=\"Zeitnehmer-$checkBoxID\" ".
+            "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::ZEITNEHMER."',".$mannschaft->getID().", this.checked)\"".
+            " $zeitnehmerChecked>".
+            "<label for=\"Zeitnehmer-$checkBoxID\">Z</label><br>";
+            
+        $sekretaerChecked = "";
+        if(isset($sekretaerDienst)){
+            if($sekretaerDienst->getMannschaft() == $mannschaft->getID()){
+                // wir haben den Dienst!
+                $sekretaerChecked = "checked";
+            } else{
+                // eine andere Mannschaft hat den Dienst
+                $sekretaerChecked = "disabled";
+            }
+        }
+        $cellcontent .= "<input type=\"checkbox\" ".
+        "name=\"Sekretär-".$spiel->getID()."\"".
+        "id=\"Sekretär-$checkBoxID\" ".
+        "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::SEKRETAER."',".$mannschaft->getID().", this.checked)\"".
+        " $sekretaerChecked>".
+        "<label for=\"Sekretär-$checkBoxID\">S</label><br>";
+        
+        echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"$tooltip\">$cellcontent</td>";
     }
     echo "</tr>";
 }
