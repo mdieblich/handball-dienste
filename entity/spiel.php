@@ -1,6 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/dienst.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/ZeitlicheDistanz.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/ZeitKlassen.php";
 
 class Spiel {
 
@@ -77,7 +77,7 @@ class Spiel {
             $andererStart = $spiel->getAnwurf();
             $anderesEnde  = $spiel->getSpielEnde();
         }
-        
+
         return ZeitlicheDistanz::fromZeitraeumen(
             $eigenerStart, $eigenesEnde,
             $andererStart, $anderesEnde
