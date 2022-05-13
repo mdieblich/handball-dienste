@@ -111,6 +111,28 @@ function getGleichzeitigesSpiel($zuPruefendesSpiel, $mannschaft): ?Spiel{
     return null;
 }
 
+function getZeitlichNaehstesSpiel($zuPruefendesSpiel, $mannschaft): ?Spiel {
+    global $spiele;
+
+    $nahstesSpiel = null;
+    $zeitlicheDistanzDesNahstenSpiels = null;
+    // TODO das geht definitiv einfacher: Alle Spiele als Array in Mannschaft
+    foreach($spiele as $spiel){
+        if($spiel->getMannschaft() != $mannschaft->getID()){
+            continue;
+        }
+        $zeitlicheDistanz = $spiel->getZeitlicheDistanz($zuPruefendesSpiel);
+        if(!isset($nahstesSpiel) || $zeitlicheDistanz->isAbsolutKleinerAls($zeitlicheDistanzDesNahstenSpiels)){
+            $nahstesSpiel = $spiel;
+            $zeitlicheDistanzDesNahstenSpiels = $zeitlicheDistanz;
+        }
+        if($spiel->getZeitlicheDistanz($zuPruefendesSpiel)->ueberlappend){
+            return $spiel;
+        }
+    }
+    return $nahstesSpiel;
+}
+
 foreach($spiele as $spiel){
     $zeitnehmerDienst = $spiel->getDienst("Zeitnehmer");
     $sekretaerDienst = $spiel->getDienst("Sekretär");
@@ -130,16 +152,21 @@ foreach($spiele as $spiel){
     foreach($mannschaften as $mannschaft){
         if($spiel->getMannschaft() == $mannschaft->getID()){
             // TODO Override ermöglichen, sodass dies doch möglich wird
-            echo "<td align=\"center\" title=\"Eigenes Spiel\">E</td>";
+            echo "<td align=\"center\" title=\"Eigenes Spiel\"><br><br>E</td>";
             continue;
         }
-        $gleichzeitigesSpiel = getGleichzeitigesSpiel($spiel, $mannschaft);
-        if(isset($gleichzeitigesSpiel)) {
+        $zeitlichNaehstesSpiel = getZeitlichNaehstesSpiel($spiel, $mannschaft);
+        $zeitlicheDistanz = $spiel->getZeitlicheDistanz($zeitlichNaehstesSpiel);
+        if($zeitlicheDistanz->ueberlappend) {
             // TODO Override ermöglichen, sodass dies doch möglich wird
-            echo "<td align=\"center\" title=\"Gleichzeitiges Spiel, ID ".$gleichzeitigesSpiel->getID()."\">G</td>";
+            echo "<td align=\"center\" title=\"Gleichzeitiges Spiel, ID ".$zeitlichNaehstesSpiel->getID()."\">";
+            echo $zeitlicheDistanz->seconds / 3600;
+            echo "<br><br>G</td>";
         } else {
             $checkBoxID = $spiel->getID()."-".$mannschaft->getID();
-            echo "<td>";
+            echo "<td align=\"center\" title=\"Zeitlich nahes Spiel: ID ".$zeitlichNaehstesSpiel->getID()."\">";
+            echo $zeitlicheDistanz->seconds / 3600;
+            echo "<br>";
             $zeitnehmerChecked = "";
             if(isset($zeitnehmerDienst)){
                 if( $zeitnehmerDienst->getMannschaft() == $mannschaft->getID()){
