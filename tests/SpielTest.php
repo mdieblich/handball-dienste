@@ -2,19 +2,26 @@
 
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/spiel.php";
 
+function checkSuccess(bool $success){
+    $OK = "<div style='background-color:#bbffbb'>OK</div>";
+    $FEHLER = "<div style='background-color:#ffbbbb'>FEHLER</div>";
+    echo $success ? $OK : $FEHLER;
+}
+
 function assertGleichzeitig(Spiel $a, Spiel $b){
     echo "<pre>";
     echo "Spiel 1: ".$a->getSpielzeitDebugOutput()."\n";
     echo "Spiel 2: ".$b->getSpielzeitDebugOutput()."\n";
-    echo $a->isGleichzeitig($b)?"OK":"FEHLER";
     echo "</pre>";
+    checkSuccess($a->isGleichzeitig($b));
 }
 function assertNichtGleichzeitig(Spiel $a, Spiel $b){
+    global $OK, $FEHLER;
     echo "<pre>";
     echo "Spiel 1: ".$a->getSpielzeitDebugOutput()."\n";
     echo "Spiel 2: ".$b->getSpielzeitDebugOutput()."\n";
-    echo $a->isGleichzeitig($b)?"FEHLER":"OK";
     echo "</pre>";
+    checkSuccess(!$a->isGleichzeitig($b));
 }
 
 function assertTimeDiff(Spiel $a, Spiel $b, ZeitlicheDistanz $expectedTimeDiff){
@@ -27,8 +34,8 @@ function assertTimeDiff(Spiel $a, Spiel $b, ZeitlicheDistanz $expectedTimeDiff){
     $actualTimeDiff = $a->getZeitlicheDistanz($b);
     $actualDiffFormatted = $actualTimeDiff->abstand->format("%Y.%M.%D %H:%I");
     echo "Erhalten: ".$actualTimeDiff->getDebugOutput()."\n";
-    echo $actualDiffFormatted == $expectedDiffFormatted?"OK":"FEHLER";
     echo "</pre>";
+    checkSuccess($actualDiffFormatted == $expectedDiffFormatted);
 }
 
 echo "Gleichzeitigkeit: ";
