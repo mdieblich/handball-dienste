@@ -102,9 +102,9 @@ class Spiel {
 
     private function getSpielnameDebugOutput(): string {
         if($this->isHeimspiel()){
-            return $this->getMannschaft()." gegen ".$this->getGegner();
+            return $this->getMannschaft()." gegen #".$this->getGegner();
         } 
-        return $this->getGegner()." gegen ".$this->getMannschaft();
+        return "#".$this->getGegner()." gegen ".$this->getMannschaft();
 
     }
 
