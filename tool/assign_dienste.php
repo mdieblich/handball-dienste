@@ -156,10 +156,12 @@ foreach($spiele as $spiel){
     foreach($mannschaften as $mannschaft){
         $backgroundColor = "inherit";
         $textColor = "black";
+        $tooltip = "";
         if($spiel->getMannschaft() == $mannschaft->getID()){
             // TODO Override ermöglichen, sodass dies doch möglich wird
             $textColor = "silver";
-            echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"Eigenes Spiel\">E</td>";
+            $tooltip = "Eigenes Spiel";
+            echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"$tooltip\">E</td>";
             continue;
         }
         $zeitlichNaehstesSpiel = getZeitlichNaehstesSpiel($spiel, $mannschaft);
@@ -168,7 +170,8 @@ foreach($spiele as $spiel){
             // TODO Override ermöglichen, sodass dies doch möglich wird
             // TODO Zelle mal als Klasse extrahieren
             $textColor = "silver";
-            echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"Gleichzeitiges Spiel, ID ".$zeitlichNaehstesSpiel->getID()."\">";
+            $tooltip = "Gleichzeitiges Spiel, ID ".$zeitlichNaehstesSpiel->getID();
+            echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"$tooltip\">";
             echo "G</td>";
         } else {
             if(isAmGleichenTag($spiel, $zeitlichNaehstesSpiel)){
@@ -178,7 +181,8 @@ foreach($spiele as $spiel){
                 }
             }
             $checkBoxID = $spiel->getID()."-".$mannschaft->getID();
-            echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"Zeitlich nahes Spiel: ID ".$zeitlichNaehstesSpiel->getID()."\">";
+            $tooltip = "Zeitlich nahes Spiel: ID ".$zeitlichNaehstesSpiel->getID();
+            echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"$tooltip\">";
             echo $zeitlicheDistanz->seconds / 3600;
             echo "<br>";
             $zeitnehmerChecked = "";
