@@ -28,7 +28,7 @@ class Spiel {
         return $this->assoc_array["mannschaft"];
     }
     
-    public function getGegner(): string {
+    public function getGegner(): int {
         return $this->assoc_array["gegner"];
     }
     

@@ -25,13 +25,14 @@ CREATE TABLE `dienstedienst`.`spiel` (
     `id` INT NOT NULL AUTO_INCREMENT , 
     `nuliga_id` VARCHAR(256) NOT NULL , 
     `mannschaft` INT NOT NULL , 
-    `gegner` VARCHAR(256) NOT NULL , 
+    `gegner` INT NOT NULL , 
     `heimspiel` TINYINT NOT NULL DEFAULT '0' , 
     `halle` int NOT NULL , 
     `anwurf` DATETIME NOT NULL , 
     PRIMARY KEY (`id`), 
     INDEX `index_anwurf` (`anwurf`),
-    FOREIGN KEY (`mannschaft`) REFERENCES `mannschaft`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (`mannschaft`) REFERENCES `mannschaft`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`gegner`) REFERENCES `gegner`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `dienstedienst`.`dienst` ( 
