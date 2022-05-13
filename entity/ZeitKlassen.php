@@ -14,15 +14,6 @@ class ZeitlicheDistanz {
     public bool $ueberlappend;
     public bool $vorher;
     public DateInterval $abstand;
-
-    public static function fromZeitraeumen(
-        DateTime $start_a, DateTime $ende_a, 
-        DateTime $start_b, DateTime $ende_b): ZeitlicheDistanz{
-
-        $a = new ZeitRaum($start_a, $ende_a);
-        $b = new ZeitRaum($start_b, $ende_b);
-        return self::fromZeitRaeumen2($a, $b);
-    }
     
     public static function fromZeitRaeumen2(ZeitRaum $a, ZeitRaum $b): ZeitlicheDistanz{
         

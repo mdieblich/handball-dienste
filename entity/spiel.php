@@ -78,10 +78,10 @@ class Spiel {
             $anderesEnde  = $spiel->getSpielEnde();
         }
 
-        return ZeitlicheDistanz::fromZeitraeumen(
-            $eigenerStart, $eigenesEnde,
-            $andererStart, $anderesEnde
-        );
+        $eigeneSpiel = new ZeitRaum($eigenerStart, $eigenesEnde);
+        $anderesSpiel = new ZeitRaum($andererStart, $anderesEnde);
+
+        return ZeitlicheDistanz::fromZeitRaeumen2($eigeneSpiel, $anderesSpiel);
     }
     
     public function getSpielzeitDebugOutput(): string {
