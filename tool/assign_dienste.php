@@ -133,6 +133,10 @@ function getZeitlichNaehstesSpiel($zuPruefendesSpiel, $mannschaft): ?Spiel {
     return $nahstesSpiel;
 }
 
+function isAmGleichenTag(Spiel $a, Spiel $b): bool {
+    return $a->getAnwurf()->format("Y-m-d") == $b->getAnwurf()->format("Y-m-d");
+}
+
 foreach($spiele as $spiel){
     $zeitnehmerDienst = $spiel->getDienst("Zeitnehmer");
     $sekretaerDienst = $spiel->getDienst("Sekretär");
@@ -168,6 +172,12 @@ foreach($spiele as $spiel){
             echo $zeitlicheDistanz->seconds / 3600;
             echo "<br><br>G</td>";
         } else {
+            if(isAmGleichenTag($spiel, $zeitlichNaehstesSpiel)){
+                $backgroundColor = "#ffd";
+                if($spiel->getHalle() == $zeitlichNaehstesSpiel->getHalle()){
+                    $backgroundColor = "#dfd";
+                }
+            }
             $checkBoxID = $spiel->getID()."-".$mannschaft->getID();
             echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"Zeitlich nahes Spiel: ID ".$zeitlichNaehstesSpiel->getID()."\">";
             echo $zeitlicheDistanz->seconds / 3600;
