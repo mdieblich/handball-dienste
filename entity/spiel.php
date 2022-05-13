@@ -86,7 +86,6 @@ class Spiel {
                 $andereAbfahrt, $andereRueckkehr
             );
         }
-        return $distanz;
     }
     
     public function getSpielzeitDebugOutput(): string {
