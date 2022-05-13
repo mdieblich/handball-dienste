@@ -14,6 +14,13 @@ CREATE TABLE `dienstedienst`.`person` (
     FOREIGN KEY (`hauptmannschaft`) REFERENCES `mannschaft`(`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
+CREATE TABLE `dienstedienst`.`gegner` ( 
+    `id` INT NOT NULL AUTO_INCREMENT , 
+    `name` VARCHAR(256) NOT NULL ,
+    `steltSekretaerBeiHeimspiel` TINYINT NOT NULL DEFAULT '0' , 
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+
 CREATE TABLE `dienstedienst`.`spiel` ( 
     `id` INT NOT NULL AUTO_INCREMENT , 
     `nuliga_id` VARCHAR(256) NOT NULL , 
