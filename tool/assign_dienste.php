@@ -1,10 +1,12 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/mannschaften.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/gegner.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/spiele.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/dienst.php";
 
 $mannschaften = loadMannschaften();
+$alleGegner = loadGegner();
 $spiele = loadSpieleDeep("1=1", "date(anwurf), heimspiel desc, anwurf, mannschaft"); 
 
 function findeGleichzeitigesSpiel(Spiel $zuVergleichendesSpiel, Mannschaft $mannschaft): ?Spiel{
@@ -147,10 +149,10 @@ foreach($spiele as $spiel){
     echo "<td>".$spiel->getHalle()."</td>";
     if($spiel->isHeimspiel()){
         echo "<td>".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
-        echo "<td>".$spiel->getGegner()."</td>";
+        echo "<td>".$gegner[$spiel->getGegner()]->getName()."</td>";
     }
     else{
-        echo "<td>".$spiel->getGegner()."</td>";
+        echo "<td>".$gegner[$spiel->getGegner()]->getName()."</td>";
         echo "<td>".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
     }
     foreach($mannschaften as $mannschaft){
@@ -182,7 +184,7 @@ foreach($spiele as $spiel){
             else{
                 $tooltip = "Spiel, welches zeitlich am nächsten ist\n"
                 .$zeitlichNaehstesSpiel->getAnwurf()->format("d.m.Y H:i")."\n"
-                .$zeitlichNaehstesSpiel->getGegner();
+                .$alleGegner[$zeitlichNaehstesSpiel->getGegner()]->getName();
             }
         }
         $checkBoxID = $spiel->getID()."-".$mannschaft->getID();
