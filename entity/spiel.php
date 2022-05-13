@@ -1,5 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/dienst.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/ZeitlicheDistanz.php";
 
 class Spiel {
 
@@ -69,7 +70,7 @@ class Spiel {
             $eigenesEnde   = $this->getSpielEnde();
             $andererAnwurf = $spiel->getAnwurf();
             $anderesEnde   = $spiel->getSpielEnde();
-    
+            
             if($eigenesEnde > $andererAnwurf && $anderesEnde > $eigenerAnwurf){
                 return true;
             }
@@ -78,19 +79,55 @@ class Spiel {
             $eigeneRueckkehr = $this->getRueckkehr();
             $andereAbfahrt   = $spiel->getAbfahrt();
             $andereRueckkehr = $spiel->getRueckkehr();
-    
+            
             if($eigeneRueckkehr > $andereAbfahrt && $andereRueckkehr > $eigeneAbfahrt){
                 return true;
             }
         }
-
+        
         return false;
     }
-
+    
+    public function getZeitlicheDistanz(Spiel $spiel): ZeitlicheDistanz {
+        $distanz = new ZeitlicheDistanz();
+        $gleicheHalle = $this->getHalle() == $spiel->getHalle();
+        if($gleicheHalle){
+            $eigenerAnwurf = $this->getAnwurf();
+            $eigenesEnde   = $this->getSpielEnde();
+            $andererAnwurf = $spiel->getAnwurf();
+            $anderesEnde   = $spiel->getSpielEnde();
+            
+            $distanz->ueberlappend = $eigenesEnde > $andererAnwurf && $anderesEnde > $eigenerAnwurf;
+            $distanz->vorher = $andererAnwurf < $eigenerAnwurf;
+            if($distanz->vorher){
+                // anderes Spiel ist vorher
+                $distanz->abstand = $eigenerAnwurf->diff($anderesEnde);
+            } else { 
+                // anderes Spiel ist nachher
+                $distanz->abstand = $eigenesEnde->diff($andererAnwurf);
+            }
+        } else{
+            $eigeneAbfahrt   = $this->getAbfahrt();
+            $eigeneRueckkehr = $this->getRueckkehr();
+            $andereAbfahrt   = $spiel->getAbfahrt();
+            $andereRueckkehr = $spiel->getRueckkehr();
+            
+            $distanz->ueberlappend = $eigeneRueckkehr > $andereAbfahrt && $andereRueckkehr > $eigeneAbfahrt;
+            $distanz->vorher = $andereAbfahrt < $andereAbfahrt;
+            if($distanz->vorher){
+                $distanz->abstand = $andereRueckkehr->diff($eigeneAbfahrt);
+            } else { // anderes Spiel ist nachher
+                $distanz->abstand = $eigeneRueckkehr->diff($andereAbfahrt);
+            }
+        }
+        return $distanz;
+    }
+    
     public function getSpielzeitDebugOutput(): string {
         return 
-            $this->getAbfahrt()->format("H:i")." - ".
-            $this->getAnwurf()->format("H:i")." - ".
+        $this->getAbfahrt()->format("H:i")." - ".
+        $this->getAnwurf()->format("H:i")."-".
+        $this->getSpielEnde()->format("H:i")." - ".
             $this->getRueckkehr()->format("H:i");
     }
     
