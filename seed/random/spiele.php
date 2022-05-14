@@ -1,9 +1,10 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/mannschaften.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/gegner.php";
 
 // Konfigurationen des Skriptes
 $spieleProTeam = 10;
-// $spieleProTeam = 26;
 
 $heimspielZeitSlots = array(
     "10:00",
@@ -28,28 +29,32 @@ $auswaertsspielZeitSlots = array(
     "20:00",    "20:30"
 );
 
-// IDs der Mannschaften bestimmen
-$result = $mysqli->query("SELECT id, name FROM mannschaft");
-$anzahlMannschaften = $result->num_rows;
-echo "Erstelle Spiele für ".$anzahlMannschaften." Mannschaften<br>";
-$mannschaften = array();
-while($mannschaftRow = $result->fetch_assoc()) {
-    $mannschaften[$mannschaftRow['id']] = $mannschaftRow['name'];
+$mannschaften = loadMannschaften();
+$anzahlMannschaften = sizeof($mannschaften);
+$alleGegner = loadGegner();
+$gegnerProMannschaft = array();
+foreach($mannschaften as $mannschaft){
+    $gegnerProMannschaft[$mannschaft->getID()] = array();
+    foreach($alleGegner as $gegner){
+        if($gegner->getLiga() == $mannschaft->getLiga()){
+            array_push($gegnerProMannschaft[$mannschaft->getID()], $gegner);
+        }
+    }
 }
 
 // INSERT vorbereiten
 $insert_spiel = $mysqli->prepare(
     "INSERT INTO spiel (nuliga_id, mannschaft, gegner, heimspiel, halle, anwurf) ".
     "VALUES (?, ?, ?, ?, ?, ?)");
-
+    
 $nuliga_id = 0;
 $mannschaft_id = 0;
-$gegner = "";
+$gegner_id = 0;
 $isHeimspiel = 1;
 $halle = 1000; // Heimspiel-Halle
 $anwurf = "";
-$insert_spiel->bind_param("iisiis", $nuliga_id, $mannschaft, $gegner, $isHeimspiel, $halle, $anwurf);
-
+$insert_spiel->bind_param("iiiiis", $nuliga_id, $mannschaft_id, $gegner_id, $isHeimspiel, $halle, $anwurf);
+    
 // Spieltage generieren
 
 function createSpielZeitSlots(array $uhrzeiten, DateTime $samstag): array{
@@ -82,7 +87,7 @@ function createSpielZeitSlots(array $uhrzeiten, DateTime $samstag): array{
         <th>Datenbank</th>
     </tr>
     <tr>
-<?php
+        <?php
 $spieltag = new DateTime();
 $spieltag->setTime(0,0);
 for($spieltagCount = 0; $spieltagCount<$spieleProTeam; $spieltagCount++){
@@ -91,10 +96,13 @@ for($spieltagCount = 0; $spieltagCount<$spieleProTeam; $spieltagCount++){
     
     $freieHeimspielSlots = createSpielZeitSlots($heimspielZeitSlots, $spieltag);
     $verfuegbareAuswaertsspielZeitSlots = createSpielZeitSlots($auswaertsspielZeitSlots, $spieltag);
-
-    foreach($mannschaften as $mannschaft => $name){
-        $nuliga_id = 10000 * $mannschaft + $spieltagCount;
-        $gegner = "Gegner von ".$name;
+    
+    foreach($mannschaften as $mannschaft){
+        $name = $mannschaft->getName();
+        $mannschaft_id = $mannschaft->getID();
+        $nuliga_id = 10000 * $mannschaft->getID() + $spieltagCount;
+        $gegner = $gegnerProMannschaft[$mannschaft->getID()][$spieltagCount];
+        $gegner_id = $gegner->getID();
         $isHeimspiel = rand(0,1);
         if($isHeimspiel){
             $halle = 1000;
@@ -113,7 +121,7 @@ for($spieltagCount = 0; $spieltagCount<$spieleProTeam; $spieltagCount++){
         echo "<td>$name</td>";
         echo "<td>$nuliga_id</td>";
         echo "<td>$anwurf</td>";
-        echo "<td>$gegner</td>";
+        echo "<td>".$gegner->getName()." ($gegner_id)</td>";
         echo "<td>$isHeimspiel</td>";
         echo "<td>$halle</td>";
         if($insert_spiel->execute()){
