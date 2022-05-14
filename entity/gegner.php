@@ -14,6 +14,10 @@ class Gegner {
         return $this->assoc_array["name"];
     }
     
+    public function getLiga(): string {
+        return $this->assoc_array["liga"];
+    }
+    
     public function stelltSekretearBeiHeimspiel(): bool {
         return $this->assoc_array["steltSekretaerBeiHeimspiel"];
     }

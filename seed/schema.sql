@@ -17,6 +17,7 @@ CREATE TABLE `dienstedienst`.`person` (
 CREATE TABLE `dienstedienst`.`gegner` ( 
     `id` INT NOT NULL AUTO_INCREMENT , 
     `name` VARCHAR(256) NOT NULL ,
+    `liga` VARCHAR(256) NULL , 
     `steltSekretaerBeiHeimspiel` TINYINT NOT NULL DEFAULT '0' , 
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
