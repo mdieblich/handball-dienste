@@ -19,7 +19,7 @@ class Gegner {
     }
     
     public function stelltSekretearBeiHeimspiel(): bool {
-        return $this->assoc_array["steltSekretaerBeiHeimspiel"];
+        return $this->assoc_array["stelltSekretaerBeiHeimspiel"];
     }
 }
 ?>
