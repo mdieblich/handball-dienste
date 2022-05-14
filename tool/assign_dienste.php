@@ -149,10 +149,10 @@ foreach($spiele as $spiel){
     echo "<td>".$spiel->getHalle()."</td>";
     if($spiel->isHeimspiel()){
         echo "<td>".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
-        echo "<td>".$gegner[$spiel->getGegner()]->getName()."</td>";
+        echo "<td>".$alleGegner[$spiel->getGegner()]->getName()."</td>";
     }
     else{
-        echo "<td>".$gegner[$spiel->getGegner()]->getName()."</td>";
+        echo "<td>".$alleGegner[$spiel->getGegner()]->getName()."</td>";
         echo "<td>".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
     }
     foreach($mannschaften as $mannschaft){
