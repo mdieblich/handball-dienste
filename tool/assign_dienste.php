@@ -102,20 +102,6 @@ foreach($mannschaften as $mannschaft){
     </tr>
 <?php
 
-function getGleichzeitigesSpiel($zuPruefendesSpiel, $mannschaft): ?Spiel{
-    global $spiele;
-    // TODO das geht definitiv einfacher: Alle Spiele als Array in Mannschaft
-    foreach($spiele as $spiel){
-        if($spiel->getMannschaft() != $mannschaft->getID()){
-            continue;
-        }
-        if($spiel->getZeitlicheDistanz($zuPruefendesSpiel)->ueberlappend){
-            return $spiel;
-        }
-    }
-    return null;
-}
-
 function getZeitlichNaehstesSpiel($zuPruefendesSpiel, $mannschaft): ?Spiel {
     global $spiele;
 
