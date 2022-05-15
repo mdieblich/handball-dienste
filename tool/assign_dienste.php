@@ -93,7 +93,7 @@ function zaehleDienste(Mannschaft $mannschaft): array{
 </script>
 <table border="0" cellpadding="3" cellspacing="3">
     <tr style="background-color:#ddddff">
-        <th>ID</th>
+        <th>Nuliga-ID</th>
         <th>Datum</th>
         <th>Halle</th>
         <th>Heim</th>
@@ -158,7 +158,7 @@ foreach($spiele as $spiel){
     $sekretaerDienst = $spiel->getDienst("Sekretär");
     $backgroundColor = $spiel->getAnwurf()->format("w")==6?"#eeeeee":"#eeeeff";
     echo "<tr style=\"background-color:$backgroundColor\">";
-    echo "<td>".$spiel->getID()."</td>";
+    echo "<td>".$spiel->getNuligaID()."</td>";
     echo "<td id=\"spiel-".$spiel->getID()."-anwurf\">".$spiel->getAnwurf()->format('d.m.Y H:i')."</td>";
     echo "<td id=\"spiel-".$spiel->getID()."-halle\">".$spiel->getHalle()."</td>";
 
