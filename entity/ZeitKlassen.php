@@ -26,8 +26,15 @@ class ZeitlicheDistanz {
     public bool $ueberlappend;
     public int $seconds;
 
-    public function isAbsolutKleinerAls(ZeitlicheDistanz $other): bool{
+    public function isNaeher(?ZeitlicheDistanz $other): bool{
+        if(!isset($other)){
+            return true;
+        }
         return abs($this->seconds) < abs($other->seconds);
+    }
+
+    public function isVorher(): bool {
+        return $this->seconds < 0;
     }
 
     public function getDebugOutput(): string {

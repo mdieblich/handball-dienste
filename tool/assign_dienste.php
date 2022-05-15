@@ -67,18 +67,39 @@ function zaehleDienste(Mannschaft $mannschaft): array{
             document.getElementById(id).innerText = previousValue - 1;
         }
     }
+
+    function highlightGames(
+        spiel_id_vorher, highlightColorVorher,
+        spiel_id_gleichzeitig,
+        spiel_id_nachher, highlightColorNachher) {
+        enableHighlight(spiel_id_vorher, highlightColorVorher);
+        enableHighlight(spiel_id_gleichzeitig, "#fdd");
+        enableHighlight(spiel_id_nachher, highlightColorNachher);
+    }
+
+    function resetHighlight(spiel_id_vorher, spiel_id_gleichzeitig, spiel_id_nachher){
+        disableHighlight(spiel_id_vorher);
+        disableHighlight(spiel_id_gleichzeitig);
+        disableHighlight(spiel_id_nachher);
+    }
     
     function enableHighlight(spiel_id, highlightColor){
-        document.getElementById(spiel_id+"-anwurf").style.backgroundColor = highlightColor;
-        document.getElementById(spiel_id+"-halle").style.backgroundColor = highlightColor;
-        document.getElementById(spiel_id+"-mannschaft").style.backgroundColor = highlightColor;
-        document.getElementById(spiel_id+"-gegner").style.backgroundColor = highlightColor;
+        if(spiel_id === null){
+            return;
+        } 
+        document.getElementById("spiel-"+spiel_id+"-anwurf").style.backgroundColor = highlightColor;
+        document.getElementById("spiel-"+spiel_id+"-halle").style.backgroundColor = highlightColor;
+        document.getElementById("spiel-"+spiel_id+"-mannschaft").style.backgroundColor = highlightColor;
+        document.getElementById("spiel-"+spiel_id+"-gegner").style.backgroundColor = highlightColor;
     }
     function disableHighlight(spiel_id){
-        document.getElementById(spiel_id+"-anwurf").style.backgroundColor = "inherit";
-        document.getElementById(spiel_id+"-halle").style.backgroundColor = "inherit";
-        document.getElementById(spiel_id+"-mannschaft").style.backgroundColor = "inherit";
-        document.getElementById(spiel_id+"-gegner").style.backgroundColor = "inherit";
+        if(spiel_id === null){
+            return;
+        }
+        document.getElementById("spiel-"+spiel_id+"-anwurf").style.backgroundColor = "inherit";
+        document.getElementById("spiel-"+spiel_id+"-halle").style.backgroundColor = "inherit";
+        document.getElementById("spiel-"+spiel_id+"-mannschaft").style.backgroundColor = "inherit";
+        document.getElementById("spiel-"+spiel_id+"-gegner").style.backgroundColor = "inherit";
     }
 </script>
 <table border="0" cellpadding="3" cellspacing="3">
@@ -102,29 +123,64 @@ foreach($mannschaften as $mannschaft){
     </tr>
 <?php
 
-function getZeitlichNaehstesSpiel($zuPruefendesSpiel, $mannschaft): ?Spiel {
+class NahgelegeneSpiele {
+    public ?Spiel $vorher = null;
+    public ?Spiel $gleichzeitig = null;
+    public ?Spiel $nachher = null;
+
+    public function getVorherID(): ?string{
+        return $this->getOptionalID($this->vorher);
+    }
+    public function getGleichzeitigID(): ?string{
+        return $this->getOptionalID($this->gleichzeitig);
+    }
+    public function getNachherID(): ?string{
+        return $this->getOptionalID($this->nachher);
+    }
+
+    private function getOptionalID(?Spiel $spiel): ?string{
+        if(!isset($spiel)) {
+            return "null";
+        }
+        return $spiel->getID();
+    }
+}
+
+function findNahgelegeneSpiele($zuPruefendesSpiel, $mannschaft): NahgelegeneSpiele {
     global $spiele;
 
-    $nahstesSpiel = null;
-    $zeitlicheDistanzDesNahstenSpiels = null;
-    // TODO das geht definitiv einfacher: Alle Spiele als Array in Mannschaft
+    $nahgelegeneSpiele = new NahgelegeneSpiele();
+    $distanzVorher = null;
+    $distanzNachher = null;
     foreach($spiele as $spiel){
+        // TODO das geht definitiv einfacher: Alle Spiele als Array in Mannschaft
         if($spiel->getMannschaft() != $mannschaft->getID()){
             continue;
         }
         $zeitlicheDistanz = $spiel->getZeitlicheDistanz($zuPruefendesSpiel);
-        if(!isset($nahstesSpiel) || $zeitlicheDistanz->isAbsolutKleinerAls($zeitlicheDistanzDesNahstenSpiels)){
-            $nahstesSpiel = $spiel;
-            $zeitlicheDistanzDesNahstenSpiels = $zeitlicheDistanz;
-        }
-        if($spiel->getZeitlicheDistanz($zuPruefendesSpiel)->ueberlappend){
-            return $spiel;
+        if($zeitlicheDistanz->ueberlappend){
+            $nahgelegeneSpiele->gleichzeitig = $spiel;
+        } else {
+            if($zeitlicheDistanz->isVorher()){
+                if($zeitlicheDistanz->isNaeher($distanzVorher)){
+                    $distanzVorher = $zeitlicheDistanz;
+                    $nahgelegeneSpiele->vorher = $spiel;
+                }
+            } else {
+                if($zeitlicheDistanz->isNaeher($distanzNachher)){
+                    $distanzNachher = $zeitlicheDistanz;
+                    $nahgelegeneSpiele->nachher = $spiel;
+                }
+            }
         }
     }
-    return $nahstesSpiel;
+    return $nahgelegeneSpiele;
 }
 
 function isAmGleichenTag(Spiel $a, Spiel $b): bool {
+    if(!isset($a) || !isset($b)){
+        return false;
+    }
     return $a->getAnwurf()->format("Y-m-d") == $b->getAnwurf()->format("Y-m-d");
 }
 
@@ -153,43 +209,54 @@ foreach($spiele as $spiel){
     }
     foreach($mannschaften as $mannschaft){
         $backgroundColor = "inherit";
-        $highlightColor = "#bbf";
+        $highlightColorVorher = "#bbf";
+        $highlightColorNachher = "#bbf";
         $textColor = "black";
         $tooltip = "";
-        $zeitlichNaehstesSpiel = getZeitlichNaehstesSpiel($spiel, $mannschaft);
-        $zeitlicheDistanz = $spiel->getZeitlicheDistanz($zeitlichNaehstesSpiel);
+        $nahgelegeneSpiele = findNahgelegeneSpiele($spiel, $mannschaft);
         if($spiel->getMannschaft() == $mannschaft->getID()){
             // TODO Warnung wegen eigenem Spiel bei Anklicken
             $textColor = "silver";
-            $highlightColor = "#fdd";
             $tooltip = "Eigenes Spiel";
-            $zeitlichNaehstesSpiel = $spiel;
-        } else if($zeitlicheDistanz->ueberlappend) {
+        } else if(isset($nahgelegeneSpiele->gleichzeitig)) {
             // TODO Warnung wegen gleichzeitigem Spiel
             $textColor = "silver";
-            $highlightColor = "#fdd";
             $tooltip = "Gleichzeitiges Spiel";
         } else {
-            if(isAmGleichenTag($spiel, $zeitlichNaehstesSpiel)){
-                $highlightColor = "#ffd";
+            $hatSpielAmGleichenTag = false;
+            $hatSpielinGleicherHalle = false;
+            
+            if(isset($nahgelegeneSpiele->vorher)){
+                if(isAmGleichenTag($spiel, $nahgelegeneSpiele->vorher)){
+                    $highlightColorVorher = "#ffd";
+                    $hatSpielAmGleichenTag = true;
+                    if($spiel->getHalle() == $nahgelegeneSpiele->vorher->getHalle()){
+                        $highlightColorVorher = "#dfd";
+                        $hatSpielinGleicherHalle = true;
+                    }
+                }    
+            }
+            
+            if(isset($nahgelegeneSpiele->nachher)){
+                if(isAmGleichenTag($spiel, $nahgelegeneSpiele->nachher)){
+                    $highlightColorNachher = "#ffd";
+                    $hatSpielAmGleichenTag = true;
+                    if($spiel->getHalle() == $nahgelegeneSpiele->nachher->getHalle()){
+                        $highlightColorNachher = "#dfd";
+                        $hatSpielinGleicherHalle = true;
+                    }
+                }    
+            }
+
+            if($hatSpielAmGleichenTag){
+                $tooltip = "Spiel am gleichen Tag";
                 $backgroundColor = "#ffd";
-                if($spiel->getHalle() == $zeitlichNaehstesSpiel->getHalle()){
-                    $tooltip = "Spiel am gleichen Tag\nSpiel in gleicher Halle";
-                    $highlightColor = "#dfd";
+                if($hatSpielinGleicherHalle){
+                    $tooltip .= "\nSpiel in gleicher Halle";
                     $backgroundColor = "#dfd";
                 }
-                else{
-                    $tooltip = "Spiel am gleichen Tag";
-                }
-            }
-            else{
-                $tooltip = "Spiel, welches zeitlich am nächsten ist";
             }
         }
-        $tooltip .= "\n"
-            .$zeitlichNaehstesSpiel->getAnwurf()->format("d.m.Y H:i")."\n"
-            .($zeitlichNaehstesSpiel->isHeimspiel()?"HEIM":"AUSWÄRTS")."\n"
-            .$alleGegner[$zeitlichNaehstesSpiel->getGegner()]->getName();
         $checkBoxID = $spiel->getID()."-".$mannschaft->getID();
         $zeitnehmerChecked = "";
         if(isset($zeitnehmerDienst)){
@@ -245,8 +312,14 @@ foreach($spiele as $spiel){
         echo "<td "
             ."style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" "
             ."title=\"$tooltip\" "
-            ."onmouseover=\"enableHighlight('spiel-".$zeitlichNaehstesSpiel->getID()."', '$highlightColor')\" "
-            ."onmouseout=\"disableHighlight('spiel-".$zeitlichNaehstesSpiel->getID()."')\" "
+            ."onmouseover=\"highlightGames("
+                .$nahgelegeneSpiele->getVorherID().", '$highlightColorVorher', "
+                .$nahgelegeneSpiele->getGleichzeitigID().", "
+                .$nahgelegeneSpiele->getNachherID().", '$highlightColorNachher')\" "
+            ."onmouseout=\"resetHighlight("
+                .$nahgelegeneSpiele->getVorherID().","
+                .$nahgelegeneSpiele->getGleichzeitigID().", "
+                .$nahgelegeneSpiele->getNachherID().")\" "
             .">$cellContent</td>";
     }
     echo "</tr>";
