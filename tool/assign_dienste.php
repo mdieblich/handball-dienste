@@ -166,10 +166,11 @@ foreach($spiele as $spiel){
             // TODO Warnung wegen eigenem Spiel bei Anklicken
             $textColor = "silver";
             $tooltip = "Eigenes Spiel";
+            $zeitlichNaehstesSpiel = $spiel;
         } else if($zeitlicheDistanz->ueberlappend) {
             // TODO Warnung wegen gleichzeitigem Spiel
             $textColor = "silver";
-            $tooltip = "Gleichzeitiges Spiel, ID ".$zeitlichNaehstesSpiel->getID();
+            $tooltip = "Gleichzeitiges Spiel";
         } else {
             if(isAmGleichenTag($spiel, $zeitlichNaehstesSpiel)){
                 $backgroundColor = "#ffd";
@@ -182,11 +183,13 @@ foreach($spiele as $spiel){
                 }
             }
             else{
-                $tooltip = "Spiel, welches zeitlich am nächsten ist\n"
-                .$zeitlichNaehstesSpiel->getAnwurf()->format("d.m.Y H:i")."\n"
-                .$alleGegner[$zeitlichNaehstesSpiel->getGegner()]->getName();
+                $tooltip = "Spiel, welches zeitlich am nächsten ist";
             }
         }
+        $tooltip .= "\n"
+            .$zeitlichNaehstesSpiel->getAnwurf()->format("d.m.Y H:i")."\n"
+            .($zeitlichNaehstesSpiel->isHeimspiel()?"HEIM":"AUSWÄRTS")."\n"
+            .$alleGegner[$zeitlichNaehstesSpiel->getGegner()]->getName();
         $checkBoxID = $spiel->getID()."-".$mannschaft->getID();
         $zeitnehmerChecked = "";
         if(isset($zeitnehmerDienst)){
