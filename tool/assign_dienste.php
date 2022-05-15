@@ -153,6 +153,7 @@ function isAmGleichenTag(Spiel $a, Spiel $b): bool {
 }
 
 foreach($spiele as $spiel){
+    $gegner = $alleGegner[$spiel->getGegner()];
     $zeitnehmerDienst = $spiel->getDienst("Zeitnehmer");
     $sekretaerDienst = $spiel->getDienst("Sekretär");
     $backgroundColor = $spiel->getAnwurf()->format("w")==6?"#eeeeee":"#eeeeff";
@@ -164,8 +165,8 @@ foreach($spiele as $spiel){
     $zelleMannschaft = "<td id=\"spiel-".$spiel->getID()."-mannschaft\">".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
     $zelleGegner = "<td "
         ."id=\"spiel-".$spiel->getID()."-gegner\" "
-        .($alleGegner[$spiel->getGegner()]->stelltSekretearBeiHeimspiel()?"title='Stellt Sekretär in deren Halle'":"")
-        .">".$alleGegner[$spiel->getGegner()]->getName()."</td>";
+        .($gegner->stelltSekretearBeiHeimspiel()?"title='Stellt Sekretär in deren Halle'":"")
+        .">".$gegner->getName()."</td>";
     if($spiel->isHeimspiel()){
         echo $zelleMannschaft;
         echo $zelleGegner;
@@ -179,7 +180,6 @@ foreach($spiele as $spiel){
         $highlightColor = "#bbf";
         $textColor = "black";
         $tooltip = "";
-        $cellcontent = "";
         $zeitlichNaehstesSpiel = getZeitlichNaehstesSpiel($spiel, $mannschaft);
         $zeitlicheDistanz = $spiel->getZeitlicheDistanz($zeitlichNaehstesSpiel);
         if($spiel->getMannschaft() == $mannschaft->getID()){
@@ -226,7 +226,8 @@ foreach($spiele as $spiel){
                 $zeitnehmerChecked = "disabled";
             }
         }
-        $cellcontent .= "<input type=\"checkbox\" ".
+        $checkboxZeitnehmer = 
+            "<input type=\"checkbox\" ".
             "name=\"Zeitnehmer-".$spiel->getID()."\"".
             "id=\"Zeitnehmer-$checkBoxID\" ".
             "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::ZEITNEHMER."',".$mannschaft->getID().", this.checked)\"".
@@ -243,19 +244,34 @@ foreach($spiele as $spiel){
                 $sekretaerChecked = "disabled";
             }
         }
-        $cellcontent .= "<input type=\"checkbox\" ".
+        $checkboxSekretaer = "<input type=\"checkbox\" ".
         "name=\"Sekretär-".$spiel->getID()."\"".
         "id=\"Sekretär-$checkBoxID\" ".
         "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::SEKRETAER."',".$mannschaft->getID().", this.checked)\"".
         " $sekretaerChecked>".
         "<label for=\"Sekretär-$checkBoxID\">S</label><br>";
+
+        $cellContent = "";
+        if($spiel->isHeimspiel()){
+            if($gegner->stelltSekretearBeiHeimspiel()){
+                $cellContent = $checkboxZeitnehmer.$checkboxSekretaer;
+            } else {
+                $cellContent = $checkboxZeitnehmer;
+            }
+        } else {
+            if($gegner->stelltSekretearBeiHeimspiel()){
+                $cellContent = "";
+            } else {
+                $cellContent = $checkboxSekretaer;
+            }
+        }
         
         echo "<td "
             ."style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" "
             ."title=\"$tooltip\" "
             ."onmouseover=\"enableHighlight('spiel-".$zeitlichNaehstesSpiel->getID()."', '$highlightColor')\" "
             ."onmouseout=\"disableHighlight('spiel-".$zeitlichNaehstesSpiel->getID()."')\" "
-            .">$cellcontent</td>";
+            .">$cellContent</td>";
     }
     echo "</tr>";
 }
