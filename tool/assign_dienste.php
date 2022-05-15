@@ -160,13 +160,19 @@ foreach($spiele as $spiel){
     echo "<td>".$spiel->getID()."</td>";
     echo "<td id=\"spiel-".$spiel->getID()."-anwurf\">".$spiel->getAnwurf()->format('d.m.Y H:i')."</td>";
     echo "<td id=\"spiel-".$spiel->getID()."-halle\">".$spiel->getHalle()."</td>";
+
+    $zelleMannschaft = "<td id=\"spiel-".$spiel->getID()."-mannschaft\">".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
+    $zelleGegner = "<td "
+        ."id=\"spiel-".$spiel->getID()."-gegner\" "
+        .($alleGegner[$spiel->getGegner()]->stelltSekretearBeiHeimspiel()?"title='Stellt Sekretär in deren Halle'":"")
+        .">".$alleGegner[$spiel->getGegner()]->getName()."</td>";
     if($spiel->isHeimspiel()){
-        echo "<td id=\"spiel-".$spiel->getID()."-mannschaft\">".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
-        echo "<td id=\"spiel-".$spiel->getID()."-gegner\">".$alleGegner[$spiel->getGegner()]->getName()."</td>";
+        echo $zelleMannschaft;
+        echo $zelleGegner;
     }
     else{
-        echo "<td id=\"spiel-".$spiel->getID()."-gegner\">".$alleGegner[$spiel->getGegner()]->getName()."</td>";
-        echo "<td id=\"spiel-".$spiel->getID()."-mannschaft\">".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
+        echo $zelleGegner;
+        echo $zelleMannschaft;
     }
     foreach($mannschaften as $mannschaft){
         $backgroundColor = "inherit";
