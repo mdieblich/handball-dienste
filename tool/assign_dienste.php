@@ -77,6 +77,19 @@ function zaehleDienste(Mannschaft $mannschaft): array{
             document.getElementById(id).innerText = previousValue - 1;
         }
     }
+    
+    function enableHighlight(spiel_id, highlightColor){
+        document.getElementById(spiel_id+"-anwurf").style.backgroundColor = highlightColor;
+        document.getElementById(spiel_id+"-halle").style.backgroundColor = highlightColor;
+        document.getElementById(spiel_id+"-mannschaft").style.backgroundColor = highlightColor;
+        document.getElementById(spiel_id+"-gegner").style.backgroundColor = highlightColor;
+    }
+    function disableHighlight(spiel_id){
+        document.getElementById(spiel_id+"-anwurf").style.backgroundColor = "inherit";
+        document.getElementById(spiel_id+"-halle").style.backgroundColor = "inherit";
+        document.getElementById(spiel_id+"-mannschaft").style.backgroundColor = "inherit";
+        document.getElementById(spiel_id+"-gegner").style.backgroundColor = "inherit";
+    }
 </script>
 <table border="0" cellpadding="3" cellspacing="3">
     <tr style="background-color:#ddddff">
@@ -145,18 +158,19 @@ foreach($spiele as $spiel){
     $backgroundColor = $spiel->getAnwurf()->format("w")==6?"#eeeeee":"#eeeeff";
     echo "<tr style=\"background-color:$backgroundColor\">";
     echo "<td>".$spiel->getID()."</td>";
-    echo "<td>".$spiel->getAnwurf()->format('d.m.Y H:i')."</td>";
-    echo "<td>".$spiel->getHalle()."</td>";
+    echo "<td id=\"spiel-".$spiel->getID()."-anwurf\">".$spiel->getAnwurf()->format('d.m.Y H:i')."</td>";
+    echo "<td id=\"spiel-".$spiel->getID()."-halle\">".$spiel->getHalle()."</td>";
     if($spiel->isHeimspiel()){
-        echo "<td>".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
-        echo "<td>".$alleGegner[$spiel->getGegner()]->getName()."</td>";
+        echo "<td id=\"spiel-".$spiel->getID()."-mannschaft\">".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
+        echo "<td id=\"spiel-".$spiel->getID()."-gegner\">".$alleGegner[$spiel->getGegner()]->getName()."</td>";
     }
     else{
-        echo "<td>".$alleGegner[$spiel->getGegner()]->getName()."</td>";
-        echo "<td>".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
+        echo "<td id=\"spiel-".$spiel->getID()."-gegner\">".$alleGegner[$spiel->getGegner()]->getName()."</td>";
+        echo "<td id=\"spiel-".$spiel->getID()."-mannschaft\">".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
     }
     foreach($mannschaften as $mannschaft){
         $backgroundColor = "inherit";
+        $highlightColor = "#bbf";
         $textColor = "black";
         $tooltip = "";
         $cellcontent = "";
@@ -165,17 +179,21 @@ foreach($spiele as $spiel){
         if($spiel->getMannschaft() == $mannschaft->getID()){
             // TODO Warnung wegen eigenem Spiel bei Anklicken
             $textColor = "silver";
+            $highlightColor = "#fdd";
             $tooltip = "Eigenes Spiel";
             $zeitlichNaehstesSpiel = $spiel;
         } else if($zeitlicheDistanz->ueberlappend) {
             // TODO Warnung wegen gleichzeitigem Spiel
             $textColor = "silver";
+            $highlightColor = "#fdd";
             $tooltip = "Gleichzeitiges Spiel";
         } else {
             if(isAmGleichenTag($spiel, $zeitlichNaehstesSpiel)){
+                $highlightColor = "#ffd";
                 $backgroundColor = "#ffd";
                 if($spiel->getHalle() == $zeitlichNaehstesSpiel->getHalle()){
                     $tooltip = "Spiel am gleichen Tag\nSpiel in gleicher Halle";
+                    $highlightColor = "#dfd";
                     $backgroundColor = "#dfd";
                 }
                 else{
@@ -226,7 +244,12 @@ foreach($spiele as $spiel){
         " $sekretaerChecked>".
         "<label for=\"Sekretär-$checkBoxID\">S</label><br>";
         
-        echo "<td style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" title=\"$tooltip\">$cellcontent</td>";
+        echo "<td "
+            ."style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" "
+            ."title=\"$tooltip\" "
+            ."onmouseover=\"enableHighlight('spiel-".$zeitlichNaehstesSpiel->getID()."', '$highlightColor')\" "
+            ."onmouseout=\"disableHighlight('spiel-".$zeitlichNaehstesSpiel->getID()."')\" "
+            .">$cellcontent</td>";
     }
     echo "</tr>";
 }
