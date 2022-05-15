@@ -92,7 +92,7 @@ function zaehleDienste(Mannschaft $mannschaft): array{
     }
 </script>
 <table border="0" cellpadding="3" cellspacing="3">
-    <tr style="background-color:#ddddff">
+    <tr style="background-color:#ddddff; position: sticky; top: 0">
         <th>Nuliga-ID</th>
         <th>Datum</th>
         <th>Halle</th>
