@@ -9,16 +9,6 @@ $mannschaften = loadMannschaften();
 $alleGegner = loadGegner();
 $spiele = loadSpieleDeep("1=1", "date(anwurf), heimspiel desc, anwurf, mannschaft"); 
 
-function findeGleichzeitigesSpiel(Spiel $zuVergleichendesSpiel, Mannschaft $mannschaft): ?Spiel{
-    global $spiele;
-    foreach($spiele as $spiel){
-        if($spiel->getMannschaft() != $mannschaft->getID()){
-            continue; // Kein Spiel der Mannschaft
-        }
-    }
-    return null;
-}
-
 function zaehleDienste(Mannschaft $mannschaft): array{
     global $spiele;
     $anzahl = array();
