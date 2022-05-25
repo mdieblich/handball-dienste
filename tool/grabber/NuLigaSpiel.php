@@ -33,7 +33,6 @@ class NuLigaSpiel {
 
     public function getAnwurf(): DateTime {
         $datum_und_zeit = $this->datum." ".$this->uhrzeit;
-        var_dump($datum_und_zeit);
         return DateTime::createFromFormat('d.m.Y H:i', $datum_und_zeit);
     }
 
