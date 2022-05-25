@@ -30,20 +30,20 @@ SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `spiel`;
 CREATE TABLE IF NOT EXISTS `spiel` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nuliga_id` int(11) NOT NULL,
+  `spielnr` int(11) NOT NULL,
   `mannschaft` int(11) NOT NULL,
   `gegner` text NOT NULL,
   `heimspiel` tinyint(1) NOT NULL,
   `anwurf` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_nuliga_id` (`nuliga_id`)
+  KEY `idx_spielnr` (`spielnr`)
 ) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 --
 -- Daten für Tabelle `spiel`
 --
 
-INSERT INTO `spiel` (`id`, `nuliga_id`, `mannschaft`, `gegner`, `heimspiel`, `halle`, `anwurf`) VALUES
+INSERT INTO `spiel` (`id`, `spielnr`, `mannschaft`, `gegner`, `heimspiel`, `halle`, `anwurf`) VALUES
 (1, 1653, 3, 'Polizei SV Köln V', 1, 3182, '2022-03-27 15:00:00'),
 (2, 101030, 2, 'HSV Frechen II', 1, 3182, '2022-03-05 18:00:00'),
 (3, 112003, 1, 'ASV SR Aachen ', 0, 1103, '2022-03-05 00:00:00'),

@@ -24,7 +24,7 @@ CREATE TABLE `dienstedienst`.`gegner` (
 
 CREATE TABLE `dienstedienst`.`spiel` ( 
     `id` INT NOT NULL AUTO_INCREMENT , 
-    `nuliga_id` VARCHAR(256) NOT NULL , 
+    `spielnr` INT NOT NULL , 
     `mannschaft` INT NOT NULL , 
     `gegner` INT NOT NULL , 
     `heimspiel` TINYINT NOT NULL DEFAULT '0' , 

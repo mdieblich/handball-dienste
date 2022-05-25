@@ -20,8 +20,8 @@ class Spiel {
     public function getID(): int {
         return $this->assoc_array["id"];
     }
-    public function getNuligaID(): int {
-        return $this->assoc_array["nuliga_id"];
+    public function getSpielNr(): int {
+        return $this->assoc_array["spielnr"];
     }
 
     public function getMannschaft(): int {
@@ -96,7 +96,7 @@ class Spiel {
     public function getDebugOutput(): string {
         return 
             "<div>".
-            $this->getNuligaID().". <b>".$this->getSpielnameDebugOutput()."</b>".
+            $this->getSpielNr().". <b>".$this->getSpielnameDebugOutput()."</b>".
             "</div>";
     }
 

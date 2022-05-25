@@ -9,8 +9,8 @@ $mannschaften = loadMannschaftenDeep();
 
 foreach($emails as $email){
     echo "<b>".$email->getBisherZeile()."</b><br>";
-    $nuligaID = $email->getSpielNummer();
-    $sql = "SELECT * FROM dienst LEFT JOIN spiel ON dienst.spiel=spiel.id WHERE spiel.nuliga_id=".$nuligaID;
+    $spielnr = $email->getSpielNummer();
+    $sql = "SELECT * FROM dienst LEFT JOIN spiel ON dienst.spiel=spiel.id WHERE spiel.spielnr=".$spielnr;
     $result = $mysqli->query($sql);
     if ($result->num_rows > 0) {
         echo "<ul>";
