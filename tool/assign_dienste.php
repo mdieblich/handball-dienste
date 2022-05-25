@@ -139,7 +139,7 @@ class NahgelegeneSpiele {
     }
 
     private function getOptionalID(?Spiel $spiel): ?string{
-        if(!isset($spiel)) {
+        if(empty($spiel)) {
             return "null";
         }
         return $spiel->getID();
@@ -178,7 +178,7 @@ function findNahgelegeneSpiele($zuPruefendesSpiel, $mannschaft): NahgelegeneSpie
 }
 
 function isAmGleichenTag(Spiel $a, Spiel $b): bool {
-    if(!isset($a) || !isset($b)){
+    if(empty($a) || empty($b)){
         return false;
     }
     return $a->getAnwurf()->format("Y-m-d") == $b->getAnwurf()->format("Y-m-d");
