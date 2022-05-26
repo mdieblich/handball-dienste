@@ -29,7 +29,7 @@ CREATE TABLE `dienstedienst`.`spiel` (
     `gegner` INT NOT NULL , 
     `heimspiel` TINYINT NOT NULL DEFAULT '0' , 
     `halle` int NOT NULL , 
-    `anwurf` DATETIME NOT NULL , 
+    `anwurf` DATETIME NULL , 
     PRIMARY KEY (`id`), 
     INDEX `index_anwurf` (`anwurf`),
     FOREIGN KEY (`mannschaft`) REFERENCES `mannschaft`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,

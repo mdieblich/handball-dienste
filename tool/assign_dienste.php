@@ -7,7 +7,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/dienst.php";
 
 $mannschaften = loadMannschaften();
 $alleGegner = loadGegner();
-$spiele = loadSpieleDeep("1=1", "date(anwurf), heimspiel desc, anwurf, mannschaft"); 
+$spiele = loadSpieleDeep("1=1", "-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"); 
 
 function zaehleDienste(Mannschaft $mannschaft): array{
     global $spiele;
@@ -158,6 +158,9 @@ function findNahgelegeneSpiele($zuPruefendesSpiel, $mannschaft): NahgelegeneSpie
             continue;
         }
         $zeitlicheDistanz = $spiel->getZeitlicheDistanz($zuPruefendesSpiel);
+        if(empty($zeitlicheDistanz)){
+            continue;
+        }
         if($zeitlicheDistanz->ueberlappend){
             $nahgelegeneSpiele->gleichzeitig = $spiel;
         } else {
@@ -181,17 +184,32 @@ function isAmGleichenTag(Spiel $a, Spiel $b): bool {
     if(empty($a) || empty($b)){
         return false;
     }
-    return $a->getAnwurf()->format("Y-m-d") == $b->getAnwurf()->format("Y-m-d");
+    $anwurfA = $a->getAnwurf();
+    $anwurfB = $b->getAnwurf();
+    if(empty($anwurfA) || empty($anwurfB)){
+        return false;
+    }
+    return $anwurfA->format("Y-m-d") == $anwurfB->format("Y-m-d");
 }
 
 foreach($spiele as $spiel){
+    $anwurf = $spiel->getAnwurf();
     $gegner = $alleGegner[$spiel->getGegner()];
     $zeitnehmerDienst = $spiel->getDienst("Zeitnehmer");
     $sekretaerDienst = $spiel->getDienst("Sekretär");
-    $backgroundColor = $spiel->getAnwurf()->format("w")==6?"#eeeeee":"#eeeeff";
+    if(isset($anwurf)){
+        $backgroundColor = $spiel->getAnwurf()->format("w")==6?"#eeeeee":"#eeeeff";
+    }
+    else {
+        $backgroundColor = "#ffffff";
+    }
     echo "<tr style=\"background-color:$backgroundColor\">";
     echo "<td>".$spiel->getSpielNr()."</td>";
-    echo "<td id=\"spiel-".$spiel->getID()."-anwurf\">".$spiel->getAnwurf()->format('d.m.Y H:i')."</td>";
+    if(isset($anwurf)){
+        echo "<td id=\"spiel-".$spiel->getID()."-anwurf\">".$spiel->getAnwurf()->format('d.m.Y H:i')."</td>";
+    }else {
+        echo "<td id=\"spiel-".$spiel->getID()."-anwurf\">Termin offen</td>";
+    }
     echo "<td id=\"spiel-".$spiel->getID()."-halle\">".$spiel->getHalle()."</td>";
 
     $zelleMannschaft = "<td id=\"spiel-".$spiel->getID()."-mannschaft\">".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";

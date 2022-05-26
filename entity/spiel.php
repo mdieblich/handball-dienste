@@ -40,26 +40,45 @@ class Spiel {
         return $this->assoc_array["halle"];        
     }
 
-    public function getAnwurf(): DateTime {
+    public function getAnwurf(): ?DateTime {
+        if(empty($this->assoc_array["anwurf"])){
+            return null;
+        }
         return DateTime::createFromFormat('Y-m-d H:i:s',  $this->assoc_array["anwurf"]);
     }
-    public function getSpielEnde(): DateTime {
-        return  $this->getAnwurf()->add(new DateInterval(self::SPIELDAUER));
+    public function getSpielEnde(): ?DateTime {
+        $anwurf = $this->getAnwurf();
+        if(empty($anwurf)){
+            return null;
+        }
+        return  $anwurf->add(new DateInterval(self::SPIELDAUER));
     }
 
-    public function getSpielzeit(): ZeitRaum {
-        return new Zeitraum($this->getAnwurf(), $this->getSpielEnde());
+    public function getSpielzeit(): ?ZeitRaum {
+        $anwurf = $this->getAnwurf();
+        if(empty($anwurf)){
+            return null;
+        }
+        return new Zeitraum($anwurf, $this->getSpielEnde());
     }
 
-    public function getAbfahrt(): DateTime {
-        $abfahrt = $this->getAnwurf()->sub(new DateInterval(self::VORBEREITUNG_VOR_ANWURF));
+    public function getAbfahrt(): ?DateTime {
+        $anwurf = $this->getAnwurf();
+        if(empty($anwurf)){
+            return null;
+        }
+        $abfahrt = $anwurf->sub(new DateInterval(self::VORBEREITUNG_VOR_ANWURF));
         if(!$this->isHeimspiel()){
             $abfahrt = $abfahrt->sub(new DateInterval(self::FAHRTZEIT_AUSWAERTS));
         }
         return $abfahrt;
     }
 
-    public function getRueckkehr(): DateTime {
+    public function getRueckkehr(): ?DateTime {
+        $anwurf = $this->getAnwurf();
+        if(empty($anwurf)){
+            return null;
+        }
         $rueckkehr = $this->getSpielEnde()->add(new DateInterval(self::NACHBEREITUNG_NACH_ENDE));
         if(!$this->isHeimspiel()){
             $rueckkehr = $rueckkehr->add(new DateInterval(self::FAHRTZEIT_AUSWAERTS));
@@ -67,14 +86,22 @@ class Spiel {
         return $rueckkehr;
     }
 
-    public function getAbwesenheitsZeitraum(): ZeitRaum {
+    public function getAbwesenheitsZeitraum(): ?ZeitRaum {
+        $anwurf = $this->getAnwurf();
+        if(empty($anwurf)){
+            return null;
+        }
         return new ZeitRaum($this->getAbfahrt(), $this->getRueckkehr());
     }
     
-    public function getZeitlicheDistanz(Spiel $spiel): ZeitlicheDistanz {
+    public function getZeitlicheDistanz(Spiel $spiel): ?ZeitlicheDistanz {
 
         $eigenesSpiel = $this->getAbwesenheitsZeitraum();
         $anderesSpiel = $spiel->getAbwesenheitsZeitraum();
+
+        if(empty($eigenesSpiel)||empty($anderesSpiel)){
+            return null;
+        }
         
         $gleicheHalle = $this->getHalle() == $spiel->getHalle();
         if($gleicheHalle){
