@@ -25,7 +25,10 @@ class SpieleGrabber {
             $tabellenZeilen = extractTabellenZeilen($tabelle);
             $spielZeilen = array_slice($tabellenZeilen, 1);
             foreach ($spielZeilen as $childNode){
-                $spiele[] = $this->extractSpiel($childNode);
+                $spiel = $this->extractSpiel($childNode);
+                if(isset($spiel)){
+                    $spiele[] = $this->extractSpiel($childNode);
+                }
             }
             
         }
@@ -64,7 +67,7 @@ class SpieleGrabber {
         return $tabellenZeile;
     }
 
-    private function extractSpiel(DOMElement $tabellenZeile): NuLigaSpiel {
+    private function extractSpiel(DOMElement $tabellenZeile): ?NuLigaSpiel {
         $zellen = $this->extractTabellenZellen($tabellenZeile);
         return NuLigaSpiel::fromTabellenZellen($zellen);
     }

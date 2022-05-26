@@ -44,7 +44,7 @@ class NuLigaSpiel {
         return DateTime::createFromFormat('d.m.Y H:i', $datum_und_zeit);
     }
 
-    public static function fromTabellenZellen(array $zellen): NuLigaSpiel {
+    public static function fromTabellenZellen(array $zellen): ?NuLigaSpiel {
         $spiel = new NuLigaSpiel();
         $spiel->wochentag = self::extractTrimmedContent($zellen[0]);
         $spiel->terminOffen = ($spiel->wochentag == "Termin offen");
@@ -66,6 +66,10 @@ class NuLigaSpiel {
             $spiel->ergebnisOderSchiris = self::extractTrimmedContent($zellen[7]);
             $spiel->spielbericht = self::extractTrimmedContent($zellen[8]);
             $spiel->spielberichtsGenehmigung = self::extractTrimmedContent($zellen[9]);
+        }
+        if(empty($spiel->spielNr)){
+            // ungültiges Spiel, vermutlich spielfrei
+            return null;
         }
         // leere Zelle: $zellen[10]
         return $spiel;
