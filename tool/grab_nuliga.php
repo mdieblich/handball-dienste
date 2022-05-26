@@ -78,7 +78,11 @@ $insert_gegner->bind_param("ss", $gegner_name, $liga);
             $gegner_id = findOrInsertGegner($spiel->getHeimmannschaft())->getID();
         }
         $halle = $spiel->getHalle();
-        $anwurf = $spiel->getAnwurf()->format('Y-m-d H:i:s');
+        if($spiel->isTerminOffen()){
+            $anwurf = null;
+        }else {
+            $anwurf = $spiel->getAnwurf()->format('Y-m-d H:i:s');
+        }
         $insert_spiel->execute();
     }
     ?>
