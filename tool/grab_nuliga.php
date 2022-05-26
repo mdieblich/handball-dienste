@@ -11,12 +11,23 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/tool/grabber/SpieleGrabbe
     //
     // Herren 1 Hinrunde
     // https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?teamtable=1744276&pageState=vorrunde&championship=MR+21%2F22&group=274529
-
-$meisterschaft = "MR+21%2F22";
-$liga = "Mittelrhein Oberliga Männer Abstiegsrunde";
-$liga_id = 274529;
-$team = "Turnerkreis Nippes";
-$team_id = 1744276;
+    
+    // Herren 1
+    // $meisterschaft = "MR+21%2F22";
+    // $liga = "Mittelrhein Oberliga Männer";
+    // $liga_id = 274529;
+    // $team = "Turnerkreis Nippes";
+    // $team_id = 1744276;
+    // $mannschaft_id = 1;
+    // $herren1Spiele = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
+    
+// Herren 2
+$meisterschaft = "KR+21%2F22";
+$liga = "Kreisliga Männer";
+$liga_id = 274464;
+$team = "Turnerkreis Nippes II";
+$team_id = 1744462;
+$mannschaft_id = 3;
 $herren1Spiele = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
 
 $alleGegner = loadGegner("liga='$liga'");
@@ -61,7 +72,6 @@ $insert_gegner->bind_param("ss", $gegner_name, $liga);
     "INSERT INTO spiel (spielnr, mannschaft, gegner, heimspiel, halle, anwurf) ".
     "VALUES (?, ?, ?, ?, ?, ?)");
     $spielnr = 0;
-    $mannschaft_id = 1;
     $gegner_id = 0;
     $isHeimspiel = 1;
     $halle = 0; // Heimspiel-Halle
