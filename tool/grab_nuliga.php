@@ -13,16 +13,16 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/tool/grabber/SpieleGrabbe
     // https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?teamtable=1744276&pageState=vorrunde&championship=MR+21%2F22&group=274529
     
     // Herren 1
-    // $meisterschaft = "MR+21%2F22";
-    // $liga = "Mittelrhein Oberliga Männer";
-    // $liga_id = 274529;
-    // $team = "Turnerkreis Nippes";
-    // $team_id = 1744276;
-    // $mannschaft_id = 1;
-    // $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
+    $meisterschaft = "MR 21/22";
+    $liga = "Mittelrhein Oberliga Männer";
+    $liga_id = 274529;
+    $team = "Turnerkreis Nippes";
+    $team_id = 1744276;
+    $mannschaft_id = 1;
+    $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
     
     // Damen 1
-    // $meisterschaft = "MR+21%2F22";
+    // $meisterschaft = "MR 21/F22";
     // $liga = "Mittelrhein Oberliga Frauen";
     // $liga_id = 274482;
     // $team = "Turnerkreis Nippes";
@@ -31,7 +31,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/tool/grabber/SpieleGrabbe
     // $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
     
 // Herren 2
-// $meisterschaft = "KR+21%2F22";
+// $meisterschaft = "KR 21/22";
 // $liga = "Kreisliga Männer";
 // $liga_id = 274464;
 // $team = "Turnerkreis Nippes II";
@@ -40,7 +40,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/tool/grabber/SpieleGrabbe
 // $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
     
 // Damen 2
-// $meisterschaft = "KR+21%2F22";
+// $meisterschaft = "KR 21/F22";
 // $liga = "Kreisliga Frauen";
 // $liga_id = 274439;
 // $team = "Turnerkreis Nippes II";
@@ -49,13 +49,13 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/tool/grabber/SpieleGrabbe
 // $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
 
 // Herren 3
-$meisterschaft = "KR+21%2F22";
-$liga = "Kreisklasse 2 Männer";
-$liga_id = 274480;
-$team = "Turnerkreis Nippes III";
-$team_id = 1744461;
-$mannschaft_id = 5;
-$spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
+// $meisterschaft = "KR 21/22";
+// $liga = "Kreisklasse 2 Männer";
+// $liga_id = 274480;
+// $team = "Turnerkreis Nippes III";
+// $team_id = 1744461;
+// $mannschaft_id = 5;
+// $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
 
 $alleGegner = loadGegner("liga='$liga'");
 

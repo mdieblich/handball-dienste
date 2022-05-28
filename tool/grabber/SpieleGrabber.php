@@ -10,7 +10,7 @@ class SpieleGrabber {
         $url = "https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?"
             ."teamtable=".$team_id
             ."&pageState=vorrunde"
-            ."&championship=".$meisterschaft
+            ."&championship=".urlencode($meisterschaft)
             ."&group=".$gruppe;
             echo "URL = $url<br>";
         $this->dom = getDOMFromSite($url);
