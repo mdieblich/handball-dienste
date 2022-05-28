@@ -8,8 +8,9 @@ Konfiguration:
 * RegEx zur Spielerkennung
 
 Design:
+* Objekt Mannschaft
 * Objekt Saison
-    * enthält Mannschaften
+    * enthält Mannschaftsmeldung (pro Mannschaft kann es in einer Saison mehrere Meldungen geben)
     * jede Mannschaft hat ihre Spiele
     * Convenience-Funktion für den Zugriff auf alle Spiele / Gesamtspielplan
     * Aus einer Saison kann eine neue Saison mit den gleichen Mannschaften "kopiert" werden (evtl. Abgleich der Liga?)
