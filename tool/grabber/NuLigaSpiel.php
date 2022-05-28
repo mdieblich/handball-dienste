@@ -67,7 +67,7 @@ class NuLigaSpiel {
             $spiel->spielbericht = self::extractTrimmedContent($zellen[8]);
             $spiel->spielberichtsGenehmigung = self::extractTrimmedContent($zellen[9]);
         }
-        if(empty($spiel->spielNr)){
+        if(empty($spiel->spielNr) || empty($spiel->halle)){
             // ungültiges Spiel, vermutlich spielfrei
             return null;
         }
