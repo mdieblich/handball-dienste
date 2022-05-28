@@ -19,16 +19,43 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/tool/grabber/SpieleGrabbe
     // $team = "Turnerkreis Nippes";
     // $team_id = 1744276;
     // $mannschaft_id = 1;
-    // $herren1Spiele = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
+    // $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
+    
+    // Damen 1
+    // $meisterschaft = "MR+21%2F22";
+    // $liga = "Mittelrhein Oberliga Frauen";
+    // $liga_id = 274482;
+    // $team = "Turnerkreis Nippes";
+    // $team_id = 1748577;
+    // $mannschaft_id = 2;
+    // $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
     
 // Herren 2
+// $meisterschaft = "KR+21%2F22";
+// $liga = "Kreisliga Männer";
+// $liga_id = 274464;
+// $team = "Turnerkreis Nippes II";
+// $team_id = 1744462;
+// $mannschaft_id = 3;
+// $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
+    
+// Damen 2
+// $meisterschaft = "KR+21%2F22";
+// $liga = "Kreisliga Frauen";
+// $liga_id = 274439;
+// $team = "Turnerkreis Nippes II";
+// $team_id = 1744465;
+// $mannschaft_id = 4;
+// $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
+
+// Herren 3
 $meisterschaft = "KR+21%2F22";
-$liga = "Kreisliga Männer";
-$liga_id = 274464;
-$team = "Turnerkreis Nippes II";
-$team_id = 1744462;
-$mannschaft_id = 3;
-$herren1Spiele = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
+$liga = "Kreisklasse 2 Männer";
+$liga_id = 274480;
+$team = "Turnerkreis Nippes III";
+$team_id = 1744461;
+$mannschaft_id = 5;
+$spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
 
 $alleGegner = loadGegner("liga='$liga'");
 
@@ -78,7 +105,7 @@ $insert_gegner->bind_param("ss", $gegner_name, $liga);
     $anwurf = "";
     $insert_spiel->bind_param("iiiiis", $spielnr, $mannschaft_id, $gegner_id, $isHeimspiel, $halle, $anwurf);
     
-    foreach($herren1Spiele->getSpiele() as $spiel){
+    foreach($spielGrabber->getSpiele() as $spiel){
         $spielnr = $spiel->getSpielNr();
         if($spiel->getHeimmannschaft() === $team){
             $isHeimspiel = true;
