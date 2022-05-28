@@ -36,8 +36,20 @@ class Mannschaft {
         return $this->assoc_array["geschlecht"];
     }
     
+    public function getMeisterschaft(): string {
+        return $this->assoc_array["meisterschaft"];
+    }
+    
     public function getLiga(): string {
         return $this->assoc_array["liga"];
+    }
+    
+    public function getNuligaLigaID(): int {
+        return $this->assoc_array["nuliga_liga_id"];
+    }
+    
+    public function getNuligaTeamID(): int {
+        return $this->assoc_array["nuliga_team_id"];
     }
 
     public function hasSpieler(): bool {
