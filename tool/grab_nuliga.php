@@ -22,7 +22,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/tool/grabber/SpieleGrabbe
     $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
     
     // Damen 1
-    // $meisterschaft = "MR 21/F22";
+    // $meisterschaft = "MR 21/22";
     // $liga = "Mittelrhein Oberliga Frauen";
     // $liga_id = 274482;
     // $team = "Turnerkreis Nippes";
