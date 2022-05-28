@@ -1,7 +1,11 @@
 CREATE TABLE `dienstedienst`.`mannschaft` ( 
     `id` INT NOT NULL AUTO_INCREMENT , 
-    `name` VARCHAR(256) NOT NULL , 
+    `nummer` INT NOT NULL , 
+    `geschlecht` enum('m','w') NOT NULL, 
+    `meisterschaft` VARCHAR(256) NULL , 
     `liga` VARCHAR(256) NULL , 
+    `nuliga_liga_id` INT NULL , 
+    `nuliga_team_id` INT NULL , 
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
 

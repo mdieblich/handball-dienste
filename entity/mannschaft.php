@@ -1,6 +1,9 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/person.php";
 
+const GESCHLECHT_M = "m";
+const GESCHLECHT_W = "w";
+
 class Mannschaft {
     private $assoc_array;
 
@@ -15,7 +18,22 @@ class Mannschaft {
     }
 
     public function getName(): string {
-        return $this->assoc_array["name"];
+        if($this->getGeschlecht() === GESCHLECHT_M){
+            return "Herren ".$this->getNummer();
+        }
+        if($this->getGeschlecht() === GESCHLECHT_W){
+            return "Damen ".$this->getNummer();
+        }
+        
+        return "Andersgeschlechtlich ".$this->getNummer();
+    }
+    
+    public function getNummer(): int {
+        return $this->assoc_array["nummer"];
+    }
+    
+    public function getGeschlecht(): string {
+        return $this->assoc_array["geschlecht"];
     }
     
     public function getLiga(): string {
