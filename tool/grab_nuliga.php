@@ -1,6 +1,7 @@
 <?php
 
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/db_connect.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/mannschaften.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/load/gegner.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/tool/grabber/SpieleGrabber.php";
     // Vereinssuche
@@ -8,58 +9,8 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/tool/grabber/SpieleGrabbe
     //
     // Mannschaften und Ligeneinteilung
     // https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/clubTeams?club=74851
-    //
-    // Herren 1 Hinrunde
-    // https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?teamtable=1744276&pageState=vorrunde&championship=MR+21%2F22&group=274529
-    
-    // Herren 1
-    $meisterschaft = "MR 21/22";
-    $liga = "Mittelrhein Oberliga Männer";
-    $liga_id = 274529;
-    $team = "Turnerkreis Nippes";
-    $team_id = 1744276;
-    $mannschaft_id = 1;
-    $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
-    
-    // Damen 1
-    // $meisterschaft = "MR 21/22";
-    // $liga = "Mittelrhein Oberliga Frauen";
-    // $liga_id = 274482;
-    // $team = "Turnerkreis Nippes";
-    // $team_id = 1748577;
-    // $mannschaft_id = 2;
-    // $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
-    
-// Herren 2
-// $meisterschaft = "KR 21/22";
-// $liga = "Kreisliga Männer";
-// $liga_id = 274464;
-// $team = "Turnerkreis Nippes II";
-// $team_id = 1744462;
-// $mannschaft_id = 3;
-// $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
-    
-// Damen 2
-// $meisterschaft = "KR 21/F22";
-// $liga = "Kreisliga Frauen";
-// $liga_id = 274439;
-// $team = "Turnerkreis Nippes II";
-// $team_id = 1744465;
-// $mannschaft_id = 4;
-// $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
 
-// Herren 3
-// $meisterschaft = "KR 21/22";
-// $liga = "Kreisklasse 2 Männer";
-// $liga_id = 274480;
-// $team = "Turnerkreis Nippes III";
-// $team_id = 1744461;
-// $mannschaft_id = 5;
-// $spielGrabber = new SpieleGrabber($meisterschaft, $liga_id, $team_id);
-
-$alleGegner = loadGegner("liga='$liga'");
-
-
+$alleGegner = loadGegner();
 
 // INSERT vorbereiten
 $insert_gegner = $mysqli->prepare("INSERT INTO gegner (name, liga) VALUES (?, ?)");
@@ -95,19 +46,35 @@ $insert_gegner->bind_param("ss", $gegner_name, $liga);
         return $mysqli->insert_id;
     }
 
-    $insert_spiel = $mysqli->prepare(
-    "INSERT INTO spiel (spielnr, mannschaft, gegner, heimspiel, halle, anwurf) ".
-    "VALUES (?, ?, ?, ?, ?, ?)");
-    $spielnr = 0;
-    $gegner_id = 0;
-    $isHeimspiel = 1;
-    $halle = 0; // Heimspiel-Halle
-    $anwurf = "";
-    $insert_spiel->bind_param("iiiiis", $spielnr, $mannschaft_id, $gegner_id, $isHeimspiel, $halle, $anwurf);
+$insert_spiel = $mysqli->prepare(
+"INSERT INTO spiel (spielnr, mannschaft, gegner, heimspiel, halle, anwurf) ".
+"VALUES (?, ?, ?, ?, ?, ?)");
+$spielnr = 0;
+$mannschaft_id = 0;
+$gegner_id = 0;
+$isHeimspiel = 1;
+$halle = 0; // Heimspiel-Halle
+$anwurf = "";
+$insert_spiel->bind_param("iiiiis", $spielnr, $mannschaft_id, $gegner_id, $isHeimspiel, $halle, $anwurf);
     
+$mannschaften = loadMannschaften();
+
+foreach($mannschaften as $mannschaft){
+    $mannschaft_id = $mannschaft->getID();
+    echo "Importiere ".$mannschaft->getName()."<br>";
+    $teamName = "Turnerkreis Nippes ";
+    for($i=0; $i<$mannschaft->getNummer(); $i++){
+        $teamName .= "I";
+    }
+    $teamName = trim($teamName);
+    $spielGrabber = new SpieleGrabber(
+        $mannschaft->getMeisterschaft(), 
+        $mannschaft->getNuligaLigaID(), 
+        $mannschaft->getNuligaTeamID()
+    );
     foreach($spielGrabber->getSpiele() as $spiel){
         $spielnr = $spiel->getSpielNr();
-        if($spiel->getHeimmannschaft() === $team){
+        if($spiel->getHeimmannschaft() === $teamName){
             $isHeimspiel = true;
             $gegner_id = findOrInsertGegner($spiel->getGastmannschaft())->getID();
         } else {
@@ -122,4 +89,6 @@ $insert_gegner->bind_param("ss", $gegner_name, $liga);
         }
         $insert_spiel->execute();
     }
+}
+
     ?>
