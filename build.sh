@@ -3,12 +3,12 @@
 cd ./build
 
 # 1. AUFRÄUMEN!!!
-mkdir -p ./tmp
-rm -rf ./tmp/*.*
+mkdir -p ./dienstedienst
+rm -rf ./dienstedienst/*.*
 rm dienstedienst.zip
 
 # 2. Alles rüberkopieren
-cp ../wordpress/*.* tmp
+cp ../wordpress/*.* dienstedienst
 
 # 3. Zippen
-./7zr.exe a dienstedienst.zip .\tmp\*.*
+./7za.exe a -r dienstedienst.zip dienstedienst
