@@ -31,22 +31,7 @@ function dienste_einstellungen_beschreibung() {
     echo '<p>Einstellungen für das Dienste-Plugin</p>';
 }
  
-/* ------------------------------------------------------------------------ *
- * Field Callbacks
- * ------------------------------------------------------------------------ */
- 
-/**
- * This function renders the interface elements for toggling the visibility of the header element.
- * 
- * It accepts an array of arguments and expects the first element in the array to be the description
- * to be displayed next to the checkbox.
- */
 function dienste_einstellungen_vereinsname_anzeigen($args) {
-     
-    // Note the ID and the name attribute of the element match that of the ID in the call to add_settings_field
-    $html = '<input type="text" id="vereinsname" name="vereinsname" value="'.get_option('vereinsname').'" />'; 
-     
-    echo $html;
-     
+    echo '<input type="text" id="vereinsname" name="vereinsname" value="'.get_option('vereinsname').'" />';
 }
 ?>
