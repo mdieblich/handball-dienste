@@ -36,6 +36,8 @@ function addDiensteMannschaftsKonfiguration(){
 
 function displayDiensteDashboard(){}
 function displayDiensteMannschaften(){
+    $mannschaften = loadMannschaften();
+
     ?>
     <div class="wrap">
         <h1>Mannschaften einrichten</h1>
@@ -49,6 +51,17 @@ function displayDiensteMannschaften(){
                 <th> nuLiga: ID Team </th>
                 <th> <!-- Spalte für Aktionen //--> </th>
             </tr>
+        <?php foreach($mannschaften as $mannschaft){ ?>
+            <tr>
+                <td> <?php echo $mannschaft->getNummer(); ?> </td>
+                <td> <?php echo $mannschaft->getGeschlecht(); ?> </td>
+                <td> <?php echo $mannschaft->getMeisterschaft(); ?> </td>
+                <td> <?php echo $mannschaft->getLiga(); ?> </td>
+                <td> <?php echo $mannschaft->getNuligaLigaID(); ?> </td>
+                <td> <?php echo $mannschaft->getNuligaTeamID(); ?> </td>
+                <td>  <!-- Spalte für Aktionen //-->  </td>
+            </tr>  
+        <?php } ?>
             <tr><form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
                 <td> <input type="number" name="mannschafts-nummer" value="1" min="1"> </td>
                 <td> 
@@ -73,6 +86,24 @@ function displayDiensteMannschaften(){
         </table>
     </div>
     <?php
+}
+
+function loadMannschaften(): array{
+    global $wpdb;
+    require_once __DIR__."/entity/mannschaft.php";
+    
+	$table_name = $wpdb->prefix . 'mannschaft';
+    $sql = "SELECT * FROM $table_name ORDER BY nummer, geschlecht";
+    $result = $wpdb->get_results($sql);
+
+    $mannschaften = array();
+    if (count($result) > 0) {
+      foreach($result as $mannschaft) {
+        $mannschaftObj = new Mannschaft((array)$mannschaft);
+        $mannschaften[$mannschaftObj->getID()] = $mannschaftObj;
+      }
+    }
+    return $mannschaften;
 }
 
 function display_mannschaft_hinzufuegen_nummer(){
