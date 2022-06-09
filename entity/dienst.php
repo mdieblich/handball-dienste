@@ -1,6 +1,6 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/person.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/mannschaft.php";
+require_once __DIR__."/person.php";
+require_once __DIR__."/mannschaft.php";
 
 class Dienstart{
     const ZEITNEHMER = "Zeitnehmer";

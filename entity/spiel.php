@@ -1,6 +1,6 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/dienst.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/ZeitKlassen.php";
+require_once __DIR__."/dienst.php";
+require_once __DIR__."/ZeitKlassen.php";
 
 class Spiel {
 
