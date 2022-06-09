@@ -85,20 +85,43 @@ function diensteMannschaftenSubmit(){
     // siehe auch https://developer.wordpress.org/plugins/security/checking-user-capabilities/#restricted-to-a-specific-capability
     ?>
     <div style="margin-left: 200px; background-color:#ffffff99">
-    Prüfe gesendete Daten....
+    Prüfe gesendete Daten....<br>
     <?php
-    if ('POST' === $_SERVER['REQUEST_METHOD']){
-        echo "etwas erhalten!";
-        check_admin_referer('dienste-mannschaft-hinzufuegen_neu');
-        if(isset($_POST['mannschafts-nummer'])){
-            echo "<br>Mannschaft-Nr. ".$_POST['mannschafts-nummer'];
-        }
+    if(isGueltigeNeueMannschaftUbertragen()){
+        echo "<br> auf gehts!";
     } else {
-        echo "nix erhalten :("   ;
+        echo "<br> Mist oder nix erhalten :("   ;
     }?>
     </div>
     <?php
 }
+
+function isGueltigeNeueMannschaftUbertragen(){
+    if ('POST' !== $_SERVER['REQUEST_METHOD']){
+        echo "nix gesendet";
+        return false;
+    }
+    if(!check_admin_referer('dienste-mannschaft-hinzufuegen_neu')){
+        echo "Nonce falsch";
+        return false;
+    }
+    $expectedKeys = array(
+        'mannschafts-nummer', 
+        'mannschafts-geschlecht',
+        'mannschafts-meisterschaft',
+        'mannschafts-liga',
+        'mannschafts-nuliga-liga-id',
+        'mannschafts-nuliga-team-id'
+    );
+    $missingKeys = array_diff($expectedKeys, array_keys($_POST));
+    if(count($missingKeys) > 0){
+        echo "Fehlende Werte für ".implode(', ', $missingKeys)."<br>";
+        var_dump($_POST);
+        return false;
+    }
+    return true;
+}
+
 function displayDiensteImport(){}
 function displayDiensteGegner(){}
 function displayDiensteZuweisen(){}
