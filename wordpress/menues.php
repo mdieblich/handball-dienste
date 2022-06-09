@@ -36,6 +36,8 @@ function addDiensteMannschaftsKonfiguration(){
 
 function displayDiensteDashboard(){}
 function displayDiensteMannschaften(){
+    
+    require_once __DIR__."/dao/mannschaft.php";
     $mannschaften = loadMannschaften();
 
     ?>
@@ -88,24 +90,6 @@ function displayDiensteMannschaften(){
     <?php
 }
 
-function loadMannschaften(): array{
-    global $wpdb;
-    require_once __DIR__."/entity/mannschaft.php";
-    
-	$table_name = $wpdb->prefix . 'mannschaft';
-    $sql = "SELECT * FROM $table_name ORDER BY nummer, geschlecht";
-    $result = $wpdb->get_results($sql);
-
-    $mannschaften = array();
-    if (count($result) > 0) {
-      foreach($result as $mannschaft) {
-        $mannschaftObj = new Mannschaft((array)$mannschaft);
-        $mannschaften[$mannschaftObj->getID()] = $mannschaftObj;
-      }
-    }
-    return $mannschaften;
-}
-
 function display_mannschaft_hinzufuegen_nummer(){
     echo '<input type="number" id="neue_mannschaft_nummer" name="neue_mannschaft_nummer" />';
 }
@@ -118,8 +102,11 @@ function diensteMannschaftenSubmit(){
     <div style="margin-left: 200px; background-color:#ffffff99">
     Prüfe gesendete Daten....<br>
     <?php
-    if(isGueltigeNeueMannschaftUbertragen()){
-        insertNeueMannschaftFrom_POST();
+    if(somethingWasSentWithPOST()){
+        var_dump($_POST);
+        if(isGueltigeNeueMannschaftUbertragen()){
+            insertNeueMannschaftFrom_POST();
+        }
     } else {
         echo "<br> Mist oder nix erhalten :("   ;
     }?>
@@ -127,8 +114,12 @@ function diensteMannschaftenSubmit(){
     <?php
 }
 
+function somethingWasSentWithPOST(){
+    return 'POST' === $_SERVER['REQUEST_METHOD'];
+}
+
 function isGueltigeNeueMannschaftUbertragen(){
-    if ('POST' !== $_SERVER['REQUEST_METHOD']){
+    if ('neue_mannschaft_nummer' !== $_POST['option_page']){
         return false;
     }
     if(!check_admin_referer('dienste-mannschaft-hinzufuegen_neu')){
