@@ -10,6 +10,7 @@ rm dienstedienst.zip
 
 # 2. Alles rüberkopieren
 cp ../wordpress/*.* dienstedienst
+cp -r ../entity dienstedienst
 
 # 3. Zippen
 ./7za.exe a -r dienstedienst.zip dienstedienst

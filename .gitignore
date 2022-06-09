@@ -1,2 +1,2 @@
-build/dienstedienst/*.*
+build/dienstedienst/**
 build/dienstedienst.zip
