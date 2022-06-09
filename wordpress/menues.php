@@ -88,7 +88,7 @@ function diensteMannschaftenSubmit(){
     Prüfe gesendete Daten....<br>
     <?php
     if(isGueltigeNeueMannschaftUbertragen()){
-        echo "<br> auf gehts!";
+        insertNeueMannschaftFrom_POST();
     } else {
         echo "<br> Mist oder nix erhalten :("   ;
     }?>
@@ -134,7 +134,20 @@ function isGueltigeNeueMannschaftUbertragen(){
 
     return true;
 }
+function insertNeueMannschaftFrom_POST(){
+    global $wpdb;
+    
+	$table_name = $wpdb->prefix . 'mannschaft';
 
+    $wpdb->insert($table_name, array(
+        'nummer' => $_POST['mannschafts-nummer'],
+        'geschlecht' => $_POST['mannschafts-geschlecht'],
+        'meisterschaft' => $_POST['mannschafts-meisterschaft'],
+        'liga' => $_POST['mannschafts-liga'],
+        'nuliga_liga_id' => $_POST['mannschafts-nuliga-liga-id'],
+        'nuliga_team_id' => $_POST['mannschafts-nuliga-team-id']
+        ));
+}
 function displayDiensteImport(){}
 function displayDiensteGegner(){}
 function displayDiensteZuweisen(){}
