@@ -98,11 +98,9 @@ function diensteMannschaftenSubmit(){
 
 function isGueltigeNeueMannschaftUbertragen(){
     if ('POST' !== $_SERVER['REQUEST_METHOD']){
-        echo "nix gesendet";
         return false;
     }
     if(!check_admin_referer('dienste-mannschaft-hinzufuegen_neu')){
-        echo "Nonce falsch";
         return false;
     }
     $expectedKeys = array(
@@ -115,10 +113,25 @@ function isGueltigeNeueMannschaftUbertragen(){
     );
     $missingKeys = array_diff($expectedKeys, array_keys($_POST));
     if(count($missingKeys) > 0){
-        echo "Fehlende Werte für ".implode(', ', $missingKeys)."<br>";
-        var_dump($_POST);
         return false;
     }
+
+    if(!is_numeric($_POST['mannschafts-nummer'])){
+        return false;
+    }
+    
+    if($_POST['mannschafts-geschlecht'] !== 'w' && $_POST['mannschafts-geschlecht'] !== 'm'){
+        return false;
+    }
+    
+    if(!is_numeric($_POST['mannschafts-nuliga-liga-id'])){
+        return false;
+    }
+    
+    if(!is_numeric($_POST['mannschafts-nuliga-team-id'])){
+        return false;
+    }
+
     return true;
 }
 
