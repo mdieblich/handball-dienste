@@ -23,4 +23,18 @@ function countSpiele(int $mannschaftsID): int {
   $table_name = $wpdb->prefix . 'spiel';
   return $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE mannschaft=$mannschaftsID");
 }
+
+function insertSpiel(int $spielnr, int $mannschaft_id, int $gegner_id, bool $isHeimspiel, int $halle, ?DateTime $anwurf){
+  global $wpdb;
+  
+  $table_name = $wpdb->prefix . 'spiel';
+  $wpdb->insert($table_name, array(
+    'spielnr' => $spielnr, 
+    'mannschaft' => $mannschaft_id, 
+    'gegner' => $gegner_id, 
+    'heimspiel' => $isHeimspiel, 
+    'halle' => $halle, 
+    'anwurf' => isset($anwurf) ? $anwurf->format('Y-m-d H:i:s') : null
+  ));
+}
 ?>
