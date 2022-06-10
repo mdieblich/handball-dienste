@@ -22,14 +22,31 @@ function addDiensteMannschaftsKonfiguration(){
     );
 
     add_settings_field( 
-        'neue_mannschaft_nummer',                      // ID used to identify the field throughout the theme
-        'Mannschafts-Nummer',                           // The label to the left of the option interface element
-        'display_mannschaft_hinzufuegen_nummer',   // The name of the function responsible for rendering the option interface
+        'neue_mannschaft',                      // ID used to identify the field throughout the theme
+        '',                           // The label to the left of the option interface element
+        'dummy_function',   // The name of the function responsible for rendering the option interface
         'dienste-mannschaften',                          // The page on which this option will be displayed
         'dienste_mannschaft_hinzufuegen'         // The name of the section to which this field belongs
         
     );
-    register_setting('dienste', 'neue_mannschaft_nummer');
+    register_setting('dienste', 'neue_mannschaft');
+
+    add_settings_section(
+        'dienste_mannschaft_aendern',
+        'Mannschaft ändern',
+        'displayMannschaftAendern',
+        'dienste-mannschaften'
+    );
+
+    add_settings_field( 
+        'alte_mannschaft',                      // ID used to identify the field throughout the theme
+        '',                           // The label to the left of the option interface element
+        'dummy_function',   // The name of the function responsible for rendering the option interface
+        'dienste-mannschaften',                          // The page on which this option will be displayed
+        'dienste_mannschaft_aendern'         // The name of the section to which this field belongs
+        
+    );
+    register_setting('dienste', 'alte_mannschaft');
 
     add_action( 'load-' . $hook_mannschaften, 'diensteMannschaftenSubmit' );
 }
@@ -54,15 +71,27 @@ function displayDiensteMannschaften(){
                 <th> <!-- Spalte für Aktionen //--> </th>
             </tr>
         <?php foreach($mannschaften as $mannschaft){ ?>
-            <tr>
-                <td> <?php echo $mannschaft->getNummer(); ?> </td>
-                <td> <?php echo $mannschaft->getGeschlecht(); ?> </td>
-                <td> <?php echo $mannschaft->getMeisterschaft(); ?> </td>
-                <td> <?php echo $mannschaft->getLiga(); ?> </td>
-                <td> <?php echo $mannschaft->getNuligaLigaID(); ?> </td>
-                <td> <?php echo $mannschaft->getNuligaTeamID(); ?> </td>
-                <td>  <!-- Spalte für Aktionen //-->  </td>
-            </tr>  
+            <tr><form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
+                <td> <input type="number" name="mannschafts-nummer" value="<?php echo $mannschaft->getNummer(); ?>" min="1"> </td>
+                <td> 
+                    <select name="mannschafts-geschlecht"> 
+                        <option value="w" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_W) echo "selected"; ?>>Damen</option>
+                        <option value="m" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_M) echo "selected"; ?>>Herren</option>
+                    </select> 
+                </td>
+                <td> <input type="text" name="mannschafts-meisterschaft" value="<?php echo $mannschaft->getMeisterschaft(); ?>"> </td>
+                <td> <input type="text" name="mannschafts-liga" value="<?php echo $mannschaft->getLiga(); ?>"> </td>
+                <td> <input type="number" name="mannschafts-nuliga-liga-id" value="<?php echo $mannschaft->getNuligaLigaID(); ?>"> </td>
+                <td> <input type="number" name="mannschafts-nuliga-team-id" value="<?php echo $mannschaft->getNuligaTeamID(); ?>"> </td>
+                <td> 
+                    <?php
+                    settings_fields( 'alte_mannschaft' );
+                    do_settings_sections( 'dienste_mannschaft_aendern' );
+                    wp_nonce_field('dienste_mannschaft_aendern_'.$mannschaft->getID());
+                    submit_button( __( 'Ändern', 'textdomain' ) );
+                    ?>
+                </td>
+            </form></tr> 
         <?php } ?>
             <tr><form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
                 <td> <input type="number" name="mannschafts-nummer" value="1" min="1"> </td>
@@ -78,7 +107,7 @@ function displayDiensteMannschaften(){
                 <td> <input type="number" name="mannschafts-nuliga-team-id"> </td>
                 <td> 
                     <?php
-                    settings_fields( 'neue_mannschaft_nummer' );
+                    settings_fields( 'neue_mannschaft' );
                     do_settings_sections( 'dienste_mannschaft_hinzufuegen' );
                     wp_nonce_field('dienste-mannschaft-hinzufuegen_neu');
                     submit_button( __( 'Anlegen', 'textdomain' ) );
@@ -90,9 +119,8 @@ function displayDiensteMannschaften(){
     <?php
 }
 
-function display_mannschaft_hinzufuegen_nummer(){
-    echo '<input type="number" id="neue_mannschaft_nummer" name="neue_mannschaft_nummer" />';
-}
+function dummy_function(){}
+
 function diensteMannschaftenSubmit(){
     // TODO check auf korrekte Berechtigung
     // 1. Berechtigung anlegen https://wordpress.org/support/article/roles-and-capabilities/
@@ -119,7 +147,7 @@ function somethingWasSentWithPOST(){
 }
 
 function isGueltigeNeueMannschaftUbertragen(){
-    if ('neue_mannschaft_nummer' !== $_POST['option_page']){
+    if ('neue_mannschaft' !== $_POST['option_page']){
         return false;
     }
     if(!check_admin_referer('dienste-mannschaft-hinzufuegen_neu')){
