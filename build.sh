@@ -12,6 +12,7 @@ rm dienstedienst.zip
 cp ../wordpress/*.* dienstedienst
 cp -r ../entity dienstedienst
 cp -r ../dao dienstedienst
+cp -r ../tool/grabber dienstedienst
 
 # 3. Zippen
 ./7za.exe a -r dienstedienst.zip dienstedienst
