@@ -52,6 +52,7 @@ function diensteImportSubmit(){
     if(!check_admin_referer('dienste-spiele-importieren')){
         return;
     }
-    // TODO hier import starten
+    require_once __DIR__."/importer.php";
+    importSpieleFromNuliga();
 }
 ?>
