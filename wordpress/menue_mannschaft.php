@@ -65,7 +65,7 @@ function displayDiensteMannschaften(){
     ?>
     <div class="wrap">
         <h1>Mannschaften einrichten</h1>
-        <table cellspacing="1" width="100%">
+        <table cellspacing="1">
             <tr>
                 <th> Nr. </th>
                 <th> w/m </th>
