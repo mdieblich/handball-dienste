@@ -34,7 +34,7 @@ function addDiensteMannschaftsKonfiguration(){
     add_settings_section(
         'dienste_mannschaft_aendern',
         'Mannschaft ändern',
-        'displayMannschaftAendern',
+        'dummy_function',
         'dienste-mannschaften'
     );
 
@@ -47,6 +47,23 @@ function addDiensteMannschaftsKonfiguration(){
         
     );
     register_setting('dienste', 'alte_mannschaft');
+
+    add_settings_section(
+        'dienste_mannschaft_loeschen',
+        'Mannschaft löschen',
+        'dummy_function',
+        'dienste-mannschaften'
+    );
+
+    add_settings_field( 
+        'loesche_mannschaft',                      // ID used to identify the field throughout the theme
+        '',                           // The label to the left of the option interface element
+        'dummy_function',   // The name of the function responsible for rendering the option interface
+        'dienste-mannschaften',                          // The page on which this option will be displayed
+        'dienste_mannschaft_loeschen'         // The name of the section to which this field belongs
+        
+    );
+    register_setting('dienste', 'loesche_mannschaft');
 
     add_action( 'load-' . $hook_mannschaften, 'diensteMannschaftenSubmit' );
 }
@@ -91,8 +108,18 @@ function displayDiensteMannschaften(){
                     wp_nonce_field('dienste-mannschaft-aendern_'.$mannschaft->getID());
                     submit_button( __( 'Ändern', 'textdomain' ) );
                     ?>
+                    </form>
+                    <form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
+                <input type="hidden" name="mannschafts-id" value="<?php echo $mannschaft->getID(); ?>">
+                    <?php
+                    settings_fields( 'loesche_mannschaft' );
+                    do_settings_sections( 'dienste_mannschaft_loeschen' );
+                    wp_nonce_field('dienste-mannschaft-loeschen_'.$mannschaft->getID());
+                    submit_button( __( 'Löschen', 'textdomain' ) );
+                    ?>
+                    </form>
                 </td>
-            </form></tr> 
+            </tr> 
         <?php } ?>
             <tr><form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
                 <td> <input type="number" name="mannschafts-nummer" value="1" min="1"> </td>
@@ -133,6 +160,7 @@ function diensteMannschaftenSubmit(){
     switch($_POST['option_page']){
         case 'neue_mannschaft': handleNeueMannschaft(); break;
         case 'alte_mannschaft': handleAlteMannschaft(); break;
+        case 'loesche_mannschaft': handleMannschaftLoeschen(); break;
     }
 }
 
@@ -162,6 +190,16 @@ function handleAlteMannschaft(){
         return;
     }
     updateMannschaftFrom_POST();
+}
+function handleMannschaftLoeschen(){
+    if(empty($_POST['mannschafts-id'])){
+        return;
+    }
+    $id = $_POST['mannschafts-id'];
+    if(!check_admin_referer('dienste-mannschaft-loeschen_'.$id)){
+        return;
+    }
+    deleteMannschaftFrom_POST();
 }
 
 function isGueltigeMannschaftUebertragen(){
@@ -225,6 +263,16 @@ function updateMannschaftFrom_POST(){
         'nuliga_liga_id' => $_POST['mannschafts-nuliga-liga-id'],
         'nuliga_team_id' => $_POST['mannschafts-nuliga-team-id']
     ), array(
+        'id' => $_POST['mannschafts-id']
+    ));
+}
+
+function deleteMannschaftFrom_POST(){
+    global $wpdb;
+    
+	$table_name = $wpdb->prefix . 'mannschaft';
+
+    $wpdb->delete($table_name, array(
         'id' => $_POST['mannschafts-id']
     ));
 }
