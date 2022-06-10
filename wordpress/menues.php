@@ -88,7 +88,7 @@ function displayDiensteMannschaften(){
                     <?php
                     settings_fields( 'alte_mannschaft' );
                     do_settings_sections( 'dienste_mannschaft_aendern' );
-                    wp_nonce_field('dienste_mannschaft_aendern_'.$mannschaft->getID());
+                    wp_nonce_field('dienste-mannschaft-aendern_'.$mannschaft->getID());
                     submit_button( __( 'Ändern', 'textdomain' ) );
                     ?>
                 </td>
@@ -154,7 +154,19 @@ function handleNeueMannschaft(){
     insertNeueMannschaftFrom_POST();
 }
 
-function handleAlteMannschaft(){}
+function handleAlteMannschaft(){
+    if(empty($_POST['mannschafts-id'])){
+        return;
+    }
+    $id = $_POST['mannschafts-id'];
+    if(!check_admin_referer('dienste-mannschaft-aendern_'.$id)){
+        return;
+    }
+    if(!isGueltigeMannschaftUebertragen()){
+        return;
+    }
+    updateMannschaftFrom_POST();
+}
 
 function isGueltigeMannschaftUebertragen(){
     $expectedKeys = array(
@@ -202,6 +214,23 @@ function insertNeueMannschaftFrom_POST(){
         'nuliga_liga_id' => $_POST['mannschafts-nuliga-liga-id'],
         'nuliga_team_id' => $_POST['mannschafts-nuliga-team-id']
         ));
+}
+
+function updateMannschaftFrom_POST(){
+    global $wpdb;
+    
+	$table_name = $wpdb->prefix . 'mannschaft';
+
+    $wpdb->update($table_name, array(
+        'nummer' => $_POST['mannschafts-nummer'],
+        'geschlecht' => $_POST['mannschafts-geschlecht'],
+        'meisterschaft' => $_POST['mannschafts-meisterschaft'],
+        'liga' => $_POST['mannschafts-liga'],
+        'nuliga_liga_id' => $_POST['mannschafts-nuliga-liga-id'],
+        'nuliga_team_id' => $_POST['mannschafts-nuliga-team-id']
+    ), array(
+        'id' => $_POST['mannschafts-id']
+    ));
 }
 function displayDiensteImport(){}
 function displayDiensteGegner(){}
