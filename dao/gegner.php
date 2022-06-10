@@ -17,4 +17,21 @@ function loadGegner(): array{
   }
   return $alleGegner;
 }
+
+function insertGegner(string $name, string $liga): Gegner{
+  global $wpdb;
+      
+	$table_name = $wpdb->prefix . 'gegner';
+
+  $wpdb->insert($table_name, array(
+      'name' => $name,
+      'liga' => $liga
+      ));
+
+  return new Gegner(array(
+    "id" => $wpdb->insert_id,
+    "name" => $name,
+    "liga" => $liga
+    ));
+}
 ?>
