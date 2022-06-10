@@ -50,6 +50,7 @@ function diensteImportSubmit(){
         return;
     }
     require_once __DIR__."/importer.php";
-    importSpieleFromNuliga();
+    $resultMessage = importSpieleFromNuliga();
+    echo "<div style='margin-left:200px;'>$resultMessage</div>";
 }
 ?>

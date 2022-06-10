@@ -16,11 +16,14 @@ function findOrInsertGegner(array $alleGegner, string $name, string $geschlecht,
     return $gegner;
 }
 
-function importSpieleFromNuliga(){
+function importSpieleFromNuliga(): string{
     require_once __DIR__."/grabber/SpieleGrabber.php";
     
     $mannschaften = loadMannschaften();
     $alleGegner = loadGegner();
+
+    $spieleNeu = 0;
+    $spieleAktualisiert = 0;
 
     foreach($mannschaften as $mannschaft){
         $teamName = get_option('vereinsname');
@@ -53,11 +56,14 @@ function importSpieleFromNuliga(){
             }
             if(spielExistiert($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel)){
                 updateSpiel($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $spiel->getHalle(), $spiel->getAnwurf());
+                $spieleAktualisiert ++;
             } else {
                 insertSpiel($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $spiel->getHalle(), $spiel->getAnwurf());
+                $spieleNeu ++;
             }
         }
     }
+    return "importiert: $spieleNeu<br>aktualisiert: $spieleAktualisiert";
 }
 
 ?>
