@@ -65,7 +65,7 @@ function displayDiensteMannschaften(){
     ?>
     <div class="wrap">
         <h1>Mannschaften einrichten</h1>
-        <table border="1" width="100%">
+        <table cellspacing="1" width="100%">
             <tr>
                 <th> Nr. </th>
                 <th> w/m </th>
@@ -78,18 +78,18 @@ function displayDiensteMannschaften(){
         <?php foreach($mannschaften as $mannschaft){ ?>
             <tr><form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
                 <input type="hidden" name="mannschafts-id" value="<?php echo $mannschaft->getID(); ?>">
-                <td> <input type="number" name="mannschafts-nummer" value="<?php echo $mannschaft->getNummer(); ?>" min="1" style="width:50px"> </td>
-                <td> 
+                <td style="text-align:center"> <input type="number" name="mannschafts-nummer" value="<?php echo $mannschaft->getNummer(); ?>" min="1" style="width:50px"> </td>
+                <td style="text-align:center"> 
                     <select name="mannschafts-geschlecht"> 
                         <option value="w" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_W) echo "selected"; ?>>Damen</option>
                         <option value="m" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_M) echo "selected"; ?>>Herren</option>
                     </select> 
                 </td>
-                <td> <input type="text" name="mannschafts-meisterschaft" value="<?php echo $mannschaft->getMeisterschaft(); ?>" style="width:100px"> </td>
-                <td> <input type="text" name="mannschafts-liga" value="<?php echo $mannschaft->getLiga(); ?>"> </td>
-                <td> <input type="number" name="mannschafts-nuliga-liga-id" value="<?php echo $mannschaft->getNuligaLigaID(); ?>" style="width:100px"> </td>
-                <td> <input type="number" name="mannschafts-nuliga-team-id" value="<?php echo $mannschaft->getNuligaTeamID(); ?>" style="width:100px"> </td>
-                <td> 
+                <td style="text-align:center"> <input type="text" name="mannschafts-meisterschaft" value="<?php echo $mannschaft->getMeisterschaft(); ?>" style="width:100px"> </td>
+                <td style="text-align:center"> <input type="text" name="mannschafts-liga" value="<?php echo $mannschaft->getLiga(); ?>"> </td>
+                <td style="text-align:center"> <input type="number" name="mannschafts-nuliga-liga-id" value="<?php echo $mannschaft->getNuligaLigaID(); ?>" style="width:100px"> </td>
+                <td style="text-align:center"> <input type="number" name="mannschafts-nuliga-team-id" value="<?php echo $mannschaft->getNuligaTeamID(); ?>" style="width:100px"> </td>
+                <td style="text-align:left"> 
                     <?php
                     settings_fields( 'alte_mannschaft' );
                     do_settings_sections( 'dienste_mannschaft_aendern' );
@@ -97,7 +97,7 @@ function displayDiensteMannschaften(){
                     submit_button( 'Ändern', 'primary' , 'submit-change', false);
                     ?>
                     </form>
-        </td><td>
+        </td><td style="text-align:left">
                     <form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
                 <input type="hidden" name="mannschafts-id" value="<?php echo $mannschaft->getID(); ?>">
                     <?php
@@ -111,18 +111,18 @@ function displayDiensteMannschaften(){
             </tr> 
         <?php } ?>
             <tr><form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
-                <td> <input type="number" name="mannschafts-nummer" min="1" style="width:50px"> </td>
-                <td> 
+                <td style="text-align:center"> <input type="number" name="mannschafts-nummer" min="1" style="width:50px"> </td>
+                <td style="text-align:center"> 
                     <select name="mannschafts-geschlecht"> 
                         <option value="w">Damen</option>
                         <option value="m">Herren</option>
                     </select> 
                 </td>
-                <td> <input type="text" name="mannschafts-meisterschaft" style="width:100px"> </td>
-                <td> <input type="text" name="mannschafts-liga"> </td>
-                <td> <input type="number" name="mannschafts-nuliga-liga-id" style="width:100px"> </td>
-                <td> <input type="number" name="mannschafts-nuliga-team-id" style="width:100px"> </td>
-                <td colspan="2"> 
+                <td style="text-align:center"> <input type="text" name="mannschafts-meisterschaft" style="width:100px"> </td>
+                <td style="text-align:center"> <input type="text" name="mannschafts-liga"> </td>
+                <td style="text-align:center"> <input type="number" name="mannschafts-nuliga-liga-id" style="width:100px"> </td>
+                <td style="text-align:center"> <input type="number" name="mannschafts-nuliga-team-id" style="width:100px"> </td>
+                <td colspan="2" style="text-align:left"> 
                     <?php
                     settings_fields( 'neue_mannschaft' );
                     do_settings_sections( 'dienste_mannschaft_hinzufuegen' );
