@@ -45,6 +45,7 @@ function dienste_gegner_initialisieren(){
 	$sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
         name VARCHAR(256) NOT NULL ,
+        geschlecht enum('m','w') NOT NULL, 
         liga VARCHAR(256) NULL , 
         stelltSekretaerBeiHeimspiel TINYINT NOT NULL DEFAULT '0' , 
         PRIMARY KEY (id)

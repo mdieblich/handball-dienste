@@ -13,6 +13,10 @@ class Gegner {
     public function getName(): string {
         return $this->assoc_array["name"];
     }
+
+    public function getGeschlecht(): string {
+        return $this->assoc_array["geschlecht"];
+    }
     
     public function getLiga(): string {
         return $this->assoc_array["liga"];

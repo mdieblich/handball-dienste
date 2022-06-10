@@ -37,9 +37,6 @@ function displaySpieleImport(){
 }
 
 function diensteImportSubmit(){
-    echo "<div style=margin-left:200px; background-color:white>";
-    var_dump($_POST);
-    echo "</div>";
     if('POST' !== $_SERVER['REQUEST_METHOD']){
         return;
     }

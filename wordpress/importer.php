@@ -3,15 +3,15 @@ require_once __DIR__."/dao/mannschaft.php";
 require_once __DIR__."/dao/gegner.php";
 require_once __DIR__."/dao/spiel.php";
 
-function findOrInsertGegner(array $alleGegner, string $name, $liga): Gegner{
+function findOrInsertGegner(array $alleGegner, string $name, string $geschlecht, string $liga): Gegner{
     
     foreach($alleGegner as $gegner){
-        if($gegner->getName() === $name){
+        if($gegner->getName() === $name && $gegner->getGeschlecht() === $geschlecht){
             return $gegner;
         }
     }
     // Nix gefunden - einfügen!
-    $gegner = insertGegner($name, $liga);
+    $gegner = insertGegner($name, $geschlecht, $liga);
     $alleGegner[$gegner->getID()] = $gegner;
     return $gegner;
 }
@@ -38,10 +38,18 @@ function importSpieleFromNuliga(){
         foreach($spielGrabber->getSpiele() as $spiel){
             if($spiel->getHeimmannschaft() === $teamName){
                 $isHeimspiel = true;
-                $gegner_id = findOrInsertGegner($alleGegner, $spiel->getGastmannschaft(), $mannschaft->getLiga())->getID();
+                $gegner_id = findOrInsertGegner($alleGegner, 
+                    $spiel->getGastmannschaft(), 
+                    $mannschaft->getGeschlecht(), 
+                    $mannschaft->getLiga()
+                )->getID();
             } else {
                 $isHeimspiel = false;
-                $gegner_id = findOrInsertGegner($alleGegner, $spiel->getHeimmannschaft(), $mannschaft->getLiga())->getID();
+                $gegner_id = findOrInsertGegner($alleGegner, 
+                    $spiel->getHeimmannschaft(), 
+                    $mannschaft->getGeschlecht(), 
+                    $mannschaft->getLiga()
+                )->getID();
             }
             insertSpiel($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $spiel->getHalle(), $spiel->getAnwurf());
         }
