@@ -37,21 +37,25 @@ function importSpieleFromNuliga(){
         );
         foreach($spielGrabber->getSpiele() as $spiel){
             if($spiel->getHeimmannschaft() === $teamName){
-                $isHeimspiel = true;
+                $isHeimspiel = 1;
                 $gegner_id = findOrInsertGegner($alleGegner, 
                     $spiel->getGastmannschaft(), 
                     $mannschaft->getGeschlecht(), 
                     $mannschaft->getLiga()
                 )->getID();
             } else {
-                $isHeimspiel = false;
+                $isHeimspiel = 0;
                 $gegner_id = findOrInsertGegner($alleGegner, 
                     $spiel->getHeimmannschaft(), 
                     $mannschaft->getGeschlecht(), 
                     $mannschaft->getLiga()
                 )->getID();
             }
-            insertSpiel($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $spiel->getHalle(), $spiel->getAnwurf());
+            if(spielExistiert($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel)){
+                updateSpiel($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $spiel->getHalle(), $spiel->getAnwurf());
+            } else {
+                insertSpiel($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $spiel->getHalle(), $spiel->getAnwurf());
+            }
         }
     }
 }
