@@ -123,10 +123,6 @@ function displayDiensteMannschaften(){
 function dummy_function(){}
 
 function diensteMannschaftenSubmit(){
-    ?>
-    <div style="margin-left: 200px; background-color:#ffffff99">
-    <?php var_dump($_POST); ?>
-    </div><?php
     // TODO check auf korrekte Berechtigung
     // 1. Berechtigung anlegen https://wordpress.org/support/article/roles-and-capabilities/
     // 2. hier prüfen mit: if ( current_user_can( 'edit_others_posts' ) ) {
