@@ -12,7 +12,6 @@ class SpieleGrabber {
             ."&pageState=vorrunde"
             ."&championship=".urlencode($meisterschaft)
             ."&group=".$gruppe;
-            echo "$url<br>";
         $this->dom = getDOMFromSite($url);
         $this->xpath = new DOMXPath($this->dom);
     }
