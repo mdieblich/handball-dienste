@@ -72,6 +72,7 @@ function displayDiensteMannschaften(){
             </tr>
         <?php foreach($mannschaften as $mannschaft){ ?>
             <tr><form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
+                <input type="hidden" name="mannschafts-id" value="<?php echo $mannschaft->getID(); ?>">
                 <td> <input type="number" name="mannschafts-nummer" value="<?php echo $mannschaft->getNummer(); ?>" min="1"> </td>
                 <td> 
                     <select name="mannschafts-geschlecht"> 
@@ -122,37 +123,40 @@ function displayDiensteMannschaften(){
 function dummy_function(){}
 
 function diensteMannschaftenSubmit(){
+    ?>
+    <div style="margin-left: 200px; background-color:#ffffff99">
+    <?php var_dump($_POST); ?>
+    </div><?php
     // TODO check auf korrekte Berechtigung
     // 1. Berechtigung anlegen https://wordpress.org/support/article/roles-and-capabilities/
     // 2. hier prüfen mit: if ( current_user_can( 'edit_others_posts' ) ) {
     // siehe auch https://developer.wordpress.org/plugins/security/checking-user-capabilities/#restricted-to-a-specific-capability
-    ?>
-    <div style="margin-left: 200px; background-color:#ffffff99">
-    Prüfe gesendete Daten....<br>
-    <?php
-    if(somethingWasSentWithPOST()){
-        var_dump($_POST);
-        if(isGueltigeNeueMannschaftUbertragen()){
-            insertNeueMannschaftFrom_POST();
-        }
-    } else {
-        echo "<br> Mist oder nix erhalten :("   ;
-    }?>
-    </div>
-    <?php
+    if(!somethingWasSentWithPOST()){
+        return;
+    }
+    switch($_POST['option_page']){
+        case 'neue_mannschaft': handleNeueMannschaft(); break;
+        case 'alte_mannschaft': handleAlteMannschaft(); break;
+    }
 }
 
 function somethingWasSentWithPOST(){
     return 'POST' === $_SERVER['REQUEST_METHOD'];
 }
 
-function isGueltigeNeueMannschaftUbertragen(){
-    if ('neue_mannschaft' !== $_POST['option_page']){
-        return false;
-    }
+function handleNeueMannschaft(){
     if(!check_admin_referer('dienste-mannschaft-hinzufuegen_neu')){
-        return false;
+        return;
     }
+    if(!isGueltigeMannschaftUebertragen()){
+        return;
+    }
+    insertNeueMannschaftFrom_POST();
+}
+
+function handleAlteMannschaft(){}
+
+function isGueltigeMannschaftUebertragen(){
     $expectedKeys = array(
         'mannschafts-nummer', 
         'mannschafts-geschlecht',
@@ -184,6 +188,7 @@ function isGueltigeNeueMannschaftUbertragen(){
 
     return true;
 }
+
 function insertNeueMannschaftFrom_POST(){
     global $wpdb;
     
