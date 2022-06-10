@@ -1,5 +1,11 @@
 <?php
 
+function addDiensteSpieleImportKonfiguration(){
+    $hook_import = add_submenu_page( 'dienste', 'Dienste - Spiele importieren', 'Import', 'administrator', 'dienste-import', 'displaySpieleImport');
+    
+    add_action( 'load-' . $hook_import, 'diensteImportSubmit' );
+}
+
 function displaySpieleImport(){
     require_once __DIR__."/dao/mannschaft.php";
     require_once __DIR__."/dao/spiel.php";
@@ -20,7 +26,32 @@ function displaySpieleImport(){
         </tr>
         <?php } ?>
     </table>
+    <form action="<?php menu_page_url( 'dienste-import' ) ?>" method="post">
+        <?php 
+            wp_nonce_field('dienste-spiele-importieren');
+            submit_button("Importieren"); 
+        ?>
+    </form>
 </div>
  <?php
+}
+
+function diensteImportSubmit(){
+    echo "<div style=margin-left:200px; background-color:white>";
+    var_dump($_POST);
+    echo "</div>";
+    if('POST' !== $_SERVER['REQUEST_METHOD']){
+        return;
+    }
+    if(empty($_POST['submit'])){
+        return;
+    }
+    if("Importieren" !== $_POST['submit']){
+        return;
+    }
+    if(!check_admin_referer('dienste-spiele-importieren')){
+        return;
+    }
+    // TODO hier import starten
 }
 ?>

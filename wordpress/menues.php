@@ -8,7 +8,7 @@ function addDiensteMenueeintraege() {
     
     //add_submenu_page( '$parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
     addDiensteMannschaftsKonfiguration();
-    add_submenu_page( 'dienste', 'Dienste - Spiele importieren', 'Import', 'administrator', 'dienste-import', 'displaySpieleImport');
+    addDiensteSpieleImportKonfiguration();
     add_submenu_page( 'dienste', 'Dienste - Gegner einrichten', 'Gegner', 'administrator', 'dienste-gegner', 'displayDiensteGegner');
     add_submenu_page( 'dienste', 'Dienste zuweisen', 'Dienste zuweisen', 'administrator', 'dienste-zuweisen', 'displayDiensteZuweisen');
 }
