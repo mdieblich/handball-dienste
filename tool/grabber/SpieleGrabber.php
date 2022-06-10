@@ -1,6 +1,6 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/tool/grabber/PageGrabber.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/tool/grabber/NuLigaSpiel.php";
+require_once __DIR__."/PageGrabber.php";
+require_once __DIR__."/NuLigaSpiel.php";
 
 class SpieleGrabber {
     public DomDocument $dom;
