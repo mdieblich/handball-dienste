@@ -9,7 +9,7 @@ rm -rf ./dienstedienst/*.*
 rm dienstedienst.zip
 
 # 2. Alles rüberkopieren
-cp ../wordpress/*.* dienstedienst
+cp -r ../wordpress/* dienstedienst
 cp -r ../entity dienstedienst
 cp -r ../dao dienstedienst
 cp -r ../tool/grabber dienstedienst

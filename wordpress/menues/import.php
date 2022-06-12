@@ -7,8 +7,8 @@ function addDiensteSpieleImportKonfiguration(){
 }
 
 function displaySpieleImport(){
-    require_once __DIR__."/dao/mannschaft.php";
-    require_once __DIR__."/dao/spiel.php";
+    require_once __DIR__."/../dao/mannschaft.php";
+    require_once __DIR__."/../dao/spiel.php";
     $mannschaften = loadMannschaften();
  ?>
 <div class="wrap">
@@ -49,7 +49,7 @@ function diensteImportSubmit(){
     if(!check_admin_referer('dienste-spiele-importieren')){
         return;
     }
-    require_once __DIR__."/importer.php";
+    require_once __DIR__."/../importer.php";
     $resultMessage = importSpieleFromNuliga();
     echo "<div style='margin-left:200px;'>$resultMessage</div>";
 }
