@@ -1,5 +1,5 @@
 <?php
-require_once WP_PLUGIN_DIR."/dienstedienst/menue_mannschaft.php";
+require_once WP_PLUGIN_DIR."/dienstedienst/menues/mannschaft.php";
 require_once WP_PLUGIN_DIR."/dienstedienst/menues/import.php";
 
 function addDiensteMenueeintraege() {
