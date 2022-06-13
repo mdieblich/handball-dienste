@@ -60,16 +60,6 @@ function assignDienst(spiel, dienstart, mannschaft, assign){
             // alles gut!
         }
     };
-    // xhr.open(assign?"PUT":"DELETE", ajaxurl, true);
-    // var dienst = new Object();
-    // dienst.spiel = spiel;
-    // dienst.dienstart = dienstart;
-    // dienst.mannschaft = mannschaft;
-    // var data = new Object();
-    // data.action = 'dienst_zuweisen';
-    // data.dienst = dienst;
-    // xhr.setRequestHeader('Content-Type', 'application/json');
-    // xhr.send(JSON.stringify(data));
     disableOtherCheckboxes(spiel, dienstart, mannschaft, assign);
     setDienstCounter(dienstart, mannschaft, assign);
 }
