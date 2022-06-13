@@ -1,11 +1,11 @@
 <?php
 require_once WP_PLUGIN_DIR."/dienstedienst/entity/spiel.php";
 
-function loadSpiele(): array{
+function loadSpiele(string $whereClause="1=1", string $orderBy="anwurf, halle"): array{
   global $wpdb;
   
   $table_name = $wpdb->prefix . 'spiel';
-  $sql = "SELECT * FROM $table_name ORDER BY anwurf, halle";
+  $sql = "SELECT * FROM $table_name WHERE $whereClause ORDER BY $orderBy";
   $result = $wpdb->get_results($sql);
   
   $spiele = array();
@@ -16,6 +16,16 @@ function loadSpiele(): array{
     }
   }
   return $spiele;
+}
+
+function loadSpieleDeep(string $whereClause="1=1", string $orderBy="anwurf, halle"){
+    $spiele = loadSpiele($whereClause, $orderBy);
+    require_once WP_PLUGIN_DIR."/dienstedienst/dao/dienst.php";
+    $dienstDAO = new DienstDAO();
+    foreach( $dienstDAO->loadAllDienste() as $dienst){
+        $spiele[$dienst->getSpiel()]->addDienst($dienst);
+    } 
+    return $spiele;
 }
 
 function countSpiele(int $mannschaftsID): int {
