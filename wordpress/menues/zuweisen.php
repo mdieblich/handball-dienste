@@ -50,16 +50,7 @@ function assignDienst(spiel, dienstart, mannschaft, assign){
         jQuery.post(ajaxurl, data, function(response) {
         });
     });
-
     
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (this.readyState != 4) return;
-
-        if (this.status == 200) {
-            // alles gut!
-        }
-    };
     disableOtherCheckboxes(spiel, dienstart, mannschaft, assign);
     setDienstCounter(dienstart, mannschaft, assign);
 }
