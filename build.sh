@@ -1,5 +1,10 @@
 #!/bin/bash
-WORDPRESS="E:\wamp64\www\wordpress\wp-content\plugins"
+# 0. Sicherstellen, dass config-Datei existiert
+if [ ! -e "config.sh" ] ; then
+    printf "#!/bin/bash\r\nWORDPRESS=\"pfad\zu\...\wordpress\wp-content\plugins\"" > config.sh
+    exit;
+fi
+source config.sh
 
 cd ./build
 
@@ -12,7 +17,7 @@ rm dienstedienst.zip
 cp -r ../wordpress/* dienstedienst
 cp -r ../entity dienstedienst
 cp -r ../dao dienstedienst
-cp -r ../tool/grabber dienstedienst
+cp -r ../grabber dienstedienst
 
 # 3. Zippen
 ./7za.exe a -r dienstedienst.zip dienstedienst
