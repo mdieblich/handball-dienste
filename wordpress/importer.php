@@ -5,7 +5,6 @@ require_once __DIR__."/dao/spiel.php";
 
 function importSpieleFromNuliga(): string{
     require_once __DIR__."/grabber/SpieleGrabber.php";
-    echo "<div style='margin-left:200px; background-color:white'>";
     
     $mannschaften = loadMannschaften();
     $gegnerDAO = new GegnerDAO();
@@ -29,7 +28,6 @@ function importSpieleFromNuliga(): string{
             $mannschaft->getNuligaTeamID()
         );
         foreach($spielGrabber->getSpiele() as $spiel){
-            echo "<li>".$spiel->getDebugOutput()."<ol>";
             if($spiel->getHeimmannschaft() === $teamName){
                 $isHeimspiel = 1;
                 $gegner_id = $gegnerDAO->findOrInsertGegner( 
@@ -45,21 +43,15 @@ function importSpieleFromNuliga(): string{
                     $mannschaft->getLiga()
                 )->getID();
             }
-            echo "<li>Gefundener Gegner: $gegner_id</li>";
             if(spielExistiert($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel)){
-                echo "<li>UPDATE</li>";
                 updateSpiel($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $spiel->getHalle(), $spiel->getAnwurf());
                 $spieleAktualisiert ++;
             } else {
-                echo "<li>NEU</li>";
                 insertSpiel($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $spiel->getHalle(), $spiel->getAnwurf());
                 $spieleNeu ++;
             }
-            echo "</ol></li>";
         }
-        echo "</ol>";
     }
-    echo "</div>";
     
     return "importiert: $spieleNeu<br>aktualisiert: $spieleAktualisiert";
 }
