@@ -34,12 +34,14 @@ function displayDiensteGegner(){
     ?>
     <div class="wrap">
         <h1>Gegner einrichten</h1>
+        Hier kann eingestellt werden, ob die gegnerische Mannschaft bei ihren Spielen einen Sekretär stellt.<br>
+        Dies bedeutet, dass bei Auswärtsspielen kein Sekretär-Dienst übernommen werden muss, aber bei Heimspielen der Sekretär-Dienst zusätzlich übernommen werden muss.
         <form action="<?php menu_page_url( 'dienste-gegner' ) ?>" method="post">
         <?php
             settings_fields( 'gegner_aendern' );
             do_settings_sections( 'dienste_gegner_aendern' );
             wp_nonce_field('dienste-gegner-aendern_alle');
-            submit_button( 'Ändern', 'primary' , 'submit-change', false);
+            submit_button( 'Speichern', 'primary' , 'submit-change', false);
         ?>
         <table cellspacing="1">
             <tr>
@@ -50,7 +52,7 @@ function displayDiensteGegner(){
             </tr>
         <?php foreach($gegnerDAO->getAlleGegner() as $gegner){ ?>
             <tr>
-                <td style="text-align:center"> <?php echo $gegner->getID()."-".$gegner->getName(); ?> </td>
+                <td> <?php echo $gegner->getName(); ?> </td>
                 <td style="text-align:center"> 
                     <select name="gegner-geschlecht" disabled> 
                         <option value="w" <?php if($gegner->getGeschlecht()==GESCHLECHT_W) echo "selected"; ?>>Damen</option>
@@ -62,7 +64,7 @@ function displayDiensteGegner(){
             </tr> 
         <?php } ?>
         </table>
-        <?php submit_button( 'Ändern', 'primary' , 'submit-change', false); ?>    
+        <?php submit_button( 'Speichern', 'primary' , 'submit-change', false); ?>    
         </form>
     </div>
     <?php
