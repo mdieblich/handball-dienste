@@ -50,7 +50,7 @@ function assignDienst(spiel, dienstart, mannschaft, assign){
         jQuery.post(ajaxurl, data, function(response) {
         });
     });
-    
+
     disableOtherCheckboxes(spiel, dienstart, mannschaft, assign);
     setDienstCounter(dienstart, mannschaft, assign);
 }
@@ -95,19 +95,19 @@ function enableHighlight(spiel_id, highlightColor){
     if(spiel_id === null){
         return;
     } 
-    document.getElementById("spiel-"+spiel_id+"-anwurf").style.backgroundColor = highlightColor;
-    document.getElementById("spiel-"+spiel_id+"-halle").style.backgroundColor = highlightColor;
+    document.getElementById("spiel-"+spiel_id+"-anwurf"    ).style.backgroundColor = highlightColor;
+    document.getElementById("spiel-"+spiel_id+"-halle"     ).style.backgroundColor = highlightColor;
     document.getElementById("spiel-"+spiel_id+"-mannschaft").style.backgroundColor = highlightColor;
-    document.getElementById("spiel-"+spiel_id+"-gegner").style.backgroundColor = highlightColor;
+    document.getElementById("spiel-"+spiel_id+"-gegner"    ).style.backgroundColor = highlightColor;
 }
 function disableHighlight(spiel_id){
     if(spiel_id === null){
         return;
     }
-    document.getElementById("spiel-"+spiel_id+"-anwurf").style.backgroundColor = "inherit";
-    document.getElementById("spiel-"+spiel_id+"-halle").style.backgroundColor = "inherit";
+    document.getElementById("spiel-"+spiel_id+"-anwurf"    ).style.backgroundColor = "inherit";
+    document.getElementById("spiel-"+spiel_id+"-halle"     ).style.backgroundColor = "inherit";
     document.getElementById("spiel-"+spiel_id+"-mannschaft").style.backgroundColor = "inherit";
-    document.getElementById("spiel-"+spiel_id+"-gegner").style.backgroundColor = "inherit";
+    document.getElementById("spiel-"+spiel_id+"-gegner"    ).style.backgroundColor = "inherit";
 }
     </script>
     <h1>Dienste zuweisen</h1>
