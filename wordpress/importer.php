@@ -9,6 +9,7 @@ function importSpieleFromNuliga(): string{
     
     $mannschaften = loadMannschaften();
     $gegnerDAO = new GegnerDAO();
+    $gegnerDAO->loadGegner();
 
     $spieleNeu = 0;
     $spieleAktualisiert = 0;
