@@ -14,7 +14,6 @@ function importSpieleFromNuliga(): string{
     $spieleAktualisiert = 0;
 
     foreach($mannschaften as $mannschaft){
-        echo $mannschaft->getName().":<ol>";
         $teamName = get_option('vereinsname');
         if($mannschaft->getNummer() >= 2){
             $teamName .= " ";
