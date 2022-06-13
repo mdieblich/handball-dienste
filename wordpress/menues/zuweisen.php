@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__."/../entity/dienst.php";
+require_once __DIR__."/../entity/spieleliste.php";
 
 $hook_zuweisen;
 function addDiensteZuweisenKonfiguration(){
@@ -41,14 +42,13 @@ function dienst_entfernen(){
 }
 
 function displayDiensteZuweisen(){
-
     require_once __DIR__."/../dao/mannschaft.php";
     require_once __DIR__."/../dao/spiel.php";
     $mannschaften = loadMannschaften();
     $gegnerDAO = new GegnerDAO();
     $gegnerDAO->loadGegner();
     $alleGegner = $gegnerDAO->getAlleGegner();
-    $spiele = loadSpieleDeep("1=1", "-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"); 
+    $spieleListe = new SpieleListe( loadSpieleDeep("1=1", "-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft") ); 
  ?>
 <div class="wrap">
     <script></script>
@@ -63,7 +63,7 @@ function displayDiensteZuweisen(){
         <th>Auswärts</th>
         <?php
 foreach($mannschaften as $mannschaft){
-    $anzahlDienste = zaehleDienste($spiele, $mannschaft);
+    $anzahlDienste = zaehleDienste($spieleListe->getSpiele(), $mannschaft);
     echo "<td>".$mannschaft->getName()."<br>";
     foreach($anzahlDienste as $dienstart => $anzahl){
         $dienstartKurz = substr($dienstart,0,1);
@@ -142,7 +142,7 @@ function isAmGleichenTag(Spiel $a, Spiel $b): bool {
     return $anwurfA->format("Y-m-d") == $anwurfB->format("Y-m-d");
 }
 
-foreach($spiele as $spiel){
+foreach($spieleListe->getSpiele() as $spiel){
     $anwurf = $spiel->getAnwurf();
     $gegner = $alleGegner[$spiel->getGegner()];
     $zeitnehmerDienst = $spiel->getDienst("Zeitnehmer");
@@ -181,7 +181,7 @@ foreach($spiele as $spiel){
         $highlightColorNachher = "#bbf";
         $textColor = "black";
         $tooltip = "";
-        $nahgelegeneSpiele = findNahgelegeneSpiele($spiele, $spiel, $mannschaft);
+        $nahgelegeneSpiele = findNahgelegeneSpiele($spieleListe->getSpiele(), $spiel, $mannschaft);
         if($spiel->getMannschaft() == $mannschaft->getID()){
             // TODO Warnung wegen eigenem Spiel bei Anklicken
             $textColor = "silver";
