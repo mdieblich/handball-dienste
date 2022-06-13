@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__."/spiel.php";
+require_once __DIR__."/nahgelegenespiele.php";
 require_once __DIR__."/dienst.php";
 
 class SpieleListe {
