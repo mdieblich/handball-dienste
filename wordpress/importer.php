@@ -10,10 +10,11 @@ function importSpieleFromNuliga(): string{
     $gegnerDAO = new GegnerDAO();
     $gegnerDAO->loadGegner();
 
-    $spieleNeu = 0;
-    $spieleAktualisiert = 0;
-
+    $resultMessage = "";
     foreach($mannschaften as $mannschaft){
+        $spieleImportiert   = 0;
+        $spieleAktualisiert = 0;
+
         $teamName = get_option('vereinsname');
         if($mannschaft->getNummer() >= 2){
             $teamName .= " ";
@@ -21,6 +22,7 @@ function importSpieleFromNuliga(): string{
                 $teamName .= "I";
             }
         }
+        
         $spielGrabber = new SpieleGrabber(
             $mannschaft->getMeisterschaft(), 
             $mannschaft->getNuligaLigaID(), 
@@ -47,12 +49,13 @@ function importSpieleFromNuliga(): string{
                 $spieleAktualisiert ++;
             } else {
                 insertSpiel($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $spiel->getHalle(), $spiel->getAnwurf());
-                $spieleNeu ++;
+                $spieleImportiert ++;
             }
         }
+        $resultMessage .= "<b>".$mannschaft->getName()."</b>: $spieleImportiert Spiele importiert, $spieleAktualisiert aktualisiert<br>\n";
     }
     
-    return "importiert: $spieleNeu<br>aktualisiert: $spieleAktualisiert";
+    return $resultMessage;
 }
 
 ?>
