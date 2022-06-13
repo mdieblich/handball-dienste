@@ -1,13 +1,29 @@
 <?php
 require_once __DIR__."/../entity/dienst.php";
 
+$hook_zuweisen;
 function addDiensteZuweisenKonfiguration(){
+    global $hook_zuweisen;
     $hook_zuweisen = add_submenu_page( 'dienste', 'Dienste zuweisen', 'Dienste zuweisen', 'administrator', 'dienste-zuweisen', 'displayDiensteZuweisen');
     
     add_action( 'load-' . $hook_zuweisen, 'diensteZuweisenSubmit' );
+    add_action( 'admin_enqueue_scripts', 'enqueue_dienste_js' );
 }
 add_action( 'wp_ajax_dienst_zuweisen', 'dienst_zuweisen' );
 add_action( 'wp_ajax_dienst_entfernen', 'dienst_entfernen' );
+
+function enqueue_dienste_js($hook){
+    global $hook_zuweisen;
+    if ( $hook !== $hook_zuweisen ) {
+        return;
+    }
+    wp_enqueue_script(
+        'dienste-script',
+        plugins_url( '/zuweisen.js', __FILE__ ),
+        array( 'jquery' ),
+        '1.0.0'
+    );
+}
 
 function dienst_zuweisen(){
     require_once __DIR__."/../dao/dienst.php";
@@ -35,81 +51,7 @@ function displayDiensteZuweisen(){
     $spiele = loadSpieleDeep("1=1", "-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"); 
  ?>
 <div class="wrap">
-    <script>
-function assignDienst(spiel, dienstart, mannschaft, assign){
-    jQuery(document).ready(function($) {
-
-        var data = {
-            'action': assign?'dienst_zuweisen':'dienst_entfernen',
-            'spiel': spiel,
-            'dienstart': dienstart,
-            'mannschaft': mannschaft
-        };
-
-        // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-        jQuery.post(ajaxurl, data, function(response) {
-        });
-    });
-
-    disableOtherCheckboxes(spiel, dienstart, mannschaft, assign);
-    setDienstCounter(dienstart, mannschaft, assign);
-}
-function disableOtherCheckboxes(spiel, dienstart, mannschaft, assign){
-    checkBoxName = dienstart+"-"+spiel;
-    otherCheckBoxes = document.getElementsByName(checkBoxName);
-    for(i=0; i<otherCheckBoxes.length; i++){
-        otherCheckBoxes[i].disabled = assign;
-    }
-    // immer die aktive CheckBox aktivieren
-    activeID = checkBoxName+"-"+mannschaft;
-    document.getElementById(activeID).disabled = false;
-}
-function setDienstCounter(dienstart, mannschaft, assign){
-    id = dienstart.substring(0,1)+"-counter-"+mannschaft;
-    previousValue = parseInt(document.getElementById(id).innerText);
-    if(assign){
-        // erhöhen
-        document.getElementById(id).innerText = previousValue + 1;
-    } else{
-        // abziehen
-        document.getElementById(id).innerText = previousValue - 1;
-    }
-}
-
-function highlightGames(
-    spiel_id_vorher, highlightColorVorher,
-    spiel_id_gleichzeitig,
-    spiel_id_nachher, highlightColorNachher) {
-    enableHighlight(spiel_id_vorher, highlightColorVorher);
-    enableHighlight(spiel_id_gleichzeitig, "#fdd");
-    enableHighlight(spiel_id_nachher, highlightColorNachher);
-}
-
-function resetHighlight(spiel_id_vorher, spiel_id_gleichzeitig, spiel_id_nachher){
-    disableHighlight(spiel_id_vorher);
-    disableHighlight(spiel_id_gleichzeitig);
-    disableHighlight(spiel_id_nachher);
-}
-
-function enableHighlight(spiel_id, highlightColor){
-    if(spiel_id === null){
-        return;
-    } 
-    document.getElementById("spiel-"+spiel_id+"-anwurf"    ).style.backgroundColor = highlightColor;
-    document.getElementById("spiel-"+spiel_id+"-halle"     ).style.backgroundColor = highlightColor;
-    document.getElementById("spiel-"+spiel_id+"-mannschaft").style.backgroundColor = highlightColor;
-    document.getElementById("spiel-"+spiel_id+"-gegner"    ).style.backgroundColor = highlightColor;
-}
-function disableHighlight(spiel_id){
-    if(spiel_id === null){
-        return;
-    }
-    document.getElementById("spiel-"+spiel_id+"-anwurf"    ).style.backgroundColor = "inherit";
-    document.getElementById("spiel-"+spiel_id+"-halle"     ).style.backgroundColor = "inherit";
-    document.getElementById("spiel-"+spiel_id+"-mannschaft").style.backgroundColor = "inherit";
-    document.getElementById("spiel-"+spiel_id+"-gegner"    ).style.backgroundColor = "inherit";
-}
-    </script>
+    <script></script>
     <h1>Dienste zuweisen</h1>
     Die Eingaben der Checkboxen werden direkt gespeichert.
     <table cellpadding="3" cellspacing="3">
