@@ -8,6 +8,8 @@ Konfiguration:
 * RegEx zur Spielerkennung
 
 Design:
+* Gegner:
+    Beim Import die Nummer hinterlegen, damit bei de rKonfiguration alle von einem Verein ausgewählt werden können
 * Objekt Mannschaft
 * Objekt Saison
     * enthält Mannschaftsmeldung (pro Mannschaft kann es in einer Saison mehrere Meldungen geben)
