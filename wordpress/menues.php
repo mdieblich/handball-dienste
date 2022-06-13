@@ -2,6 +2,7 @@
 require_once WP_PLUGIN_DIR."/dienstedienst/menues/mannschaft.php";
 require_once WP_PLUGIN_DIR."/dienstedienst/menues/import.php";
 require_once WP_PLUGIN_DIR."/dienstedienst/menues/gegner.php";
+require_once WP_PLUGIN_DIR."/dienstedienst/menues/zuweisen.php";
 
 function addDiensteMenueeintraege() {
     //add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position );
@@ -11,11 +12,10 @@ function addDiensteMenueeintraege() {
     addDiensteMannschaftsKonfiguration();
     addDiensteSpieleImportKonfiguration();
     addDiensteGegnerKonfiguration();
-    add_submenu_page( 'dienste', 'Dienste zuweisen', 'Dienste zuweisen', 'administrator', 'dienste-zuweisen', 'displayDiensteZuweisen');
+    addDiensteZuweisenKonfiguration();
 }
 
 
 function displayDiensteDashboard(){}
-function displayDiensteZuweisen(){}
 
 ?>
