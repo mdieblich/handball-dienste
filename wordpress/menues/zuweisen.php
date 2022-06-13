@@ -63,7 +63,7 @@ function displayDiensteZuweisen(){
         <th>Auswärts</th>
         <?php
 foreach($mannschaften as $mannschaft){
-    $anzahlDienste = zaehleDienste($spieleListe->getSpiele(), $mannschaft);
+    $anzahlDienste = $spieleListe->zaehleDienste($mannschaft);
     echo "<td>".$mannschaft->getName()."<br>";
     foreach($anzahlDienste as $dienstart => $anzahl){
         $dienstartKurz = substr($dienstart,0,1);
