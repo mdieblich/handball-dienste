@@ -9,8 +9,7 @@ function assignDienst(spiel, dienstart, mannschaft, assign){
         };
 
         // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-        jQuery.post(ajaxurl, data, function(response) {
-        });
+        jQuery.post(ajaxurl, data);
     });
 
     disableOtherCheckboxes(spiel, dienstart, mannschaft, assign);
