@@ -1,12 +1,31 @@
 <?php
+require_once __DIR__."/../entity/dienst.php";
 
 function addDiensteZuweisenKonfiguration(){
     $hook_zuweisen = add_submenu_page( 'dienste', 'Dienste zuweisen', 'Dienste zuweisen', 'administrator', 'dienste-zuweisen', 'displayDiensteZuweisen');
     
     add_action( 'load-' . $hook_zuweisen, 'diensteZuweisenSubmit' );
 }
+add_action( 'wp_ajax_dienst_zuweisen', 'dienst_zuweisen' );
+add_action( 'wp_ajax_dienst_entfernen', 'dienst_entfernen' );
+
+function dienst_zuweisen(){
+    require_once __DIR__."/../dao/dienst.php";
+    $dienstDAO = new DienstDAO();
+    $dienstDAO->insert($_POST['spiel'], $_POST['dienstart'], $_POST['mannschaft']);
+    http_response_code(200);
+    wp_die();
+}
+function dienst_entfernen(){
+    require_once __DIR__."/../dao/dienst.php";
+    $dienstDAO = new DienstDAO();
+    $dienstDAO->delete($_POST['spiel'], $_POST['dienstart'], $_POST['mannschaft']);
+    http_response_code(200);
+    wp_die();
+}
 
 function displayDiensteZuweisen(){
+
     require_once __DIR__."/../dao/mannschaft.php";
     require_once __DIR__."/../dao/spiel.php";
     $mannschaften = loadMannschaften();
@@ -18,6 +37,21 @@ function displayDiensteZuweisen(){
 <div class="wrap">
     <script>
 function assignDienst(spiel, dienstart, mannschaft, assign){
+    jQuery(document).ready(function($) {
+
+        var data = {
+            'action': assign?'dienst_zuweisen':'dienst_entfernen',
+            'spiel': spiel,
+            'dienstart': dienstart,
+            'mannschaft': mannschaft
+        };
+
+        // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+        jQuery.post(ajaxurl, data, function(response) {
+        });
+    });
+
+    
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (this.readyState != 4) return;
@@ -26,13 +60,16 @@ function assignDienst(spiel, dienstart, mannschaft, assign){
             // alles gut!
         }
     };
-    xhr.open(assign?"PUT":"DELETE", "../api/dienst.php", true);
-    var dienst = new Object();
-    dienst.spiel = spiel;
-    dienst.dienstart = dienstart;
-    dienst.mannschaft = mannschaft;
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(JSON.stringify(dienst));
+    // xhr.open(assign?"PUT":"DELETE", ajaxurl, true);
+    // var dienst = new Object();
+    // dienst.spiel = spiel;
+    // dienst.dienstart = dienstart;
+    // dienst.mannschaft = mannschaft;
+    // var data = new Object();
+    // data.action = 'dienst_zuweisen';
+    // data.dienst = dienst;
+    // xhr.setRequestHeader('Content-Type', 'application/json');
+    // xhr.send(JSON.stringify(data));
     disableOtherCheckboxes(spiel, dienstart, mannschaft, assign);
     setDienstCounter(dienstart, mannschaft, assign);
 }
