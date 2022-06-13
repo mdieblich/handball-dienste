@@ -120,6 +120,7 @@ function disableHighlight(spiel_id){
 }
     </script>
     <h1>Dienste zuweisen</h1>
+    Die Eingaben der Checkboxen werden direkt gespeichert.
     <table cellpadding="3" cellspacing="3">
     <tr style="background-color:#ddddff; position: sticky; top: 0">
         <th>Spiel-Nr.</th>
