@@ -4,11 +4,11 @@ require_once WP_PLUGIN_DIR."/dienstedienst/entity/gegner.php";
 class GegnerDAO{
     private $alleGegner = array();
 
-    public function loadGegner(){
+    public function loadGegner($where = "1=1", $orderBy = "name ASC"){
         global $wpdb;
         
         $table_name = $wpdb->prefix . 'gegner';
-        $sql = "SELECT * FROM $table_name";
+        $sql = "SELECT * FROM $table_name WHERE $where ORDER BY $orderBy";
         $result = $wpdb->get_results($sql);
 
         if (count($result) > 0) {
@@ -19,23 +19,27 @@ class GegnerDAO{
         }
     }
 
-  public function insertGegner(string $name, string $geschlecht, string $liga): Gegner{
-      global $wpdb;
-          
-      $table_name = $wpdb->prefix . 'gegner';
+    public function getAlleGegner(): array{
+        return $this->alleGegner;
+    }
 
-      $params = array(
-          'name' => $name,
-          'geschlecht' => $geschlecht,
-          'liga' => $liga
-      );
+    public function insertGegner(string $name, string $geschlecht, string $liga): Gegner{
+        global $wpdb;
+            
+        $table_name = $wpdb->prefix . 'gegner';
 
-      $wpdb->insert($table_name, $params);
-      $params["id"] = $wpdb->insert_id;
+        $params = array(
+            'name' => $name,
+            'geschlecht' => $geschlecht,
+            'liga' => $liga
+        );
 
-      $newGegner = new Gegner($params);
-      $this->alleGegner[$newGegner->getID()] = $newGegner;
-      return $newGegner;
+        $wpdb->insert($table_name, $params);
+        $params["id"] = $wpdb->insert_id;
+
+        $newGegner = new Gegner($params);
+        $this->alleGegner[$newGegner->getID()] = $newGegner;
+        return $newGegner;
 
   }
 
