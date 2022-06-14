@@ -93,7 +93,14 @@ foreach($spieleListe->getSpiele() as $spiel){
     echo "<tr style=\"background-color:$backgroundColor\">";
     echo "<td>".$spiel->getSpielNr()."</td>";
     if(isset($anwurf)){
-        echo "<td id=\"spiel-".$spiel->getID()."-anwurf\">".$spiel->getAnwurf()->format('d.m.Y H:i')."</td>";
+        echo "<td id=\"spiel-".$spiel->getID()."-anwurf\">".$anwurf->format("d.m.Y ");
+        $uhrzeit = $anwurf->format("H:i");
+        if($uhrzeit !== "00:00"){
+           echo $uhrzeit;
+        }else{
+           echo "<span style='color:red'>$uhrzeit</span>";
+        }
+        echo "</td>";
     }else {
         echo "<td id=\"spiel-".$spiel->getID()."-anwurf\">Termin offen</td>";
     }
