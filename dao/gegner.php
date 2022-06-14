@@ -4,7 +4,7 @@ require_once WP_PLUGIN_DIR."/dienstedienst/entity/gegner.php";
 class GegnerDAO{
     private $alleGegner = array();
 
-    public function loadGegner($where = "1=1", $orderBy = "name ASC"){
+    public function loadGegner($where = "1=1", $orderBy = "verein ASC, nummer ASC"){
         global $wpdb;
         
         $table_name = $wpdb->prefix . 'gegner';
@@ -28,8 +28,30 @@ class GegnerDAO{
             
         $table_name = $wpdb->prefix . 'gegner';
 
+        $verein = $name;
+        $nummer = 1;
+
+        if(str_ends_with($name, " V")){
+            $nummer = 5;
+            $verein = substr($name, 0, strlen($name)-2);
+        } else if(str_ends_with($name, " IV")){
+            $nummer = 4;
+            $verein = substr($name, 0, strlen($name)-3);
+        } else if(str_ends_with($name, " III")){
+            $nummer = 3;
+            $verein = substr($name, 0, strlen($name)-4);
+        } else if(str_ends_with($name, " II")){
+            $nummer = 2;
+            $verein = substr($name, 0, strlen($name)-3);
+        } else if(str_ends_with($name, " I")){
+            $nummer = 1;
+            $verein = substr($name, 0, strlen($name)-2);
+        }
+        $verein = trim($verein);
+
         $params = array(
-            'name' => $name,
+            'verein' => $verein,
+            'nummer' => $nummer,
             'geschlecht' => $geschlecht,
             'liga' => $liga
         );

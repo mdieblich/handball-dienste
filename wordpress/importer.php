@@ -31,19 +31,16 @@ function importSpieleFromNuliga(): string{
         foreach($spielGrabber->getSpiele() as $spiel){
             if($spiel->getHeimmannschaft() === $teamName){
                 $isHeimspiel = 1;
-                $gegner_id = $gegnerDAO->findOrInsertGegner( 
-                    $spiel->getGastmannschaft(), 
-                    $mannschaft->getGeschlecht(), 
-                    $mannschaft->getLiga()
-                )->getID();
+                $gegnerName = $spiel->getGastmannschaft();
             } else {
                 $isHeimspiel = 0;
-                $gegner_id = $gegnerDAO->findOrInsertGegner( 
-                    $spiel->getHeimmannschaft(), 
-                    $mannschaft->getGeschlecht(), 
-                    $mannschaft->getLiga()
-                )->getID();
+                $gegnerName = $spiel->getHeimmannschaft();
             }
+            $gegner_id = $gegnerDAO->findOrInsertGegner( 
+                $gegnerName, 
+                $mannschaft->getGeschlecht(), 
+                $mannschaft->getLiga()
+            )->getID();
             if(spielExistiert($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel)){
                 updateSpiel($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $spiel->getHalle(), $spiel->getAnwurf());
                 $spieleAktualisiert ++;
