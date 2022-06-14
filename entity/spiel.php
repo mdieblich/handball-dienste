@@ -149,5 +149,18 @@ class Spiel {
         }
         return null;
     }
+
+    public function isAmGleichenTag(?Spiel $other): bool {
+        if(empty($other)){
+            return false;
+        }
+        $anwurfA = $this->getAnwurf();
+        $anwurfB = $other->getAnwurf();
+        if(empty($anwurfA) || empty($anwurfB)){
+            return false;
+        }
+        return $anwurfA->format("Y-m-d") == $anwurfB->format("Y-m-d");
+    }
+    
 }
 ?>

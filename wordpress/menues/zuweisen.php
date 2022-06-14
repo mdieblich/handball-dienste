@@ -75,18 +75,6 @@ foreach($mannschaften as $mannschaft){
     </tr>
 <?php
 
-function isAmGleichenTag(?Spiel $a, ?Spiel $b): bool {
-    if(empty($a) || empty($b)){
-        return false;
-    }
-    $anwurfA = $a->getAnwurf();
-    $anwurfB = $b->getAnwurf();
-    if(empty($anwurfA) || empty($anwurfB)){
-        return false;
-    }
-    return $anwurfA->format("Y-m-d") == $anwurfB->format("Y-m-d");
-}
-
 $vorherigesSpiel = null;
 $zeilenFarbePrimaer = true;
 foreach($spieleListe->getSpiele() as $spiel){
@@ -95,7 +83,7 @@ foreach($spieleListe->getSpiele() as $spiel){
     $zeitnehmerDienst = $spiel->getDienst("Zeitnehmer");
     $sekretaerDienst = $spiel->getDienst("Sekretär");
     if(isset($anwurf)){
-        if(!isAmGleichenTag($spiel, $vorherigesSpiel)){
+        if(!$spiel->isAmGleichenTag($vorherigesSpiel)){
             $zeilenFarbePrimaer = !$zeilenFarbePrimaer;
         }
         $backgroundColor = $zeilenFarbePrimaer?"#ddddff":"#dddddd";
@@ -145,7 +133,7 @@ foreach($spieleListe->getSpiele() as $spiel){
             $hatSpielinGleicherHalle = false;
             
             if(isset($nahgelegeneSpiele->vorher)){
-                if(isAmGleichenTag($spiel, $nahgelegeneSpiele->vorher)){
+                if($spiel->isAmGleichenTag($nahgelegeneSpiele->vorher)){
                     $highlightColorVorher = "#ffd";
                     $hatSpielAmGleichenTag = true;
                     if($spiel->getHalle() == $nahgelegeneSpiele->vorher->getHalle()){
@@ -156,7 +144,7 @@ foreach($spieleListe->getSpiele() as $spiel){
             }
             
             if(isset($nahgelegeneSpiele->nachher)){
-                if(isAmGleichenTag($spiel, $nahgelegeneSpiele->nachher)){
+                if($spiel->isAmGleichenTag($nahgelegeneSpiele->nachher)){
                     $highlightColorNachher = "#ffd";
                     $hatSpielAmGleichenTag = true;
                     if($spiel->getHalle() == $nahgelegeneSpiele->nachher->getHalle()){
