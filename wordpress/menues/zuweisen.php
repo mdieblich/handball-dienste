@@ -75,7 +75,7 @@ foreach($mannschaften as $mannschaft){
     </tr>
 <?php
 
-function isAmGleichenTag(Spiel $a, Spiel $b): bool {
+function isAmGleichenTag(?Spiel $a, ?Spiel $b): bool {
     if(empty($a) || empty($b)){
         return false;
     }
@@ -87,13 +87,18 @@ function isAmGleichenTag(Spiel $a, Spiel $b): bool {
     return $anwurfA->format("Y-m-d") == $anwurfB->format("Y-m-d");
 }
 
+$vorherigesSpiel = null;
+$zeilenFarbePrimaer = true;
 foreach($spieleListe->getSpiele() as $spiel){
     $anwurf = $spiel->getAnwurf();
     $gegner = $alleGegner[$spiel->getGegner()];
     $zeitnehmerDienst = $spiel->getDienst("Zeitnehmer");
     $sekretaerDienst = $spiel->getDienst("Sekretär");
     if(isset($anwurf)){
-        $backgroundColor = $spiel->getAnwurf()->format("w")==6?"#eeeeee":"#eeeeff";
+        if(!isAmGleichenTag($spiel, $vorherigesSpiel)){
+            $zeilenFarbePrimaer = !$zeilenFarbePrimaer;
+        }
+        $backgroundColor = $zeilenFarbePrimaer?"#ddddff":"#dddddd";
     }
     else {
         $backgroundColor = "#ffffff";
@@ -236,6 +241,7 @@ foreach($spieleListe->getSpiele() as $spiel){
             .">$cellContent</td>";
     }
     echo "</tr>";
+    $vorherigesSpiel = $spiel;
 }
 ?>
     </table>
