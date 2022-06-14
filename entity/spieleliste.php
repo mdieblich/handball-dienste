@@ -1,7 +1,8 @@
 <?php
+require_once __DIR__."/mannschaft.php";
 require_once __DIR__."/spiel.php";
-require_once __DIR__."/nahgelegenespiele.php";
 require_once __DIR__."/dienst.php";
+require_once __DIR__."/nahgelegenespiele.php";
 
 class SpieleListe {
     private array $spiele;
@@ -28,5 +29,39 @@ class SpieleListe {
         }
         return $anzahl;
     }
+    
+    function findNahgelegeneSpiele(Spiel $zuPruefendesSpiel, Mannschaft $mannschaft): NahgelegeneSpiele {
+
+        $nahgelegeneSpiele = new NahgelegeneSpiele();
+        $distanzVorher = null;
+        $distanzNachher = null;
+        foreach($this->spiele as $spiel){
+            // TODO das geht definitiv einfacher: Alle Spiele als Array in Mannschaft
+            if($spiel->getMannschaft() != $mannschaft->getID()){
+                continue;
+            }
+            $zeitlicheDistanz = $spiel->getZeitlicheDistanz($zuPruefendesSpiel);
+            if(empty($zeitlicheDistanz)){
+                continue;
+            }
+            if($zeitlicheDistanz->ueberlappend){
+                $nahgelegeneSpiele->gleichzeitig = $spiel;
+            } else {
+                if($zeitlicheDistanz->isVorher()){
+                    if($zeitlicheDistanz->isNaeher($distanzVorher)){
+                        $distanzVorher = $zeitlicheDistanz;
+                        $nahgelegeneSpiele->vorher = $spiel;
+                    }
+                } else {
+                    if($zeitlicheDistanz->isNaeher($distanzNachher)){
+                        $distanzNachher = $zeitlicheDistanz;
+                        $nahgelegeneSpiele->nachher = $spiel;
+                    }
+                }
+            }
+        }
+        return $nahgelegeneSpiele;
+    }
+
 }
 ?>

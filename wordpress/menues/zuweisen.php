@@ -75,39 +75,6 @@ foreach($mannschaften as $mannschaft){
     </tr>
 <?php
 
-function findNahgelegeneSpiele(array $spiele, $zuPruefendesSpiel, $mannschaft): NahgelegeneSpiele {
-
-    $nahgelegeneSpiele = new NahgelegeneSpiele();
-    $distanzVorher = null;
-    $distanzNachher = null;
-    foreach($spiele as $spiel){
-        // TODO das geht definitiv einfacher: Alle Spiele als Array in Mannschaft
-        if($spiel->getMannschaft() != $mannschaft->getID()){
-            continue;
-        }
-        $zeitlicheDistanz = $spiel->getZeitlicheDistanz($zuPruefendesSpiel);
-        if(empty($zeitlicheDistanz)){
-            continue;
-        }
-        if($zeitlicheDistanz->ueberlappend){
-            $nahgelegeneSpiele->gleichzeitig = $spiel;
-        } else {
-            if($zeitlicheDistanz->isVorher()){
-                if($zeitlicheDistanz->isNaeher($distanzVorher)){
-                    $distanzVorher = $zeitlicheDistanz;
-                    $nahgelegeneSpiele->vorher = $spiel;
-                }
-            } else {
-                if($zeitlicheDistanz->isNaeher($distanzNachher)){
-                    $distanzNachher = $zeitlicheDistanz;
-                    $nahgelegeneSpiele->nachher = $spiel;
-                }
-            }
-        }
-    }
-    return $nahgelegeneSpiele;
-}
-
 function isAmGleichenTag(Spiel $a, Spiel $b): bool {
     if(empty($a) || empty($b)){
         return false;
@@ -159,7 +126,7 @@ foreach($spieleListe->getSpiele() as $spiel){
         $highlightColorNachher = "#bbf";
         $textColor = "black";
         $tooltip = "";
-        $nahgelegeneSpiele = findNahgelegeneSpiele($spieleListe->getSpiele(), $spiel, $mannschaft);
+        $nahgelegeneSpiele = $spieleListe->findNahgelegeneSpiele($spiel, $mannschaft);
         if($spiel->getMannschaft() == $mannschaft->getID()){
             // TODO Warnung wegen eigenem Spiel bei Anklicken
             $textColor = "silver";
