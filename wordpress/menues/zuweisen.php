@@ -79,8 +79,9 @@ $zeilenFarbePrimaer = true;
 foreach($spieleListe->getSpiele() as $spiel){
     $anwurf = $spiel->getAnwurf();
     $gegner = $alleGegner[$spiel->getGegner()];
-    $zeitnehmerDienst = $spiel->getDienst("Zeitnehmer");
-    $sekretaerDienst = $spiel->getDienst("Sekretär");
+    $zeitnehmerDienst = $spiel->getDienst(Dienstart::ZEITNEHMER);
+    $sekretaerDienst = $spiel->getDienst(Dienstart::SEKRETAER);
+    $cateringDienst = $spiel->getDienst(Dienstart::CATERING);
     if(isset($anwurf)){
         if(!$spiel->isAmGleichenTag($vorherigesSpiel)){
             $zeilenFarbePrimaer = !$zeilenFarbePrimaer;
@@ -205,7 +206,25 @@ foreach($spieleListe->getSpiele() as $spiel){
         "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::SEKRETAER."',".$mannschaft->getID().", this.checked)\"".
         " $sekretaerChecked>".
         "<label for=\"Sekretär-$checkBoxID\">S</label><br>";
+            
+        $cateringChecked = "";
+        if(isset($cateringDienst)){
+            if($cateringDienst->getMannschaft() == $mannschaft->getID()){
+                // wir haben den Dienst!
+                $cateringChecked = "checked";
+            } else{
+                // eine andere Mannschaft hat den Dienst
+                $cateringChecked = "disabled";
+            }
+        }
+        $checkboxCatering = "<input type=\"checkbox\" ".
+        "name=\"Catering-".$spiel->getID()."\"".
+        "id=\"Catering-$checkBoxID\" ".
+        "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::CATERING."',".$mannschaft->getID().", this.checked)\"".
+        " $cateringChecked>".
+        "<label for=\"Catering-$checkBoxID\">C</label><br>";
 
+        // Zelleninhalt zusammenbauen
         $cellContent = "";
         if($spiel->isHeimspiel()){
             if($gegner->stelltSekretearBeiHeimspiel()){
@@ -213,6 +232,7 @@ foreach($spieleListe->getSpiele() as $spiel){
             } else {
                 $cellContent = $checkboxZeitnehmer;
             }
+            $cellContent .= $checkboxCatering;
         } else {
             if($gegner->stelltSekretearBeiHeimspiel()){
                 $cellContent = "";

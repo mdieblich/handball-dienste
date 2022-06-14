@@ -5,7 +5,8 @@ require_once __DIR__."/mannschaft.php";
 class Dienstart{
     const ZEITNEHMER = "Zeitnehmer";
     const SEKRETAER = "Sekretär";
-    const values = array(self::ZEITNEHMER, self::SEKRETAER);
+    const CATERING = "Catering";
+    const values = array(self::ZEITNEHMER, self::SEKRETAER, self::CATERING);
 }
 
 class Dienst {
