@@ -254,19 +254,4 @@ function diensteZuweisenSubmit(){
     $resultMessage = importSpieleFromNuliga();
     echo "<div style='margin-left:200px;'>$resultMessage</div>";
 }
-
-function zaehleDienste(array $spiele, Mannschaft $mannschaft): array{
-    $anzahl = array();
-    foreach(Dienstart::values as $dienstart){
-        $anzahl[$dienstart] = 0;
-    }
-    foreach($spiele as $spiel){
-        foreach($spiel->getDienste() as $dienst){
-            if($dienst->getMannschaft() == $mannschaft->getID()){
-                $anzahl[$dienst->getDienstart()]++;
-            }
-        }
-    }
-    return $anzahl;
-}
 ?>
