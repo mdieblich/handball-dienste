@@ -41,7 +41,8 @@ function importSpieleFromNuliga(): string{
                 $mannschaft->getGeschlecht(), 
                 $mannschaft->getLiga()
             )->getID();
-            if(spielExistiert($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel)){
+            $spielID = findSpielID ($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
+            if(isset($spielID)){
                 updateSpiel($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $spiel->getHalle(), $spiel->getAnwurf());
                 // Hier mit wp_mail 
                 $spieleAktualisiert ++;

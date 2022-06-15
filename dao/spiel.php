@@ -40,10 +40,6 @@ function findSpielID(int $spielnr, int $mannschaft_id, int $gegner_id, int $isHe
   return $wpdb->get_var("SELECT id FROM $table_name WHERE spielnr=$spielnr AND mannschaft=$mannschaft_id AND gegner=$gegner_id AND heimspiel=$isHeimspiel");
 }
 
-function spielExistiert(int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): bool{
-  return findSpielID($spielnr, $mannschaft_id, $gegner_id, $isHeimspiel) !== null;
-}
-
 function insertSpiel(int $spielnr, int $mannschaft_id, int $gegner_id, bool $isHeimspiel, int $halle, ?DateTime $anwurf){
   global $wpdb;
   
