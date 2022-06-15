@@ -18,11 +18,37 @@ function dienste_einstellungen_initialisieren() {
         'dienste_einstellungen'         // The name of the section to which this field belongs
         
     );
+    add_settings_field( 
+        'bot-email',                      // ID used to identify the field throughout the theme
+        'Bot-Email',                           // The label to the left of the option interface element
+        'dienste_einstellungen_botemail_anzeigen',   // The name of the function responsible for rendering the option interface
+        'general',                          // The page on which this option will be displayed
+        'dienste_einstellungen'         // The name of the section to which this field belongs
+        
+    );
+    add_settings_field( 
+        'bot-passwort',                      // ID used to identify the field throughout the theme
+        'Bot-Passwort',                           // The label to the left of the option interface element
+        'dienste_einstellungen_botpasswort_anzeigen',   // The name of the function responsible for rendering the option interface
+        'general',                          // The page on which this option will be displayed
+        'dienste_einstellungen'         // The name of the section to which this field belongs
+        
+    );
      
     // Finally, we register the fields with WordPress
     register_setting(
         'general',
         'vereinsname'
+    );
+
+    register_setting(
+        'general',
+        'bot-email'
+    );
+    
+    register_setting(
+        'general',
+        'bot-passwort'
     );
      
 } 
@@ -33,5 +59,11 @@ function dienste_einstellungen_beschreibung() {
  
 function dienste_einstellungen_vereinsname_anzeigen($args) {
     echo '<input type="text" id="vereinsname" name="vereinsname" value="'.get_option('vereinsname').'" />';
+}
+function dienste_einstellungen_botemail_anzeigen($args) {
+    echo '<input type="text" id="bot-email" name="bot-email" value="'.get_option('bot-email').'" />';
+}
+function dienste_einstellungen_botpasswort_anzeigen($args) {
+    echo '<input type="text" id="bot-passwort" name="bot-passwort" value="'.get_option('bot-passwort').'" />';
 }
 ?>
