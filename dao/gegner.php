@@ -4,6 +4,16 @@ require_once WP_PLUGIN_DIR."/dienstedienst/entity/gegner.php";
 class GegnerDAO{
     private $alleGegner = array();
 
+    public function fetch(int $id): ?Gegner{
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'gegner';
+        $result = $wpdb->get_row("SELECT * FROM $table_name WHERE id=$id", ARRAY_A);
+        if(empty($result)){
+          return null;
+        }
+        return new Gegner($result);
+    }
+
     public function loadGegner($where = "1=1", $orderBy = "verein ASC, nummer ASC"){
         global $wpdb;
         
