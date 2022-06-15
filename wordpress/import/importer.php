@@ -8,6 +8,8 @@ require_once __DIR__."/../dao/gegner.php";
 require_once __DIR__."/../dao/spiel.php";
 require_once __DIR__."/../dao/dienst.php";
 
+require_once __DIR__."/../PHPMailer/NippesMailer.php";
+
 function importSpieleFromNuliga(): string{
     
     $mannschaften = loadMannschaften();
@@ -66,7 +68,8 @@ function importSpieleFromNuliga(): string{
         $resultMessage .= "<b>".$mannschaft->getName()."</b>: $spieleGeprueft Spiele geprüft, davon $spieleImportiert neu importiert und $spieleAktualisiert aktualisiert<br>\n";
     }
 
-    $resultMessage .= "<br><b>Folgende Emails würden versendet werden:</b><br>".$dienstAenderungsPlan->simulateEmails();
+    $dienstAenderungsPlan->sendEmails();
+    //$resultMessage .= "<br><b>Folgende Emails würden versendet werden:</b><br>".$dienstAenderungsPlan->simulateEmails();
 
     return $resultMessage;
 }

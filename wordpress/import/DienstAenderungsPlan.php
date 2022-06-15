@@ -33,15 +33,19 @@ class DienstAenderungsPlan{
         }
     }
 
-    public function simulateEmails(): string{
-        $messages = array();
+    public function sendEmails(){
         foreach($this->mannschaften as $mannschaft){
             if($this->hatKeineGeandertenDienste($mannschaft)){
                 continue;
             }
-            $messages[$mannschaft->getID()] = $this->createMessageForMannschaft($mannschaft);
+            
+            $mail = init_nippes_mailer();
+            $mail->addAddress($mannschaft->getEmail());
+            $mail->Subject = "Spielplanänderungen, bei denen ihr Dienste habt";
+            $mail->Body = $this->createMessageForMannschaft($mannschaft);
+            $mail->isHTML(true);
+            $mail->send();
         }
-        return "<pre>".implode("\n\n--------------\n\n", $messages)."</pre>";
     }
 
     private function hatKeineGeandertenDienste(Mannschaft $mannschaft): bool{
@@ -50,23 +54,25 @@ class DienstAenderungsPlan{
 
     private function createMessageForMannschaft(Mannschaft $mannschaft): string{
         $message = 
-            "Hallo ".$mannschaft->getName().",\n"
-            ."\n"
-            ."es haben sich Spiele geändert, bei denen ihr Dienste übernehmt:\n"
-            ."\n";
+            "<p>Hallo ".$mannschaft->getName().",</p>"
+            ."<p>es haben sich Spiele geändert, bei denen ihr Dienste übernehmt:</p>";
         
         $spieleUndDienste = $this->getGeanderteSpieleUndDienste($mannschaft);
 
         foreach($spieleUndDienste as $spielID => $dienstarten){
             $spielAenderung = $this->geanderteSpiele[$spielID];
-            $message .= "  ".$spielAenderung->getBegegnungsbezeichnung($this->mannschaften, $this->gegnerDAO)."\n";
-            $message .= "    ÄNDERUNG: ".$spielAenderung->getAenderung()."\n";
-            $message .= "    EURE DIENSTE: ".implode(", ", $dienstarten)."\n";
+            $message .= "<div style='padding-left:2em'>";
+            $message .= "<b>".$spielAenderung->getBegegnungsbezeichnung($this->mannschaften, $this->gegnerDAO)."</b>";
+            $message .= "<ul>";
+            $message .= "<li>ÄNDERUNG: ".$spielAenderung->getAenderung()."</li>";
+            $message .= "<li>EURE DIENSTE: ".implode(", ", $dienstarten)."</li>";
+            $message .= "</ul>";
+            $message .= "</div>";
         }
 
-        $message .= "\n"
-            ."Viele Grüße,\n"
-            ."Euer Nippesbot";
+        $message .= 
+            "<p>Viele Grüße<br>"
+            ."Euer Nippesbot</p>";
 
         return $message;
     }
