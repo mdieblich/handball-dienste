@@ -16,6 +16,7 @@ Import regelmäßig
     https://developer.wordpress.org/reference/functions/wp_mail/
 
 Design:
+* DAOs statt arrays nutzen für Mannschaften, Spiele und Dienste
 * Objekt Saison
     * enthält Mannschaftsmeldung (pro Mannschaft kann es in einer Saison mehrere Meldungen geben)
     * jede Mannschaft hat ihre Spiele
