@@ -26,6 +26,7 @@ function dienste_mannschaft_initialisieren(){
         id INT NOT NULL AUTO_INCREMENT , 
         nummer INT NOT NULL , 
         geschlecht enum('m','w') NOT NULL, 
+        email VARCHAR(1024) NULL , 
         meisterschaft VARCHAR(256) NULL , 
         liga VARCHAR(256) NULL , 
         nuliga_liga_id INT NULL , 

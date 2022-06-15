@@ -35,6 +35,9 @@ class Mannschaft {
     public function getGeschlecht(): string {
         return $this->assoc_array["geschlecht"];
     }
+    public function getEmail(): ?string {
+        return $this->assoc_array["email"];
+    }
     
     public function getMeisterschaft(): string {
         return $this->assoc_array["meisterschaft"];
