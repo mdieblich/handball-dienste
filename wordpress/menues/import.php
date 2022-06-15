@@ -49,7 +49,7 @@ function diensteImportSubmit(){
     if(!check_admin_referer('dienste-spiele-importieren')){
         return;
     }
-    require_once __DIR__."/../importer.php";
+    require_once __DIR__."/../import/importer.php";
     $resultMessage = importSpieleFromNuliga();
     echo "<div style='margin-left:200px;'>$resultMessage</div>";
 }
