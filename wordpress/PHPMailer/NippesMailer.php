@@ -22,7 +22,7 @@ function init_nippes_mailer(): PHPMailer {
     $mail->Port       = 587;
 
     //Recipients
-    $mail->setFrom('dienstebot@turnerkreisnippes.de', 'Nippesbot');
+    $mail->setFrom(get_option('bot-email'), 'Nippesbot');
     $mail->addReplyTo('no-reply@turnerkreisnippes.de');
 
     $mail->CharSet = PHPMAILER::CHARSET_UTF8;
