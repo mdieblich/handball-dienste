@@ -34,10 +34,14 @@ function countSpiele(int $mannschaftsID): int {
   return $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE mannschaft=$mannschaftsID");
 }
 
-function spielExistiert(int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): bool{
+function findSpielID(int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): bool{
   global $wpdb;
   $table_name = $wpdb->prefix . 'spiel';
-  return $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE spielnr=$spielnr AND mannschaft=$mannschaft_id AND gegner=$gegner_id AND heimspiel=$isHeimspiel") > 0;
+  return $wpdb->get_var("SELECT id FROM $table_name WHERE spielnr=$spielnr AND mannschaft=$mannschaft_id AND gegner=$gegner_id AND heimspiel=$isHeimspiel");
+}
+
+function spielExistiert(int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): bool{
+  return findSpielID($spielnr, $mannschaft_id, $gegner_id, $isHeimspiel) !== null;
 }
 
 function insertSpiel(int $spielnr, int $mannschaft_id, int $gegner_id, bool $isHeimspiel, int $halle, ?DateTime $anwurf){
