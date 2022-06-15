@@ -69,6 +69,7 @@ function displayDiensteMannschaften(){
             <tr>
                 <th> Nr. </th>
                 <th> w/m </th>
+                <th> Email </th>
                 <th> Meisterschaft </th>
                 <th> Liga </th>
                 <th> nuLiga: ID Liga </th>
@@ -85,6 +86,7 @@ function displayDiensteMannschaften(){
                         <option value="m" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_M) echo "selected"; ?>>Herren</option>
                     </select> 
                 </td>
+                <td style="text-align:center"> <input type="text" name="mannschafts-email" value="<?php echo $mannschaft->getEmail(); ?>" style="width:150px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-meisterschaft" value="<?php echo $mannschaft->getMeisterschaft(); ?>" style="width:100px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-liga" value="<?php echo $mannschaft->getLiga(); ?>"> </td>
                 <td style="text-align:center"> <input type="number" name="mannschafts-nuliga-liga-id" value="<?php echo $mannschaft->getNuligaLigaID(); ?>" style="width:100px"> </td>
@@ -118,6 +120,7 @@ function displayDiensteMannschaften(){
                         <option value="m">Herren</option>
                     </select> 
                 </td>
+                <td style="text-align:center"> <input type="text" name="mannschafts-email" style="width:150px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-meisterschaft" style="width:100px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-liga"> </td>
                 <td style="text-align:center"> <input type="number" name="mannschafts-nuliga-liga-id" style="width:100px"> </td>
@@ -204,12 +207,16 @@ function isGueltigeMannschaftUebertragen(){
     if(count($missingKeys) > 0){
         return false;
     }
-
+    
     if(!is_numeric($_POST['mannschafts-nummer'])){
         return false;
     }
     
     if($_POST['mannschafts-geschlecht'] !== 'w' && $_POST['mannschafts-geschlecht'] !== 'm'){
+        return false;
+    }
+    
+    if (!empty($_POST['mannschafts-email']) && !filter_var($_POST['mannschafts-email'], FILTER_VALIDATE_EMAIL)) {
         return false;
     }
     
@@ -232,6 +239,7 @@ function insertNeueMannschaftFrom_POST(){
     $wpdb->insert($table_name, array(
         'nummer' => $_POST['mannschafts-nummer'],
         'geschlecht' => $_POST['mannschafts-geschlecht'],
+        'email' => $_POST['mannschafts-email'],
         'meisterschaft' => $_POST['mannschafts-meisterschaft'],
         'liga' => $_POST['mannschafts-liga'],
         'nuliga_liga_id' => $_POST['mannschafts-nuliga-liga-id'],
@@ -247,6 +255,7 @@ function updateMannschaftFrom_POST(){
     $wpdb->update($table_name, array(
         'nummer' => $_POST['mannschafts-nummer'],
         'geschlecht' => $_POST['mannschafts-geschlecht'],
+        'email' => $_POST['mannschafts-email'],
         'meisterschaft' => $_POST['mannschafts-meisterschaft'],
         'liga' => $_POST['mannschafts-liga'],
         'nuliga_liga_id' => $_POST['mannschafts-nuliga-liga-id'],
