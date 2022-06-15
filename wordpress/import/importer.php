@@ -1,13 +1,14 @@
 <?php
+require_once __DIR__."/SpieleGrabber.php";
+require_once __DIR__."/DienstAenderungsPlan.php";
+require_once __DIR__."/NuLigaSpiel.php";
+
 require_once __DIR__."/../dao/mannschaft.php";
 require_once __DIR__."/../dao/gegner.php";
 require_once __DIR__."/../dao/spiel.php";
 require_once __DIR__."/../dao/dienst.php";
-require_once __DIR__."/DienstAenderungsPlan.php";
-
 
 function importSpieleFromNuliga(): string{
-    require_once __DIR__."/../grabber/SpieleGrabber.php";
     
     $mannschaften = loadMannschaften();
     $gegnerDAO = new GegnerDAO();

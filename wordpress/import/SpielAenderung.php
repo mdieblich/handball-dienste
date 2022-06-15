@@ -1,6 +1,7 @@
 <?php
+require_once __DIR__."/NuLigaSpiel.php";
+
 require_once __DIR__."/../entity/spiel.php";
-require_once __DIR__."/../grabber/NuLigaSpiel.php";
 require_once __DIR__."/../dao/gegner.php";
 
 class SpielAenderung{
