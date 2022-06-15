@@ -12,7 +12,8 @@ Import regelmäßig
 * Rest-Endpunkt anlegen:
     https://developer.wordpress.org/reference/functions/register_rest_route/
     https://wp-plugin-erstellen.de/ebook/rest-api/erweitern/eigene-endpunkte/
-
+* Eine Email bei Updates senden 
+    https://developer.wordpress.org/reference/functions/wp_mail/
 
 Design:
 * Objekt Saison
