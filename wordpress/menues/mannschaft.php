@@ -254,6 +254,7 @@ function insertNeueMannschaftFrom_POST(){
         'post_content'  => 'Hier werden die Dienste dargestellt',
         'post_status'   => 'publish',
         'post_author'   => 1,
+        'post_type'     => 'page',
         'meta_input'    => array('mannschaft'    => $mannschaftsID)
     );
 

@@ -112,6 +112,7 @@ function dienste_mannschaftsseiten_erstellen(){
                 'post_content'  => 'Hier werden die Dienste dargestellt',
                 'post_status'   => 'publish',
                 'post_author'   => 1,
+                'post_type'     => 'page',
                 'meta_input'    => array('mannschaft'    => $mannschaft->getID())
             );
         
