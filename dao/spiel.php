@@ -53,7 +53,7 @@ function insertSpiel(int $spielnr, int $mannschaft_id, int $gegner_id, bool $isH
     'anwurf' => isset($anwurf) ? $anwurf->format('Y-m-d H:i:s') : null
   ));
 }
-function updateSpiel(int $spielnr, int $mannschaft_id, int $gegner_id, bool $isHeimspiel, int $halle, ?DateTime $anwurf){
+function updateSpiel(int $id, int $halle, ?DateTime $anwurf){
   global $wpdb;
   
   $table_name = $wpdb->prefix . 'spiel';
@@ -62,10 +62,7 @@ function updateSpiel(int $spielnr, int $mannschaft_id, int $gegner_id, bool $isH
       'halle' => $halle, 
       'anwurf' => isset($anwurf) ? $anwurf->format('Y-m-d H:i:s') : null
     ), array(
-      'spielnr' => $spielnr, 
-      'mannschaft' => $mannschaft_id, 
-      'gegner' => $gegner_id, 
-      'heimspiel' => $isHeimspiel
+      'id' => $id
     ));
 }
 ?>
