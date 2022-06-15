@@ -3,7 +3,7 @@
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 global $dienste_db_version;
-$dienste_db_version = '1.0';
+$dienste_db_version = '1.1';
 
 function dienste_datenbank_initialisieren() {
 	global $dienste_db_version;
