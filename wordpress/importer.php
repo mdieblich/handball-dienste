@@ -12,17 +12,47 @@ class SpielAenderung{
         $this->alt = $alt;
         $this->neu = $neu;
     }
+
+    public function getBegegnungsbezeichnung(array $alleMannschaften, GegnerDAO $gegnerDAO): string{
+        $message = "";
+        $mannschaft = $alleMannschaften[$this->alt->getMannschaft()]->getName();
+        $gegner = $gegnerDAO->fetch($this->alt->getGegner())->getName();
+        
+        if($this->alt->isHeimspiel()){
+            return "HEIM $mannschaft vs. $gegner";
+        } else{
+            return "AUSWÄRTS $gegner vs. $mannschaft";
+        }   
+    }
+
+    public function getAenderung(): string{
+        $message = "";
+        if($this->alt->getAnwurf() != $this->neu->getAnwurf()){
+
+            $message .= "Anwurf "
+                ."von [".$this->alt->getAnwurf()->format("d.m.Y H:i")."]"
+                ." zu [".$this->neu->getAnwurf()->format("d.m.Y H:i")."]";
+        }
+        if($this->alt->getHalle() != $this->neu->getHalle()){
+            $message .= " Halle "
+                ."von [".$this->alt->getHalle()."]"
+                ." zu [".$this->neu->getHalle()."]";
+        }
+        return $message;
+    }
 }
 
 class DienstAenderungsPlan{
     private DienstDAO $dao;
     private array $mannschaften;
+    private GegnerDAO $gegnerDAO;
     private $geanderteDienste = array();
     private $geanderteSpiele = array();
 
-    public function __construct(array $mannschaften){
+    public function __construct(array $mannschaften, GegnerDAO $gegnerDAO){
         $this->dao = new DienstDAO();
         $this->mannschaften = $mannschaften;
+        $this->gegnerDAO = $gegnerDAO;
         
         foreach($mannschaften as $mannschaft){
             $this->geanderteDienste[$mannschaft->getID()] = array();
@@ -53,12 +83,39 @@ class DienstAenderungsPlan{
     }
 
     private function createMessageForMannschaft(Mannschaft $mannschaft): string{
-        $simulatedMessage = 
-            "Hallo ".$mannschaft->getName()."\n"
+        $message = 
+            "Hallo ".$mannschaft->getName().",\n"
             ."\n"
-            ."Es haben sich Spiele geändert, bei denen ihr Dienste übernehmt:\n";
+            ."es haben sich Spiele geändert, bei denen ihr Dienste übernehmt:\n"
+            ."\n";
         
-        return $simulatedMessage;
+        $spieleUndDienste = $this->getGeanderteSpieleUndDienste($mannschaft);
+
+        foreach($spieleUndDienste as $spielID => $dienstarten){
+            $spielAenderung = $this->geanderteSpiele[$spielID];
+            $message .= "  ".$spielAenderung->getBegegnungsbezeichnung($this->mannschaften, $this->gegnerDAO)."\n";
+            $message .= "    ÄNDERUNG: ".$spielAenderung->getAenderung()."\n";
+            $message .= "    EURE DIENSTE: ".implode(", ", $dienstarten)."\n";
+        }
+
+        $message .= "\n"
+            ."Viele Grüße,\n"
+            ."Euer Nippesbot";
+
+        return $message;
+    }
+
+    private function getGeanderteSpieleUndDienste(Mannschaft $mannschaft): array{
+        
+        $spieleUndDienste = array();
+        foreach($this->geanderteDienste[$mannschaft->getID()] as $dienst){
+            $spielID = $dienst->getSpiel();
+            if(empty($spieleUndDienste[$spielID])){
+                $spieleUndDienste[$spielID] = array();
+            }
+            array_push($spieleUndDienste[$spielID], $dienst->getDienstart());
+        }
+        return $spieleUndDienste;
     }
 }
 
@@ -69,7 +126,7 @@ function importSpieleFromNuliga(): string{
     $gegnerDAO = new GegnerDAO();
     $gegnerDAO->loadGegner();
 
-    $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaften);
+    $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaften, $gegnerDAO);
 
     $resultMessage = "";
     foreach($mannschaften as $mannschaft){
