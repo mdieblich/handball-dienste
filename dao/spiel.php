@@ -34,12 +34,6 @@ function countSpiele(int $mannschaftsID): int {
   return $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE mannschaft=$mannschaftsID");
 }
 
-function findSpielID(int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): ?int{
-  global $wpdb;
-  $table_name = $wpdb->prefix . 'spiel';
-  return $wpdb->get_var("SELECT id FROM $table_name WHERE spielnr=$spielnr AND mannschaft=$mannschaft_id AND gegner=$gegner_id AND heimspiel=$isHeimspiel");
-}
-
 function findSpiel(int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): ?Spiel{
   global $wpdb;
   $table_name = $wpdb->prefix . 'spiel';
