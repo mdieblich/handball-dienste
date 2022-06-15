@@ -73,6 +73,7 @@ function importSpieleFromNuliga(): string{
 
     $resultMessage = "";
     foreach($mannschaften as $mannschaft){
+        $spieleGeprueft     = 0;
         $spieleImportiert   = 0;
         $spieleAktualisiert = 0;
 
@@ -103,17 +104,21 @@ function importSpieleFromNuliga(): string{
                 $mannschaft->getLiga()
             )->getID();
             $spiel = findSpiel ($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
+            $spieleGeprueft ++;
             if(isset($spiel)){
-                $dienstAenderungsPlan->registerSpielAenderung($spiel, $nuLigaSpiel);
-                updateSpiel($spiel->getID(), $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
-                // Hier mit wp_mail 
-                $spieleAktualisiert ++;
+                $hallenAenderung = ($spiel->getHalle() != $nuLigaSpiel->getHalle());
+                $AnwurfAenderung = ($spiel->getAnwurf() != $nuLigaSpiel->getAnwurf());
+                if($hallenAenderung || $AnwurfAenderung){
+                    $dienstAenderungsPlan->registerSpielAenderung($spiel, $nuLigaSpiel);
+                    updateSpiel($spiel->getID(), $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
+                    $spieleAktualisiert ++;
+                }
             } else {
                 insertSpiel($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
                 $spieleImportiert ++;
             }
         }
-        $resultMessage .= "<b>".$mannschaft->getName()."</b>: $spieleImportiert Spiele importiert, $spieleAktualisiert aktualisiert<br>\n";
+        $resultMessage .= "<b>".$mannschaft->getName()."</b>: $spieleGeprueft Spiele geprüft, davon $spieleImportiert neu importiert und $spieleAktualisiert aktualisiert<br>\n";
     }
 
     $resultMessage .= "<br><b>Folgende Emails würden versendet werden:</b><br>".$dienstAenderungsPlan->simulateEmails();
