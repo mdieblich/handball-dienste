@@ -6,12 +6,12 @@ function loadSpiele(string $whereClause="1=1", string $orderBy="anwurf, halle"):
   
   $table_name = $wpdb->prefix . 'spiel';
   $sql = "SELECT * FROM $table_name WHERE $whereClause ORDER BY $orderBy";
-  $result = $wpdb->get_results($sql);
+  $result = $wpdb->get_results($sql, ARRAY_A);
   
   $spiele = array();
   if (count($result) > 0) {
     foreach($result as $spiel) {
-      $spielObj = new Spiel((array)$spiel);
+      $spielObj = new Spiel($spiel);
       $spiele[$spielObj->getID()] = $spielObj;
     }
   }
@@ -34,11 +34,18 @@ function countSpiele(int $mannschaftsID): int {
   return $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE mannschaft=$mannschaftsID");
 }
 
-function findSpielID(int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): bool{
+function findSpielID(int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): int{
   global $wpdb;
   $table_name = $wpdb->prefix . 'spiel';
   return $wpdb->get_var("SELECT id FROM $table_name WHERE spielnr=$spielnr AND mannschaft=$mannschaft_id AND gegner=$gegner_id AND heimspiel=$isHeimspiel");
 }
+
+// function findSpiel(int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): ?Spiel{
+//   global $wpdb;
+//   $table_name = $wpdb->prefix . 'spiel';
+//   $result = $wpdb->get_row("SELECT * FROM $table_name WHERE spielnr=$spielnr AND mannschaft=$mannschaft_id AND gegner=$gegner_id AND heimspiel=$isHeimspiel");
+//   if()
+// }
 
 function insertSpiel(int $spielnr, int $mannschaft_id, int $gegner_id, bool $isHeimspiel, int $halle, ?DateTime $anwurf){
   global $wpdb;

@@ -9,11 +9,11 @@ class GegnerDAO{
         
         $table_name = $wpdb->prefix . 'gegner';
         $sql = "SELECT * FROM $table_name WHERE $where ORDER BY $orderBy";
-        $result = $wpdb->get_results($sql);
+        $result = $wpdb->get_results($sql, ARRAY_A);
 
         if (count($result) > 0) {
             foreach($result as $gegner) {
-                $gegnerObj = new Gegner((array)$gegner);
+                $gegnerObj = new Gegner($gegner);
                 $this->alleGegner[$gegnerObj->getID()] = $gegnerObj;
             }
         }

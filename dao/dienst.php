@@ -8,12 +8,12 @@ class DienstDAO{
   
         $table_name = $wpdb->prefix . 'dienst';
         $sql = "SELECT * FROM $table_name WHERE $whereClause ORDER BY $orderBy";
-        $result = $wpdb->get_results($sql);
+        $result = $wpdb->get_results($sql, ARRAY_A);
       
         $dienste = array();
         if (count($result) > 0) {
             foreach($result as $dienst) {
-                $dienstObj = new Dienst((array)$dienst);
+                $dienstObj = new Dienst($dienst);
                 $dienste[$dienstObj->getID()] = $dienstObj;
             }
         }

@@ -6,12 +6,12 @@ function loadMannschaften(): array{
   
   $table_name = $wpdb->prefix . 'mannschaft';
   $sql = "SELECT * FROM $table_name ORDER BY nummer, geschlecht";
-  $result = $wpdb->get_results($sql);
+  $result = $wpdb->get_results($sql, ARRAY_A);
 
   $mannschaften = array();
   if (count($result) > 0) {
     foreach($result as $mannschaft) {
-      $mannschaftObj = new Mannschaft((array)$mannschaft);
+      $mannschaftObj = new Mannschaft($mannschaft);
       $mannschaften[$mannschaftObj->getID()] = $mannschaftObj;
     }
   }
