@@ -16,7 +16,7 @@ class SpieleGrabber {
         $this->xpath = new DOMXPath($this->dom);
     }
 
-    public function getSpiele() : array {
+    public function getNuLigaSpiele() : array {
         $spiele  = array();
 
         $tabelle = $this->findSpielTabelle();

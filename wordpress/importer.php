@@ -28,26 +28,26 @@ function importSpieleFromNuliga(): string{
             $mannschaft->getNuligaLigaID(), 
             $mannschaft->getNuligaTeamID()
         );
-        foreach($spielGrabber->getSpiele() as $spiel){
-            if($spiel->getHeimmannschaft() === $teamName){
+        foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
+            if($nuLigaSpiel->getHeimmannschaft() === $teamName){
                 $isHeimspiel = 1;
-                $gegnerName = $spiel->getGastmannschaft();
+                $gegnerName = $nuLigaSpiel->getGastmannschaft();
             } else {
                 $isHeimspiel = 0;
-                $gegnerName = $spiel->getHeimmannschaft();
+                $gegnerName = $nuLigaSpiel->getHeimmannschaft();
             }
             $gegner_id = $gegnerDAO->findOrInsertGegner( 
                 $gegnerName, 
                 $mannschaft->getGeschlecht(), 
                 $mannschaft->getLiga()
             )->getID();
-            $spielID = findSpielID ($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
+            $spielID = findSpielID ($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
             if(isset($spielID)){
-                updateSpiel($spielID, $spiel->getHalle(), $spiel->getAnwurf());
+                updateSpiel($spielID, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
                 // Hier mit wp_mail 
                 $spieleAktualisiert ++;
             } else {
-                insertSpiel($spiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $spiel->getHalle(), $spiel->getAnwurf());
+                insertSpiel($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
                 $spieleImportiert ++;
             }
         }
