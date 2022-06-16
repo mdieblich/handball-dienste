@@ -50,8 +50,7 @@ function dienste_tabellen_ersetzen(array $matches){
         $spielzeile = 
             "<tr>"
             ."<td>$anwurf</td>"
-            // TODO diesen Link etwas sauberer!
-            ."<td><a href=\"https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/courtInfo?federation=HVMittelrhein&roundTyp=0&championship=KR+22%2F23&location=$halle\">$halle</a></td>"
+            ."<td>$halle</td>"
             ."<td>$heim</td>"
             ."<td>$gast</td>";
         foreach(Dienstart::values as $dienstart){
