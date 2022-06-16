@@ -27,6 +27,13 @@ class Mannschaft {
         
         return "Andersgeschlechtlich ".$this->getNummer();
     }
+
+    public function getKurzname(): string {
+        if($this->getGeschlecht() === GESCHLECHT_W){
+            return "D".$this->getNummer();
+        }
+        return "H".$this->getNummer();
+    }
     
     public function getNummer(): int {
         return $this->assoc_array["nummer"];

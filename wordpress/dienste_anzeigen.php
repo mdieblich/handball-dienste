@@ -23,12 +23,13 @@ function dienste_tabellen_ersetzen(array $matches){
 
     $kopfzeile = 
         "<tr style=\"background-color:#ddddff;\">"
-        ."<th style=\"width:200px;\">Datum</th>"
+        ."<th style=\"min-width:150px\">Datum</th>"
         ."<th>Halle</th>"
         ."<th>Heim</th>"
         ."<th>Gast</th>";
     foreach(Dienstart::values as $dienstart){
-        $kopfzeile .= "<td>$dienstart</td>";
+        $kurzfrom = substr($dienstart, 0, 1);
+        $kopfzeile .= "<th>$kurzfrom</td>";
     }
     $kopfzeile .= "</tr>";
 
@@ -57,7 +58,7 @@ function dienste_tabellen_ersetzen(array $matches){
             $spielzeile .= "<td>";
             $dienst = $spiel->getDienst($dienstart);
             if(isset($dienst)){
-                $spielzeile .= $mannschaften[$dienst->getMannschaft()]->getName();
+                $spielzeile .= $mannschaften[$dienst->getMannschaft()]->getKurzname();
             }
             $spielzeile .= "</td>";
         }
