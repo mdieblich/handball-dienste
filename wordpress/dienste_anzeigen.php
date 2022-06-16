@@ -10,13 +10,26 @@ function dienst_tabelle_einblenden($content){
 
 function dienste_tabellen_ersetzen(array $matches){
     $kompletterTreffer = $matches[0];
-    $attribute = $matches[1];
+    $attributString = $matches[1];
     $innerHTML = $matches[2];
 
-    require_once __DIR__."/entity/dienst.php";
     require_once __DIR__."/dao/mannschaft.php";
-    require_once __DIR__."/dao/gegner.php";
     $mannschaften = loadMannschaften();
+
+    preg_match_all("/(\w*)=\"([\w\d\s]*)\"/", $attributString, $attributeArray);
+    $attributeKeys = $attributeArray[1];
+    $attributeValues = $attributeArray[2];
+    $vonMannschaft = null;
+    $fuerMannschaft = null;
+    for($i=0; $i<count($attributeKeys); $i++){
+        switch($attributeKeys[$i]){
+            case "von" : $vonMannschaft  = getMannschaftFromName($mannschaften, $attributeValues[$i]); break;
+            case "fuer": $fuerMannschaft = getMannschaftFromName($mannschaften, $attributeValues[$i]); break;
+        }
+    }
+
+    require_once __DIR__."/entity/dienst.php";
+    require_once __DIR__."/dao/gegner.php";
     $gegnerDAO = new GegnerDAO();
     $gegnerDAO->loadGegner();
     $alleGegner = $gegnerDAO->getAlleGegner();
@@ -34,7 +47,12 @@ function dienste_tabellen_ersetzen(array $matches){
     $kopfzeile .= "</tr>";
 
     require_once __DIR__."/dao/spiel.php";
-    $spiele = loadSpieleDeep("1=1", "-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"); 
+    $filter = array();
+    if(isset($fuerMannschaft)){
+        $filter[] = "mannschaft=".$fuerMannschaft->getID();
+    }
+    $filter[] = "1=1"; // dummy-Filter für leichters implode
+    $spiele = loadSpieleDeep(implode(" AND ", $filter), "-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"); 
 
     $tabellenkoerper = "";
     foreach($spiele as $spiel){
@@ -72,4 +90,5 @@ function dienste_tabellen_ersetzen(array $matches){
     $tabelle = "<table>$kopfzeile $tabellenkoerper</table>";
     return $tabelle;
 }
+
 ?>
