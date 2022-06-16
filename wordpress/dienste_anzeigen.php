@@ -12,6 +12,60 @@ function dienste_tabellen_ersetzen(array $matches){
     $kompletterTreffer = $matches[0];
     $attribute = $matches[1];
     $innerHTML = $matches[2];
-    return "<pre>".var_export($matches, true)."</pre>";
+
+    require_once __DIR__."/entity/dienst.php";
+    require_once __DIR__."/dao/mannschaft.php";
+    require_once __DIR__."/dao/gegner.php";
+    $mannschaften = loadMannschaften();
+    $gegnerDAO = new GegnerDAO();
+    $gegnerDAO->loadGegner();
+    $alleGegner = $gegnerDAO->getAlleGegner();
+
+    $kopfzeile = 
+        "<tr style=\"background-color:#ddddff;\">"
+        ."<th style=\"width:200px;\">Datum</th>"
+        ."<th>Halle</th>"
+        ."<th>Heim</th>"
+        ."<th>Gast</th>";
+    foreach(Dienstart::values as $dienstart){
+        $kopfzeile .= "<td>$dienstart</td>";
+    }
+    $kopfzeile .= "</tr>";
+
+    require_once __DIR__."/dao/spiel.php";
+    $spiele = loadSpieleDeep("1=1", "-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"); 
+
+    $tabellenkoerper = "";
+    foreach($spiele as $spiel){
+        $anwurf = $spiel->getAnwurf()->format("Y-m-d H:i");
+        $halle = $spiel->getHalle();
+        $mannschaft = $mannschaften[$spiel->getMannschaft()]->getName();
+        $gegner = $alleGegner[$spiel->getGegner()]->getName();
+        $heim = $mannschaft;
+        $gast = $gegner;
+        if(!$spiel->isHeimspiel()){
+            $heim = $gegner;
+            $gast = $mannschaft;
+        }
+        $spielzeile = 
+            "<tr>"
+            ."<td>$anwurf</td>"
+            // TODO diesen Link etwas sauberer!
+            ."<td><a href=\"https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/courtInfo?federation=HVMittelrhein&roundTyp=0&championship=KR+22%2F23&location=$halle\">$halle</a></td>"
+            ."<td>$heim</td>"
+            ."<td>$gast</td>";
+        foreach(Dienstart::values as $dienstart){
+            $spielzeile .= "<td>";
+            $dienst = $spiel->getDienst($dienstart);
+            if(isset($dienst)){
+                $spielzeile .= $mannschaften[$dienst->getMannschaft()]->getName();
+            }
+            $spielzeile .= "</td>";
+        }
+        $spielzeile .= "</tr>";
+        $tabellenkoerper .= $spielzeile;
+    }
+    $tabelle = "<table>$kopfzeile $tabellenkoerper</table>";
+    return $tabelle;
 }
 ?>
