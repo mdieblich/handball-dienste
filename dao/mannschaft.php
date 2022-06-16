@@ -5,7 +5,7 @@ function loadMannschaften(): array{
     global $wpdb;
     
     $table_name = $wpdb->prefix . 'mannschaft';
-    $sql = "SELECT * FROM $table_name ORDER BY nummer, geschlecht";
+    $sql = "SELECT * FROM $table_name ORDER BY jugendklasse, nummer, geschlecht";
     $result = $wpdb->get_results($sql, ARRAY_A);
 
     $mannschaften = array();
