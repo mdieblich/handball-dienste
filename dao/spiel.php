@@ -22,7 +22,9 @@ function loadSpieleDeep(string $whereClause="1=1", string $orderBy="anwurf, hall
     $spiele = loadSpiele($whereClause, $orderBy);
     require_once WP_PLUGIN_DIR."/dienstedienst/dao/dienst.php";
     $dienstDAO = new DienstDAO();
-    foreach( $dienstDAO->loadAllDienste() as $dienst){
+    $spielIDs = Spiel::getIDs($spiele);
+    $filter = "spiel in (".implode(", ", $spielIDs).")";
+    foreach( $dienstDAO->loadAllDienste($filter) as $dienst){
         $spiele[$dienst->getSpiel()]->addDienst($dienst);
     } 
     return $spiele;

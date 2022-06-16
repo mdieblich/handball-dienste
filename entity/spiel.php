@@ -161,6 +161,14 @@ class Spiel {
         }
         return $anwurfA->format("Y-m-d") == $anwurfB->format("Y-m-d");
     }
+
+    public static function getIDs(array $spiele): array {
+        $ids = array();
+        foreach($spiele as $spiel){
+            $ids[] = $spiel->getID();
+        }
+        return $ids;
+    }
     
 }
 ?>
