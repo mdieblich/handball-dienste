@@ -91,7 +91,7 @@ function dienste_tabellen_ersetzen(array $matches){
         $spielzeile .= "</tr>";
         $tabellenkoerper .= $spielzeile;
     }
-    $tabelle = "<table cellpadding=\"3\">$kopfzeile $tabellenkoerper</table>";
+    $tabelle = "<table cellpadding=\"3\" cellspacing=\"2\">$kopfzeile $tabellenkoerper</table>";
     return $tabelle;
 }
 
