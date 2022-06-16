@@ -14,6 +14,13 @@ function displaySpieleImport(){
 <div class="wrap">
 
     <h1>Spiele von nuLiga importieren</h1>
+    Einfach auf <i>"Importieren"</i> klicken:
+    <ol>
+        <li>Vorhandene Spiele werden aktualisiert</li>
+        <li>bestehende Dienste bleiben erhalten</li>
+        <li>Sollte sich ein Spiel ändern (Anwurf oder Halle), bei dem eine Mannschaft schon Dienste zugewiesen bekommen hat, dann bekommt diese eine Email.</li>
+        <li>Auch bei mehreren sich ändernden Spielen bekommt eine Mannschaft pro Import immer nur genau <u>eine</u> Email. <i>(Ich hasse zu viele Emails!)</i>
+    </ol>
     <table>
         <tr>
             <th> Mannschaft </th>
