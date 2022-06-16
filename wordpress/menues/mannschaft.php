@@ -70,6 +70,9 @@ function displayDiensteMannschaften(){
                 Mit <b>Nummer</b> ist die fortlaufende Nummer gemeint, unter der eine Mannschaft gemeldet ist, also z.B. 1. Herren, 2. Herren, 3. Herren usw..
             </li>
             <li>
+                <b>Jugend</b> sollte mit "A", "B"  usw. befüllt werden, wenn es sich um eine Jugend-Mannschaft handelt. Auch "Minis" ist möglich. Für Senioren-Mannschaften dies leer lassen.
+            </li>
+            <li>
                 An die <b>E-Mail-Adresse</b><i>(optional)</i> werden Updates geschickt, wenn sich nach einem Import an den Spielen etwas ändert, bei denen diese Mannschaft Dienste hat. 
             </li>
             <li>
@@ -89,6 +92,7 @@ function displayDiensteMannschaften(){
             <tr>
                 <th> Nr. </th>
                 <th> w/m </th>
+                <th> Jugend </th>
                 <th> Email </th>
                 <th> Meisterschaft </th>
                 <th> Liga </th>
@@ -106,6 +110,7 @@ function displayDiensteMannschaften(){
                         <option value="m" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_M) echo "selected"; ?>>Herren</option>
                     </select> 
                 </td>
+                <td style="text-align:center"> <input type="text" name="mannschafts-jugendklasse" value="<?php echo $mannschaft->getJugendklasse(); ?>" style="width:50px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-email" value="<?php echo $mannschaft->getEmail(); ?>" style="width:150px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-meisterschaft" value="<?php echo $mannschaft->getMeisterschaft(); ?>" style="width:100px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-liga" value="<?php echo $mannschaft->getLiga(); ?>"> </td>
@@ -140,6 +145,7 @@ function displayDiensteMannschaften(){
                         <option value="m">Herren</option>
                     </select> 
                 </td>
+                <td style="text-align:center"> <input type="text" name="mannschafts-jugendklasse" style="width:50px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-email" style="width:150px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-meisterschaft" style="width:100px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-liga"> </td>
@@ -259,6 +265,7 @@ function insertNeueMannschaftFrom_POST(){
     $wpdb->insert($table_name, array(
         'nummer' => $_POST['mannschafts-nummer'],
         'geschlecht' => $_POST['mannschafts-geschlecht'],
+        'jugendklasse' => $_POST['mannschafts-jugendklasse'],
         'email' => $_POST['mannschafts-email'],
         'meisterschaft' => $_POST['mannschafts-meisterschaft'],
         'liga' => $_POST['mannschafts-liga'],
@@ -277,6 +284,7 @@ function updateMannschaftFrom_POST(){
     $wpdb->update($table_name, array(
         'nummer' => $_POST['mannschafts-nummer'],
         'geschlecht' => $_POST['mannschafts-geschlecht'],
+        'jugendklasse' => $_POST['mannschafts-jugendklasse'],
         'email' => $_POST['mannschafts-email'],
         'meisterschaft' => $_POST['mannschafts-meisterschaft'],
         'liga' => $_POST['mannschafts-liga'],
