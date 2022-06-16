@@ -19,6 +19,14 @@ function dienste_einstellungen_initialisieren() {
         
     );
     add_settings_field( 
+        'bot-smtp',                      // ID used to identify the field throughout the theme
+        'Bot-SMTP-Server',                           // The label to the left of the option interface element
+        'dienste_einstellungen_botsmtp_anzeigen',   // The name of the function responsible for rendering the option interface
+        'general',                          // The page on which this option will be displayed
+        'dienste_einstellungen'         // The name of the section to which this field belongs
+        
+    );
+    add_settings_field( 
         'bot-email',                      // ID used to identify the field throughout the theme
         'Bot-Email',                           // The label to the left of the option interface element
         'dienste_einstellungen_botemail_anzeigen',   // The name of the function responsible for rendering the option interface
@@ -43,6 +51,11 @@ function dienste_einstellungen_initialisieren() {
 
     register_setting(
         'general',
+        'bot-smtp'
+    );
+
+    register_setting(
+        'general',
         'bot-email'
     );
     
@@ -59,6 +72,9 @@ function dienste_einstellungen_beschreibung() {
  
 function dienste_einstellungen_vereinsname_anzeigen($args) {
     echo '<input type="text" id="vereinsname" name="vereinsname" value="'.get_option('vereinsname').'" />';
+}
+function dienste_einstellungen_botsmtp_anzeigen($args) {
+    echo '<input type="text" id="bot-smtp" name="bot-smtp" value="'.get_option('bot-smtp').'" />';
 }
 function dienste_einstellungen_botemail_anzeigen($args) {
     echo '<input type="text" id="bot-email" name="bot-email" value="'.get_option('bot-email').'" />';

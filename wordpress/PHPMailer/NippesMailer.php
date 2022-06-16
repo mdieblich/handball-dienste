@@ -14,7 +14,7 @@ function init_nippes_mailer(): PHPMailer {
 
     //Server settings
     $mail->isSMTP();
-    $mail->Host       = 'smtp.ionos.de';
+    $mail->Host       = get_option('bot-smtp');
     $mail->SMTPAuth   = true;
     $mail->Username   = get_option('bot-email');
     $mail->Password   = get_option('bot-passwort');
