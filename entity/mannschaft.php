@@ -18,6 +18,9 @@ class Mannschaft {
     }
 
     public function getName(): string {
+        if(!empty($this->getJugendklasse())){
+            return $this->getGeschlecht().$this->getJugendklasse().$this->getNummer();
+        }
         if($this->getGeschlecht() === GESCHLECHT_M){
             return "Herren ".$this->getNummer();
         }
@@ -29,6 +32,9 @@ class Mannschaft {
     }
 
     public function getKurzname(): string {
+        if(!empty($this->getJugendklasse())){
+            return $this->getGeschlecht().$this->getJugendklasse().$this->getNummer();
+        }
         if($this->getGeschlecht() === GESCHLECHT_W){
             return "D".$this->getNummer();
         }
@@ -41,6 +47,9 @@ class Mannschaft {
     
     public function getGeschlecht(): string {
         return $this->assoc_array["geschlecht"];
+    }
+    public function getJugendklasse(): ?string {
+        return $this->assoc_array["jugendklasse"];
     }
     public function getEmail(): ?string {
         return $this->assoc_array["email"];
