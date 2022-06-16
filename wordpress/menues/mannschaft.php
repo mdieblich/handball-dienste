@@ -65,6 +65,26 @@ function displayDiensteMannschaften(){
     ?>
     <div class="wrap">
         <h1>Mannschaften einrichten</h1>
+        <ol>
+            <li>
+                Mit <b>Nummer</b> ist die fortlaufende Nummer gemeint, unter der eine Mannschaft gemeldet ist, also z.B. 1. Herren, 2. Herren, 3. Herren usw..
+            </li>
+            <li>
+                An die <b>E-Mail-Adresse</b><i>(optional)</i> werden Updates geschickt, wenn sich nach einem Import an den Spielen etwas ändert, bei denen diese Mannschaft Dienste hat. 
+            </li>
+            <li>
+                <b>Meisterschaft</b>, <b>nuLiga: ID Liga</b>, <b>nuLiga: ID Team</b> sind Werte, die aus nuliga stammen. Über diese Werte sucht der Importer die Tabelle aller Spiele. <br>
+                Am besten findet man diese Werte, wenn man in einer Liga auf die jeweilige Mannschaft klickt und sich dann die URL anschaut. 
+                Hier werden die Werte <i>championship</i>, <i>group</i> und <i>teamtable</i> benötigt. <br>
+                <br>
+                Bsp: <code>https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?teamtable=<span style="color:#37bbbf">1744276</span>&pageState=vorrunde&championship=<span style="color:red">MR+21%2F22</span>&group=<span style="color:blue">274529</span></code><br>
+                wird zu <code>Meisterschaft = <span style="color:red">MR 21/22</span></code>, <code>nuLiga: ID Liga = <span style="color:blue">274529</span></code> und <code>nuLiga: ID Team = <span style="color:#37bbbf">1744276</span></code>
+            </li>
+            <li>
+                Der Name der <b>Liga</b> wird dazu genutzt, um dies bei importierten Gegnern zu hinterlegen.<br>
+                Für zukünftige Verwendungen sollte er so sein, wie er in nuLiga steht.
+            </li>
+        </ol>
         <table cellspacing="1">
             <tr>
                 <th> Nr. </th>
