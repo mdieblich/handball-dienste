@@ -38,7 +38,11 @@ function dienste_tabellen_ersetzen(array $matches){
 
     $tabellenkoerper = "";
     foreach($spiele as $spiel){
-        $anwurf = $spiel->getAnwurf()->format("d.m.Y H:i");
+        $anwurfDatum = $spiel->getAnwurf()->format("d.m.Y");
+        $anwurfZeit = $spiel->getAnwurf()->format("H:i");
+        if($anwurfZeit === "00:00"){
+            $anwurfZeit = "<span style='color:red'>$anwurfZeit</span>";
+        }
         $halle = $spiel->getHalle();
         $mannschaft = $mannschaften[$spiel->getMannschaft()]->getName();
         $gegner = $alleGegner[$spiel->getGegner()]->getName();
@@ -50,7 +54,7 @@ function dienste_tabellen_ersetzen(array $matches){
         }
         $spielzeile = 
             "<tr>"
-            ."<td>$anwurf</td>"
+            ."<td>$anwurfDatum $anwurfZeit</td>"
             ."<td>$halle</td>"
             ."<td>$heim</td>"
             ."<td>$gast</td>";
