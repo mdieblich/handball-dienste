@@ -247,19 +247,6 @@ function insertNeueMannschaftFrom_POST(){
         ));
 
     $mannschaftsID = $wpdb->insert_id;
-
-    $mannschaftsName = ($_POST['mannschafts-geschlecht'] == "w"?"Damen":"Herren")." ".$_POST['mannschafts-nummer'];
-    $my_post = array(
-        'post_title'    => wp_strip_all_tags( "Dienste von ".$mannschaftsName ),
-        'post_content'  => 'Hier werden die Dienste dargestellt',
-        'post_status'   => 'publish',
-        'post_author'   => 1,
-        'post_type'     => 'page',
-        'meta_input'    => array('mannschaft'    => $mannschaftsID)
-    );
-
-    // Insert the post into the database
-    wp_insert_post( $my_post );
 }
 
 function updateMannschaftFrom_POST(){
@@ -288,10 +275,5 @@ function deleteMannschaftFrom_POST(){
     $wpdb->delete($table_name, array(
         'id' => $_POST['mannschafts-id']
     ));
-
-    $dienstSeiten = get_pages(array('meta_key' => 'mannschaft', 'meta_value' => $mannschaft->getID()));
-    foreach($dienstSeiten as $seite){
-        wp_delete_post($seite->ID, true);
-    }
 }
 ?>

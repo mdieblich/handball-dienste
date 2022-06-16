@@ -3,7 +3,7 @@
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 global $dienste_db_version;
-$dienste_db_version = '1.1';
+$dienste_db_version = '1.2';
 
 function dienste_datenbank_initialisieren() {
     global $dienste_db_version;
@@ -12,8 +12,6 @@ function dienste_datenbank_initialisieren() {
     dienste_gegner_initialisieren();
     dienste_spiele_initialisieren();
     dienste_zuweisungen_initialisieren();
-
-    dienste_mannschaftsseiten_erstellen();
 
     add_option( 'dienste_db_version', $dienste_db_version );
 }
@@ -98,27 +96,5 @@ function dienste_zuweisungen_initialisieren(){
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );
-}
-
-function dienste_mannschaftsseiten_erstellen(){
-    require_once __DIR__."/dao/mannschaft.php";
-    $mannschaften = loadMannschaften();
-
-    foreach($mannschaften as $mannschaft){
-        $dienstSeiten = get_pages(array('meta_key' => 'mannschaft', 'meta_value' => $mannschaft->getID()));
-        if(count($dienstSeiten) == 0){
-            $my_post = array(
-                'post_title'    => wp_strip_all_tags( "Dienste von ".$mannschaft->getName() ),
-                'post_content'  => 'Hier werden die Dienste dargestellt',
-                'post_status'   => 'publish',
-                'post_author'   => 1,
-                'post_type'     => 'page',
-                'meta_input'    => array('mannschaft'    => $mannschaft->getID())
-            );
-        
-            // Insert the post into the database
-            wp_insert_post( $my_post );
-        }
-    }
 }
 ?>
