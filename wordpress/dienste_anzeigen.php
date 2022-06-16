@@ -35,7 +35,7 @@ function dienste_tabellen_ersetzen(array $matches){
     $alleGegner = $gegnerDAO->getAlleGegner();
 
     $kopfzeile = 
-        "<tr style=\"background-color:#ddddff;\">"
+        "<tr style=\"background-color:#00407d; color:white\">"
         ."<th style=\"min-width:150px\">Datum</th>"
         ."<th>Halle</th>"
         ."<th>Heim</th>"
@@ -91,7 +91,7 @@ function dienste_tabellen_ersetzen(array $matches){
         $spielzeile .= "</tr>";
         $tabellenkoerper .= $spielzeile;
     }
-    $tabelle = "<table>$kopfzeile $tabellenkoerper</table>";
+    $tabelle = "<table cellpadding=\"3\">$kopfzeile $tabellenkoerper</table>";
     return $tabelle;
 }
 
