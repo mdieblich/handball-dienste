@@ -63,6 +63,14 @@ function displayDiensteMannschaften(){
     $mannschaften = loadMannschaften();
 
     ?>
+    <script>
+function updateGeschlecht(jugendklasse, id){
+    bezeichnungW = jugendklasse ? "Mädchen" : "Damen";
+    bezeichnungM = jugendklasse ? "Jungen"  : "Herren";
+    document.getElementById("option-w-"+id).innerHTML=bezeichnungW;
+    document.getElementById("option-m-"+id).innerHTML=bezeichnungM;
+}
+    </script>
     <div class="wrap">
         <h1>Mannschaften einrichten</h1>
         <ol>
@@ -100,17 +108,20 @@ function displayDiensteMannschaften(){
                 <th> nuLiga: ID Team </th>
                 <th colspan="2"> <!-- Spalte für Aktionen //--> </th>
             </tr>
-        <?php foreach($mannschaften as $mannschaft){ ?>
+        <?php foreach($mannschaften as $mannschaft){ 
+            $bezeichnungW = ($mannschaft->getJugendklasse() !== null) ? "Mädchen" : "Damen";
+            $bezeichnungM = ($mannschaft->getJugendklasse() !== null) ? "Jungen"  : "Herren";
+            ?>
             <tr><form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
                 <input type="hidden" name="mannschafts-id" value="<?php echo $mannschaft->getID(); ?>">
                 <td style="text-align:center"> <input type="number" name="mannschafts-nummer" value="<?php echo $mannschaft->getNummer(); ?>" min="1" style="width:50px"> </td>
                 <td style="text-align:center"> 
-                    <select name="mannschafts-geschlecht"> 
-                        <option value="w" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_W) echo "selected"; ?>>Damen</option>
-                        <option value="m" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_M) echo "selected"; ?>>Herren</option>
+                    <select name="mannschafts-geschlecht" style="width:100px"> 
+                        <option value="w" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_W) echo "selected"; ?> id="option-w-<?php echo $mannschaft->getID(); ?>"><?php echo $bezeichnungW; ?></option>
+                        <option value="m" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_M) echo "selected"; ?> id="option-m-<?php echo $mannschaft->getID(); ?>"><?php echo $bezeichnungM; ?></option>
                     </select> 
                 </td>
-                <td style="text-align:center"> <input type="text" name="mannschafts-jugendklasse" value="<?php echo $mannschaft->getJugendklasse(); ?>" style="width:50px"> </td>
+                <td style="text-align:center"> <input type="text" name="mannschafts-jugendklasse" value="<?php echo $mannschaft->getJugendklasse(); ?>" style="width:50px" onchange="updateGeschlecht(this.value, '<?php echo $mannschaft->getID(); ?>')"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-email" value="<?php echo $mannschaft->getEmail(); ?>" style="width:150px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-meisterschaft" value="<?php echo $mannschaft->getMeisterschaft(); ?>" style="width:100px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-liga" value="<?php echo $mannschaft->getLiga(); ?>"> </td>
@@ -140,12 +151,12 @@ function displayDiensteMannschaften(){
             <tr><form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
                 <td style="text-align:center"> <input type="number" name="mannschafts-nummer" min="1" style="width:50px"> </td>
                 <td style="text-align:center"> 
-                    <select name="mannschafts-geschlecht"> 
-                        <option value="w">Damen</option>
-                        <option value="m">Herren</option>
+                    <select name="mannschafts-geschlecht" style="width:100px"> 
+                        <option value="w" id="option-w-neu">Damen</option>
+                        <option value="m" id="option-m-neu">Herren</option>
                     </select> 
                 </td>
-                <td style="text-align:center"> <input type="text" name="mannschafts-jugendklasse" style="width:50px"> </td>
+                <td style="text-align:center"> <input type="text" name="mannschafts-jugendklasse" style="width:50px" onchange="updateGeschlecht(this.value, 'neu')"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-email" style="width:150px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-meisterschaft" style="width:100px"> </td>
                 <td style="text-align:center"> <input type="text" name="mannschafts-liga"> </td>
