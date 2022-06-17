@@ -36,13 +36,13 @@ function dienste_tabellen_ersetzen(array $matches){
 
     $kopfzeile = 
         "<tr style=\"background-color:#00407d; color:white\">"
-        ."<th style=\"min-width:150px\">Datum</th>"
-        ."<th>Halle</th>"
-        ."<th>Heim</th>"
-        ."<th>Gast</th>";
+        ."<th style=\"min-width:150px; padding: 3px\">Datum</th>"
+        ."<th style=\"padding: 3px\">Halle</th>"
+        ."<th style=\"padding: 3px\">Heim</th>"
+        ."<th style=\"padding: 3px; border-right:2px solid #00407d\">Gast</th>";
     foreach(Dienstart::values as $dienstart){
         $kurzfrom = substr($dienstart, 0, 1);
-        $kopfzeile .= "<th>$kurzfrom</td>";
+        $kopfzeile .= "<th style=\"padding: 3px; text-align:center\">$kurzfrom</td>";
     }
     $kopfzeile .= "</tr>";
 
@@ -76,12 +76,12 @@ function dienste_tabellen_ersetzen(array $matches){
         }
         $spielzeile = 
             "<tr>"
-            ."<td>$anwurfDatum $anwurfZeit</td>"
-            ."<td>$halle</td>"
-            ."<td>$heim</td>"
-            ."<td>$gast</td>";
+            ."<td style=\"padding: 3px;\">$anwurfDatum $anwurfZeit</td>"
+            ."<td style=\"padding: 3px;\">$halle</td>"
+            ."<td style=\"padding: 3px;\">$heim</td>"
+            ."<td style=\"padding: 3px; border-right:2px solid #00407d\">$gast</td>";
         foreach(Dienstart::values as $dienstart){
-            $spielzeile .= "<td>";
+            $spielzeile .= "<td style=\"padding: 3px;\">";
             $dienst = $spiel->getDienst($dienstart);
             if(isset($dienst)){
                 $spielzeile .= $mannschaften[$dienst->getMannschaft()]->getKurzname();
@@ -91,7 +91,7 @@ function dienste_tabellen_ersetzen(array $matches){
         $spielzeile .= "</tr>";
         $tabellenkoerper .= $spielzeile;
     }
-    $tabelle = "<table cellpadding=\"3\" cellspacing=\"2\">$kopfzeile $tabellenkoerper</table>";
+    $tabelle = "<table cellpadding=\"3\" style=\"border-collapse:separate; border-spacing:0px\">$kopfzeile $tabellenkoerper</table>";
     return $tabelle;
 }
 
