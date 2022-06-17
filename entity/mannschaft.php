@@ -49,7 +49,9 @@ class Mannschaft {
         return $this->assoc_array["geschlecht"];
     }
     public function getJugendklasse(): ?string {
-        return $this->assoc_array["jugendklasse"];
+        $jugendklasse = $this->assoc_array["jugendklasse"];
+        if(trim($jugendklasse) == "") return null;
+        return $jugendklasse;
     }
     public function getEmail(): ?string {
         return $this->assoc_array["email"];
