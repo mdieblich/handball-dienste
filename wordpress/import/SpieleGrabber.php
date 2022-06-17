@@ -3,16 +3,17 @@ require_once __DIR__."/PageGrabber.php";
 require_once __DIR__."/NuLigaSpiel.php";
 
 class SpieleGrabber {
+    public string $url;
     public DomDocument $dom;
     private DOMXPath $xpath;
 
     public function __construct(string $meisterschaft, int $gruppe, int $team_id){
-        $url = "https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?"
+        $this->url = "https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?"
             ."teamtable=".$team_id
             ."&pageState=vorrunde"
             ."&championship=".urlencode($meisterschaft)
             ."&group=".$gruppe;
-        $this->dom = getDOMFromSite($url);
+        $this->dom = getDOMFromSite($this->url);
         $this->xpath = new DOMXPath($this->dom);
     }
 
@@ -23,10 +24,12 @@ class SpieleGrabber {
         if(isset($tabelle)){
             $tabellenZeilen = extractTabellenZeilen($tabelle);
             $spielZeilen = array_slice($tabellenZeilen, 1);
+            $vorherigesSpiel = null;
             foreach ($spielZeilen as $childNode){
-                $spiel = $this->extractSpiel($childNode);
+                $spiel = $this->extractSpiel($childNode, $vorherigesSpiel);
                 if(isset($spiel)){
-                    $spiele[] = $this->extractSpiel($childNode);
+                    $vorherigesSpiel = $spiel;
+                    $spiele[] = $spiel;
                 }
             }
             
@@ -66,9 +69,9 @@ class SpieleGrabber {
         return $tabellenZeile;
     }
 
-    private function extractSpiel(DOMElement $tabellenZeile): ?NuLigaSpiel {
+    private function extractSpiel(DOMElement $tabellenZeile, ?NuLigaSpiel $vorherigesSpiel): ?NuLigaSpiel {
         $zellen = $this->extractTabellenZellen($tabellenZeile);
-        return NuLigaSpiel::fromTabellenZellen($zellen);
+        return NuLigaSpiel::fromTabellenZellen($zellen, $vorherigesSpiel);
     }
 
     private function extractTabellenZellen(DOMElement $zeile): array {
