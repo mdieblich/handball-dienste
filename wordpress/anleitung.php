@@ -21,6 +21,9 @@ In den Wordpress-Einstellungen (<i>Seite "Allgemein"</i>) findet sich ein Abschn
 
 <h2>Dienste darstellen</h2>
 In einem Beitrag oder einer Seite kann der Tag <code>&lt;dienste&gt;&lt;/dienste&gt;</code> verwendet werden. Dies wird mit einer Tabelle ersetzt, welche alle Dienste darstellt.<br>
-Um dies weiter einzuschränken, können die Attribute <code>von</code> und <code>fuer</code> benutzt werden. Dabei erwarten diese den Mannschaftsnamen in der Form 
-<code>Damen 1</code>,<code>Damen 2</code>,<code>Herren 1</code> usw.. <br>
+Um dies weiter einzuschränken, können die Attribute <code>von</code> und <code>fuer</code> benutzt werden. Dabei erwarten diese den Mannschaftsnamen ... 
+<ul style="list-style-type:square; padding-left:1em">
+    <li>für Senioren in der Form <code>Damen 1</code>,<code>Damen 2</code>,<code>Herren 1</code> usw.. </li>
+    <li>für Jugendmannschaften in der Form <code>mB1</code>, <code>wC2</code> usw...</li>
+</ul>
 Bsp: <code>&lt;dienste von="Damen 2"&gt;&lt;/dienste&gt;</code> oder <code>&lt;dienste fuer="Herren 3"&gt;&lt;/dienste&gt;</code>
