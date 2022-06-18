@@ -1,16 +1,13 @@
 function assignDienst(spiel, dienstart, mannschaft, assign){
-    jQuery(document).ready(function($) {
+    var data = {
+        'action': assign?'dienst_zuweisen':'dienst_entfernen',
+        'spiel': spiel,
+        'dienstart': dienstart,
+        'mannschaft': mannschaft
+    };
 
-        var data = {
-            'action': assign?'dienst_zuweisen':'dienst_entfernen',
-            'spiel': spiel,
-            'dienstart': dienstart,
-            'mannschaft': mannschaft
-        };
-
-        // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-        jQuery.post(ajaxurl, data);
-    });
+    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+    jQuery.post(ajaxurl, data);
 
     disableOtherCheckboxes(spiel, dienstart, mannschaft, assign);
     setDienstCounter(dienstart, mannschaft, assign);
