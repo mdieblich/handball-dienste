@@ -67,3 +67,24 @@ function disableHighlight(spiel_id){
     document.getElementById("spiel-"+spiel_id+"-mannschaft").style.backgroundColor = "inherit";
     document.getElementById("spiel-"+spiel_id+"-gegner"    ).style.backgroundColor = "inherit";
 }
+
+function mannschaftDarstellen(mannschaft, darstellen){ 
+
+    if(darstellen){
+
+        jQuery(function($){
+            $("#tabelle-dienste-zuweisen tr").filter(function(){
+                return $(this).attr("mannschaft") == mannschaft;
+            }).show('slow');
+        });
+    }else{
+        jQuery(function($){
+            $("#tabelle-dienste-zuweisen tr").filter(function(){
+                return $(this).attr("mannschaft") == mannschaft;
+            }).hide('slow');
+        });
+    }
+    // filter(function() {
+    //         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    //       });
+}

@@ -50,10 +50,17 @@ function displayDiensteZuweisen(){
     $spieleListe = new SpieleListe( loadSpieleDeep("1=1", "-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft") ); 
  ?>
 <div class="wrap">
-    <script></script>
+    <div style="float:right; width: 200px; background-color:#ddddff; padding: 5px">
+    Filter
+    <?php foreach ($mannschaften as $mannschaft) { ?>
+        <br>
+        <input type="checkbox" name="filter-<?php echo $mannschaft->getID();?>" checked onchange="mannschaftDarstellen(<?php echo $mannschaft->getID();?>, this.checked)" id="filter-<?php echo $mannschaft->getID();?>">
+        <label for="filter-<?php echo $mannschaft->getID();?>"><?php echo $mannschaft->getKurzname(); ?></label>
+    <?php } ?>
+    </div>
     <h1>Dienste zuweisen</h1>
     Die Eingaben der Checkboxen werden direkt gespeichert.
-    <table cellpadding="3" cellspacing="3">
+    <table cellpadding="3" cellspacing="3" id="tabelle-dienste-zuweisen">
     <tr style="background-color:#ddddff; position: sticky; top: 32px">
         <th>Spiel-Nr.</th>
         <th>Datum</th>
@@ -78,6 +85,7 @@ $vorherigesSpiel = null;
 $zeilenFarbePrimaer = true;
 foreach($spieleListe->getSpiele() as $spiel){
     $anwurf = $spiel->getAnwurf();
+    $mannschaftDesSpiels = $mannschaften[$spiel->getMannschaft()];
     $gegner = $alleGegner[$spiel->getGegner()];
     $zeitnehmerDienst = $spiel->getDienst(Dienstart::ZEITNEHMER);
     $sekretaerDienst = $spiel->getDienst(Dienstart::SEKRETAER);
@@ -91,7 +99,7 @@ foreach($spieleListe->getSpiele() as $spiel){
     else {
         $backgroundColor = "#ffffff";
     }
-    echo "<tr style=\"background-color:$backgroundColor\">";
+    echo "<tr style=\"background-color:$backgroundColor\" mannschaft=\"".$mannschaftDesSpiels->getID()."\">";
     echo "<td>".$spiel->getSpielNr()."</td>";
     if(isset($anwurf)){
         echo "<td id=\"spiel-".$spiel->getID()."-anwurf\">".$anwurf->format("d.m.Y ");
@@ -107,7 +115,7 @@ foreach($spieleListe->getSpiele() as $spiel){
     }
     echo "<td id=\"spiel-".$spiel->getID()."-halle\">".$spiel->getHalle()."</td>";
 
-    $zelleMannschaft = "<td id=\"spiel-".$spiel->getID()."-mannschaft\">".$mannschaften[$spiel->getMannschaft()]->getName()."</td>";
+    $zelleMannschaft = "<td id=\"spiel-".$spiel->getID()."-mannschaft\">".$mannschaftDesSpiels->getName()."</td>";
     $zelleGegner = "<td "
         ."id=\"spiel-".$spiel->getID()."-gegner\" "
         .($gegner->stelltSekretearBeiHeimspiel()?"title='Stellt Sekretär in deren Halle'":"")
