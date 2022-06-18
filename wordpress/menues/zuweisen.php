@@ -70,7 +70,7 @@ function displayDiensteZuweisen(){
         <?php
 foreach($mannschaften as $mannschaft){
     $anzahlDienste = $spieleListe->zaehleDienste($mannschaft);
-    echo "<td>".$mannschaft->getName()."<br>";
+    echo "<td mannschaft=\"".$mannschaft->getID()."\">".$mannschaft->getName()."<br>";
     foreach($anzahlDienste as $dienstart => $anzahl){
         $dienstartKurz = substr($dienstart,0,1);
         echo $dienstartKurz.": <span id=\"$dienstartKurz-counter-".$mannschaft->getID()."\">".$anzahl."</span><br>"; 
@@ -250,6 +250,7 @@ foreach($spieleListe->getSpiele() as $spiel){
         }
         
         echo "<td "
+            ."mannschaft=\"".$mannschaft->getID()."\""
             ."style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" "
             ."title=\"$tooltip\" "
             ."onmouseover=\"highlightGames("

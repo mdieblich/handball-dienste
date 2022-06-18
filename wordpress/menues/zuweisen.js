@@ -75,16 +75,19 @@ function mannschaftDarstellen(mannschaft, darstellen){
         jQuery(function($){
             $("#tabelle-dienste-zuweisen tr").filter(function(){
                 return $(this).attr("mannschaft") == mannschaft;
-            }).show('slow');
+            }).show();
+            $("#tabelle-dienste-zuweisen td").filter(function(){
+                return $(this).attr("mannschaft") == mannschaft;
+            }).show();
         });
     }else{
         jQuery(function($){
             $("#tabelle-dienste-zuweisen tr").filter(function(){
                 return $(this).attr("mannschaft") == mannschaft;
-            }).hide('slow');
+            }).hide();
+            $("#tabelle-dienste-zuweisen td").filter(function(){
+                return $(this).attr("mannschaft") == mannschaft;
+            }).hide();
         });
     }
-    // filter(function() {
-    //         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-    //       });
 }
