@@ -10,7 +10,17 @@ require_once __DIR__."/../dao/dienst.php";
 
 require_once __DIR__."/../PHPMailer/NippesMailer.php";
 
-function importSpieleFromNuliga(): string{
+class ImportErgebnis{
+    public int $spiele = 0;
+    public int $neu = 0;
+    public int $aktualisiert = 0;
+
+    public function toReadableString(): string{
+        return $this->spiele." Spiele geprüft, davon ".$this->neu." neu importiert und ".$this->aktualisiert." aktualisiert";
+    }
+}
+
+function importSpieleFromNuliga(): array{
     
     $mannschaften = loadMannschaften();
     $gegnerDAO = new GegnerDAO();
@@ -18,11 +28,9 @@ function importSpieleFromNuliga(): string{
 
     $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaften, $gegnerDAO);
 
-    $resultMessage = "";
+    $ergebnis = array();
     foreach($mannschaften as $mannschaft){
-        $spieleGeprueft     = 0;
-        $spieleImportiert   = 0;
-        $spieleAktualisiert = 0;
+        $importErgebnis = new ImportErgebnis();
 
         $teamName = get_option('vereinsname');
         if($mannschaft->getNummer() >= 2){
@@ -51,27 +59,26 @@ function importSpieleFromNuliga(): string{
                 $mannschaft->getLiga()
             )->getID();
             $spiel = findSpiel ($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
-            $spieleGeprueft ++;
+            $importErgebnis->spiele ++;
             if(isset($spiel)){
                 $hallenAenderung = ($spiel->getHalle() != $nuLigaSpiel->getHalle());
                 $AnwurfAenderung = ($spiel->getAnwurf() != $nuLigaSpiel->getAnwurf());
                 if($hallenAenderung || $AnwurfAenderung){
                     $dienstAenderungsPlan->registerSpielAenderung($spiel, $nuLigaSpiel);
                     updateSpiel($spiel->getID(), $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
-                    $spieleAktualisiert ++;
+                    $importErgebnis->akzualisiert ++;
                 }
             } else {
                 insertSpiel($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
-                $spieleImportiert ++;
+                $importErgebnis->neu ++;
             }
         }
-        $resultMessage .= "<b>".$mannschaft->getName()."</b>: $spieleGeprueft Spiele geprüft, davon $spieleImportiert neu importiert und $spieleAktualisiert aktualisiert<br>\n";
+        $ergebnis[$mannschaft->getName()]  = $importErgebnis;
     }
 
     $dienstAenderungsPlan->sendEmails();
-    //$resultMessage .= "<br><b>Folgende Emails würden versendet werden:</b><br>".$dienstAenderungsPlan->simulateEmails();
 
-    return $resultMessage;
+    return $ergebnis;
 }
 
 ?>

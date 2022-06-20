@@ -57,7 +57,11 @@ function diensteImportSubmit(){
         return;
     }
     require_once __DIR__."/../import/importer.php";
-    $resultMessage = importSpieleFromNuliga();
+    $importErgebnis = importSpieleFromNuliga();
+    $resultMessage = "";
+    foreach($importErgebnis as $mannschaftsName => $ergebnis){
+        $resultMessage .= "<b>$mannschaftsName</b>: ".$ergebnis->toReadableString()."<br>";
+    }
     echo "<div style='margin-left:200px;'>$resultMessage</div>";
 }
 ?>

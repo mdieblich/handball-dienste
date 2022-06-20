@@ -27,8 +27,7 @@ add_action( 'rest_api_init', function () {
 
 function updateFromNuliga(){
     require_once __DIR__."/import/importer.php";
-    $resultMessage = importSpieleFromNuliga();
-    return $resultMessage;
+    return importSpieleFromNuliga();
 }
 
 function checkNuligaUpdatePersmission(){
