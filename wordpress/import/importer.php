@@ -66,7 +66,7 @@ function importSpieleFromNuliga(): array{
                 if($hallenAenderung || $AnwurfAenderung){
                     $dienstAenderungsPlan->registerSpielAenderung($spiel, $nuLigaSpiel);
                     updateSpiel($spiel->getID(), $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
-                    $importErgebnis->akzualisiert ++;
+                    $importErgebnis->aktualisiert ++;
                 }
             } else {
                 insertSpiel($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
