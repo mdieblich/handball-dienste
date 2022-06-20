@@ -33,3 +33,7 @@ Mannschaftsnamen (für <code>von</code> und <code>fuer</code>) müssen den folge
     <li>für Jugendmannschaften in der Form <code>mB1</code>, <code>wC2</code> usw...</li>
 </ul>
 Bsp: <code>&lt;dienste von="Damen 2"&gt;&lt;/dienste&gt;</code> oder <code>&lt;dienste fuer="Herren 3" seit=01.01.2022"&gt;&lt;/dienste&gt;</code>
+
+<h2>Regelmäßige nuLiga-Updates</h2>
+Unter der URL <code><?php echo get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> kann man den Import von extern starten.<br>
+Der Endpunkt erwartet eine Basic-Authentifizierung mit den Werten, die man bei <b>Bot-Email</b> und <b>Bot-Passwort</b> angegeben hat.
