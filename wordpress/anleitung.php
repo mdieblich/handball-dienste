@@ -36,4 +36,4 @@ Bsp: <code>&lt;dienste von="Damen 2"&gt;&lt;/dienste&gt;</code> oder <code>&lt;d
 
 <h2>Regelmäßige nuLiga-Updates</h2>
 Unter der URL <code><?php echo get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> kann man den Import von extern starten.<br>
-Der Endpunkt erwartet eine Basic-Authentifizierung mit den Werten, die man bei <b>Bot-Email</b> und <b>Bot-Passwort</b> angegeben hat.
+Der Endpunkt ist öffentlich zugänglich und benötigt keine Authentifizierung
