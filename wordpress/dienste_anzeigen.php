@@ -16,18 +16,19 @@ function dienste_tabellen_ersetzen(array $matches){
     require_once __DIR__."/dao/mannschaft.php";
     $mannschaften = loadMannschaften();
 
-    preg_match_all("/(\w*)=\"([\w\d\s]*)\"/", $attributString, $attributeArray);
+    preg_match_all("/(\w*)=\"([\w\d\s\.]*)\"/", $attributString, $attributeArray);
     $attributeKeys = $attributeArray[1];
     $attributeValues = $attributeArray[2];
     $vonMannschaft = null;
     $fuerMannschaft = null;
+    $seit = null;
     for($i=0; $i<count($attributeKeys); $i++){
         switch($attributeKeys[$i]){
             case "von" : $vonMannschaft  = getMannschaftFromName($mannschaften, $attributeValues[$i]); break;
             case "fuer": $fuerMannschaft = getMannschaftFromName($mannschaften, $attributeValues[$i]); break;
+            case "seit": $seit = getDateFromString($attributeValues[$i]); break;
         }
     }
-
     require_once __DIR__."/entity/dienst.php";
     require_once __DIR__."/dao/gegner.php";
     $gegnerDAO = new GegnerDAO();
@@ -48,7 +49,11 @@ function dienste_tabellen_ersetzen(array $matches){
 
     require_once __DIR__."/dao/spiel.php";
     $filter = array();
-    $filter[] = "anwurf > subdate(current_date, 1)"; // nur aktuelle Spiele
+    if(isset($seit)){
+        $filter[] = "anwurf > \"".$seit->format("Y-m-d")."\""; // nur aktuelle Spiele
+    }else{
+        $filter[] = "anwurf > subdate(current_date, 1)"; // nur aktuelle Spiele
+    }
     if(isset($fuerMannschaft)){
         $filter[] = "mannschaft=".$fuerMannschaft->getID();
     }
@@ -93,6 +98,14 @@ function dienste_tabellen_ersetzen(array $matches){
     }
     $tabelle = "<table cellpadding=\"3\" style=\"border-collapse:separate; border-spacing:0px\">$kopfzeile $tabellenkoerper</table>";
     return $tabelle;
+}
+
+function getDateFromString(string $string): ?DateTime{
+    $date = DateTime::createFromFormat("d.m.Y", $string);
+    if($date){
+        return $date;
+    }
+    return null;
 }
 
 ?>
