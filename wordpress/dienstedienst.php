@@ -21,7 +21,7 @@ add_action( 'rest_api_init', function () {
     register_rest_route( 'dienste', '/updateFromNuliga', array(
         'methods' => 'GET',
         'callback' => 'updateFromNuliga',    
-        'permission_callback' => '__return_true'
+        'permission_callback' => 'checkNuligaUpdatePersmission'
     ));
 });
 
@@ -29,6 +29,13 @@ function updateFromNuliga(){
     require_once __DIR__."/import/importer.php";
     $resultMessage = importSpieleFromNuliga();
     return $resultMessage;
+}
+
+function checkNuligaUpdatePersmission(){
+    if(!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])){ return false; }
+    if($_SERVER['PHP_AUTH_USER'] !== get_option('bot-email')){ return false;}
+    if($_SERVER['PHP_AUTH_PW'] !== get_option('bot-passwort')){ return false; }
+    return true;
 }
 
 ?>

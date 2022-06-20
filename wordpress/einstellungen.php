@@ -40,7 +40,6 @@ function dienste_einstellungen_initialisieren() {
         'dienste_einstellungen_botpasswort_anzeigen',   // The name of the function responsible for rendering the option interface
         'general',                          // The page on which this option will be displayed
         'dienste_einstellungen'         // The name of the section to which this field belongs
-        
     );
      
     // Finally, we register the fields with WordPress
