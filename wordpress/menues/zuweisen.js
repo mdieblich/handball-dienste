@@ -73,19 +73,13 @@ function mannschaftDarstellen(mannschaft, darstellen){
     if(darstellen){
 
         jQuery(function($){
-            $("#tabelle-dienste-zuweisen tr").filter(function(){
-                return $(this).attr("mannschaft") == mannschaft;
-            }).show();
-            $("#tabelle-dienste-zuweisen td").filter(function(){
+            $("#tabelle-dienste-zuweisen tr, td").filter(function(){
                 return $(this).attr("mannschaft") == mannschaft;
             }).show();
         });
     }else{
         jQuery(function($){
-            $("#tabelle-dienste-zuweisen tr").filter(function(){
-                return $(this).attr("mannschaft") == mannschaft;
-            }).hide();
-            $("#tabelle-dienste-zuweisen td").filter(function(){
+            $("#tabelle-dienste-zuweisen tr, td").filter(function(){
                 return $(this).attr("mannschaft") == mannschaft;
             }).hide();
         });
