@@ -1,7 +1,7 @@
 <?php
 require_once WP_PLUGIN_DIR."/dienstedienst/entity/spiel.php";
 
-function loadSpiele(string $whereClause="1=1", string $orderBy="anwurf, halle"): array{
+function loadSpiele(string $whereClause="1=1", string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"): array{
   global $wpdb;
   
   $table_name = $wpdb->prefix . 'spiel';
@@ -18,7 +18,7 @@ function loadSpiele(string $whereClause="1=1", string $orderBy="anwurf, halle"):
   return $spiele;
 }
 
-function loadSpieleDeep(string $whereClause="1=1", string $orderBy="anwurf, halle"){
+function loadSpieleDeep(string $whereClause="1=1", string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"){
     $spiele = loadSpiele($whereClause, $orderBy);
     require_once WP_PLUGIN_DIR."/dienstedienst/dao/dienst.php";
     $dienstDAO = new DienstDAO();

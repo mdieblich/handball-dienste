@@ -56,7 +56,7 @@ function dienste_tabellen_ersetzen(array $matches){
         $filter[] = "id IN (SELECT spiel FROM ". $wpdb->prefix ."dienst WHERE mannschaft=".$vonMannschaft->getID().")";
     }
     $filter[] = "1=1"; // dummy-Filter für leichters implode
-    $spiele = loadSpieleDeep(implode(" AND ", $filter), "-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"); 
+    $spiele = loadSpieleDeep(implode(" AND ", $filter)); 
 
     $tabellenkoerper = "";
     foreach($spiele as $spiel){

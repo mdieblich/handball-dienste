@@ -47,7 +47,7 @@ function displayDiensteZuweisen(){
     $gegnerDAO = new GegnerDAO();
     $gegnerDAO->loadGegner();
     $alleGegner = $gegnerDAO->getAlleGegner();
-    $spieleListe = new SpieleListe( loadSpieleDeep("1=1", "-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft") ); 
+    $spieleListe = new SpieleListe( loadSpieleDeep("1=1") ); 
  ?>
 <div class="wrap">
     <div style="float:right; width: 200px; background-color:#ddddff; padding: 5px">
