@@ -29,9 +29,9 @@ function importSpieleFromNuliga(): array{
     $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaften, $gegnerDAO);
 
     $ergebnis = array();
-    foreach($mannschaften as $mannschaft){
+    foreach($mannschaften as $mannschaft){ 
         $importErgebnis = new ImportErgebnis();
-
+        
         $teamName = get_option('vereinsname');
         if($mannschaft->getNummer() >= 2){
             $teamName .= " ";
@@ -40,37 +40,39 @@ function importSpieleFromNuliga(): array{
             }
         }
         
-        $spielGrabber = new SpieleGrabber(
-            $mannschaft->getMeisterschaft(), 
-            $mannschaft->getNuligaLigaID(), 
-            $mannschaft->getNuligaTeamID()
-        );
-        foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
-            if($nuLigaSpiel->getHeimmannschaft() === $teamName){
-                $isHeimspiel = 1;
-                $gegnerName = $nuLigaSpiel->getGastmannschaft();
-            } else {
-                $isHeimspiel = 0;
-                $gegnerName = $nuLigaSpiel->getHeimmannschaft();
-            }
-            $gegner_id = $gegnerDAO->findOrInsertGegner( 
-                $gegnerName, 
-                $mannschaft->getGeschlecht(), 
-                $mannschaft->getLiga()
-            )->getID();
-            $spiel = findSpiel ($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
-            $importErgebnis->spiele ++;
-            if(isset($spiel)){
-                $hallenAenderung = ($spiel->getHalle() != $nuLigaSpiel->getHalle());
-                $AnwurfAenderung = ($spiel->getAnwurf() != $nuLigaSpiel->getAnwurf());
-                if($hallenAenderung || $AnwurfAenderung){
-                    $dienstAenderungsPlan->registerSpielAenderung($spiel, $nuLigaSpiel);
-                    updateSpiel($spiel->getID(), $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
-                    $importErgebnis->aktualisiert ++;
+        foreach($mannschaft->getMeisterschaften() as $meisterschaft) {
+            $spielGrabber = new SpieleGrabber(
+                $meisterschaft->getKuerzel(), 
+                $meisterschaft->getNuligaLigaID(), 
+                $meisterschaft->getNuligaTeamID()
+            );
+            foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
+                if($nuLigaSpiel->getHeimmannschaft() === $teamName){
+                    $isHeimspiel = 1;
+                    $gegnerName = $nuLigaSpiel->getGastmannschaft();
+                } else {
+                    $isHeimspiel = 0;
+                    $gegnerName = $nuLigaSpiel->getHeimmannschaft();
                 }
-            } else {
-                insertSpiel($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
-                $importErgebnis->neu ++;
+                $gegner_id = $gegnerDAO->findOrInsertGegner( 
+                    $gegnerName, 
+                    $mannschaft->getGeschlecht(), 
+                    $meisterschaft->getLiga()
+                )->getID();
+                $spiel = findSpiel ($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
+                $importErgebnis->spiele ++;
+                if(isset($spiel)){
+                    $hallenAenderung = ($spiel->getHalle() != $nuLigaSpiel->getHalle());
+                    $AnwurfAenderung = ($spiel->getAnwurf() != $nuLigaSpiel->getAnwurf());
+                    if($hallenAenderung || $AnwurfAenderung){
+                        $dienstAenderungsPlan->registerSpielAenderung($spiel, $nuLigaSpiel);
+                        updateSpiel($spiel->getID(), $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
+                        $importErgebnis->aktualisiert ++;
+                    }
+                } else {
+                    insertSpiel($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
+                    $importErgebnis->neu ++;
+                }
             }
         }
         $ergebnis[$mannschaft->getName()]  = $importErgebnis;
