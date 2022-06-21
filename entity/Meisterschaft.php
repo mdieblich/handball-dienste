@@ -18,6 +18,10 @@ class Meisterschaft {
     public function getKuerzel(): string {
         return $this->assoc_array["kuerzel"];
     }
+
+    public function getMannschaft(): int {
+        return $this->assoc_array["mannschaft"];
+    }
     
     public function getLiga(): string {
         return $this->assoc_array["liga"];

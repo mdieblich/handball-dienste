@@ -117,5 +117,14 @@ class Mannschaft {
         }
         return "<ul>".$spielerListe."</ul>";
     }
+
+    public static function getIDs(array $mannschaften): array {
+        $ids = array();
+        foreach($mannschaften as $mannschaft){
+            $ids[] = $mannschaft->getID();
+        }
+        return $ids;
+    }
+    
 }
 ?>
