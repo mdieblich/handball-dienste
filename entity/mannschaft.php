@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__."/person.php";
+require_once __DIR__."/meisterschaft.php";
 
 const GESCHLECHT_M = "m";
 const GESCHLECHT_W = "w";
@@ -8,6 +9,7 @@ class Mannschaft {
     private $assoc_array;
 
     private $spieler = array();
+    private $meisterschaften = array();
 
     public function __construct(array $assoc_array){
         $this->assoc_array = $assoc_array;
@@ -90,6 +92,14 @@ class Mannschaft {
 
     public function addSpieler(Person $spieler){
         $this->spieler[$spieler->getID()] = $spieler;
+    }
+
+    public function addMeisterschaft(Meisterschaft $meisterschaft){
+        $this->meisterschaften[$meisterschaft->getID()] = $meisterschaft;
+    }
+
+    public function getMeisterschaften(): array{
+        return $this->meisterschaften;
     }
     
     public function getDebugOutput(): string {
