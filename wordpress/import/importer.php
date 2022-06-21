@@ -22,14 +22,14 @@ class ImportErgebnis{
 
 function importSpieleFromNuliga(): array{
     
-    $mannschaften = loadMannschaften();
+    $mannschaften = loadMannschaftenMitMeisterschaften();
     $gegnerDAO = new GegnerDAO();
     $gegnerDAO->loadGegner();
 
     $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaften, $gegnerDAO);
 
     $ergebnis = array();
-    foreach($mannschaften as $mannschaft){ 
+    foreach($mannschaften as $mannschaft){
         $importErgebnis = new ImportErgebnis();
         
         $teamName = get_option('vereinsname');
