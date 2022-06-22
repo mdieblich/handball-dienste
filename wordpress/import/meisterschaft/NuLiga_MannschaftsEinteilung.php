@@ -5,7 +5,7 @@ require_once __DIR__."/NuLiga_Ligatabelle.php";
 
 class NuLiga_MannschaftsEinteilung{
     public string $mannschaftsBezeichnung;
-    public string $meiterschaftsKuerzel;
+    public string $meisterschaftsKuerzel;
     public string $liga;
     public int $liga_id;
     public int $team_id;
@@ -20,7 +20,7 @@ class NuLiga_MannschaftsEinteilung{
         $url = $linkElement->attributes->getNamedItem("href")->value;
         preg_match('/championship=(.*)&/', $url, $championShipMatches);
         preg_match('/group=(.*)/', $url, $groupMatches);
-        $einteilung->meiterschaftsKuerzel = urldecode($championShipMatches[1]);
+        $einteilung->meisterschaftsKuerzel = urldecode($championShipMatches[1]);
         $einteilung->liga_id = $groupMatches[1];
 
         $ligaTabellenSeite = new NuLiga_Ligatabelle($url);
