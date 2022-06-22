@@ -13,10 +13,9 @@ function dienste_datenbank_initialisieren() {
         dienste_meisterschaft_initialisieren();
         dienste_migrate_meisterschaft();
         dienste_mannschaft_aktualisiern();
-    } else {
-        dienste_mannschaft_initialisieren();
     }
-
+    
+    dienste_mannschaft_initialisieren();
     dienste_gegner_initialisieren();
     dienste_spiele_initialisieren();
     dienste_zuweisungen_initialisieren();
