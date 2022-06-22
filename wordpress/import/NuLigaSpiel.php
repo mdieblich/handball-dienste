@@ -84,12 +84,7 @@ class NuLigaSpiel {
     }
 
     private static function extractTrimmedContent(DOMElement $zelle): string {
-        $content = $zelle->textContent;
-        $content = preg_replace('/\s+/', ' ',$content);
-        $evilSpace = hex2bin("c2a0"); // das ist ein utf-16 Zeichen. Die Ottos von nuliga geben das falsche Encoding an!
-        $content = str_replace($evilSpace, " ", $content);
-        $content = trim($content);
-        return $content;
+        return sanitizeContent($zelle->textContent);
     }
 
 }

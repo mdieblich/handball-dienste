@@ -39,6 +39,14 @@ function getDOMFromSite(string $url): DomDocument{
     return $dom;
 }
 
+function sanitizeContent(string $content): string{
+    $content = preg_replace('/\s+/', ' ',$content);
+    $evilSpace = hex2bin("c2a0"); // das ist ein utf-16 Zeichen. Die Ottos von nuliga geben das falsche Encoding an!
+    $content = str_replace($evilSpace, " ", $content);
+    $content = trim($content);
+    return $content;
+}
+
 
 function extractTabellenZeilen($tabelle): array {
     $tabellenZeile = array();
