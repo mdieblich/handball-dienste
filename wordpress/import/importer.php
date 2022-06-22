@@ -83,4 +83,47 @@ function importSpieleFromNuliga(): array{
     return $ergebnis;
 }
 
+function importMeisterschaftenFromNuliga(): array{
+    
+    $mannschaften = loadMannschaften();
+    $nuligaBezeichnungen = createNuLigaMannschaftsBezeichnungen($mannschaften);
+        
+    $ligeneinteilung = new NuLiga_MannschaftsUndLigenEinteilung(get_option('nuliga-clubid'));
+    $nuliga_meisterschaften = $ligeneinteilung->getMeisterschaften(get_option('vereinsname'));
+
+    foreach($nuliga_meisterschaften as $nuliga_meisterschaft){
+        foreach($nuliga_meisterschaft->mannschaftsEinteilungen as $mannschaftsEinteilung){
+            // TODO Meisterschaft extrahieren und speichern
+        }
+    }
+}
+
+function createNuLigaMannschaftsBezeichnungen(array $mannschaften): array{
+    $nuligaBezeichnungen = array();
+    foreach($mannschaften as $mannschaft){
+        $bezeichnung = "";
+        $jugendKlasse = $mannschaft->getJugendklasse();
+        if(empty($jugendKlasse)){
+            switch($mannschaft->getGeschlecht()){
+                case GESCHLECHT_W: $bezeichnung = "Frauen"; break;
+                case GESCHLECHT_M: $bezeichnung = "Männer"; break;
+            }
+        }else {
+            switch($mannschaft->getGeschlecht()){
+                case GESCHLECHT_W: $bezeichnung = "weibliche"; break;
+                case GESCHLECHT_M: $bezeichnung = "männliche"; break;
+            }
+            $bezeichnung .= " Jugend ".strtoupper($jugendKlasse);
+        }
+        if($mannschaft->getNummer() > 1){
+            $bezeichnung .= " ";
+            for($i=0; $i++; $i<$mannschaft->getNummer()){
+                $bezeichnung .= "I";
+            }
+        }
+        $nuligaBezeichnungen[$bezeichnung] = $mannschaft;
+    }
+    return $nuligaBezeichnungen;
+}
+
 ?>
