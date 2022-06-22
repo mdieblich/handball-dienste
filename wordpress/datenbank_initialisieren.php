@@ -3,13 +3,13 @@
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 global $dienste_db_version;
-$dienste_db_version = '1.3';
+$dienste_db_version = '1.6';
 
 function dienste_datenbank_initialisieren() {
     global $dienste_db_version;
 
     $previous_version = get_option('dienste_db_version');
-    if($previous_version && $previous_version < '1.3'){
+    if($previous_version && $previous_version < '1.6'){
         dienste_meisterschaft_initialisieren();
         dienste_migrate_meisterschaft();
         dienste_mannschaft_aktualisiern();
