@@ -49,23 +49,26 @@ function sanitizeContent(string $content): string{
 
 
 function extractTabellenZeilen($tabelle): array {
-    $tabellenZeile = array();
-    foreach ($tabelle->childNodes as $childNode){
-        if($childNode->nodeName === "tr"){
-            $tabellenZeile[] = $childNode;
-        }
-    }
-    return $tabellenZeile;
+    return extractChildrenByTags($tabelle, "tr");
 }
 
 function extractTabellenZellen($zeile): array {
-    $tabellenZellen = array();
-    foreach ($zeile->childNodes as $childNode){
-        if($childNode->nodeName === "td" || $childNode->nodeName === "th"){
-            $tabellenZellen[] = $childNode;
+    return extractChildrenByTags($zeile, array("td","th"));
+}
+
+function extractChildrenByTags($domElement, $tags): array{
+
+    if(!is_array($tags)){
+        $tags = array($tags);
+    }
+
+    $children = array();
+    foreach ($domElement->childNodes as $childNode){
+        if(in_array($childNode->nodeName, $tags)){
+            $children[] = $childNode;
         }
     }
-    return $tabellenZellen;
+    return $children;
 }
 
 ?>
