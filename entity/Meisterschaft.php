@@ -22,6 +22,10 @@ class Meisterschaft {
     public function getMannschaft(): int {
         return $this->assoc_array["mannschaft"];
     }
+
+    public function isAktiv(): bool {
+        return $this->assoc_array["aktiv"] != "0";
+    }
     
     public function getLiga(): string {
         return $this->assoc_array["liga"];
