@@ -60,7 +60,7 @@ function addDiensteMannschaftsKonfiguration(){
 function displayDiensteMannschaften(){
     
     require_once __DIR__."/../dao/mannschaft.php";
-    $mannschaften = loadMannschaften();
+    $mannschaften = loadMannschaftenMitMeisterschaften();
 
     ?>
     <script>
@@ -75,15 +75,6 @@ function updateGeschlecht(jugendklasse, id){
         <h1>Mannschaften einrichten</h1>
         <ol>
             <li>
-                Mit <b>Nummer</b> ist die fortlaufende Nummer gemeint, unter der eine Mannschaft gemeldet ist, also z.B. 1. Herren, 2. Herren, 3. Herren usw..
-            </li>
-            <li>
-                <b>Jugend</b> sollte mit "A", "B"  usw. befüllt werden, wenn es sich um eine Jugend-Mannschaft handelt. Auch "Minis" ist möglich. Für Senioren-Mannschaften dies leer lassen.
-            </li>
-            <li>
-                An die <b>E-Mail-Adresse</b><i>(optional)</i> werden Updates geschickt, wenn sich nach einem Import an den Spielen etwas ändert, bei denen diese Mannschaft Dienste hat. 
-            </li>
-            <li>
                 <b>Meisterschaft</b>, <b>nuLiga: ID Liga</b>, <b>nuLiga: ID Team</b> sind Werte, die aus nuliga stammen. Über diese Werte sucht der Importer die Tabelle aller Spiele. <br>
                 Am besten findet man diese Werte, wenn man in einer Liga auf die jeweilige Mannschaft klickt und sich dann die URL anschaut. 
                 Hier werden die Werte <i>championship</i>, <i>group</i> und <i>teamtable</i> benötigt. <br>
@@ -96,82 +87,79 @@ function updateGeschlecht(jugendklasse, id){
                 Für zukünftige Verwendungen sollte er so sein, wie er in nuLiga steht.
             </li>
         </ol>
-        <table cellspacing="1">
-            <tr>
-                <th> Nr. </th>
-                <th> w/m </th>
-                <th> Jugend </th>
-                <th> Email </th>
-                <th> Meisterschaft </th>
-                <th> Liga </th>
-                <th> nuLiga: ID Liga </th>
-                <th> nuLiga: ID Team </th>
-                <th colspan="2"> <!-- Spalte für Aktionen //--> </th>
-            </tr>
-        <?php foreach($mannschaften as $mannschaft){ 
+        
+        <div class="accordion" id="accordionMannschaften">
+            <?php foreach ($mannschaften as $mannschaft) { 
             $bezeichnungW = ($mannschaft->getJugendklasse() !== null) ? "Mädchen" : "Damen";
             $bezeichnungM = ($mannschaft->getJugendklasse() !== null) ? "Jungen"  : "Herren";
             ?>
-            <tr><form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
-                <input type="hidden" name="mannschafts-id" value="<?php echo $mannschaft->getID(); ?>">
-                <td style="text-align:center"> <input type="number" name="mannschafts-nummer" value="<?php echo $mannschaft->getNummer(); ?>" min="1" style="width:50px"> </td>
-                <td style="text-align:center"> 
-                    <select name="mannschafts-geschlecht" style="width:100px"> 
-                        <option value="w" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_W) echo "selected"; ?> id="option-w-<?php echo $mannschaft->getID(); ?>"><?php echo $bezeichnungW; ?></option>
-                        <option value="m" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_M) echo "selected"; ?> id="option-m-<?php echo $mannschaft->getID(); ?>"><?php echo $bezeichnungM; ?></option>
-                    </select> 
-                </td>
-                <td style="text-align:center"> <input type="text" name="mannschafts-jugendklasse" value="<?php echo $mannschaft->getJugendklasse(); ?>" style="width:50px" onchange="updateGeschlecht(this.value, '<?php echo $mannschaft->getID(); ?>')"> </td>
-                <td style="text-align:center"> <input type="text" name="mannschafts-email" value="<?php echo $mannschaft->getEmail(); ?>" style="width:150px"> </td>
-                <td style="text-align:center"> <input type="text" name="mannschafts-meisterschaft" value="<?php echo $mannschaft->getMeisterschaft(); ?>" style="width:100px"> </td>
-                <td style="text-align:center"> <input type="text" name="mannschafts-liga" value="<?php echo $mannschaft->getLiga(); ?>"> </td>
-                <td style="text-align:center"> <input type="number" name="mannschafts-nuliga-liga-id" value="<?php echo $mannschaft->getNuligaLigaID(); ?>" style="width:100px"> </td>
-                <td style="text-align:center"> <input type="number" name="mannschafts-nuliga-team-id" value="<?php echo $mannschaft->getNuligaTeamID(); ?>" style="width:100px"> </td>
-                <td style="text-align:left"> 
-                    <?php
-                    settings_fields( 'alte_mannschaft' );
-                    do_settings_sections( 'dienste_mannschaft_aendern' );
-                    wp_nonce_field('dienste-mannschaft-aendern_'.$mannschaft->getID());
-                    submit_button( 'Ändern', 'primary' , 'submit-change', false);
-                    ?>
-                    </form>
-        </td><td style="text-align:left">
-                    <form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
-                <input type="hidden" name="mannschafts-id" value="<?php echo $mannschaft->getID(); ?>">
-                    <?php
-                    settings_fields( 'loesche_mannschaft' );
-                    do_settings_sections( 'dienste_mannschaft_loeschen' );
-                    wp_nonce_field('dienste-mannschaft-loeschen_'.$mannschaft->getID());
-                    submit_button( 'Löschen', 'delete', 'submit-delete', false );
-                    ?>
-                    </form>
-                </td>
-            </tr> 
-        <?php } ?>
-            <tr><form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
-                <td style="text-align:center"> <input type="number" name="mannschafts-nummer" min="1" style="width:50px"> </td>
-                <td style="text-align:center"> 
-                    <select name="mannschafts-geschlecht" style="width:100px"> 
-                        <option value="w" id="option-w-neu">Damen</option>
-                        <option value="m" id="option-m-neu">Herren</option>
-                    </select> 
-                </td>
-                <td style="text-align:center"> <input type="text" name="mannschafts-jugendklasse" style="width:50px" onchange="updateGeschlecht(this.value, 'neu')"> </td>
-                <td style="text-align:center"> <input type="text" name="mannschafts-email" style="width:150px"> </td>
-                <td style="text-align:center"> <input type="text" name="mannschafts-meisterschaft" style="width:100px"> </td>
-                <td style="text-align:center"> <input type="text" name="mannschafts-liga"> </td>
-                <td style="text-align:center"> <input type="number" name="mannschafts-nuliga-liga-id" style="width:100px"> </td>
-                <td style="text-align:center"> <input type="number" name="mannschafts-nuliga-team-id" style="width:100px"> </td>
-                <td colspan="2" style="text-align:left"> 
-                    <?php
-                    settings_fields( 'neue_mannschaft' );
-                    do_settings_sections( 'dienste_mannschaft_hinzufuegen' );
-                    wp_nonce_field('dienste-mannschaft-hinzufuegen_neu');
-                    submit_button('Anlegen', 'primary', 'submit-new', false);
-                    ?>
-                </td>
-            </form></tr>
-        </table>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading<?php echo $mannschaft->getID(); ?>">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $mannschaft->getID(); ?>" aria-expanded="true" aria-controls="collapse<?php echo $mannschaft->getID(); ?>">
+                            <?php echo $mannschaft->getName(); ?>
+                        </button>
+                    </h2>
+                    <div id="collapse<?php echo $mannschaft->getID(); ?>" class="accordion-collapse collapse" aria-labelledby="heading<?php echo $mannschaft->getID(); ?>" data-bs-parent="#accordionMannschaften">
+                        <div class="accordion-body">    
+                            <form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
+                                <input type="hidden" name="mannschafts-id" value="<?php echo $mannschaft->getID(); ?>">
+                                <div class="row">
+                                    <div class="col-2"><div class="form-floating">
+                                        <input title="Die fortlaufende Nummer, unter der eine Mannschaft gemeldet ist, also z.B. 1. Herren, 2. Herren, 3. Herren usw.." type="number" class="form-control" placeholder="XX" name="mannschafts-nummer" value="<?php echo $mannschaft->getNummer(); ?>" min="1" id="mannschafts-nummer-<?php echo $mannschaft->getID(); ?>">
+                                        <label for="mannschafts-nummer-<?php echo $mannschaft->getID(); ?>">Nummer</label>
+                                    </div></div>
+                                    <div class="col-2"><div class="form-floating">
+                                        <select name="mannschafts-geschlecht" class="form-select" id="mannschafts-geschlecht-<?php echo $mannschaft->getID(); ?>"> 
+                                            <option value="w" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_W) echo "selected"; ?> id="option-w-<?php echo $mannschaft->getID(); ?>"><?php echo $bezeichnungW; ?></option>
+                                            <option value="m" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_M) echo "selected"; ?> id="option-m-<?php echo $mannschaft->getID(); ?>"><?php echo $bezeichnungM; ?></option>
+                                        </select> 
+                                        <label for="mannschafts-geschlecht-<?php echo $mannschaft->getID(); ?>">Geschlecht</label>
+                                    </div></div>
+                                    <div class="col-2"><div class="form-floating">
+                                        <input type="text" class="form-control" title='Sollte mit "A", "B"  usw. befüllt werden, wenn es sich um eine Jugend-Mannschaft handelt. Auch "Minis" ist möglich. Für Senioren-Mannschaften dies leer lassen.' placeholder="Mädels" name="mannschafts-jugendklasse" value="<?php echo $mannschaft->getJugendklasse(); ?>" onchange="updateGeschlecht(this.value, '<?php echo $mannschaft->getID(); ?>')" id="mannschafts-jugendklasse-<?php echo $mannschaft->getID(); ?>">
+                                        <label for="mannschafts-jugendklasse-<?php echo $mannschaft->getID(); ?>">Jugendklasse (optional)</label>
+                                    </div></div>
+                                    <div class="col-2"><div class="form-floating">
+                                        <input type="text" class="form-control" title='An diese Adresse werden Updates geschickt, wenn sich nach einem Import an den Spielen etwas ändert, bei denen diese Mannschaft Dienste hat.' placeholder="example@turnerkreisnippes.de" name="mannschafts-email" value="<?php echo $mannschaft->getEmail(); ?>" id="mannschafts-email-<?php echo $mannschaft->getID(); ?>">
+                                        <label for="mannschafts-email-<?php echo $mannschaft->getID(); ?>">E-Mail (optional)</label>
+                                    </div></div>
+                                    <div class="col">
+                                    <?php
+                                        settings_fields( 'alte_mannschaft' );
+                                        do_settings_sections( 'dienste_mannschaft_aendern' );
+                                        wp_nonce_field('dienste-mannschaft-aendern_'.$mannschaft->getID());
+                                        submit_button( 'Ändern', 'btn btn-primary btn-lg' , 'submit-change', false);
+                                    ?><!--input type="submit" class="btn btn-primary btn-lg" value="Ändern" //-->
+                                    </form>
+                                    <form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
+                                        <input type="hidden" name="mannschafts-id" value="<?php echo $mannschaft->getID(); ?>">
+                                        <?php
+                                        settings_fields( 'loesche_mannschaft' );
+                                        do_settings_sections( 'dienste_mannschaft_loeschen' );
+                                        wp_nonce_field('dienste-mannschaft-loeschen_'.$mannschaft->getID());
+                                        submit_button( 'Löschen', 'delete', 'submit-delete', false );
+                                        ?>
+                                        </form>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingNeu">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNeu" aria-expanded="true" aria-controls="collapseNeu">
+                        Neue Mannschaft anlegen...
+                    </button>
+                </h2>
+                <div id="collapseNeu" class="accordion-collapse collapse" aria-labelledby="headingNeu" data-bs-parent="#accordionMannschaften">
+                    <div class="accordion-body">
+                        <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <?php
 }
@@ -234,11 +222,7 @@ function handleMannschaftLoeschen(){
 function isGueltigeMannschaftUebertragen(){
     $expectedKeys = array(
         'mannschafts-nummer', 
-        'mannschafts-geschlecht',
-        'mannschafts-meisterschaft',
-        'mannschafts-liga',
-        'mannschafts-nuliga-liga-id',
-        'mannschafts-nuliga-team-id'
+        'mannschafts-geschlecht'
     );
     $missingKeys = array_diff($expectedKeys, array_keys($_POST));
     if(count($missingKeys) > 0){
@@ -256,14 +240,6 @@ function isGueltigeMannschaftUebertragen(){
     if (!empty($_POST['mannschafts-email']) && !filter_var($_POST['mannschafts-email'], FILTER_VALIDATE_EMAIL)) {
         return false;
     }
-    
-    if(!is_numeric($_POST['mannschafts-nuliga-liga-id'])){
-        return false;
-    }
-    
-    if(!is_numeric($_POST['mannschafts-nuliga-team-id'])){
-        return false;
-    }
 
     return true;
 }
@@ -277,11 +253,7 @@ function insertNeueMannschaftFrom_POST(){
         'nummer' => $_POST['mannschafts-nummer'],
         'geschlecht' => $_POST['mannschafts-geschlecht'],
         'jugendklasse' => $_POST['mannschafts-jugendklasse'],
-        'email' => $_POST['mannschafts-email'],
-        'meisterschaft' => $_POST['mannschafts-meisterschaft'],
-        'liga' => $_POST['mannschafts-liga'],
-        'nuliga_liga_id' => $_POST['mannschafts-nuliga-liga-id'],
-        'nuliga_team_id' => $_POST['mannschafts-nuliga-team-id']
+        'email' => $_POST['mannschafts-email']
         ));
 
     $mannschaftsID = $wpdb->insert_id;
@@ -291,16 +263,16 @@ function updateMannschaftFrom_POST(){
     global $wpdb;
     
 	$table_name = $wpdb->prefix . 'mannschaft';
+    $jugendklasse = null;
+    if(!empty($_POST['mannschafts-jugendklasse'])){
+        $jugendklasse = $_POST['mannschafts-jugendklasse'];
+    }
 
     $wpdb->update($table_name, array(
         'nummer' => $_POST['mannschafts-nummer'],
         'geschlecht' => $_POST['mannschafts-geschlecht'],
-        'jugendklasse' => $_POST['mannschafts-jugendklasse'],
-        'email' => $_POST['mannschafts-email'],
-        'meisterschaft' => $_POST['mannschafts-meisterschaft'],
-        'liga' => $_POST['mannschafts-liga'],
-        'nuliga_liga_id' => $_POST['mannschafts-nuliga-liga-id'],
-        'nuliga_team_id' => $_POST['mannschafts-nuliga-team-id']
+        'jugendklasse' => $jugendklasse,
+        'email' => $_POST['mannschafts-email']
     ), array(
         'id' => $_POST['mannschafts-id']
     ));
