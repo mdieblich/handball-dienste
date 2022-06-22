@@ -50,4 +50,14 @@ function extractTabellenZeilen($tabelle): array {
     return $tabellenZeile;
 }
 
+function extractTabellenZellen($zeile): array {
+    $tabellenZellen = array();
+    foreach ($zeile->childNodes as $childNode){
+        if($childNode->nodeName === "td" || $childNode->nodeName === "th"){
+            $tabellenZellen[] = $childNode;
+        }
+    }
+    return $tabellenZellen;
+}
+
 ?>
