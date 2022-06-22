@@ -155,7 +155,37 @@ function updateGeschlecht(jugendklasse, id){
                 </h2>
                 <div id="collapseNeu" class="accordion-collapse collapse" aria-labelledby="headingNeu" data-bs-parent="#accordionMannschaften">
                     <div class="accordion-body">
-                        <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                        <form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
+                            <div class="row">
+                                <div class="col-2"><div class="form-floating">
+                                    <input title="Die fortlaufende Nummer, unter der eine Mannschaft gemeldet ist, also z.B. 1. Herren, 2. Herren, 3. Herren usw.." type="number" class="form-control" placeholder="XX" name="mannschafts-nummer" min="1" id="mannschafts-nummer-neu">
+                                    <label for="mannschafts-nummer-neu">Nummer</label>
+                                </div></div>
+                                <div class="col-2"><div class="form-floating">
+                                    <select name="mannschafts-geschlecht" class="form-select" id="mannschafts-geschlecht-neu"> 
+                                        <option value="w" id="option-w-neu">Damen</option>
+                                        <option value="m" id="option-m-neu">Herren</option>
+                                    </select> 
+                                    <label for="mannschafts-geschlecht-neu">Geschlecht</label>
+                                </div></div>
+                                <div class="col-2"><div class="form-floating">
+                                    <input type="text" class="form-control" title='Sollte mit "A", "B"  usw. befüllt werden, wenn es sich um eine Jugend-Mannschaft handelt. Auch "Minis" ist möglich. Für Senioren-Mannschaften dies leer lassen.' placeholder="Mädels" name="mannschafts-jugendklasse" onchange="updateGeschlecht(this.value, 'neu')" id="mannschafts-jugendklasse-neu">
+                                    <label for="mannschafts-jugendklasse-neu">Jugendklasse (optional)</label>
+                                </div></div>
+                                <div class="col-2"><div class="form-floating">
+                                    <input type="text" class="form-control" title='An diese Adresse werden Updates geschickt, wenn sich nach einem Import an den Spielen etwas ändert, bei denen diese Mannschaft Dienste hat.' placeholder="example@turnerkreisnippes.de" name="mannschafts-email" id="mannschafts-email-neu">
+                                    <label for="mannschafts-email-neu">E-Mail (optional)</label>
+                                </div></div>
+                                <div class="col">
+                                <?php
+                                    settings_fields( 'neue_mannschaft' );
+                                    do_settings_sections( 'dienste_mannschaft_hinzufuegen' );
+                                    wp_nonce_field('dienste-mannschaft-hinzufuegen_neu');
+                                    submit_button('Anlegen', 'primary', 'submit-new', false);
+                                ?>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
