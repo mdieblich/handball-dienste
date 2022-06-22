@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__."/person.php";
 require_once __DIR__."/meisterschaft.php";
 
 const GESCHLECHT_M = "m";
@@ -8,7 +7,6 @@ const GESCHLECHT_W = "w";
 class Mannschaft {
     private $assoc_array;
 
-    private $spieler = array();
     private $meisterschaften = array();
 
     public function __construct(array $assoc_array){
@@ -81,17 +79,6 @@ class Mannschaft {
 
     public function getRandomSpielerID(): int {
         return array_rand($this->spieler);
-    }
-
-    public function getSpieler(?int $id): ?Person {
-        if(array_key_exists($id, $this->spieler)){
-            return $this->spieler[$id];
-        }
-        return null;
-    }
-
-    public function addSpieler(Person $spieler){
-        $this->spieler[$spieler->getID()] = $spieler;
     }
 
     public function addMeisterschaft(Meisterschaft $meisterschaft){

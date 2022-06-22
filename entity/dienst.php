@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__."/person.php";
 require_once __DIR__."/mannschaft.php";
 
 class Dienstart{
@@ -32,9 +31,6 @@ class Dienst {
         return $this->assoc_array["mannschaft"];
     }
 
-    public function getPerson(): string {
-        return $this->assoc_array["person"];
-    }
 
     public function getDebugOutput($mannschaften = array()): string {
         return 
@@ -46,21 +42,11 @@ class Dienst {
 
     private function getAnsetzungDebugOutput($mannschaften): string {
 
-        $mannschaftDebugOutput = $this->getMannschaft();
-        $spielerDebugOuput = $this->getPerson();
-
         if(array_key_exists($this->getMannschaft(), $mannschaften)){
             $mannschaft = $mannschaften[$this->getMannschaft()];
-            $mannschaftDebugOutput = $mannschaft->getName();
-            $spieler = $mannschaft->getSpieler($this->getPerson());
-            if(!empty($spieler)){
-                return $spielerDebugOuput = $spieler->getName();
-            }
+            return $mannschaft->getName();
         }
-        return 
-            "Mannschaft ".$mannschaftDebugOutput.", ".
-            "Person ".$spielerDebugOuput;
-
+        return $this->getMannschaft();
     }
 
 }
