@@ -7,14 +7,14 @@ class NuLiga_MannschaftsUndLigenEinteilung {
     public DomDocument $dom;
     private DOMXPath $xpath;
 
-    public function __construct(string $vereinsname, int $club_id){
+    public function __construct(int $club_id){
         $this->url = "https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/clubTeams?"
             ."club=".$club_id;
         $this->dom = getDOMFromSite($this->url);
         $this->xpath = new DOMXPath($this->dom);
     }
 
-    public function getMeisterschaften(): array{
+    public function getMeisterschaften(string $vereinsname): array{
         $meisterschaften = array();
 
         $contentDiv = $this->dom->getElementById("content-row1");
@@ -36,7 +36,7 @@ class NuLiga_MannschaftsUndLigenEinteilung {
                 // die nächste Zeile ist eine Kopfzeile
                 $skipZeile = true;
             } else {
-                $currentMeisterschaft->mannschaftsEinteilungen[] = NuLiga_MannschaftsEinteilung::fromTabellenzeile($zellen);
+                $currentMeisterschaft->mannschaftsEinteilungen[] = NuLiga_MannschaftsEinteilung::fromTabellenzeile($zellen, $vereinsname);
             }
         }
 

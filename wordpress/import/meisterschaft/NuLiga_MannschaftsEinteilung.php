@@ -1,15 +1,16 @@
 <?php
 
 require_once __DIR__."/../PageGrabber.php";
+require_once __DIR__."/NuLiga_Ligatabelle.php";
 
 class NuLiga_MannschaftsEinteilung{
     public string $mannschaftsBezeichnung;
     public string $meiterschaftsKuerzel;
     public string $liga;
-    public string $liga_id;
-    // TODO: Rausfinden der Team-ID
+    public int $liga_id;
+    public int $team_id;
 
-    public static function fromTabellenzeile(array $zellen): NuLiga_MannschaftsEinteilung {
+    public static function fromTabellenzeile(array $zellen, string $vereinsname): NuLiga_MannschaftsEinteilung {
         $einteilung = new NuLiga_MannschaftsEinteilung();
         $einteilung->mannschaftsBezeichnung = sanitizeContent($zellen[0]->textContent);
         $einteilung->liga = sanitizeContent($zellen[1]->textContent);
@@ -21,6 +22,9 @@ class NuLiga_MannschaftsEinteilung{
         preg_match('/group=(.*)/', $url, $groupMatches);
         $einteilung->meiterschaftsKuerzel = urldecode($championShipMatches[1]);
         $einteilung->liga_id = $groupMatches[1];
+
+        $ligaTabellenSeite = new NuLiga_Ligatabelle($url);
+        $einteilung->team_id = $ligaTabellenSeite->extractTeamID($vereinsname);
 
         return $einteilung;
     }
