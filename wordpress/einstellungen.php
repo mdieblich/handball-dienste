@@ -18,6 +18,16 @@ function dienste_einstellungen_initialisieren() {
         'dienste_einstellungen'         // The name of the section to which this field belongs
         
     );
+     
+    // Next, we will introduce the fields for toggling the visibility of content elements.
+    add_settings_field( 
+        'nuliga-clubid',                      // ID used to identify the field throughout the theme
+        'Nuliga-Vereins-ID',                           // The label to the left of the option interface element
+        'dienste_einstellungen_nuligaclubid_anzeigen',   // The name of the function responsible for rendering the option interface
+        'general',                          // The page on which this option will be displayed
+        'dienste_einstellungen'         // The name of the section to which this field belongs
+        
+    );
     add_settings_field( 
         'bot-smtp',                      // ID used to identify the field throughout the theme
         'Bot-SMTP-Server',                           // The label to the left of the option interface element
@@ -47,6 +57,11 @@ function dienste_einstellungen_initialisieren() {
         'general',
         'vereinsname'
     );
+    
+    register_setting(
+        'general',
+        'nuliga-clubid'
+    );
 
     register_setting(
         'general',
@@ -71,6 +86,9 @@ function dienste_einstellungen_beschreibung() {
  
 function dienste_einstellungen_vereinsname_anzeigen($args) {
     echo '<input type="text" id="vereinsname" name="vereinsname" value="'.get_option('vereinsname').'" />';
+}
+function dienste_einstellungen_nuligaclubid_anzeigen($args) {
+    echo '<input type="text" id="nuliga-clubid" name="nuliga-clubid" value="'.get_option('nuliga-clubid').'" />';
 }
 function dienste_einstellungen_botsmtp_anzeigen($args) {
     echo '<input type="text" id="bot-smtp" name="bot-smtp" value="'.get_option('bot-smtp').'" />';
