@@ -17,4 +17,19 @@ function loadMeisterschaften(string $where = "1=1", string $orderby = "id"): arr
     }
     return $meisterschaften;
 }
+
+function insertMeisterschaft(int $mannschaft, string $name, string $kuerzel, string $liga, int $nuliga_liga_id, int $nuliga_team_id){
+    
+    global $wpdb;
+    
+    $table_name = $wpdb->prefix . 'meisterschaft';
+    $wpdb->insert($table_name, array(
+        'mannschaft' => $mannschaft, 
+        'name' => $name, 
+        'kuerzel' => $kuerzel, 
+        'liga' => $liga, 
+        'nuliga_liga_id' => $nuliga_liga_id, 
+        'nuliga_team_id' => $nuliga_team_id
+      ));
+}
 ?>
