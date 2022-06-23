@@ -84,6 +84,7 @@ function importSpieleFromNuliga(): array{
 }
 
 function importMeisterschaftenFromNuliga(): array{
+    require_once __DIR__."/../dao/meistcerschaft.php";
     
     $mannschaften = loadMannschaften();
     $nuligaBezeichnungen = createNuLigaMannschaftsBezeichnungen($mannschaften);
@@ -93,9 +94,18 @@ function importMeisterschaftenFromNuliga(): array{
 
     foreach($nuliga_meisterschaften as $nuliga_meisterschaft){
         foreach($nuliga_meisterschaft->mannschaftsEinteilungen as $mannschaftsEinteilung){
-            // TODO Meisterschaft extrahieren und speichern
+            $mannschaft = $nuligaBezeichnungen[$mannschaftsEinteilung->mannschaftsBezeichnung];
+            if(isset($mannschaft)){
+                // TODO prüfen, ob bereits vorhanden
+                insertMeisterschaft($mannschaft->getID(), 
+                    $nuliga_meisterschaften->name, $mannschaftsEinteilung->meisterschaftsKuerzel, 
+                    $mannschaftsEinteilung->liga, $mannschaftsEinteilung->liga_id,
+                    $mannschaftsEinteilung->team_id
+                );
+            }
         }
     }
+    // TODO Rückgabewert!
 }
 
 function createNuLigaMannschaftsBezeichnungen(array $mannschaften): array{
