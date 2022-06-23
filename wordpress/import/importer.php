@@ -11,12 +11,12 @@ require_once __DIR__."/../dao/dienst.php";
 require_once __DIR__."/../PHPMailer/NippesMailer.php";
 
 class ImportErgebnis{
-    public int $spiele = 0;
+    public int $gesamt = 0;
     public int $neu = 0;
     public int $aktualisiert = 0;
 
     public function toReadableString(): string{
-        return $this->spiele." Spiele geprüft, davon ".$this->neu." neu importiert und ".$this->aktualisiert." aktualisiert";
+        return $this->gesamt." geprüft, davon ".$this->neu." neu importiert und ".$this->aktualisiert." aktualisiert";
     }
 }
 
@@ -60,7 +60,7 @@ function importSpieleFromNuliga(): array{
                     $meisterschaft->getLiga()
                 )->getID();
                 $spiel = findSpiel ($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
-                $importErgebnis->spiele ++;
+                $importErgebnis->gesamt ++;
                 if(isset($spiel)){
                     $hallenAenderung = ($spiel->getHalle() != $nuLigaSpiel->getHalle());
                     $AnwurfAenderung = ($spiel->getAnwurf() != $nuLigaSpiel->getAnwurf());
@@ -92,6 +92,10 @@ function importMeisterschaftenFromNuliga(): array{
     $ligeneinteilung = new NuLiga_MannschaftsUndLigenEinteilung(get_option('nuliga-clubid'));
     $nuliga_meisterschaften = $ligeneinteilung->getMeisterschaften(get_option('vereinsname'));
 
+    $ergebnis = array();
+    foreach($mannschaften as $mannschaft){
+        $ergebnis[$mannschaft->getName()] = new ImportErgebnis();
+    }
     foreach($nuliga_meisterschaften as $nuliga_meisterschaft){
         foreach($nuliga_meisterschaft->mannschaftsEinteilungen as $mannschaftsEinteilung){
             $mannschaft = $nuligaBezeichnungen[$mannschaftsEinteilung->mannschaftsBezeichnung];
@@ -102,10 +106,11 @@ function importMeisterschaftenFromNuliga(): array{
                     $mannschaftsEinteilung->liga, $mannschaftsEinteilung->liga_id,
                     $mannschaftsEinteilung->team_id
                 );
+                $ergebnis[$mannschaft->getName()]->neu++;
             }
         }
     }
-    // TODO Rückgabewert!
+    return $ergebnis;
 }
 
 function createNuLigaMannschaftsBezeichnungen(array $mannschaften): array{
