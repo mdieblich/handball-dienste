@@ -78,7 +78,7 @@ function startImportSpiele(){
         <?php foreach($mannschaften as $mannschaft){  ?>
         <tr>
             <td> <?php echo $mannschaft->getName(); ?> </td>
-            <td style="text-align:center"> <?php echo countMeisterschaften($mannschaft->getID()); ?> </td>
+            <td style="text-align:center"> <?php echo count($mannschaft->getMeisterschaften()); ?> </td>
             <td style="text-align:center"> <?php echo countSpiele($mannschaft->getID()); ?> </td>
         </tr>
         <?php } ?>
