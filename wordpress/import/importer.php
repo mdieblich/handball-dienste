@@ -84,11 +84,12 @@ function importSpieleFromNuliga(): array{
 }
 
 function importMeisterschaftenFromNuliga(): array{
-    require_once __DIR__."/../dao/meistcerschaft.php";
+    require_once __DIR__."/../dao/meisterschaft.php";
+    require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
     
     $mannschaften = loadMannschaften();
     $nuligaBezeichnungen = createNuLigaMannschaftsBezeichnungen($mannschaften);
-        
+    
     $ligeneinteilung = new NuLiga_MannschaftsUndLigenEinteilung(get_option('nuliga-clubid'));
     $nuliga_meisterschaften = $ligeneinteilung->getMeisterschaften(get_option('vereinsname'));
 
@@ -104,11 +105,12 @@ function importMeisterschaftenFromNuliga(): array{
 
                 $meisterschaft = findMeisterschaft($mannschaft->getID(), $mannschaftsEinteilung->meisterschaftsKuerzel, $mannschaftsEinteilung->liga);
                 if(isset($meisterschaft)){
-                    updateMeisterschaft($meisterschaft->getID(), $nuliga_meisterschaften->name, $mannschaftsEinteilung->liga_id, $mannschaftsEinteilung->team_id);
+                    updateMeisterschaft($meisterschaft->getID(), $nuliga_meisterschaft->name, $mannschaftsEinteilung->liga_id, $mannschaftsEinteilung->team_id);
                     $ergebnis[$mannschaft->getName()]->aktualisiert++;
                 } else{
+                    
                     insertMeisterschaft($mannschaft->getID(), 
-                        $nuliga_meisterschaften->name, $mannschaftsEinteilung->meisterschaftsKuerzel, 
+                        $nuliga_meisterschaft->name, $mannschaftsEinteilung->meisterschaftsKuerzel, 
                         $mannschaftsEinteilung->liga, $mannschaftsEinteilung->liga_id,
                         $mannschaftsEinteilung->team_id
                     );
@@ -139,7 +141,7 @@ function createNuLigaMannschaftsBezeichnungen(array $mannschaften): array{
         }
         if($mannschaft->getNummer() > 1){
             $bezeichnung .= " ";
-            for($i=0; $i++; $i<$mannschaft->getNummer()){
+            for($i=0; $i<$mannschaft->getNummer(); $i++){
                 $bezeichnung .= "I";
             }
         }
