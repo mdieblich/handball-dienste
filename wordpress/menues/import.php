@@ -9,7 +9,7 @@ add_action( 'wp_ajax_spiele_importieren', 'spiele_importieren' );
 function displaySpieleImport(){
     require_once __DIR__."/../dao/mannschaft.php";
     require_once __DIR__."/../dao/spiel.php";
-    $mannschaften = loadMannschaftenMitMeisterschaften();
+    $mannschaften = loadMannschaftenMitMeldungen();
 ?>
 <script>
 function startImportMeisterschaften(){
@@ -78,7 +78,7 @@ function startImportSpiele(){
         <?php foreach($mannschaften as $mannschaft){  ?>
         <tr>
             <td> <?php echo $mannschaft->getName(); ?> </td>
-            <td style="text-align:center"> <?php echo count($mannschaft->getMeisterschaften()); ?> </td>
+            <td style="text-align:center"> <?php echo count($mannschaft->getMeldungen()); ?> </td>
             <td style="text-align:center"> <?php echo countSpiele($mannschaft->getID()); ?> </td>
         </tr>
         <?php } ?>

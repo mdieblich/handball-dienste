@@ -1,6 +1,6 @@
 <?php
 require_once WP_PLUGIN_DIR."/dienstedienst/entity/mannschaft.php";
-require_once __dir__."/meisterschaft.php";
+require_once __dir__."/MannschaftsMeldung.php";
 
 function loadMannschaften(): array{
     global $wpdb;
@@ -18,15 +18,15 @@ function loadMannschaften(): array{
     }
     return $mannschaften;
 }
-function loadMannschaftenMitMeisterschaften(): array{
+function loadMannschaftenMitMeldungen(): array{
     $mannschaften = loadMannschaften();
     
     $mannschaftIDs = Mannschaft::getIDs($mannschaften);
     $filter = "mannschaft in (".implode(", ", $mannschaftIDs).")";
 
-    $meisterschaften = loadMeisterschaften($filter);
-    foreach($meisterschaften as $meisterschaft){
-        $mannschaften[$meisterschaft->getMannschaft()]->addMeisterschaft($meisterschaft);
+    $meldungen = loadMannschaftsMeldungen($filter);
+    foreach($meldungen as $meldung){
+        $mannschaften[$meldung->getMannschaft()]->addMeldung($meldung);
     }
 
     return $mannschaften;

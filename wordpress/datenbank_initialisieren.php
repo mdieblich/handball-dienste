@@ -10,11 +10,10 @@ function dienste_datenbank_initialisieren() {
 
     $previous_version = get_option('dienste_db_version');
     if($previous_version && $previous_version < '1.6'){
-        dienste_meisterschaft_initialisieren();
-        dienste_migrate_meisterschaft();
         dienste_mannschaft_aktualisiern();
     }
     
+    dienste_mannschaftsMeldung_initialisieren();
     dienste_mannschaft_initialisieren();
     dienste_gegner_initialisieren();
     dienste_spiele_initialisieren();
@@ -41,10 +40,10 @@ function dienste_mannschaft_initialisieren(){
     dbDelta( $sql );
 }
 
-function dienste_meisterschaft_initialisieren(){
+function dienste_mannschaftsMeldung_initialisieren(){
     global $wpdb;
 
-    $table_name = $wpdb->prefix . 'meisterschaft';
+    $table_name = $wpdb->prefix . 'mannschaftsMeldung';
     $charset_collate = $wpdb->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
@@ -61,19 +60,6 @@ function dienste_meisterschaft_initialisieren(){
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );
-}
-
-function dienste_migrate_meisterschaft(){
-    global $wpdb;
-
-    $table_name_mannschaft    = $wpdb->prefix . 'mannschaft';
-    $table_name_meisterschaft = $wpdb->prefix . 'meisterschaft';
-    $sql = "INSERT INTO $table_name_meisterschaft 
-        (name, kuerzel, mannschaft, liga, nuliga_liga_id, nuliga_team_id, aktiv) 
-        SELECT meisterschaft, meisterschaft, id, liga, nuliga_liga_id, nuliga_team_id, 1 
-        FROM $table_name_mannschaft";
-
-    $wpdb->query($sql);
 }
 
 function dienste_mannschaft_aktualisiern(){

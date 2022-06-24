@@ -60,7 +60,7 @@ function addDiensteMannschaftsKonfiguration(){
 function displayDiensteMannschaften(){
     
     require_once __DIR__."/../dao/mannschaft.php";
-    $mannschaften = loadMannschaftenMitMeisterschaften();
+    $mannschaften = loadMannschaften();
 
     ?>
     <script>

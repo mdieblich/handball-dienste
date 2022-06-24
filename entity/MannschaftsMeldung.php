@@ -1,6 +1,6 @@
 <?php
 
-class Meisterschaft {
+class MannschaftsMeldung {
     private $assoc_array;
 
     public function __construct(array $assoc_array){

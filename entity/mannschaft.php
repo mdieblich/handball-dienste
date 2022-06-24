@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."/meisterschaft.php";
+require_once __DIR__."/MannschaftsMeldung.php";
 
 const GESCHLECHT_M = "m";
 const GESCHLECHT_W = "w";
@@ -7,7 +7,7 @@ const GESCHLECHT_W = "w";
 class Mannschaft {
     private $assoc_array;
 
-    private $meisterschaften = array();
+    private $meldungen = array();
 
     public function __construct(array $assoc_array){
         $this->assoc_array = $assoc_array;
@@ -56,23 +56,6 @@ class Mannschaft {
     public function getEmail(): ?string {
         return $this->assoc_array["email"];
     }
-    
-    public function getMeisterschaft(): string {
-        return $this->assoc_array["meisterschaft"];
-    }
-    
-    public function getLiga(): string {
-        return $this->assoc_array["liga"];
-    }
-    
-    public function getNuligaLigaID(): int {
-        return $this->assoc_array["nuliga_liga_id"];
-    }
-    
-    public function getNuligaTeamID(): int {
-        return $this->assoc_array["nuliga_team_id"];
-    }
-
     public function hasSpieler(): bool {
         return count($this->spieler) > 0;
     }
@@ -81,12 +64,12 @@ class Mannschaft {
         return array_rand($this->spieler);
     }
 
-    public function addMeisterschaft(Meisterschaft $meisterschaft){
-        $this->meisterschaften[$meisterschaft->getID()] = $meisterschaft;
+    public function addMeldung(MannschaftsMeldung $mannschaftsMeldung){
+        $this->meldungen[$mannschaftsMeldung->getID()] = $mannschaftsMeldung;
     }
 
-    public function getMeisterschaften(): array{
-        return $this->meisterschaften;
+    public function getMeldungen(): array{
+        return $this->meldungen;
     }
     
     public function getDebugOutput(): string {

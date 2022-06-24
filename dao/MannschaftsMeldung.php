@@ -1,0 +1,62 @@
+<?php
+require_once __DIR__."/../entity/MannschaftsMeldung.php";
+
+function loadMannschaftsMeldungen(string $where = "1=1", string $orderby = "id"): array{
+    global $wpdb;
+    
+    $table_name = $wpdb->prefix . 'mannschaftsMeldung';
+    $sql = "SELECT * FROM $table_name WHERE $where ORDER BY $orderby";
+    $result = $wpdb->get_results($sql, ARRAY_A);
+
+    $meldungen = array();
+    if (count($result) > 0) {
+        foreach($result as $meldung) {
+            $meldungObj = new MannschaftsMeldung($meldung);
+            $meldungen[$meldungObj->getID()] = $meldungObj;
+        }
+    }
+    return $meldungen;
+}
+
+function findMannschaftsMeldung(int $mannschaft, string $kuerzel, string $liga): ?MannschaftsMeldung {
+  global $wpdb;
+
+  $table_name = $wpdb->prefix . 'mannschaftsMeldung';
+  $sql = "SELECT * FROM $table_name WHERE mannschaft=$mannschaft AND kuerzel=\"$kuerzel\" AND liga=\"$liga\"";
+  $result = $wpdb->get_row($sql, ARRAY_A);
+  if(empty($result)){
+    return null;
+  }
+
+  return new MannschaftsMeldung($result);
+}
+function updateMannschaftsMeldung(int $id, string $name, int $nuliga_liga_id, int $nuliga_team_id){
+  global $wpdb;
+  
+  $table_name = $wpdb->prefix . 'mannschaftsMeldung';
+  $wpdb->update($table_name, 
+    array(
+      'name' => $name, 
+      'nuliga_liga_id' => $nuliga_liga_id, 
+      'nuliga_team_id' => $nuliga_team_id
+    ), array(
+      'id' => $id
+    ));
+}
+
+function insertMannschaftsMeldung(int $mannschaft, string $name, string $kuerzel, string $liga, int $nuliga_liga_id, int $nuliga_team_id){
+    global $wpdb;
+    
+    $values = array(
+        'mannschaft' => $mannschaft, 
+        'name' => $name, 
+        'kuerzel' => $kuerzel, 
+        'liga' => $liga, 
+        'nuliga_liga_id' => $nuliga_liga_id, 
+        'nuliga_team_id' => $nuliga_team_id
+    );
+    
+    $table_name = $wpdb->prefix . 'mannschaftsMeldung';
+    $wpdb->insert($table_name, $values);
+}
+?>
