@@ -1,5 +1,5 @@
 <?php
-require_once WP_PLUGIN_DIR."/dienstedienst/entity/meisterschaft.php";
+require_once __DIR__."/../entity/meisterschaft.php";
 
 function loadMeisterschaften(string $where = "1=1", string $orderby = "id"): array{
     global $wpdb;
@@ -20,11 +20,14 @@ function loadMeisterschaften(string $where = "1=1", string $orderby = "id"): arr
 
 function findMeisterschaft(int $mannschaft, string $kuerzel, string $liga): ?Meisterschaft {
   global $wpdb;
+
   $table_name = $wpdb->prefix . 'meisterschaft';
-  $result = $wpdb->get_row("SELECT * FROM $table_name WHERE mannschaft=$mannschaft AND kuerzel=$kuerzel AND liga=$liga", ARRAY_A);
+  $sql = "SELECT * FROM $table_name WHERE mannschaft=$mannschaft AND kuerzel=\"$kuerzel\" AND liga=\"$liga\"";
+  $result = $wpdb->get_row($sql, ARRAY_A);
   if(empty($result)){
     return null;
   }
+
   return new Meisterschaft($result);
 }
 function updateMeisterschaft(int $id, string $name, int $nuliga_liga_id, int $nuliga_team_id){
@@ -41,18 +44,20 @@ function updateMeisterschaft(int $id, string $name, int $nuliga_liga_id, int $nu
     ));
 }
 
+// function insertMeisterschaft(int $mannschaft, string $name, string $kuerzel, string $liga, int $nuliga_liga_id, int $nuliga_team_id){
 function insertMeisterschaft(int $mannschaft, string $name, string $kuerzel, string $liga, int $nuliga_liga_id, int $nuliga_team_id){
-    
     global $wpdb;
     
-    $table_name = $wpdb->prefix . 'meisterschaft';
-    $wpdb->insert($table_name, array(
+    $values = array(
         'mannschaft' => $mannschaft, 
         'name' => $name, 
         'kuerzel' => $kuerzel, 
         'liga' => $liga, 
         'nuliga_liga_id' => $nuliga_liga_id, 
         'nuliga_team_id' => $nuliga_team_id
-      ));
+    );
+    
+    $table_name = $wpdb->prefix . 'meisterschaft';
+    $wpdb->insert($table_name, $values);
 }
 ?>
