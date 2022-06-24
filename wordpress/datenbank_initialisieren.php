@@ -53,7 +53,7 @@ function dienste_meisterschaft_initialisieren(){
         kuerzel VARCHAR(256) NOT NULL,
         mannschaft INT NOT NULL , 
         liga VARCHAR(256) NULL , 
-        aktiv TINYINT NOT NULL DEFAULT '1' , 
+        aktiv TINYINT NOT NULL DEFAULT '0' , 
         nuliga_liga_id INT NULL , 
         nuliga_team_id INT NULL , 
         PRIMARY KEY (id), 
@@ -69,8 +69,8 @@ function dienste_migrate_meisterschaft(){
     $table_name_mannschaft    = $wpdb->prefix . 'mannschaft';
     $table_name_meisterschaft = $wpdb->prefix . 'meisterschaft';
     $sql = "INSERT INTO $table_name_meisterschaft 
-        (name, kuerzel, mannschaft, liga, nuliga_liga_id, nuliga_team_id) 
-        SELECT meisterschaft, meisterschaft, id, liga, nuliga_liga_id, nuliga_team_id 
+        (name, kuerzel, mannschaft, liga, nuliga_liga_id, nuliga_team_id, aktiv) 
+        SELECT meisterschaft, meisterschaft, id, liga, nuliga_liga_id, nuliga_team_id, 1 
         FROM $table_name_mannschaft";
 
     $wpdb->query($sql);
