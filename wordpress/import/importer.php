@@ -100,13 +100,20 @@ function importMeisterschaftenFromNuliga(): array{
         foreach($nuliga_meisterschaft->mannschaftsEinteilungen as $mannschaftsEinteilung){
             $mannschaft = $nuligaBezeichnungen[$mannschaftsEinteilung->mannschaftsBezeichnung];
             if(isset($mannschaft)){
-                // TODO prüfen, ob bereits vorhanden
-                insertMeisterschaft($mannschaft->getID(), 
-                    $nuliga_meisterschaften->name, $mannschaftsEinteilung->meisterschaftsKuerzel, 
-                    $mannschaftsEinteilung->liga, $mannschaftsEinteilung->liga_id,
-                    $mannschaftsEinteilung->team_id
-                );
-                $ergebnis[$mannschaft->getName()]->neu++;
+                $ergebnis[$mannschaft->getName()]->gesamt++;
+
+                $meisterschaft = findMeisterschaft($mannschaft->getID(), $mannschaftsEinteilung->meisterschaftsKuerzel, $mannschaftsEinteilung->liga);
+                if(isset($meisterschaft)){
+                    updateMeisterschaft($meisterschaft->getID(), $nuliga_meisterschaften->name, $mannschaftsEinteilung->liga_id, $mannschaftsEinteilung->team_id);
+                    $ergebnis[$mannschaft->getName()]->aktualisiert++;
+                } else{
+                    insertMeisterschaft($mannschaft->getID(), 
+                        $nuliga_meisterschaften->name, $mannschaftsEinteilung->meisterschaftsKuerzel, 
+                        $mannschaftsEinteilung->liga, $mannschaftsEinteilung->liga_id,
+                        $mannschaftsEinteilung->team_id
+                    );
+                    $ergebnis[$mannschaft->getName()]->neu++;
+                }
             }
         }
     }
