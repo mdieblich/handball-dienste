@@ -13,8 +13,9 @@ function dienste_datenbank_initialisieren() {
         dienste_mannschaft_aktualisiern();
     }
     
-    dienste_mannschaftsMeldung_initialisieren();
     dienste_mannschaft_initialisieren();
+    dienste_meisterschaft_initialisieren();
+    dienste_mannschaftsMeldung_initialisieren();
     dienste_gegner_initialisieren();
     dienste_spiele_initialisieren();
     dienste_zuweisungen_initialisieren();
@@ -37,7 +38,26 @@ function dienste_mannschaft_initialisieren(){
         PRIMARY KEY (id)
     ) $charset_collate, ENGINE = InnoDB;";
 
-    dbDelta( $sql );
+dbDelta( $sql );
+}
+
+function dienste_meisterschaft_initialisieren(){
+    global $wpdb;
+    
+    $table_name = $wpdb->prefix . 'meisterschaft';
+    $charset_collate = $wpdb->get_charset_collate();
+    
+    $sql = "CREATE TABLE $table_name (
+        id INT NOT NULL AUTO_INCREMENT , 
+        kuerzel VARCHAR(256) NOT NULL,
+        name VARCHAR(1024) NOT NULL,
+        PRIMARY KEY (id)
+    ) $charset_collate, ENGINE = InnoDB;";
+
+    $result = dbDelta( $sql );
+    $message = var_export($result, true);
+    $myFile = fopen("Testdatei.txt", "w");
+    fwrite($myFile, $message);
 }
 
 function dienste_mannschaftsMeldung_initialisieren(){
