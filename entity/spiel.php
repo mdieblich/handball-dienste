@@ -20,6 +20,9 @@ class Spiel {
     public function getID(): int {
         return $this->assoc_array["id"];
     }
+    public function getMeisterschaft(): string {
+        return $this->assoc_array["meisterschaft"];
+    }
     public function getSpielNr(): int {
         return $this->assoc_array["spielnr"];
     }

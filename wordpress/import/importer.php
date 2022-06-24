@@ -59,7 +59,7 @@ function importSpieleFromNuliga(): array{
                     $mannschaft->getGeschlecht(), 
                     $mannschaftsMeldung->getLiga()
                 )->getID();
-                $spiel = findSpiel ($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
+                $spiel = findSpiel ($mannschaftsMeldung->getKuerzel(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
                 $importErgebnis->gesamt ++;
                 if(isset($spiel)){
                     $hallenAenderung = ($spiel->getHalle() != $nuLigaSpiel->getHalle());
@@ -70,7 +70,7 @@ function importSpieleFromNuliga(): array{
                         $importErgebnis->aktualisiert ++;
                     }
                 } else {
-                    insertSpiel($nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
+                    insertSpiel($mannschaftsMeldung->getKuerzel(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
                     $importErgebnis->neu ++;
                 }
             }

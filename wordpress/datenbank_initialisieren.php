@@ -121,6 +121,7 @@ function dienste_spiele_initialisieren(){
 
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
+        meisterschaft VARCHAR(256) NOT NULL,
         spielnr INT NOT NULL , 
         mannschaft INT NOT NULL , 
         gegner INT NOT NULL , 
