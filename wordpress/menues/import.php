@@ -15,20 +15,22 @@ function displaySpieleImport(){
 <script>
 function startImport(){
     jQuery(function($){
+        $("#import-result").hide();
         $("#loading-spinner").show(500);
     });
 
     var data = {'action': 'meisterschaften_importieren'};
 
     // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-    jQuery.post(ajaxurl, data, function(response){    
-        jQuery(function($){
-            $("#loading-spinner").hide(500, function(){
-                $("#import-result").show(500);
+    jQuery.post(ajaxurl, data)
+        .done(function(response){    
+            jQuery(function($){
+                $("#loading-spinner").hide(500, function(){
+                    $("#import-result").show(500);
+                });
+                $("#import-result").html("<pre>" + response + "</pre>");
             });
-            $("#import-result").html("<pre>" + response + "</pre>");
         });
-    });
 }
 </script>
 <div class="wrap">
@@ -95,7 +97,12 @@ function diensteImportSubmit(){
 }
 
 function meisterschaften_importieren(){
-    echo importMeisterschaftenFromNuliga();
+    require_once __DIR__."/../import/importer.php";
+    $importErgebnis = importMeisterschaftenFromNuliga();
+    echo "Ergebnis des Imports der Meisterschaften:\n";
+    foreach($importErgebnis as $mannschaftsName => $ergebnis){
+        echo $mannschaftsName.": ".$ergebnis->toReadableString()."\n";
+    }
     exit;
 }
 ?>
