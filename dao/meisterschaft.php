@@ -18,6 +18,12 @@ function loadMeisterschaften(string $where = "1=1", string $orderby = "id"): arr
     return $meisterschaften;
 }
 
+function countMeisterschaften(int $mannschaftsID): int {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'meisterschaft';
+    return $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE mannschaft=$mannschaftsID");
+}
+
 function findMeisterschaft(int $mannschaft, string $kuerzel, string $liga): ?Meisterschaft {
   global $wpdb;
 
@@ -44,7 +50,6 @@ function updateMeisterschaft(int $id, string $name, int $nuliga_liga_id, int $nu
     ));
 }
 
-// function insertMeisterschaft(int $mannschaft, string $name, string $kuerzel, string $liga, int $nuliga_liga_id, int $nuliga_team_id){
 function insertMeisterschaft(int $mannschaft, string $name, string $kuerzel, string $liga, int $nuliga_liga_id, int $nuliga_team_id){
     global $wpdb;
     
