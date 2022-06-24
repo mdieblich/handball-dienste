@@ -92,20 +92,14 @@ function startImportSpiele(){
 function spiele_importieren(){
     require_once __DIR__."/../import/importer.php";
     $importErgebnis = importSpieleFromNuliga();
-    echo "Ergebnis des Imports der Spiele:\n";
-    foreach($importErgebnis as $mannschaftsName => $ergebnis){
-        echo $mannschaftsName.": ".$ergebnis->toReadableString()."\n";
-    }
+    echo json_encode($importErgebnis, JSON_PRETTY_PRINT);
     exit;
 }
 
 function meisterschaften_importieren(){
     require_once __DIR__."/../import/importer.php";
     $importErgebnis = importMeisterschaftenFromNuliga();
-    echo "Ergebnis des Imports der Meisterschaften:\n";
-    foreach($importErgebnis as $mannschaftsName => $ergebnis){
-        echo $mannschaftsName.": ".$ergebnis->toReadableString()."\n";
-    }
+    echo json_encode($importErgebnis, JSON_PRETTY_PRINT);
     exit;
 }
 ?>
