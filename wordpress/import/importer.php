@@ -85,6 +85,7 @@ function importSpieleFromNuliga(): array{
 
 function importMeisterschaftenFromNuliga(): array{
     require_once __DIR__."/../dao/MannschaftsMeldung.php";
+    require_once __DIR__."/../dao/Meisterschaft.php";
     require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
     
     $mannschaften = loadMannschaften();
@@ -97,7 +98,13 @@ function importMeisterschaftenFromNuliga(): array{
         $ergebnis[$mannschaft->getName()] = new ImportErgebnis();
     }
     foreach($nuliga_meisterschaften as $nuliga_meisterschaft){
+        $meisterschaftNeedsUpsert = true;
         foreach($nuliga_meisterschaft->mannschaftsEinteilungen as $mannschaftsEinteilung){
+            if($meisterschaftNeedsUpsert){
+                // muss einmal zu Beginn passieren, da das Kürzel der Meisterschaft nur den Kind-Elementen bekannt ist.
+                upsertMeisterschaft($mannschaftsEinteilung->meisterschaftsKuerzel, $nuliga_meisterschaft->name);
+                $meisterschaftNeedsUpsert = false;
+            }
             $mannschaft = $nuligaBezeichnungen[$mannschaftsEinteilung->mannschaftsBezeichnung];
             
             if(isset($mannschaft)){
@@ -105,17 +112,15 @@ function importMeisterschaftenFromNuliga(): array{
 
                 $mannschaftsMeldung = findMannschaftsMeldung($mannschaft->getID(), $mannschaftsEinteilung->meisterschaftsKuerzel, $mannschaftsEinteilung->liga);
                 if(isset($mannschaftsMeldung)){
-                    $namensAenderung = $mannschaftsMeldung->getName() !== $nuliga_meisterschaft->name;
                     $liga_idAenderung = $mannschaftsMeldung->getNuligaLigaID() !==  $mannschaftsEinteilung->liga_id;
                     $team_idAenderung = $mannschaftsMeldung->getNuligaTeamID() !==  $mannschaftsEinteilung->team_id;
                     if($namensAenderung || $liga_idAenderung || $team_idAenderung){
-                        updateMannschaftsMeldung($mannschaftsMeldung->getID(), $nuliga_meisterschaft->name, $mannschaftsEinteilung->liga_id, $mannschaftsEinteilung->team_id);
+                        updateMannschaftsMeldung($mannschaftsMeldung->getID(), $mannschaftsEinteilung->liga_id, $mannschaftsEinteilung->team_id);
                         $ergebnis[$mannschaft->getName()]->aktualisiert++;
                     }
                 } else{
-                    
                     insertMannschaftsMeldung($mannschaft->getID(), 
-                        $nuliga_meisterschaft->name, $mannschaftsEinteilung->meisterschaftsKuerzel, 
+                        $mannschaftsEinteilung->meisterschaftsKuerzel, 
                         $mannschaftsEinteilung->liga, $mannschaftsEinteilung->liga_id,
                         $mannschaftsEinteilung->team_id
                     );

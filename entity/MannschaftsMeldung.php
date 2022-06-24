@@ -11,10 +11,6 @@ class MannschaftsMeldung {
         return $this->assoc_array["id"];
     }
     
-    public function getName(): string {
-        return $this->assoc_array["name"];
-    }
-    
     public function getKuerzel(): string {
         return $this->assoc_array["kuerzel"];
     }

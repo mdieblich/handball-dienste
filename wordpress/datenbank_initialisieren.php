@@ -68,7 +68,6 @@ function dienste_mannschaftsMeldung_initialisieren(){
 
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
-        name VARCHAR(1024) NOT NULL,
         kuerzel VARCHAR(256) NOT NULL,
         mannschaft INT NOT NULL , 
         liga VARCHAR(256) NULL , 

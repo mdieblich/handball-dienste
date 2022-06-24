@@ -30,13 +30,12 @@ function findMannschaftsMeldung(int $mannschaft, string $kuerzel, string $liga):
 
   return new MannschaftsMeldung($result);
 }
-function updateMannschaftsMeldung(int $id, string $name, int $nuliga_liga_id, int $nuliga_team_id){
+function updateMannschaftsMeldung(int $id, int $nuliga_liga_id, int $nuliga_team_id){
   global $wpdb;
   
   $table_name = $wpdb->prefix . 'mannschaftsMeldung';
   $wpdb->update($table_name, 
     array(
-      'name' => $name, 
       'nuliga_liga_id' => $nuliga_liga_id, 
       'nuliga_team_id' => $nuliga_team_id
     ), array(
@@ -44,12 +43,11 @@ function updateMannschaftsMeldung(int $id, string $name, int $nuliga_liga_id, in
     ));
 }
 
-function insertMannschaftsMeldung(int $mannschaft, string $name, string $kuerzel, string $liga, int $nuliga_liga_id, int $nuliga_team_id){
+function insertMannschaftsMeldung(int $mannschaft, string $kuerzel, string $liga, int $nuliga_liga_id, int $nuliga_team_id){
     global $wpdb;
     
     $values = array(
         'mannschaft' => $mannschaft, 
-        'name' => $name, 
         'kuerzel' => $kuerzel, 
         'liga' => $liga, 
         'nuliga_liga_id' => $nuliga_liga_id, 
