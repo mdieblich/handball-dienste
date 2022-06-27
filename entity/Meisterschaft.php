@@ -7,6 +7,10 @@ class Meisterschaft {
         $this->assoc_array = $assoc_array;
     }
 
+    public function getID(): string {
+        return $this->assoc_array["id"];
+    }
+    
     public function getKuerzel(): string {
         return $this->assoc_array["kuerzel"];
     }
