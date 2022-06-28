@@ -5,6 +5,18 @@ function addDiensteSpieleImportKonfiguration(){
 }
 add_action( 'wp_ajax_meisterschaften_importieren', 'meisterschaften_importieren' );
 add_action( 'wp_ajax_spiele_importieren', 'spiele_importieren' );
+add_action( 'wp_ajax_meldung_aktivieren', 'meldung_aktivieren' );
+
+function meldung_aktivieren(){
+    require_once __DIR__."/../dao/MannschaftsMeldung.php";
+
+    $meldung_id = filter_var($_POST['meldung'], FILTER_VALIDATE_INT);
+    $aktiv = filter_var($_POST['aktiv'], FILTER_VALIDATE_BOOLEAN);
+
+    meldungAktivieren($meldung_id, $aktiv);
+    http_response_code(200);
+    wp_die();
+}
 
 function displaySpieleImport(){
     require_once __DIR__."/../dao/mannschaft.php";
@@ -33,6 +45,18 @@ function startImportMeisterschaften(){
             });
         });
 }
+
+function meldungAktivieren(meldung_id, aktiv){
+    var data = {
+        'action': 'meldung_aktivieren',
+        'meldung': meldung_id,
+        'aktiv': aktiv
+    };
+
+    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+    jQuery.post(ajaxurl, data);
+}
+
 function startImportSpiele(){
     jQuery(function($){
         $("#import-result").hide();
@@ -95,7 +119,7 @@ function startImportSpiele(){
                                         ."<td>".$meldung->getLiga()   ."</td>"
                                         ."<td>".$anzahlSpiele         ."</td>"
                                         ."<td>"
-                                            ."<input type=\"checkbox\" id=\"$input_id\" $checked>"
+                                            ."<input type=\"checkbox\" id=\"$input_id\" $checked onClick=\"meldungAktivieren(".$meldung->getID().", this.checked)\">"
                                         ."</td>"
                                         ."</tr>";
                                 }
