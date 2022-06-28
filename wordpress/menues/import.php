@@ -97,6 +97,7 @@ Nachdem Meisterschaften importiert wurden, können dazugehörige Spiele importie
 <ul style="font-size:13px">
     <li type="disc">Vorhandene Spiele werden aktualisiert</li>
     <li type="disc">bestehende Dienste bleiben erhalten</li>
+    <li type="disc">Gegnerische Mannschaften werden automatisch mitimportiert</li>
     <li type="disc">Sollte sich ein Spiel ändern (Anwurf oder Halle), bei dem eine Mannschaft schon Dienste zugewiesen bekommen hat, dann bekommt diese eine Email.</li>
     <li type="disc">Auch bei mehreren sich ändernden Spielen bekommt eine Mannschaft pro Import immer nur genau <u>eine</u> Email. <i>(Ich hasse zu viele Emails!)</i></li>
     <li type="disc">Durch den Aufruf von <code><?php echo get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> kann der Import automatisiert werden.</li>
