@@ -79,16 +79,40 @@ function startImportSpiele(){
 </script>
 <div class="wrap">
 
-    <div class="spinner-border" role="status" id="loading-spinner" style="display:none">
-        <span class="visually-hidden">Loading...</span>
-    </div>
-    
-    <div id="import-result" style="display:none">Ergebnisse!</div>
+<h1>Meisterschaften & Spiele von nuLiga importieren</h1>
+<h2>Meisterschaften importieren</h2>
+<p>
+    Zuerst müssen Meisterschaften importiert werden, welche dann unten auftauchen. Für jede 
+    <a href="<?php echo get_permalink( get_page_by_path( 'dienste-mannschaften' ) );?>">Mannschaft, die zuvor konfiguriert wurde</a> werden dann Mannschaftsmneldungen geladen und hier dargestellt.<br>
+    Bestehende Mesiterschaften und Meldungen bleiben bei jedem weiterem Import erhalten. Der Import dauert recht lange, da viele Seiten von nuLiga gescannt werden.
+</p>
+<p>
+    Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden. Dazugehörige Spiele werden zwar noch aktualisiert, aber die Spiele werden nicht mehr in der Liste der Dienste dargestellt.
+</p>
+<button class="btn btn-primary" onclick="startImportMeisterschaften()">Meisterschaften importieren</button>
+<hr>
+<h2>Spiele importieren</h2>
+<p>
+Nachdem Meisterschaften importiert wurden, können dazugehörige Spiele importiert werden.
+</p>
+<ol>
+    <li>Vorhandene Spiele werden aktualisiert</li>
+    <li>bestehende Dienste bleiben erhalten</li>
+    <li>Sollte sich ein Spiel ändern (Anwurf oder Halle), bei dem eine Mannschaft schon Dienste zugewiesen bekommen hat, dann bekommt diese eine Email.</li>
+    <li>Auch bei mehreren sich ändernden Spielen bekommt eine Mannschaft pro Import immer nur genau <u>eine</u> Email. <i>(Ich hasse zu viele Emails!)</li>
+    <li>Durch den Aufruf von <code><?php echo get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> kann der Import automatisiert werden.</li>
+</ol>
 
+<button class="btn btn-primary" onclick="startImportSpiele()">Spiele importieren</button>
 
-    <h1>Spiele von nuLiga importieren</h1>
+<div class="spinner-border" role="status" id="loading-spinner" style="display:none">
+    <span class="visually-hidden">Loading...</span>
+</div>
 
-    <div class="container"><div class="accordion" id="accordionMeisterschaften">
+<div id="import-result" style="display:none">Ergebnisse!</div>
+
+<hr>
+    <div class="accordion" id="accordionMeisterschaften">
         <?php foreach($meisterschaften as $meisterschaft){  ?>
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading<?php echo $meisterschaft->getID(); ?>">
@@ -129,18 +153,7 @@ function startImportSpiele(){
                 </div>
             </div>
         <?php  } ?>
-    </div></div>
-
-    Einfach auf <i>"Importieren"</i> klicken:
-    <ol>
-        <li>Vorhandene Spiele werden aktualisiert</li>
-        <li>bestehende Dienste bleiben erhalten</li>
-        <li>Sollte sich ein Spiel ändern (Anwurf oder Halle), bei dem eine Mannschaft schon Dienste zugewiesen bekommen hat, dann bekommt diese eine Email.</li>
-        <li>Auch bei mehreren sich ändernden Spielen bekommt eine Mannschaft pro Import immer nur genau <u>eine</u> Email. <i>(Ich hasse zu viele Emails!)</i>
-    </ol>
-
-    <button class="btn btn-primary" onclick="startImportMeisterschaften()">Meisterschaften importieren</button>
-    <button class="btn btn-primary" onclick="startImportSpiele()">Spiele importieren</button>
+    </div>
 </div>
  <?php
 }
