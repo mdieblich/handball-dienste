@@ -88,11 +88,15 @@ function startImportSpiele(){
                                 }
                                 foreach ($meisterschaftsMeldungen as $meldung) {
                                     $anzahlSpiele = countSpiele($meldung->getID(), $mannschaft->getID());
+                                    $input_id = "aktiv_".$meldung->getID();
+                                    $checked = $meldung->isAktiv()?"checked":""; 
                                     echo "<tr>"
                                         ."<td>".$mannschaft->getName()."</td>"
                                         ."<td>".$meldung->getLiga()   ."</td>"
                                         ."<td>".$anzahlSpiele         ."</td>"
-                                        ."<td>".$meldung->isAktiv()   ."</td>"
+                                        ."<td>"
+                                            ."<input type=\"checkbox\" id=\"$input_id\" $checked>"
+                                        ."</td>"
                                         ."</tr>";
                                 }
                             } ?>   
