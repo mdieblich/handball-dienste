@@ -79,12 +79,11 @@ function startImportSpiele(){
 </script>
 <div class="wrap">
 
-<h1>Meisterschaften & Spiele von nuLiga importieren</h1>
 <h2>Meisterschaften importieren</h2>
 <p>
     Zuerst müssen Meisterschaften importiert werden, welche dann unten auftauchen. Für jede 
-    <a href="<?php echo get_permalink( get_page_by_path( 'dienste-mannschaften' ) );?>">Mannschaft, die zuvor konfiguriert wurde</a> werden dann Mannschaftsmneldungen geladen und hier dargestellt.<br>
-    Bestehende Mesiterschaften und Meldungen bleiben bei jedem weiterem Import erhalten. Der Import dauert recht lange, da viele Seiten von nuLiga gescannt werden.
+    <a href="<?php echo get_permalink( get_page_by_path( 'dienste-mannschaften' ) );?>">Mannschaft, die zuvor konfiguriert wurde</a> werden dann Mannschaftsmeldungen geladen und hier dargestellt.<br>
+    Bestehende Meisterschaften und Meldungen bleiben bei jedem weiterem Import erhalten. Der Import dauert recht lange, da viele Seiten von nuLiga gescannt werden.
 </p>
 <p>
     Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden. Dazugehörige Spiele werden zwar noch aktualisiert, aber die Spiele werden nicht mehr in der Liste der Dienste dargestellt.
@@ -95,13 +94,13 @@ function startImportSpiele(){
 <p>
 Nachdem Meisterschaften importiert wurden, können dazugehörige Spiele importiert werden.
 </p>
-<ol>
-    <li>Vorhandene Spiele werden aktualisiert</li>
-    <li>bestehende Dienste bleiben erhalten</li>
-    <li>Sollte sich ein Spiel ändern (Anwurf oder Halle), bei dem eine Mannschaft schon Dienste zugewiesen bekommen hat, dann bekommt diese eine Email.</li>
-    <li>Auch bei mehreren sich ändernden Spielen bekommt eine Mannschaft pro Import immer nur genau <u>eine</u> Email. <i>(Ich hasse zu viele Emails!)</li>
-    <li>Durch den Aufruf von <code><?php echo get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> kann der Import automatisiert werden.</li>
-</ol>
+<ul style="font-size:13px">
+    <li type="disc">Vorhandene Spiele werden aktualisiert</li>
+    <li type="disc">bestehende Dienste bleiben erhalten</li>
+    <li type="disc">Sollte sich ein Spiel ändern (Anwurf oder Halle), bei dem eine Mannschaft schon Dienste zugewiesen bekommen hat, dann bekommt diese eine Email.</li>
+    <li type="disc">Auch bei mehreren sich ändernden Spielen bekommt eine Mannschaft pro Import immer nur genau <u>eine</u> Email. <i>(Ich hasse zu viele Emails!)</i></li>
+    <li type="disc">Durch den Aufruf von <code><?php echo get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> kann der Import automatisiert werden.</li>
+</ul>
 
 <button class="btn btn-primary" onclick="startImportSpiele()">Spiele importieren</button>
 
