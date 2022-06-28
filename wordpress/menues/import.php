@@ -8,8 +8,10 @@ add_action( 'wp_ajax_spiele_importieren', 'spiele_importieren' );
 
 function displaySpieleImport(){
     require_once __DIR__."/../dao/mannschaft.php";
+    require_once __DIR__."/../dao/meisterschaft.php";
     require_once __DIR__."/../dao/spiel.php";
     $mannschaften = loadMannschaftenMitMeldungen();
+    $meisterschaften = loadMeisterschaften();
 ?>
 <script>
 function startImportMeisterschaften(){
@@ -61,6 +63,46 @@ function startImportSpiele(){
 
 
     <h1>Spiele von nuLiga importieren</h1>
+
+    <div class="container"><div class="accordion" id="accordionMeisterschaften">
+        <?php foreach($meisterschaften as $meisterschaft){  ?>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading<?php echo $meisterschaft->getID(); ?>">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $meisterschaft->getID(); ?>" aria-expanded="true" aria-controls="collapse<?php echo $meisterschaft->getID(); ?>">
+                        <?php echo $meisterschaft->getName(); ?>
+                    </button>
+                </h2>
+                <div id="collapse<?php echo $meisterschaft->getID(); ?>" class="accordion-collapse collapse" aria-labelledby="heading<?php echo $meisterschaft->getID(); ?>" data-bs-parent="#accordionMeisterschaften">
+                    <div class="accordion-body">    
+                        <table class="table">  
+                            <tr>
+                                <th>Mannschaft</th>
+                                <th>Liga</th>
+                                <th>Spiele</th>
+                                <th>aktiv</th>
+                            </tr>            
+                            <?php foreach($mannschaften as $mannschaft){  
+                                $meisterschaftsMeldungen = $mannschaft->getMeldungenFuerMeisterschaft($meisterschaft->getID());
+                                if(count($meisterschaftsMeldungen) === 0){
+                                    continue;
+                                }
+                                foreach ($meisterschaftsMeldungen as $meldung) {
+                                    $anzahlSpiele = countSpiele($meldung->getID(), $mannschaft->getID());
+                                    echo "<tr>"
+                                        ."<td>".$mannschaft->getName()."</td>"
+                                        ."<td>".$meldung->getLiga()   ."</td>"
+                                        ."<td>".$anzahlSpiele         ."</td>"
+                                        ."<td>".$meldung->isAktiv()   ."</td>"
+                                        ."</tr>";
+                                }
+                            } ?>   
+                        </table>
+                    </div>
+                </div>
+            </div>
+        <?php  } ?>
+    </div></div>
+
     Einfach auf <i>"Importieren"</i> klicken:
     <ol>
         <li>Vorhandene Spiele werden aktualisiert</li>
@@ -69,20 +111,6 @@ function startImportSpiele(){
         <li>Auch bei mehreren sich ändernden Spielen bekommt eine Mannschaft pro Import immer nur genau <u>eine</u> Email. <i>(Ich hasse zu viele Emails!)</i>
     </ol>
 
-    <table>
-        <tr>
-            <th> Mannschaft </th>
-            <th> Meisterschaften </th>
-            <th> Importierte Spiele </th>
-        </tr>
-        <?php foreach($mannschaften as $mannschaft){  ?>
-        <tr>
-            <td> <?php echo $mannschaft->getName(); ?> </td>
-            <td style="text-align:center"> <?php echo count($mannschaft->getMeldungen()); ?> </td>
-            <td style="text-align:center"> <?php echo countSpiele($mannschaft->getID()); ?> </td>
-        </tr>
-        <?php } ?>
-    </table>
     <button class="btn btn-primary" onclick="startImportMeisterschaften()">Meisterschaften importieren</button>
     <button class="btn btn-primary" onclick="startImportSpiele()">Spiele importieren</button>
 </div>

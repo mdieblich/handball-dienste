@@ -11,8 +11,8 @@ class MannschaftsMeldung {
         return $this->assoc_array["id"];
     }
     
-    public function getKuerzel(): string {
-        return $this->assoc_array["kuerzel"];
+    public function getMeisterschaft(): int {
+        return $this->assoc_array["meisterschaft"];
     }
 
     public function getMannschaft(): int {
@@ -25,6 +25,12 @@ class MannschaftsMeldung {
     
     public function getLiga(): string {
         return $this->assoc_array["liga"];
+    }
+
+    public function getLigaKurz(): string {
+        $liga = $this->getLiga();
+        $liga = str_replace(array(" Männer", " Frauen", "Mittelrhein ", "männliche ", "weibliche "), "", $liga);
+        return trim($liga);
     }
     
     public function getNuligaLigaID(): int {

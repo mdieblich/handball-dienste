@@ -72,10 +72,10 @@ class Mannschaft {
         return $this->meldungen;
     }
     
-    public function getMeldungenFuerMeisterschaft(string $meisterschaftsKuerzel): array{
+    public function getMeldungenFuerMeisterschaft(int $meisterschaft): array{
         $meldungen = array();
         foreach ($this->getMeldungen() as $meldung) {
-            if($meldung->getKuerzel() === $meisterschaftsKuerzel){
+            if($meldung->getMeisterschaft() === $meisterschaft){
                 $meldungen[] = $meldung;
             }
         }

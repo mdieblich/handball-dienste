@@ -68,13 +68,14 @@ function dienste_mannschaftsMeldung_initialisieren(){
 
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
-        kuerzel VARCHAR(256) NOT NULL,
+        meisterschaft INT NOT NULL,
         mannschaft INT NOT NULL , 
         liga VARCHAR(256) NULL , 
         aktiv TINYINT NOT NULL DEFAULT '0' , 
         nuliga_liga_id INT NULL , 
         nuliga_team_id INT NULL , 
         PRIMARY KEY (id), 
+        FOREIGN KEY (meisterschaft) REFERENCES ".$wpdb->prefix."meisterschaft(id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (mannschaft) REFERENCES ".$wpdb->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
 
@@ -121,7 +122,7 @@ function dienste_spiele_initialisieren(){
 
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
-        meisterschaft VARCHAR(256) NOT NULL,
+        mannschaftsmeldung INT NOT NULL,
         spielnr INT NOT NULL , 
         mannschaft INT NOT NULL , 
         gegner INT NOT NULL , 
@@ -130,6 +131,7 @@ function dienste_spiele_initialisieren(){
         anwurf DATETIME NULL , 
         PRIMARY KEY (id), 
         KEY index_anwurf (anwurf),
+        FOREIGN KEY (mannschaftsmeldung) REFERENCES ".$wpdb->prefix."mannschaftsmeldung(id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (mannschaft) REFERENCES ".$wpdb->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (gegner) REFERENCES ".$wpdb->prefix."gegner(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
