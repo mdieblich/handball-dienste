@@ -3,7 +3,7 @@
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 global $dienste_db_version;
-$dienste_db_version = '1.6';
+$dienste_db_version = '1.7';
 
 function dienste_datenbank_initialisieren() {
     global $dienste_db_version;
@@ -19,6 +19,8 @@ function dienste_datenbank_initialisieren() {
     dienste_gegner_initialisieren();
     dienste_spiele_initialisieren();
     dienste_zuweisungen_initialisieren();
+
+    dienste_nuliga_import_initialisieren();
 
     update_option( 'dienste_db_version', $dienste_db_version );
 }
@@ -153,6 +155,47 @@ function dienste_zuweisungen_initialisieren(){
         PRIMARY KEY (id),
         FOREIGN KEY (spiel) REFERENCES ".$wpdb->prefix."spiel(id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (mannschaft) REFERENCES ".$wpdb->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
+    ) $charset_collate, ENGINE = InnoDB;";
+
+    dbDelta( $sql );
+}
+
+function dienste_nuliga_import_initialisieren(){
+    
+    dienste_nuliga_import_meisterschaft_initialisieren();
+    dienste_nuliga_import_mannschaftseinteilung_initialisieren();
+}
+
+function dienste_nuliga_import_meisterschaft_initialisieren(){
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . 'nuliga_meisterschaft';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $table_name (
+        id INT NOT NULL AUTO_INCREMENT , 
+        name VARCHAR(1024) NOT NULL,
+        PRIMARY KEY (id)
+    ) $charset_collate, ENGINE = InnoDB;";
+
+    dbDelta( $sql );
+}
+
+function dienste_nuliga_import_mannschaftseinteilung_initialisieren(){
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $table_name (
+        id INT NOT NULL AUTO_INCREMENT , 
+        nuliga_meisterschaft INT NOT NULL,
+        mannschaftsBezeichnung VARCHAR(1024) NOT NULL,
+        meisterschaftsKuerzel VARCHAR(256) NOT NULL,
+        liga VARCHAR(256) NOT NULL,
+        liga_id INT NOT NULL,
+        PRIMARY KEY (id),
+        FOREIGN KEY (nuliga_meisterschaft) REFERENCES ".$wpdb->prefix."nuliga_meisterschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );

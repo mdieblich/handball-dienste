@@ -43,6 +43,36 @@ class NuLiga_MannschaftsUndLigenEinteilung {
         return $meisterschaften;
     }
 
+
+    public function getMeisterschaften_new(): array{
+        $meisterschaften = array();
+
+        $contentDiv = $this->dom->getElementById("content-row1");
+        $tabelle = $contentDiv->getElementsByTagName("table")[0];
+        $tabellenZeilen = extractTabellenZeilen($tabelle);
+        $currentMeisterschaft = null;
+        $skipZeile = false;
+        foreach($tabellenZeilen as $tabellenZeile){
+            if($skipZeile){
+                $skipZeile = false;
+                continue;
+            }
+            $zellen = extractTabellenZellen($tabellenZeile);
+            if($this->isMeisterschaftsZeile($zellen)){
+                $currentMeisterschaft = new NuLiga_Meisterschaft();
+                $currentMeisterschaft->name = sanitizeContent($zellen[0]->textContent);
+                $meisterschaften[] = $currentMeisterschaft;
+
+                // die nächste Zeile ist eine Kopfzeile
+                $skipZeile = true;
+            } else {
+                $currentMeisterschaft->mannschaftsEinteilungen[] = NuLiga_MannschaftsEinteilung::fromTabellenzeile_new($zellen);
+            }
+        }
+
+        return $meisterschaften;
+    }
+
     private function isMeisterschaftsZeile($zellen): bool{
         return count($zellen) == 1;
     }

@@ -87,6 +87,37 @@ function importSpieleFromNuliga(): array{
     return array_values($ergebnis);
 }
 
+function importMeisterschaftenFromNuliga_new(){
+    global $wpdb;
+    require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
+
+    $ligeneinteilung = new NuLiga_MannschaftsUndLigenEinteilung(get_option('nuliga-clubid'));
+    $nuliga_meisterschaften = $ligeneinteilung->getMeisterschaften_new();
+
+    $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
+    $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
+
+    foreach($nuliga_meisterschaften as $nuliga_meisterschaft){
+        $values_meisterschaft = array(
+            'name' => $nuliga_meisterschaft->name
+        );
+        $wpdb->insert($table_nuliga_meisterschaft, $values_meisterschaft);
+        $meisterschaft_id = $wpdb->insert_id;
+
+        foreach($nuliga_meisterschaft->mannschaftsEinteilungen as $mannschaftsEinteilung){
+            $values_einteilung = array(
+                'nuliga_meisterschaft' => $meisterschaft_id,
+                'mannschaftsBezeichnung' => $mannschaftsEinteilung->mannschaftsBezeichnung,
+                'meisterschaftsKuerzel' => $mannschaftsEinteilung->meisterschaftsKuerzel,
+                'liga' => $mannschaftsEinteilung->liga,
+                'liga_id' => $mannschaftsEinteilung->liga_id
+            );
+            $wpdb->insert($table_nuliga_mannschaftseinteilung, $values_einteilung);
+        }
+    }
+}
+    
+
 function importMeisterschaftenFromNuliga(): array{
     require_once __DIR__."/../dao/MannschaftsMeldung.php";
     require_once __DIR__."/../dao/Meisterschaft.php";

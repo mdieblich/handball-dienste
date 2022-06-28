@@ -4,6 +4,7 @@ function addDiensteSpieleImportKonfiguration(){
     $hook_import = add_submenu_page( 'dienste', 'Dienste - Spiele importieren', 'Import', 'administrator', 'dienste-import', 'displaySpieleImport');
 }
 add_action( 'wp_ajax_meisterschaften_importieren', 'meisterschaften_importieren' );
+add_action( 'wp_ajax_meisterschaften_importieren_new', 'meisterschaften_importieren_new' );
 add_action( 'wp_ajax_spiele_importieren', 'spiele_importieren' );
 add_action( 'wp_ajax_meldung_aktivieren', 'meldung_aktivieren' );
 
@@ -52,6 +53,27 @@ function startImportMeisterschaften(){
                 
                 $("#loading-spinner").hide(500, function(){
                     $("#import-result").show(500);
+                });
+            });
+        });
+}
+function startImportMeisterschaftenNew(){
+    jQuery(function($){
+        $("#importModalLabel").html("Importiere Meisterschaften...");
+        $("#import-result").hide();
+        $("#loading-spinner").show(500);
+    });
+
+    var data = {'action': 'meisterschaften_importieren_new'};
+
+    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+    jQuery.post(ajaxurl, data)
+        .done(function(response){    
+            jQuery(function($){
+                $("#loading-spinner").hide(500, function(){
+                    $("#import-result")
+                        .html(response)
+                        .show(500);
                 });
             });
         });
@@ -142,7 +164,13 @@ Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden.
 <button class="btn btn-primary psition-relative bottom-0 start-50 " 
         onclick="startImportMeisterschaften()" 
         data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Meisterschaften importieren
+    Meisterschaften importieren (alt)
+</button>
+
+<button class="btn btn-primary psition-relative bottom-0 start-50 " 
+        onclick="startImportMeisterschaftenNew()" 
+        data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Meisterschaften importieren (neu)
 </button>
 
 <hr>
@@ -223,6 +251,12 @@ function meisterschaften_importieren(){
     require_once __DIR__."/../import/importer.php";
     $importErgebnis = importMeisterschaftenFromNuliga();
     echo json_encode($importErgebnis, JSON_PRETTY_PRINT);
+    exit;
+}
+function meisterschaften_importieren_new(){
+    require_once __DIR__."/../import/importer.php";
+    $importErgebnis = importMeisterschaftenFromNuliga_new();
+    echo "Erfolg";
     exit;
 }
 ?>
