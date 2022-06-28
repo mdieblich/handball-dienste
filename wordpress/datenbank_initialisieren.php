@@ -71,7 +71,7 @@ function dienste_mannschaftsMeldung_initialisieren(){
         meisterschaft INT NOT NULL,
         mannschaft INT NOT NULL , 
         liga VARCHAR(256) NULL , 
-        aktiv TINYINT NOT NULL DEFAULT '0' , 
+        aktiv TINYINT NOT NULL DEFAULT '1' , 
         nuliga_liga_id INT NULL , 
         nuliga_team_id INT NULL , 
         PRIMARY KEY (id), 
