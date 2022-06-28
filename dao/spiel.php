@@ -1,11 +1,13 @@
 <?php
 require_once WP_PLUGIN_DIR."/dienstedienst/entity/spiel.php";
 
-function loadSpiele(string $whereClause="anwurf > subdate(current_date, 1)", string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"): array{
+function loadSpiele(string $whereClause="anwurf > subdate(current_date, 1) AND aktiv=1", string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"): array{
   global $wpdb;
   
-  $table_name = $wpdb->prefix . 'spiel';
-  $sql = "SELECT * FROM $table_name WHERE $whereClause ORDER BY $orderBy";
+  $table_spiel = $wpdb->prefix . 'spiel'; 
+  $table_meldung = $wpdb->prefix . 'mannschaftsmeldung'; 
+  $tables = "$table_spiel LEFT JOIN $table_meldung ON $table_spiel.mannschaftsmeldung=$table_meldung.id";
+  $sql = "SELECT $table_spiel.*, $table_meldung.aktiv FROM $tables WHERE $whereClause ORDER BY $orderBy";
   $result = $wpdb->get_results($sql, ARRAY_A);
   
   $spiele = array();
@@ -18,7 +20,7 @@ function loadSpiele(string $whereClause="anwurf > subdate(current_date, 1)", str
   return $spiele;
 }
 
-function loadSpieleDeep(string $whereClause="anwurf > subdate(current_date, 1)", string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"){
+function loadSpieleDeep(string $whereClause="anwurf > subdate(current_date, 1) AND aktiv=1", string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"){
     $spiele = loadSpiele($whereClause, $orderBy);
     require_once WP_PLUGIN_DIR."/dienstedienst/dao/dienst.php";
     $dienstDAO = new DienstDAO();
