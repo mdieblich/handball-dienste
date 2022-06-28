@@ -11,13 +11,14 @@ require_once __DIR__."/../dao/dienst.php";
 
 require_once __DIR__."/../PHPMailer/NippesMailer.php";
 
-class ImportErgebnis{
+class ImportErgebnisProMannschaft{
+    public string $mannschaft;
     public int $gesamt = 0;
     public int $neu = 0;
     public int $aktualisiert = 0;
 
-    public function toReadableString(): string{
-        return $this->gesamt." geprüft, davon ".$this->neu." neu importiert und ".$this->aktualisiert." aktualisiert";
+    public function __construct(Mannschaft $mannschaft){
+        $this->mannschaft = $mannschaft->getName();
     }
 }
 
@@ -32,7 +33,7 @@ function importSpieleFromNuliga(): array{
 
     $ergebnis = array();
     foreach($mannschaften as $mannschaft){
-        $importErgebnis = new ImportErgebnis();
+        $importErgebnis = new ImportErgebnisProMannschaft($mannschaft);
         
         $teamName = get_option('vereinsname');
         if($mannschaft->getNummer() >= 2){
@@ -83,7 +84,7 @@ function importSpieleFromNuliga(): array{
 
     $dienstAenderungsPlan->sendEmails();
 
-    return $ergebnis;
+    return array_values($ergebnis);
 }
 
 function importMeisterschaftenFromNuliga(): array{
@@ -98,7 +99,7 @@ function importMeisterschaftenFromNuliga(): array{
 
     $ergebnis = array();
     foreach($mannschaften as $mannschaft){
-        $ergebnis[$mannschaft->getName()] = new ImportErgebnis();
+        $ergebnis[$mannschaft->getName()] = new ImportErgebnisProMannschaft($mannschaft);
     }
     foreach($nuliga_meisterschaften as $nuliga_meisterschaft){
         $meisterschaftNeedsUpsert = true;
@@ -132,7 +133,7 @@ function importMeisterschaftenFromNuliga(): array{
             }
         }
     }
-    return $ergebnis;
+    return array_values($ergebnis);
 }
 
 function createNuLigaMannschaftsBezeichnungen(array $mannschaften): array{

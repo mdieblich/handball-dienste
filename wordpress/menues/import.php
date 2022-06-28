@@ -28,6 +28,7 @@ function displaySpieleImport(){
 <script>
 function startImportMeisterschaften(){
     jQuery(function($){
+        $("#importModalLabel").html("Importiere Meisterschaften...");
         $("#import-result").hide();
         $("#loading-spinner").show(500);
     });
@@ -38,10 +39,20 @@ function startImportMeisterschaften(){
     jQuery.post(ajaxurl, data)
         .done(function(response){    
             jQuery(function($){
+                importErgebnisse = JSON.parse(response);
+                importErgebnisse.forEach(function(importErgebnis){
+                    neueErgebnisZeile = $("#import-result-zeile").clone();
+                    neueErgebnisZeile.appendTo("#import-result");
+                    neueErgebnisZeile.find(".antwort").html(importErgebnis.mannschaft);
+                    neueErgebnisZeile.find(".text-bg-success").html(importErgebnis.gesamt);
+                    neueErgebnisZeile.find(".text-bg-warning").html(importErgebnis.aktualisiert);
+                    neueErgebnisZeile.find(".text-bg-info").html(importErgebnis.neu);
+                    neueErgebnisZeile.show();
+                });
+                
                 $("#loading-spinner").hide(500, function(){
                     $("#import-result").show(500);
                 });
-                $("#import-result").html("<pre>" + response + "</pre>");
             });
         });
 }
@@ -59,6 +70,7 @@ function meldungAktivieren(meldung_id, aktiv){
 
 function startImportSpiele(){
     jQuery(function($){
+        $("#importModalLabel").html("Importiere Spiele...");
         $("#import-result").hide();
         $("#loading-spinner").show(500);
     });
@@ -67,28 +79,72 @@ function startImportSpiele(){
 
     // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
     jQuery.post(ajaxurl, data)
-        .done(function(response){    
-            jQuery(function($){
+        .done(function(response){
+            jQuery(function($){    
+                importErgebnisse = JSON.parse(response);
+                importErgebnisse.forEach(function(importErgebnis){
+                    neueErgebnisZeile = $("#import-result-zeile").clone();
+                    neueErgebnisZeile.appendTo("#import-result");
+                    neueErgebnisZeile.find(".antwort").html(importErgebnis.mannschaft);
+                    neueErgebnisZeile.find(".text-bg-success").html(importErgebnis.gesamt);
+                    neueErgebnisZeile.find(".text-bg-warning").html(importErgebnis.aktualisiert);
+                    neueErgebnisZeile.find(".text-bg-info").html(importErgebnis.neu);
+                    neueErgebnisZeile.show();
+                });
                 $("#loading-spinner").hide(500, function(){
                     $("#import-result").show(500);
                 });
-                $("#import-result").html("<pre>" + response + "</pre>");
+                // $("#import-result").html("<pre>" + response + "</pre>");
             });
         });
 }
 </script>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="importModalLabel">Import läuft...</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div  id="loading-spinner" class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+        </div>
+
+        <div id="import-result" style="display:none" class="container">
+            <div class="row" id="import-result-zeile">
+                <div class="col"><span class="antwort"><i>Mannschaft</i></span></div>
+                <div class="col text-center"><span class="badge text-bg-success">geprüft</span></div>
+                <div class="col text-center"><span class="badge text-bg-warning">aktualisiert</span></div>
+                <div class="col text-center"><span class="badge text-bg-info">importiert</span></div>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="wrap">
 
 <h2>Meisterschaften importieren</h2>
 <p>
-    Zuerst müssen Meisterschaften importiert werden, welche dann unten auftauchen. Für jede 
-    <a href="<?php echo get_permalink( get_page_by_path( 'dienste-mannschaften' ) );?>">Mannschaft, die zuvor konfiguriert wurde</a> werden dann Mannschaftsmeldungen geladen und hier dargestellt.<br>
-    Bestehende Meisterschaften und Meldungen bleiben bei jedem weiterem Import erhalten. Der Import dauert recht lange, da viele Seiten von nuLiga gescannt werden.
+Zuerst müssen Meisterschaften importiert werden, welche dann unten auftauchen. Für jede 
+<a href="<?php echo get_permalink( get_page_by_path( 'dienste-mannschaften' ) );?>">Mannschaft, die zuvor konfiguriert wurde</a> werden dann Mannschaftsmeldungen geladen und hier dargestellt.<br>
+Bestehende Meisterschaften und Meldungen bleiben bei jedem weiterem Import erhalten. Der Import dauert recht lange, da viele Seiten von nuLiga gescannt werden.
 </p>
 <p>
-    Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden. Dazugehörige Spiele werden zwar noch aktualisiert, aber die Spiele werden nicht mehr in der Liste der Dienste dargestellt.
+Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden. Dazugehörige Spiele werden zwar noch aktualisiert, aber die Spiele werden nicht mehr in der Liste der Dienste dargestellt.
 </p>
-<button class="btn btn-primary" onclick="startImportMeisterschaften()">Meisterschaften importieren</button>
+<button class="btn btn-primary psition-relative bottom-0 start-50 " 
+        onclick="startImportMeisterschaften()" 
+        data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Meisterschaften importieren
+</button>
+
 <hr>
 <h2>Spiele importieren</h2>
 <p>
@@ -103,13 +159,11 @@ Nachdem Meisterschaften importiert wurden, können dazugehörige Spiele importie
     <li type="disc">Durch den Aufruf von <code><?php echo get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> kann der Import automatisiert werden.</li>
 </ul>
 
-<button class="btn btn-primary" onclick="startImportSpiele()">Spiele importieren</button>
-
-<div class="spinner-border" role="status" id="loading-spinner" style="display:none">
-    <span class="visually-hidden">Loading...</span>
-</div>
-
-<div id="import-result" style="display:none">Ergebnisse!</div>
+<button class="btn btn-primary" 
+        onclick="startImportSpiele()" 
+        data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Spiele importieren
+</button>
 
 <hr>
     <div class="accordion" id="accordionMeisterschaften">
