@@ -12,7 +12,7 @@ function loadMeisterschaften(string $where = "1=1", string $orderby = "id"): arr
     if (count($result) > 0) {
         foreach($result as $meisterschaft) {
             $meisterschaftObj = new Meisterschaft($meisterschaft);
-            $meisterschaften[$meisterschaftObj->getKuerzel()] = $meisterschaftObj;
+            $meisterschaften[$meisterschaftObj->getID()] = $meisterschaftObj;
         }
     }
     return $meisterschaften;
