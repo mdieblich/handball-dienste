@@ -18,9 +18,22 @@ function loadMannschaftsMeldungen(string $where = "1=1", string $orderby = "id")
     return $meldungen;
 }
 
+function meldungAktivieren(int $id, bool $aktiv){
+  global $wpdb;
+  
+  $table_name = $wpdb->prefix . 'mannschaftsMeldung';
+  $wpdb->update($table_name, 
+    array(
+      'aktiv' => $aktiv ? 1 : 0, 
+    ), array(
+      'id' => $id
+    ));
+
+}
+
 function findMannschaftsMeldung(int $meisterschaft, int $mannschaft, string $liga): ?MannschaftsMeldung {
   global $wpdb;
-
+  
   $table_name = $wpdb->prefix . 'mannschaftsMeldung';
   $sql = "SELECT * FROM $table_name WHERE meisterschaft=$meisterschaft AND mannschaft=$mannschaft AND liga=\"$liga\"";
   $result = $wpdb->get_row($sql, ARRAY_A);
