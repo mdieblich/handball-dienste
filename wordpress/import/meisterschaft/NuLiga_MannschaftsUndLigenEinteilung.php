@@ -14,7 +14,7 @@ class NuLiga_MannschaftsUndLigenEinteilung {
         $this->xpath = new DOMXPath($this->dom);
     }
 
-    public function getMeisterschaften_new(): array{
+    public function getMeisterschaften(): array{
         $meisterschaften = array();
 
         $contentDiv = $this->dom->getElementById("content-row1");
@@ -36,7 +36,7 @@ class NuLiga_MannschaftsUndLigenEinteilung {
                 // die nächste Zeile ist eine Kopfzeile
                 $skipZeile = true;
             } else {
-                $currentMeisterschaft->mannschaftsEinteilungen[] = NuLiga_MannschaftsEinteilung::fromTabellenzeile_new($zellen);
+                $currentMeisterschaft->mannschaftsEinteilungen[] = NuLiga_MannschaftsEinteilung::fromTabellenzeile($zellen);
             }
         }
 

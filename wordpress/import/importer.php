@@ -87,12 +87,12 @@ function importSpieleFromNuliga(): array{
     return array_values($ergebnis);
 }
 
-function importMeisterschaftenFromNuliga_new(){
+function importMeisterschaftenFromNuliga(){
     global $wpdb;
     require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
 
     $ligeneinteilung = new NuLiga_MannschaftsUndLigenEinteilung(get_option('nuliga-clubid'));
-    $nuliga_meisterschaften = $ligeneinteilung->getMeisterschaften_new();
+    $nuliga_meisterschaften = $ligeneinteilung->getMeisterschaften();
 
     $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
@@ -133,14 +133,14 @@ function importMeisterschaftenFromNuliga_new(){
 
 function importTeamIDsFromNuLiga() {
     global $wpdb;
-    require_once __DIR__."/meisterschaft/NuLiga_Ligatabelle_new.php";
+    require_once __DIR__."/meisterschaft/NuLiga_Ligatabelle.php";
     
     $vereinsname = get_option('vereinsname');
 
     $table_name = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
     $results = $wpdb->get_results("SELECT * FROM $table_name WHERE team_id IS NULL", ARRAY_A);
     foreach ($results as $nuliga_mannschaftseinteilung) {
-        $ligaTabellenSeite = new NuLiga_Ligatabelle_new(
+        $ligaTabellenSeite = new NuLiga_Ligatabelle(
             $nuliga_mannschaftseinteilung['meisterschaftsKuerzel'], 
             $nuliga_mannschaftseinteilung['liga_id']
         );

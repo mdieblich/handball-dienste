@@ -3,7 +3,7 @@
 function addDiensteSpieleImportKonfiguration(){
     $hook_import = add_submenu_page( 'dienste', 'Dienste - Spiele importieren', 'Import', 'administrator', 'dienste-import', 'displaySpieleImport');
 }
-add_action( 'wp_ajax_meisterschaften_importieren_new', 'meisterschaften_importieren_new' );
+add_action( 'wp_ajax_meisterschaften_importieren', 'meisterschaften_importieren' );
 add_action( 'wp_ajax_teamIDs_importieren', 'teamIDs_importieren' );
 add_action( 'wp_ajax_mannschaften_zuordnen', 'mannschaften_zuordnen' );
 add_action( 'wp_ajax_meisterschaften_aktualisieren', 'meisterschaften_aktualisieren' );
@@ -30,14 +30,14 @@ function displaySpieleImport(){
     $meisterschaften = loadMeisterschaften();
 ?>
 <script>
-function startImportMeisterschaftenNew(){
+function startImportMeisterschaften(){
     jQuery(function($){
         $("#importModalLabel").html("Importiere Meisterschaften...");
         $("#import-result").hide();
         $("#loading-spinner").show(500);
     });
 
-    var data = {'action': 'meisterschaften_importieren_new'};
+    var data = {'action': 'meisterschaften_importieren'};
 
     // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
     jQuery.post(ajaxurl, data)
@@ -224,9 +224,9 @@ Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden.
 </p>
 
 <button class="btn btn-primary psition-relative bottom-0 start-50 " 
-        onclick="startImportMeisterschaftenNew()" 
+        onclick="startImportMeisterschaften()" 
         data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Meisterschaften importieren (neu)
+    Meisterschaften importieren
 </button>
 <button class="btn btn-primary psition-relative bottom-0 start-50 " 
         onclick="startImportTeamIDs()" 
@@ -323,9 +323,9 @@ function spiele_importieren(){
     exit;
 }
 
-function meisterschaften_importieren_new(){
+function meisterschaften_importieren(){
     require_once __DIR__."/../import/importer.php";
-    $importErgebnis = importMeisterschaftenFromNuliga_new();
+    $importErgebnis = importMeisterschaftenFromNuliga();
     echo "Erfolg";
     exit;
 }
