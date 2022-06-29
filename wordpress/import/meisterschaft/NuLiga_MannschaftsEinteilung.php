@@ -8,7 +8,7 @@ class NuLiga_MannschaftsEinteilung{
     public string $liga;
     public int $liga_id;
 
-    public static function fromTabellenzeile_new(array $zellen): NuLiga_MannschaftsEinteilung {
+    public static function fromTabellenzeile(array $zellen): NuLiga_MannschaftsEinteilung {
         $einteilung = new NuLiga_MannschaftsEinteilung();
         $einteilung->mannschaftsBezeichnung = sanitizeContent($zellen[0]->textContent);
         $einteilung->liga = sanitizeContent($zellen[1]->textContent);
