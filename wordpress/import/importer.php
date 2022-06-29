@@ -98,11 +98,14 @@ function importMeisterschaftenFromNuliga_new(){
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
 
     foreach($nuliga_meisterschaften as $nuliga_meisterschaft){
-        $values_meisterschaft = array(
-            'name' => $nuliga_meisterschaft->name
-        );
-        $wpdb->insert($table_nuliga_meisterschaft, $values_meisterschaft);
-        $meisterschaft_id = $wpdb->insert_id;
+        $meisterschaft_id = $wpdb->get_var("SELECT id FROM $table_nuliga_meisterschaft WHERE name=\"".$nuliga_meisterschaft->name."\"");
+        if(empty($meisterschaft_id)){
+            $values_meisterschaft = array(
+                'name' => $nuliga_meisterschaft->name
+            );
+            $wpdb->insert($table_nuliga_meisterschaft, $values_meisterschaft);
+            $meisterschaft_id = $wpdb->insert_id;
+        }
 
         foreach($nuliga_meisterschaft->mannschaftsEinteilungen as $mannschaftsEinteilung){
             $values_einteilung = array(
@@ -136,6 +139,12 @@ function importTeamIDsFromNuLiga() {
             array('id' => $nuliga_mannschaftseinteilung['id'])
         );
     }
+}
+
+function updateMeisterschaften(){
+    global $wpdb;
+
+    // SELECT * , (SELECT wp_nuliga_mannschaftseinteilung.meisterschaftsKuerzel FROM wp_nuliga_mannschaftseinteilung WHERE wp_nuliga_mannschaftseinteilung.nuliga_meisterschaft=wp_nuliga_meisterschaft.id LIMIT 1) FROM `wp_nuliga_meisterschaft` WHERE 1;
 }
     
 
