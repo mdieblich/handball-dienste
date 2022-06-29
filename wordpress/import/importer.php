@@ -205,34 +205,27 @@ function updateMannschaftsMeldungen(){
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
     $table_meisterschaft = $wpdb->prefix . 'meisterschaft';
 
-    $mannschaften = loadMannschaften();
-    $nuligaBezeichnungen = createNuLigaMannschaftsBezeichnungen($mannschaften);
-
     $sql = "SELECT 
             $table_nuliga_mannschaftseinteilung.id,
             nuliga_meisterschaft,
             $table_meisterschaft.id as meisterschaft, 
-            mannschaftsBezeichnung, 
+            mannschaft, 
             liga, 
             liga_id as nuliga_liga_id, 
             team_id as nuliga_team_id 
         FROM $table_nuliga_mannschaftseinteilung
         LEFT JOIN $table_meisterschaft on $table_meisterschaft.kuerzel=$table_nuliga_mannschaftseinteilung.meisterschaftsKuerzel
-        WHERE team_id IS NOT NULL";
+        WHERE team_id IS NOT NULL
+        AND mannschaft IS NOT NULL";
     $results = $wpdb->get_results($sql, ARRAY_A);
     
     foreach($results as $nuliga_mannschaftsEinteilung){
-        if(!array_key_exists($nuliga_mannschaftsEinteilung['mannschaftsBezeichnung'], $nuligaBezeichnungen)){
-            continue;
-        }
-        $mannschaft = $nuligaBezeichnungen[$nuliga_mannschaftsEinteilung['mannschaftsBezeichnung']];
-        
-        $mannschaftsMeldung = findMannschaftsMeldung($nuliga_mannschaftsEinteilung['meisterschaft'], $mannschaft->getID(), $nuliga_mannschaftsEinteilung['liga']);
+        $mannschaftsMeldung = findMannschaftsMeldung($nuliga_mannschaftsEinteilung['meisterschaft'], $nuliga_mannschaftsEinteilung['mannschaft'], $nuliga_mannschaftsEinteilung['liga']);
         // TODO Transaktionsstart
         if(isset($mannschaftsMeldung)){
             updateMannschaftsMeldung($mannschaftsMeldung->getID(), $nuliga_mannschaftsEinteilung['nuliga_liga_id'], $nuliga_mannschaftsEinteilung['nuliga_team_id']);
         } else{
-            insertMannschaftsMeldung($nuliga_mannschaftsEinteilung['meisterschaft'], $mannschaft->getID(), 
+            insertMannschaftsMeldung($nuliga_mannschaftsEinteilung['meisterschaft'], $nuliga_mannschaftsEinteilung['mannschaft'], 
                 $nuliga_mannschaftsEinteilung['liga'], $nuliga_mannschaftsEinteilung['nuliga_liga_id'],
                 $nuliga_mannschaftsEinteilung['nuliga_team_id']
             );
