@@ -108,6 +108,12 @@ function importMeisterschaftenFromNuliga_new(){
         }
 
         foreach($nuliga_meisterschaft->mannschaftsEinteilungen as $mannschaftsEinteilung){
+            $mannschaftsEinteilung_id = $wpdb->get_var(
+                "SELECT id FROM $table_nuliga_mannschaftseinteilung "
+                ."WHERE mannschaftsBezeichnung=\"".$mannschaftsEinteilung->mannschaftsBezeichnung."\" "
+                ."AND liga_id=".$mannschaftsEinteilung->liga_id
+            );
+            
             $values_einteilung = array(
                 'nuliga_meisterschaft' => $meisterschaft_id,
                 'mannschaftsBezeichnung' => $mannschaftsEinteilung->mannschaftsBezeichnung,
@@ -115,7 +121,12 @@ function importMeisterschaftenFromNuliga_new(){
                 'liga' => $mannschaftsEinteilung->liga,
                 'liga_id' => $mannschaftsEinteilung->liga_id
             );
-            $wpdb->insert($table_nuliga_mannschaftseinteilung, $values_einteilung);
+
+            if(isset($mannschaftsEinteilung_id)){
+                $wpdb->update($table_nuliga_mannschaftseinteilung, $values_einteilung, array('id' => $mannschaftsEinteilung_id));
+            } else{
+                $wpdb->insert($table_nuliga_mannschaftseinteilung, $values_einteilung);
+            }
         }
     }
 }
