@@ -177,6 +177,53 @@ function updateMeisterschaften(){
     }
 }
 
+function updateMannschaftsMeldungen(){
+    global $wpdb;
+
+    $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
+    $table_meisterschaft = $wpdb->prefix . 'meisterschaft';
+
+    $mannschaften = loadMannschaften();
+    $nuligaBezeichnungen = createNuLigaMannschaftsBezeichnungen($mannschaften);
+
+    $sql = "SELECT 
+            $table_nuliga_mannschaftseinteilung.id,
+            nuliga_meisterschaft,
+            $table_meisterschaft.id as meisterschaft, 
+            mannschaftsBezeichnung, 
+            liga, 
+            liga_id as nuliga_liga_id, 
+            team_id as nuliga_team_id 
+        FROM $table_nuliga_mannschaftseinteilung
+        LEFT JOIN $table_meisterschaft on $table_meisterschaft.kuerzel=$table_nuliga_mannschaftseinteilung.meisterschaftsKuerzel
+        WHERE team_id IS NOT NULL";
+    $results = $wpdb->get_results($sql, ARRAY_A);
+    
+    foreach($results as $nuliga_mannschaftsEinteilung){
+        if(!array_key_exists($nuliga_mannschaftsEinteilung['mannschaftsBezeichnung'], $nuligaBezeichnungen)){
+            continue;
+        }
+        $mannschaft = $nuligaBezeichnungen[$nuliga_mannschaftsEinteilung['mannschaftsBezeichnung']];
+        var_dump($nuliga_mannschaftsEinteilung);
+        $mannschaftsMeldung = findMannschaftsMeldung($nuliga_mannschaftsEinteilung['meisterschaft'], $mannschaft->getID(), $nuliga_mannschaftsEinteilung['liga']);
+        // TODO Transaktionsstart
+        if(isset($mannschaftsMeldung)){
+            updateMannschaftsMeldung($mannschaftsMeldung->getID(), $nuliga_mannschaftsEinteilung['nuliga_liga_id'], $nuliga_mannschaftsEinteilung['nuliga_team_id']);
+        } else{
+            insertMannschaftsMeldung($nuliga_mannschaftsEinteilung['meisterschaft'], $mannschaft->getID(), 
+                $nuliga_mannschaftsEinteilung['liga'], $nuliga_mannschaftsEinteilung['nuliga_liga_id'],
+                $nuliga_mannschaftsEinteilung['nuliga_team_id']
+            );
+        }
+        // Löschen der Einteilung in der nuliga-Import-Tabelle
+        $wpdb->delete($table_nuliga_mannschaftseinteilung, array('id' => $nuliga_mannschaftsEinteilung['id']));
+        // TODO Transaktionsende
+    }
+    // Löschen überflüssiger Meisterschaften in der nuliga-Import-Tabelle
+    $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
+    $wpdb->query("DELETE FROM $table_nuliga_meisterschaft WHERE id NOT IN (SELECT nuliga_meisterschaft FROM $table_nuliga_mannschaftseinteilung)");
+}
+
 function importMeisterschaftenFromNuliga(): array{
     require_once __DIR__."/../dao/MannschaftsMeldung.php";
     require_once __DIR__."/../dao/Meisterschaft.php";

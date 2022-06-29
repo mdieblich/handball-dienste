@@ -7,6 +7,7 @@ add_action( 'wp_ajax_meisterschaften_importieren', 'meisterschaften_importieren'
 add_action( 'wp_ajax_meisterschaften_importieren_new', 'meisterschaften_importieren_new' );
 add_action( 'wp_ajax_teamIDs_importieren', 'teamIDs_importieren' );
 add_action( 'wp_ajax_meisterschaften_aktualisieren', 'meisterschaften_aktualisieren' );
+add_action( 'wp_ajax_meldungen_aktualisieren', 'meldungen_aktualisieren' );
 add_action( 'wp_ajax_spiele_importieren', 'spiele_importieren' );
 add_action( 'wp_ajax_meldung_aktivieren', 'meldung_aktivieren' );
 
@@ -105,12 +106,34 @@ function startImportTeamIDs(){
 
 function startUpdateMeisterschaften(){
     jQuery(function($){
-        $("#importModalLabel").html("Importiere TeamIDs...");
+        $("#importModalLabel").html("Aktualisiere Meisterschaften...");
         $("#import-result").hide();
         $("#loading-spinner").show(500);
     });
 
     var data = {'action': 'meisterschaften_aktualisieren'};
+
+    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+    jQuery.post(ajaxurl, data)
+        .done(function(response){    
+            jQuery(function($){
+                $("#loading-spinner").hide(500, function(){
+                    $("#import-result")
+                        .html("<pre>"+response+"</pre>")
+                        .show(500);
+                });
+            });
+        });
+}
+
+function startMeldungenAktualisieren(){
+    jQuery(function($){
+        $("#importModalLabel").html("Aktualisiere Meldungen...");
+        $("#import-result").hide();
+        $("#loading-spinner").show(500);
+    });
+
+    var data = {'action': 'meldungen_aktualisieren'};
 
     // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
     jQuery.post(ajaxurl, data)
@@ -228,6 +251,11 @@ Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden.
         data-bs-toggle="modal" data-bs-target="#exampleModal">
     Meisterschaften aktualisieren
 </button>
+<button class="btn btn-primary psition-relative bottom-0 start-50 " 
+        onclick="startMeldungenAktualisieren()" 
+        data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Meldungen aktualisieren
+</button>
 
 <hr>
 <h2>Spiele importieren</h2>
@@ -326,6 +354,13 @@ function teamIDs_importieren(){
 function meisterschaften_aktualisieren(){
     require_once __DIR__."/../import/importer.php";
     $importErgebnis = updateMeisterschaften();
+    echo "Erfolg\n";
+    exit;
+}
+
+function meldungen_aktualisieren(){
+    require_once __DIR__."/../import/importer.php";
+    $importErgebnis = updateMannschaftsMeldungen();
     echo "Erfolg\n";
     exit;
 }
