@@ -318,12 +318,8 @@ function meisterschaften_importieren_new(){
 
 function teamIDs_importieren(){
     require_once __DIR__."/../import/importer.php";
-    $start = microtime();
     $importErgebnis = importTeamIDsFromNuLiga();
-    $end = microtime();
     echo "Erfolg\n";
-    $duration = $end-$start;
-    echo "Dauer: $duration\n";
     exit;
 }
 
