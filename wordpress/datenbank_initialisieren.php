@@ -194,6 +194,7 @@ function dienste_nuliga_import_mannschaftseinteilung_initialisieren(){
         meisterschaftsKuerzel VARCHAR(256) NOT NULL,
         liga VARCHAR(256) NOT NULL,
         liga_id INT NOT NULL,
+        team_id INT NULL,
         PRIMARY KEY (id),
         FOREIGN KEY (nuliga_meisterschaft) REFERENCES ".$wpdb->prefix."nuliga_meisterschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";

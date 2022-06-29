@@ -116,6 +116,27 @@ function importMeisterschaftenFromNuliga_new(){
         }
     }
 }
+
+function importTeamIDsFromNuLiga() {
+    global $wpdb;
+    require_once __DIR__."/meisterschaft/NuLiga_Ligatabelle_new.php";
+    
+    $vereinsname = get_option('vereinsname');
+
+    $table_name = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
+    $results = $wpdb->get_results("SELECT * FROM $table_name WHERE team_id IS NULL", ARRAY_A);
+    foreach ($results as $nuliga_mannschaftseinteilung) {
+        $ligaTabellenSeite = new NuLiga_Ligatabelle_new(
+            $nuliga_mannschaftseinteilung['meisterschaftsKuerzel'], 
+            $nuliga_mannschaftseinteilung['liga_id']
+        );
+        $team_id = $ligaTabellenSeite->extractTeamID($vereinsname);
+        $updated = $wpdb->update($table_name, 
+            array('team_id' => $team_id), 
+            array('id' => $nuliga_mannschaftseinteilung['id'])
+        );
+    }
+}
     
 
 function importMeisterschaftenFromNuliga(): array{

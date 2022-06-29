@@ -5,6 +5,7 @@ function addDiensteSpieleImportKonfiguration(){
 }
 add_action( 'wp_ajax_meisterschaften_importieren', 'meisterschaften_importieren' );
 add_action( 'wp_ajax_meisterschaften_importieren_new', 'meisterschaften_importieren_new' );
+add_action( 'wp_ajax_teamIDs_importieren', 'teamIDs_importieren' );
 add_action( 'wp_ajax_spiele_importieren', 'spiele_importieren' );
 add_action( 'wp_ajax_meldung_aktivieren', 'meldung_aktivieren' );
 
@@ -72,7 +73,29 @@ function startImportMeisterschaftenNew(){
             jQuery(function($){
                 $("#loading-spinner").hide(500, function(){
                     $("#import-result")
-                        .html(response)
+                        .html("<pre>"+response+"</pre>")
+                        .show(500);
+                });
+            });
+        });
+}
+
+function startImportTeamIDs(){
+    jQuery(function($){
+        $("#importModalLabel").html("Importiere TeamIDs...");
+        $("#import-result").hide();
+        $("#loading-spinner").show(500);
+    });
+
+    var data = {'action': 'teamIDs_importieren'};
+
+    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+    jQuery.post(ajaxurl, data)
+        .done(function(response){    
+            jQuery(function($){
+                $("#loading-spinner").hide(500, function(){
+                    $("#import-result")
+                        .html("<pre>"+response+"</pre>")
                         .show(500);
                 });
             });
@@ -172,6 +195,11 @@ Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden.
         data-bs-toggle="modal" data-bs-target="#exampleModal">
     Meisterschaften importieren (neu)
 </button>
+<button class="btn btn-primary psition-relative bottom-0 start-50 " 
+        onclick="startImportTeamIDs()" 
+        data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Team-IDs importieren
+</button>
 
 <hr>
 <h2>Spiele importieren</h2>
@@ -257,6 +285,17 @@ function meisterschaften_importieren_new(){
     require_once __DIR__."/../import/importer.php";
     $importErgebnis = importMeisterschaftenFromNuliga_new();
     echo "Erfolg";
+    exit;
+}
+
+function teamIDs_importieren(){
+    require_once __DIR__."/../import/importer.php";
+    $start = microtime();
+    $importErgebnis = importTeamIDsFromNuLiga();
+    $end = microtime();
+    echo "Erfolg\n";
+    $duration = $end-$start;
+    echo "Dauer: $duration\n";
     exit;
 }
 ?>
