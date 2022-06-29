@@ -3,6 +3,7 @@
 function addDiensteSpieleImportKonfiguration(){
     $hook_import = add_submenu_page( 'dienste', 'Dienste - Spiele importieren', 'Import', 'administrator', 'dienste-import', 'displaySpieleImport');
 }
+add_action( 'wp_ajax_alles_importieren', 'alles_importieren' );
 add_action( 'wp_ajax_meisterschaften_importieren', 'meisterschaften_importieren' );
 add_action( 'wp_ajax_teamIDs_importieren', 'teamIDs_importieren' );
 add_action( 'wp_ajax_mannschaften_zuordnen', 'mannschaften_zuordnen' );
@@ -30,6 +31,27 @@ function displaySpieleImport(){
     $meisterschaften = loadMeisterschaften();
 ?>
 <script>
+function startImportAlles(){
+    jQuery(function($){
+        $("#importModalLabel").html("Importiere Alles...");
+        $("#import-result").hide();
+        $("#loading-spinner").show(500);
+    });
+
+    var data = {'action': 'alles_importieren'};
+
+    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+    jQuery.post(ajaxurl, data)
+        .done(function(response){    
+            jQuery(function($){
+                $("#loading-spinner").hide(500, function(){
+                    $("#import-result")
+                        .html("<pre>"+response+"</pre>")
+                        .show(500);
+                });
+            });
+        });
+}
 function startImportMeisterschaften(){
     jQuery(function($){
         $("#importModalLabel").html("Importiere Meisterschaften...");
@@ -224,6 +246,11 @@ Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden.
 </p>
 
 <button class="btn btn-primary psition-relative bottom-0 start-50 " 
+        onclick="startImportAlles()" 
+        data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Alles importieren
+</button>
+<button class="btn btn-primary psition-relative bottom-0 start-50 " 
         onclick="startImportMeisterschaften()" 
         data-bs-toggle="modal" data-bs-target="#exampleModal">
     Meisterschaften importieren
@@ -316,10 +343,35 @@ Nachdem Meisterschaften importiert wurden, können dazugehörige Spiele importie
  <?php
 }
 
-function spiele_importieren(){
+function alles_importieren(){
     require_once __DIR__."/../import/importer.php";
-    $importErgebnis = importSpieleFromNuliga();
-    echo json_encode($importErgebnis, JSON_PRETTY_PRINT);
+    echo "Start<br>\n";
+
+    echo "Meisterschaften ...";
+    importMeisterschaftenFromNuliga();
+    echo "importiert!<br>\n";
+
+    echo "Team-IDs ...";
+    importTeamIDsFromNuLiga();
+    echo "importiert!<br>\n";
+
+    echo "Mannschaften ...";
+    mannschaftenZuordnen();
+    echo "zugeordnet!<br>\n";
+
+    echo "Meisterschaften ...";
+    updateMeisterschaften();
+    echo "aktualisiert!<br>\n";
+
+    echo "Meldungen ...";
+    updateMannschaftsMeldungen();
+    echo "aktualisiert !<br>\n";
+
+    echo "Spiele ...";
+    importSpieleFromNuliga();
+    echo "importiert!<br>\n";
+
+    echo "Erfolg";
     exit;
 }
 
@@ -357,4 +409,11 @@ function meldungen_aktualisieren(){
     echo "Erfolg\n";
     exit;
 }
+function spiele_importieren(){
+    require_once __DIR__."/../import/importer.php";
+    $importErgebnis = importSpieleFromNuliga();
+    echo json_encode($importErgebnis, JSON_PRETTY_PRINT);
+    exit;
+}
+
 ?>
