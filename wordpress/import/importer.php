@@ -155,9 +155,27 @@ function importTeamIDsFromNuLiga() {
 function updateMeisterschaften(){
     global $wpdb;
 
-    // SELECT * , (SELECT wp_nuliga_mannschaftseinteilung.meisterschaftsKuerzel FROM wp_nuliga_mannschaftseinteilung WHERE wp_nuliga_mannschaftseinteilung.nuliga_meisterschaft=wp_nuliga_meisterschaft.id LIMIT 1) FROM `wp_nuliga_meisterschaft` WHERE 1;
+    $table_meisterschaft = $wpdb->prefix . 'meisterschaft';
+    $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
+    $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
+
+    $results = $wpdb->get_results(
+        "SELECT name , (
+            SELECT meisterschaftsKuerzel 
+            FROM $table_nuliga_mannschaftseinteilung 
+            WHERE nuliga_meisterschaft=$table_nuliga_meisterschaft.id 
+            LIMIT 1
+        ) as kuerzel FROM $table_nuliga_meisterschaft", ARRAY_A);
+    foreach($results as $nuliga_meisterschaft){
+        $sql = "SELECT id FROM $table_meisterschaft WHERE kuerzel=\"".$nuliga_meisterschaft['kuerzel']."\"";
+        $meisterschaft_id = $wpdb->get_var($sql);
+        if(isset($meisterschaft_id)){
+            $wpdb->update($table_meisterschaft, $nuliga_meisterschaft, array('id' => $meisterschaft_id));
+        }else{
+            $wpdb->insert($table_meisterschaft, $nuliga_meisterschaft);
+        }
+    }
 }
-    
 
 function importMeisterschaftenFromNuliga(): array{
     require_once __DIR__."/../dao/MannschaftsMeldung.php";
