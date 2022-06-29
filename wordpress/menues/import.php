@@ -3,7 +3,6 @@
 function addDiensteSpieleImportKonfiguration(){
     $hook_import = add_submenu_page( 'dienste', 'Dienste - Spiele importieren', 'Import', 'administrator', 'dienste-import', 'displaySpieleImport');
 }
-add_action( 'wp_ajax_meisterschaften_importieren', 'meisterschaften_importieren' );
 add_action( 'wp_ajax_meisterschaften_importieren_new', 'meisterschaften_importieren_new' );
 add_action( 'wp_ajax_teamIDs_importieren', 'teamIDs_importieren' );
 add_action( 'wp_ajax_mannschaften_zuordnen', 'mannschaften_zuordnen' );
@@ -31,36 +30,6 @@ function displaySpieleImport(){
     $meisterschaften = loadMeisterschaften();
 ?>
 <script>
-function startImportMeisterschaften(){
-    jQuery(function($){
-        $("#importModalLabel").html("Importiere Meisterschaften...");
-        $("#import-result").hide();
-        $("#loading-spinner").show(500);
-    });
-
-    var data = {'action': 'meisterschaften_importieren'};
-
-    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-    jQuery.post(ajaxurl, data)
-        .done(function(response){    
-            jQuery(function($){
-                importErgebnisse = JSON.parse(response);
-                importErgebnisse.forEach(function(importErgebnis){
-                    neueErgebnisZeile = $("#import-result-zeile").clone();
-                    neueErgebnisZeile.appendTo("#import-result");
-                    neueErgebnisZeile.find(".antwort").html(importErgebnis.mannschaft);
-                    neueErgebnisZeile.find(".text-bg-success").html(importErgebnis.gesamt);
-                    neueErgebnisZeile.find(".text-bg-warning").html(importErgebnis.aktualisiert);
-                    neueErgebnisZeile.find(".text-bg-info").html(importErgebnis.neu);
-                    neueErgebnisZeile.show();
-                });
-                
-                $("#loading-spinner").hide(500, function(){
-                    $("#import-result").show(500);
-                });
-            });
-        });
-}
 function startImportMeisterschaftenNew(){
     jQuery(function($){
         $("#importModalLabel").html("Importiere Meisterschaften...");
@@ -253,11 +222,6 @@ Bestehende Meisterschaften und Meldungen bleiben bei jedem weiterem Import erhal
 <p>
 Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden. Dazugehörige Spiele werden zwar noch aktualisiert, aber die Spiele werden nicht mehr in der Liste der Dienste dargestellt.
 </p>
-<button class="btn btn-primary psition-relative bottom-0 start-50 " 
-        onclick="startImportMeisterschaften()" 
-        data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Meisterschaften importieren (alt)
-</button>
 
 <button class="btn btn-primary psition-relative bottom-0 start-50 " 
         onclick="startImportMeisterschaftenNew()" 
@@ -359,12 +323,6 @@ function spiele_importieren(){
     exit;
 }
 
-function meisterschaften_importieren(){
-    require_once __DIR__."/../import/importer.php";
-    $importErgebnis = importMeisterschaftenFromNuliga();
-    echo json_encode($importErgebnis, JSON_PRETTY_PRINT);
-    exit;
-}
 function meisterschaften_importieren_new(){
     require_once __DIR__."/../import/importer.php";
     $importErgebnis = importMeisterschaftenFromNuliga_new();

@@ -239,55 +239,6 @@ function updateMannschaftsMeldungen(){
     $wpdb->query("DELETE FROM $table_nuliga_meisterschaft WHERE id NOT IN (SELECT nuliga_meisterschaft FROM $table_nuliga_mannschaftseinteilung)");
 }
 
-function importMeisterschaftenFromNuliga(): array{
-    require_once __DIR__."/../dao/MannschaftsMeldung.php";
-    require_once __DIR__."/../dao/Meisterschaft.php";
-    require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
-    
-    $mannschaften = loadMannschaften();
-    $nuligaBezeichnungen = createNuLigaMannschaftsBezeichnungen($mannschaften);
-    $ligeneinteilung = new NuLiga_MannschaftsUndLigenEinteilung(get_option('nuliga-clubid'));
-    $nuliga_meisterschaften = $ligeneinteilung->getMeisterschaften(get_option('vereinsname'));
-
-    $ergebnis = array();
-    foreach($mannschaften as $mannschaft){
-        $ergebnis[$mannschaft->getName()] = new ImportErgebnisProMannschaft($mannschaft);
-    }
-    foreach($nuliga_meisterschaften as $nuliga_meisterschaft){
-        $meisterschaftNeedsUpsert = true;
-        $meisterschaft_id = null;
-        foreach($nuliga_meisterschaft->mannschaftsEinteilungen as $mannschaftsEinteilung){
-            if($meisterschaftNeedsUpsert){
-                // muss einmal zu Beginn passieren, da das Kürzel der Meisterschaft nur den Kind-Elementen bekannt ist.
-                $meisterschaft_id = upsertMeisterschaft($mannschaftsEinteilung->meisterschaftsKuerzel, $nuliga_meisterschaft->name);
-                $meisterschaftNeedsUpsert = false;
-            }
-            $mannschaft = $nuligaBezeichnungen[$mannschaftsEinteilung->mannschaftsBezeichnung];
-            
-            if(isset($mannschaft)){
-                $ergebnis[$mannschaft->getName()]->gesamt++;
-
-                $mannschaftsMeldung = findMannschaftsMeldung($meisterschaft_id, $mannschaft->getID(), $mannschaftsEinteilung->liga);
-                if(isset($mannschaftsMeldung)){
-                    $liga_idAenderung = $mannschaftsMeldung->getNuligaLigaID() !==  $mannschaftsEinteilung->liga_id;
-                    $team_idAenderung = $mannschaftsMeldung->getNuligaTeamID() !==  $mannschaftsEinteilung->team_id;
-                    if($namensAenderung || $liga_idAenderung || $team_idAenderung){
-                        updateMannschaftsMeldung($mannschaftsMeldung->getID(), $mannschaftsEinteilung->liga_id, $mannschaftsEinteilung->team_id);
-                        $ergebnis[$mannschaft->getName()]->aktualisiert++;
-                    }
-                } else{
-                    insertMannschaftsMeldung($meisterschaft_id, $mannschaft->getID(), 
-                        $mannschaftsEinteilung->liga, $mannschaftsEinteilung->liga_id,
-                        $mannschaftsEinteilung->team_id
-                    );
-                    $ergebnis[$mannschaft->getName()]->neu++;
-                }
-            }
-        }
-    }
-    return array_values($ergebnis);
-}
-
 function createNuLigaMannschaftsBezeichnungen(array $mannschaften): array{
     $nuligaBezeichnungen = array();
     foreach($mannschaften as $mannschaft){
