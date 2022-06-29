@@ -22,71 +22,6 @@ class ImportErgebnisProMannschaft{
     }
 }
 
-function importSpieleFromNuliga(): array{
-    
-    $meisterschaften = loadMeisterschaften();
-    $mannschaften = loadMannschaftenMitMeldungen();
-    $gegnerDAO = new GegnerDAO();
-    $gegnerDAO->loadGegner();
-
-    $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaften, $gegnerDAO);
-
-    $ergebnis = array();
-    foreach($mannschaften as $mannschaft){
-        $importErgebnis = new ImportErgebnisProMannschaft($mannschaft);
-        
-        $teamName = get_option('vereinsname');
-        if($mannschaft->getNummer() >= 2){
-            $teamName .= " ";
-            for($i=0; $i<$mannschaft->getNummer(); $i++){
-                $teamName .= "I";
-            }
-        }
-        
-        foreach($mannschaft->getMeldungen() as $mannschaftsMeldung) {
-            $meisterschaft = $meisterschaften[$mannschaftsMeldung->getMeisterschaft()];
-            $spielGrabber = new SpieleGrabber(
-                $meisterschaft->getKuerzel(), 
-                $mannschaftsMeldung->getNuligaLigaID(), 
-                $mannschaftsMeldung->getNuligaTeamID()
-            );
-            foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
-                if($nuLigaSpiel->getHeimmannschaft() === $teamName){
-                    $isHeimspiel = 1;
-                    $gegnerName = $nuLigaSpiel->getGastmannschaft();
-                } else {
-                    $isHeimspiel = 0;
-                    $gegnerName = $nuLigaSpiel->getHeimmannschaft();
-                }
-                $gegner_id = $gegnerDAO->findOrInsertGegner( 
-                    $gegnerName, 
-                    $mannschaft->getGeschlecht(), 
-                    $mannschaftsMeldung->getLiga()
-                )->getID();
-                $spiel = findSpiel ($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
-                $importErgebnis->gesamt ++;
-                if(isset($spiel)){
-                    $hallenAenderung = ($spiel->getHalle() != $nuLigaSpiel->getHalle());
-                    $AnwurfAenderung = ($spiel->getAnwurf() != $nuLigaSpiel->getAnwurf());
-                    if($hallenAenderung || $AnwurfAenderung){
-                        $dienstAenderungsPlan->registerSpielAenderung($spiel, $nuLigaSpiel);
-                        updateSpiel($spiel->getID(), $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
-                        $importErgebnis->aktualisiert ++;
-                    }
-                } else {
-                    insertSpiel($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
-                    $importErgebnis->neu ++;
-                }
-            }
-        }
-        $ergebnis[$mannschaft->getName()]  = $importErgebnis;
-    }
-
-    $dienstAenderungsPlan->sendEmails();
-
-    return array_values($ergebnis);
-}
-
 function importMeisterschaftenFromNuliga(){
     global $wpdb;
     require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
@@ -174,6 +109,34 @@ function mannschaftenZuordnen(){
     }
 }
 
+function createNuLigaMannschaftsBezeichnungen(array $mannschaften): array{
+    $nuligaBezeichnungen = array();
+    foreach($mannschaften as $mannschaft){
+        $bezeichnung = "";
+        $jugendKlasse = $mannschaft->getJugendklasse();
+        if(empty($jugendKlasse)){
+            switch($mannschaft->getGeschlecht()){
+                case GESCHLECHT_W: $bezeichnung = "Frauen"; break;
+                case GESCHLECHT_M: $bezeichnung = "Männer"; break;
+            }
+        }else {
+            switch($mannschaft->getGeschlecht()){
+                case GESCHLECHT_W: $bezeichnung = "weibliche"; break;
+                case GESCHLECHT_M: $bezeichnung = "männliche"; break;
+            }
+            $bezeichnung .= " Jugend ".strtoupper($jugendKlasse);
+        }
+        if($mannschaft->getNummer() > 1){
+            $bezeichnung .= " ";
+            for($i=0; $i<$mannschaft->getNummer(); $i++){
+                $bezeichnung .= "I";
+            }
+        }
+        $nuligaBezeichnungen[$bezeichnung] = $mannschaft;
+    }
+    return $nuligaBezeichnungen;
+}
+
 function updateMeisterschaften(){
     global $wpdb;
 
@@ -239,32 +202,77 @@ function updateMannschaftsMeldungen(){
     $wpdb->query("DELETE FROM $table_nuliga_meisterschaft WHERE id NOT IN (SELECT nuliga_meisterschaft FROM $table_nuliga_mannschaftseinteilung)");
 }
 
-function createNuLigaMannschaftsBezeichnungen(array $mannschaften): array{
-    $nuligaBezeichnungen = array();
+function importSpieleFromNuliga(): array{
+    
+    $meisterschaften = loadMeisterschaften();
+    $mannschaften = loadMannschaftenMitMeldungen();
+    $gegnerDAO = new GegnerDAO();
+    $gegnerDAO->loadGegner();
+
+    $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaften, $gegnerDAO);
+
+    $ergebnis = array();
     foreach($mannschaften as $mannschaft){
-        $bezeichnung = "";
-        $jugendKlasse = $mannschaft->getJugendklasse();
-        if(empty($jugendKlasse)){
-            switch($mannschaft->getGeschlecht()){
-                case GESCHLECHT_W: $bezeichnung = "Frauen"; break;
-                case GESCHLECHT_M: $bezeichnung = "Männer"; break;
-            }
-        }else {
-            switch($mannschaft->getGeschlecht()){
-                case GESCHLECHT_W: $bezeichnung = "weibliche"; break;
-                case GESCHLECHT_M: $bezeichnung = "männliche"; break;
-            }
-            $bezeichnung .= " Jugend ".strtoupper($jugendKlasse);
-        }
-        if($mannschaft->getNummer() > 1){
-            $bezeichnung .= " ";
+        $importErgebnis = new ImportErgebnisProMannschaft($mannschaft);
+        
+        $teamName = get_option('vereinsname');
+        if($mannschaft->getNummer() >= 2){
+            $teamName .= " ";
             for($i=0; $i<$mannschaft->getNummer(); $i++){
-                $bezeichnung .= "I";
+                $teamName .= "I";
             }
         }
-        $nuligaBezeichnungen[$bezeichnung] = $mannschaft;
+        
+        foreach($mannschaft->getMeldungen() as $mannschaftsMeldung) {
+            $meisterschaft = $meisterschaften[$mannschaftsMeldung->getMeisterschaft()];
+            $spielGrabber = new SpieleGrabber(
+                $meisterschaft->getKuerzel(), 
+                $mannschaftsMeldung->getNuligaLigaID(), 
+                $mannschaftsMeldung->getNuligaTeamID()
+            );
+            foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
+                if($nuLigaSpiel->getHeimmannschaft() === $teamName){
+                    $isHeimspiel = 1;
+                    $gegnerName = $nuLigaSpiel->getGastmannschaft();
+                } else {
+                    $isHeimspiel = 0;
+                    $gegnerName = $nuLigaSpiel->getHeimmannschaft();
+                }
+                $gegner_id = $gegnerDAO->findOrInsertGegner( 
+                    $gegnerName, 
+                    $mannschaft->getGeschlecht(), 
+                    $mannschaftsMeldung->getLiga()
+                )->getID();
+                $spiel = findSpiel ($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
+                $importErgebnis->gesamt ++;
+                if(isset($spiel)){
+                    $hallenAenderung = ($spiel->getHalle() != $nuLigaSpiel->getHalle());
+                    $AnwurfAenderung = ($spiel->getAnwurf() != $nuLigaSpiel->getAnwurf());
+                    if($hallenAenderung || $AnwurfAenderung){
+                        $dienstAenderungsPlan->registerSpielAenderung($spiel, $nuLigaSpiel);
+                        updateSpiel($spiel->getID(), $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
+                        $importErgebnis->aktualisiert ++;
+                    }
+                } else {
+                    insertSpiel($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
+                    $importErgebnis->neu ++;
+                }
+            }
+        }
+        $ergebnis[$mannschaft->getName()]  = $importErgebnis;
     }
-    return $nuligaBezeichnungen;
+
+    $dienstAenderungsPlan->sendEmails();
+
+    return array_values($ergebnis);
+}
+
+function delete_import_cache(){
+    global $wpdb;
+    $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
+    $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
+    $wpdb->query("DELETE FROM $table_nuliga_mannschaftseinteilung");
+    $wpdb->query("DELETE FROM $table_nuliga_meisterschaft");
 }
 
 ?>

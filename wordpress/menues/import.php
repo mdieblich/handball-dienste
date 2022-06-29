@@ -10,6 +10,8 @@ add_action( 'wp_ajax_mannschaften_zuordnen', 'mannschaften_zuordnen' );
 add_action( 'wp_ajax_meisterschaften_aktualisieren', 'meisterschaften_aktualisieren' );
 add_action( 'wp_ajax_meldungen_aktualisieren', 'meldungen_aktualisieren' );
 add_action( 'wp_ajax_spiele_importieren', 'spiele_importieren' );
+add_action( 'wp_ajax_import_cache_leeren', 'import_cache_leeren' );
+
 add_action( 'wp_ajax_meldung_aktivieren', 'meldung_aktivieren' );
 
 function meldung_aktivieren(){
@@ -203,6 +205,27 @@ function startImportSpiele(){
             });
         });
 }
+function startCacheLeeren(){
+    jQuery(function($){
+        $("#importModalLabel").html("Leere Cache...");
+        $("#import-result").hide();
+        $("#loading-spinner").show(500);
+    });
+
+    var data = {'action': 'import_cache_leeren'};
+
+    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+    jQuery.post(ajaxurl, data)
+        .done(function(response){    
+            jQuery(function($){
+                $("#loading-spinner").hide(500, function(){
+                    $("#import-result")
+                        .html("<pre>"+response+"</pre>")
+                        .show(500);
+                });
+            });
+        });
+}
 </script>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
@@ -275,6 +298,11 @@ Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden.
         data-bs-toggle="modal" data-bs-target="#exampleModal">
     Meldungen aktualisieren
 </button>
+<button class="btn btn-primary psition-relative bottom-0 start-50 " 
+        onclick="startCacheLeeren()" 
+        data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Cache leeren
+</button>
 
 <hr>
 <h2>Spiele importieren</h2>
@@ -345,33 +373,37 @@ Nachdem Meisterschaften importiert wurden, können dazugehörige Spiele importie
 
 function alles_importieren(){
     require_once __DIR__."/../import/importer.php";
-    echo "Start<br>\n";
+    echo "Start\n";
 
     echo "Meisterschaften ...";
     importMeisterschaftenFromNuliga();
-    echo "importiert!<br>\n";
+    echo "importiert!\n";
 
     echo "Team-IDs ...";
     importTeamIDsFromNuLiga();
-    echo "importiert!<br>\n";
+    echo "importiert!\n";
 
     echo "Mannschaften ...";
     mannschaftenZuordnen();
-    echo "zugeordnet!<br>\n";
+    echo "zugeordnet!\n";
 
     echo "Meisterschaften ...";
     updateMeisterschaften();
-    echo "aktualisiert!<br>\n";
+    echo "aktualisiert!\n";
 
     echo "Meldungen ...";
     updateMannschaftsMeldungen();
-    echo "aktualisiert !<br>\n";
+    echo "aktualisiert !\n";
 
     echo "Spiele ...";
     importSpieleFromNuliga();
-    echo "importiert!<br>\n";
+    echo "importiert!\n";
+    
+    echo "Cache ...";
+    delete_import_cache();
+    echo "geleert!\n";
 
-    echo "Erfolg";
+    echo "Erfolgreich abgeschlossen";
     exit;
 }
 
@@ -413,6 +445,12 @@ function spiele_importieren(){
     require_once __DIR__."/../import/importer.php";
     $importErgebnis = importSpieleFromNuliga();
     echo json_encode($importErgebnis, JSON_PRETTY_PRINT);
+    exit;
+}
+function import_cache_leeren(){
+    require_once __DIR__."/../import/importer.php";
+    delete_import_cache();
+    echo "Erfolg";
     exit;
 }
 
