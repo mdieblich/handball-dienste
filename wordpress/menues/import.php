@@ -6,6 +6,7 @@ function addDiensteSpieleImportKonfiguration(){
 add_action( 'wp_ajax_meisterschaften_importieren', 'meisterschaften_importieren' );
 add_action( 'wp_ajax_meisterschaften_importieren_new', 'meisterschaften_importieren_new' );
 add_action( 'wp_ajax_teamIDs_importieren', 'teamIDs_importieren' );
+add_action( 'wp_ajax_mannschaften_zuordnen', 'mannschaften_zuordnen' );
 add_action( 'wp_ajax_meisterschaften_aktualisieren', 'meisterschaften_aktualisieren' );
 add_action( 'wp_ajax_meldungen_aktualisieren', 'meldungen_aktualisieren' );
 add_action( 'wp_ajax_spiele_importieren', 'spiele_importieren' );
@@ -90,6 +91,28 @@ function startImportTeamIDs(){
     });
 
     var data = {'action': 'teamIDs_importieren'};
+
+    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+    jQuery.post(ajaxurl, data)
+        .done(function(response){    
+            jQuery(function($){
+                $("#loading-spinner").hide(500, function(){
+                    $("#import-result")
+                        .html("<pre>"+response+"</pre>")
+                        .show(500);
+                });
+            });
+        });
+}
+
+function startMannschaftenZuordnen(){
+    jQuery(function($){
+        $("#importModalLabel").html("Ordne die Mannschaften zu");
+        $("#import-result").hide();
+        $("#loading-spinner").show(500);
+    });
+
+    var data = {'action': 'mannschaften_zuordnen'};
 
     // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
     jQuery.post(ajaxurl, data)
@@ -247,6 +270,11 @@ Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden.
     Team-IDs importieren
 </button>
 <button class="btn btn-primary psition-relative bottom-0 start-50 " 
+        onclick="startMannschaftenZuordnen()" 
+        data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Mannschaften zuordnen
+</button>
+<button class="btn btn-primary psition-relative bottom-0 start-50 " 
         onclick="startUpdateMeisterschaften()" 
         data-bs-toggle="modal" data-bs-target="#exampleModal">
     Meisterschaften aktualisieren
@@ -347,6 +375,13 @@ function meisterschaften_importieren_new(){
 function teamIDs_importieren(){
     require_once __DIR__."/../import/importer.php";
     $importErgebnis = importTeamIDsFromNuLiga();
+    echo "Erfolg\n";
+    exit;
+}
+
+function mannschaften_zuordnen(){
+    require_once __DIR__."/../import/importer.php";
+    $importErgebnis = mannschaftenZuordnen();
     echo "Erfolg\n";
     exit;
 }

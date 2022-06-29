@@ -191,6 +191,7 @@ function dienste_nuliga_import_mannschaftseinteilung_initialisieren(){
         id INT NOT NULL AUTO_INCREMENT , 
         nuliga_meisterschaft INT NOT NULL,
         mannschaftsBezeichnung VARCHAR(1024) NOT NULL,
+        mannschaft INT NULL,
         meisterschaftsKuerzel VARCHAR(256) NOT NULL,
         liga VARCHAR(256) NOT NULL,
         liga_id INT NOT NULL,

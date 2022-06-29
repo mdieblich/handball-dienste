@@ -152,6 +152,28 @@ function importTeamIDsFromNuLiga() {
     }
 }
 
+function mannschaftenZuordnen(){
+    global $wpdb;
+
+    $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
+
+    $mannschaften = loadMannschaften();
+    $nuligaBezeichnungen = createNuLigaMannschaftsBezeichnungen($mannschaften);
+
+    $results = $wpdb->get_results("SELECT id, mannschaftsBezeichnung FROM $table_nuliga_mannschaftseinteilung WHERE mannschaft IS NULL", ARRAY_A);
+    foreach($results as $nuliga_mannschaftsEinteilung){
+        if(!array_key_exists($nuliga_mannschaftsEinteilung['mannschaftsBezeichnung'], $nuligaBezeichnungen)){
+            continue;
+        }
+        $mannschaft = $nuligaBezeichnungen[$nuliga_mannschaftsEinteilung['mannschaftsBezeichnung']];
+        $wpdb->update(
+            $table_nuliga_mannschaftseinteilung, 
+            array('mannschaft'=>$mannschaft->getID()), 
+            array('id' => $nuliga_mannschaftsEinteilung['id'])
+        );
+    }
+}
+
 function updateMeisterschaften(){
     global $wpdb;
 
@@ -204,7 +226,7 @@ function updateMannschaftsMeldungen(){
             continue;
         }
         $mannschaft = $nuligaBezeichnungen[$nuliga_mannschaftsEinteilung['mannschaftsBezeichnung']];
-        var_dump($nuliga_mannschaftsEinteilung);
+        
         $mannschaftsMeldung = findMannschaftsMeldung($nuliga_mannschaftsEinteilung['meisterschaft'], $mannschaft->getID(), $nuliga_mannschaftsEinteilung['liga']);
         // TODO Transaktionsstart
         if(isset($mannschaftsMeldung)){
