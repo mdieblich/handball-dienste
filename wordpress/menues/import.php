@@ -5,13 +5,7 @@ function addDiensteSpieleImportKonfiguration(){
     $hook_import = add_submenu_page( 'dienste', 'Dienste - Spiele importieren', 'Import', 'administrator', 'dienste-import', 'displaySpieleImport');
 }
 add_action( 'wp_ajax_alles_importieren', 'alles_importieren' );
-add_action( 'wp_ajax_meisterschaften_importieren', 'meisterschaften_importieren' );
-add_action( 'wp_ajax_teamIDs_importieren', 'teamIDs_importieren' );
-add_action( 'wp_ajax_mannschaften_zuordnen', 'mannschaften_zuordnen' );
-add_action( 'wp_ajax_meisterschaften_aktualisieren', 'meisterschaften_aktualisieren' );
-add_action( 'wp_ajax_meldungen_aktualisieren', 'meldungen_aktualisieren' );
-add_action( 'wp_ajax_spiele_importieren', 'spiele_importieren' );
-add_action( 'wp_ajax_import_cache_leeren', 'import_cache_leeren' );
+add_action( 'wp_ajax_start_import_schritt', 'start_import_schritt' );
 
 add_action( 'wp_ajax_status_lesen', 'status_lesen' );
 
@@ -57,102 +51,18 @@ function startImportAlles(){
             });
         });
 }
-function startImportMeisterschaften(){
+
+function startImportSchritt(schritt){
     jQuery(function($){
-        $("#importModalLabel").html("Importiere Meisterschaften...");
+        $("#importModalLabel").html("Starte Importschritt " + schritt);
         $("#import-result").hide();
         $("#loading-spinner").show(500);
     });
 
-    var data = {'action': 'meisterschaften_importieren'};
-
-    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-    jQuery.post(ajaxurl, data)
-        .done(function(response){    
-            jQuery(function($){
-                $("#loading-spinner").hide(500, function(){
-                    $("#import-result")
-                        .html("<pre>"+response+"</pre>")
-                        .show(500);
-                });
-            });
-        });
-}
-
-function startImportTeamIDs(){
-    jQuery(function($){
-        $("#importModalLabel").html("Importiere TeamIDs...");
-        $("#import-result").hide();
-        $("#loading-spinner").show(500);
-    });
-
-    var data = {'action': 'teamIDs_importieren'};
-
-    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-    jQuery.post(ajaxurl, data)
-        .done(function(response){    
-            jQuery(function($){
-                $("#loading-spinner").hide(500, function(){
-                    $("#import-result")
-                        .html("<pre>"+response+"</pre>")
-                        .show(500);
-                });
-            });
-        });
-}
-
-function startMannschaftenZuordnen(){
-    jQuery(function($){
-        $("#importModalLabel").html("Ordne die Mannschaften zu");
-        $("#import-result").hide();
-        $("#loading-spinner").show(500);
-    });
-
-    var data = {'action': 'mannschaften_zuordnen'};
-
-    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-    jQuery.post(ajaxurl, data)
-        .done(function(response){    
-            jQuery(function($){
-                $("#loading-spinner").hide(500, function(){
-                    $("#import-result")
-                        .html("<pre>"+response+"</pre>")
-                        .show(500);
-                });
-            });
-        });
-}
-
-function startUpdateMeisterschaften(){
-    jQuery(function($){
-        $("#importModalLabel").html("Aktualisiere Meisterschaften...");
-        $("#import-result").hide();
-        $("#loading-spinner").show(500);
-    });
-
-    var data = {'action': 'meisterschaften_aktualisieren'};
-
-    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-    jQuery.post(ajaxurl, data)
-        .done(function(response){    
-            jQuery(function($){
-                $("#loading-spinner").hide(500, function(){
-                    $("#import-result")
-                        .html("<pre>"+response+"</pre>")
-                        .show(500);
-                });
-            });
-        });
-}
-
-function startMeldungenAktualisieren(){
-    jQuery(function($){
-        $("#importModalLabel").html("Aktualisiere Meldungen...");
-        $("#import-result").hide();
-        $("#loading-spinner").show(500);
-    });
-
-    var data = {'action': 'meldungen_aktualisieren'};
+    var data = {
+        'action': 'start_import_schritt', 
+        'schritt': schritt
+    };
 
     // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
     jQuery.post(ajaxurl, data)
@@ -178,57 +88,6 @@ function meldungAktivieren(meldung_id, aktiv){
     jQuery.post(ajaxurl, data);
 }
 
-function startImportSpiele(){
-    jQuery(function($){
-        $("#importModalLabel").html("Importiere Spiele...");
-        $("#import-result").hide();
-        $("#loading-spinner").show(500);
-    });
-
-    var data = {'action': 'spiele_importieren'};
-
-    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-    jQuery.post(ajaxurl, data)
-        .done(function(response){
-            jQuery(function($){    
-                importErgebnisse = JSON.parse(response);
-                importErgebnisse.forEach(function(importErgebnis){
-                    neueErgebnisZeile = $("#import-result-zeile").clone();
-                    neueErgebnisZeile.appendTo("#import-result");
-                    neueErgebnisZeile.find(".antwort").html(importErgebnis.mannschaft);
-                    neueErgebnisZeile.find(".text-bg-success").html(importErgebnis.gesamt);
-                    neueErgebnisZeile.find(".text-bg-warning").html(importErgebnis.aktualisiert);
-                    neueErgebnisZeile.find(".text-bg-info").html(importErgebnis.neu);
-                    neueErgebnisZeile.show();
-                });
-                $("#loading-spinner").hide(500, function(){
-                    $("#import-result").show(500);
-                });
-                // $("#import-result").html("<pre>" + response + "</pre>");
-            });
-        });
-}
-function startCacheLeeren(){
-    jQuery(function($){
-        $("#importModalLabel").html("Leere Cache...");
-        $("#import-result").hide();
-        $("#loading-spinner").show(500);
-    });
-
-    var data = {'action': 'import_cache_leeren'};
-
-    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-    jQuery.post(ajaxurl, data)
-        .done(function(response){    
-            jQuery(function($){
-                $("#loading-spinner").hide(500, function(){
-                    $("#import-result")
-                        .html("<pre>"+response+"</pre>")
-                        .show(500);
-                });
-            });
-        });
-}
 </script>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
@@ -283,53 +142,34 @@ Nachdem Meisterschaften importiert wurden, können dazugehörige Spiele importie
     <li type="disc">Auch bei mehreren sich ändernden Spielen bekommt eine Mannschaft pro Import immer nur genau <u>eine</u> Email. <i>(Ich hasse zu viele Emails!)</i></li>
     <li type="disc">Durch den Aufruf von <code><?php echo get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> kann der Import automatisiert werden.</li>
 </ul>
-
-<button class="btn btn-primary psition-relative bottom-0 start-50 " 
-        onclick="startImportAlles()" 
-        data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Alles importieren
-</button>
-<button class="btn btn-primary psition-relative bottom-0 start-50 " 
-        onclick="startImportMeisterschaften()" 
-        data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Meisterschaften importieren
-</button>
-<button class="btn btn-primary psition-relative bottom-0 start-50 " 
-        onclick="startImportTeamIDs()" 
-        data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Team-IDs importieren
-</button>
-<button class="btn btn-primary psition-relative bottom-0 start-50 " 
-        onclick="startMannschaftenZuordnen()" 
-        data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Mannschaften zuordnen
-</button>
-<button class="btn btn-primary psition-relative bottom-0 start-50 " 
-        onclick="startUpdateMeisterschaften()" 
-        data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Meisterschaften aktualisieren
-</button>
-<button class="btn btn-primary psition-relative bottom-0 start-50 " 
-        onclick="startMeldungenAktualisieren()" 
-        data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Meldungen aktualisieren
-</button>
-<button class="btn btn-primary" 
-        onclick="startImportSpiele()" 
-        data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Spiele importieren
-</button>
-<button class="btn btn-primary psition-relative bottom-0 start-50 " 
-        onclick="startCacheLeeren()" 
-        data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Cache leeren
-</button>
-<br><br>
 <hr>
-Fortschritt
 <div class="container">
-    <div class="row" id="step-"
+    <div class="row">
+        <div class="col"><span class="badge bg-secondary">Nie</span></div>
+        <div class="col">
+            <button class="btn btn-primary psition-relative bottom-0 start-50 " 
+                onclick="startImportAlles()" 
+                data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Alles importieren
+            </button>
+        </div>
+    </div>
+    <?php foreach(Importer::alleSchritte() as $importSchritt){ ?>
+        <div class="row">
+            <div class="col"><span class="badge bg-secondary">Nie</span></div>
+            <div class="col">
+                <button class="btn btn-primary psition-relative bottom-0 start-50 " 
+                    onclick="startImportSchritt(<?php echo $importSchritt->schritt;?>)" 
+                    data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <?php echo $importSchritt->beschreibung;?>
+                </button>
+            </div>
+        </div>
+    <?php } ?>
 </div>
+<br><br>
 <div class="progress">
   <div class="progress-bar" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">aa</div>
   <div class="progress-bar bg-success" role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
@@ -418,42 +258,8 @@ function alles_importieren(){
     exit;
 }
 
-function meisterschaften_importieren(){
-    Importer::$NULIGA_MEISTERSCHAFTEN_LESEN->run();
-    echo "Erfolg";
-    exit;
-}
-
-function teamIDs_importieren(){
-    Importer::$NULIGA_TEAM_IDS_LESEN->run();
-    echo "Erfolg\n";
-    exit;
-}
-
-function mannschaften_zuordnen(){
-    Importer::$MANNSCHAFTEN_ZUORDNEN->run();
-    echo "Erfolg\n";
-    exit;
-}
-
-function meisterschaften_aktualisieren(){
-    Importer::$MEISTERSCHAFTEN_AKTUALISIEREN->run();
-    echo "Erfolg\n";
-    exit;
-}
-
-function meldungen_aktualisieren(){
-    Importer::$MELDUNGEN_AKTUALISIEREN->run();
-    echo "Erfolg\n";
-    exit;
-}
-
-function spiele_importieren(){
-    Importer::$SPIELE_IMPORTIEREN->run();
-    exit;
-}
-function import_cache_leeren(){
-    Importer::$CACHE_LEEREN->run();
+function start_import_schritt(){
+    Importer::alleSchritte()[$_POST['schritt']]->run();
     echo "Erfolg";
     exit;
 }

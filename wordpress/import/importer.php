@@ -20,6 +20,23 @@ class Importer{
     public static $MELDUNGEN_AKTUALISIEREN;
     public static $SPIELE_IMPORTIEREN;
     public static $CACHE_LEEREN;
+
+    public static function alleSchritte(): array{
+        $unsortierteSchritte = array(
+            self::$NULIGA_MEISTERSCHAFTEN_LESEN,
+            self::$NULIGA_TEAM_IDS_LESEN,
+            self::$MANNSCHAFTEN_ZUORDNEN,
+            self::$MEISTERSCHAFTEN_AKTUALISIEREN,
+            self::$MELDUNGEN_AKTUALISIEREN,
+            self::$SPIELE_IMPORTIEREN,
+            self::$CACHE_LEEREN
+        );
+        $sortierteSchritte = array();
+        foreach($unsortierteSchritte as $schritt){
+            $sortierteSchritte[$schritt->schritt] = $schritt;
+        }
+        return $sortierteSchritte;
+    }
 }
 
 Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(1, "Meisterschaften von nuLiga lesen", function (){
