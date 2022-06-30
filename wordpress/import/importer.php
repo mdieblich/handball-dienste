@@ -37,6 +37,13 @@ class Importer{
         }
         return $sortierteSchritte;
     }
+
+    public static function starteAlles(){
+        ImportSchritt::initAlleSchritte();
+        foreach(self::alleSchritte() as $schritt){
+            $schritt->run();
+        }
+    }
 }
 
 Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(1, "Meisterschaften von nuLiga lesen", function (){
@@ -125,6 +132,34 @@ Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen",
         );
     }
 });
+
+function createNuLigaMannschaftsBezeichnungen(array $mannschaften): array{
+    $nuligaBezeichnungen = array();
+    foreach($mannschaften as $mannschaft){
+        $bezeichnung = "";
+        $jugendKlasse = $mannschaft->getJugendklasse();
+        if(empty($jugendKlasse)){
+            switch($mannschaft->getGeschlecht()){
+                case GESCHLECHT_W: $bezeichnung = "Frauen"; break;
+                case GESCHLECHT_M: $bezeichnung = "Männer"; break;
+            }
+        }else {
+            switch($mannschaft->getGeschlecht()){
+                case GESCHLECHT_W: $bezeichnung = "weibliche"; break;
+                case GESCHLECHT_M: $bezeichnung = "männliche"; break;
+            }
+            $bezeichnung .= " Jugend ".strtoupper($jugendKlasse);
+        }
+        if($mannschaft->getNummer() > 1){
+            $bezeichnung .= " ";
+            for($i=0; $i<$mannschaft->getNummer(); $i++){
+                $bezeichnung .= "I";
+            }
+        }
+        $nuligaBezeichnungen[$bezeichnung] = $mannschaft;
+    }
+    return $nuligaBezeichnungen;
+}
 
 Importer::$MEISTERSCHAFTEN_AKTUALISIEREN = new ImportSchritt(4, "Meisterschaften aktualisieren", function (){
     global $wpdb;

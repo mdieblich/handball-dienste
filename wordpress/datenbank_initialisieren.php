@@ -213,7 +213,7 @@ function dienste_nuliga_import_status_initialisieren(){
     $sql = "CREATE TABLE $table_name (
         schritt INT NOT NULL,
         beschreibung VARCHAR(1024) NOT NULL,
-        start DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+        start DATETIME NULL DEFAULT CURRENT_TIMESTAMP, 
         ende DATETIME NULL , 
         PRIMARY KEY (schritt)
     ) $charset_collate, ENGINE = InnoDB;";

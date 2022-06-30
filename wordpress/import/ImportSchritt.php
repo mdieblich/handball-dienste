@@ -52,5 +52,11 @@ class ImportSchritt{
         );
         return $wpdb->insert_id;
     }
+
+    public static function initAlleSchritte(){
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'import_status';
+        $wpdb->query("UPDATE $table_name set start=null, ende=null");
+    }
 }
 ?>
