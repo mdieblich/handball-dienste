@@ -35,6 +35,6 @@ function enqueue_scripts() {
 
 function updateFromNuliga(){
     require_once __DIR__."/import/importer.php";
-    return importSpieleFromNuliga();
+    Importer::$SPIELE_IMPORTIEREN->run();
 }
 ?>
