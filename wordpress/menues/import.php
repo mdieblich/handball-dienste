@@ -268,6 +268,19 @@ Bestehende Meisterschaften und Meldungen bleiben bei jedem weiterem Import erhal
 Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden. Dazugehörige Spiele werden zwar noch aktualisiert, aber die Spiele werden nicht mehr in der Liste der Dienste dargestellt.
 </p>
 
+<h2>Spiele importieren</h2>
+<p>
+Nachdem Meisterschaften importiert wurden, können dazugehörige Spiele importiert werden.
+</p>
+<ul style="font-size:13px">
+    <li type="disc">Vorhandene Spiele werden aktualisiert</li>
+    <li type="disc">bestehende Dienste bleiben erhalten</li>
+    <li type="disc">Gegnerische Mannschaften werden automatisch mitimportiert</li>
+    <li type="disc">Sollte sich ein Spiel ändern (Anwurf oder Halle), bei dem eine Mannschaft schon Dienste zugewiesen bekommen hat, dann bekommt diese eine Email.</li>
+    <li type="disc">Auch bei mehreren sich ändernden Spielen bekommt eine Mannschaft pro Import immer nur genau <u>eine</u> Email. <i>(Ich hasse zu viele Emails!)</i></li>
+    <li type="disc">Durch den Aufruf von <code><?php echo get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> kann der Import automatisiert werden.</li>
+</ul>
+
 <button class="btn btn-primary psition-relative bottom-0 start-50 " 
         onclick="startImportAlles()" 
         data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -298,30 +311,15 @@ Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden.
         data-bs-toggle="modal" data-bs-target="#exampleModal">
     Meldungen aktualisieren
 </button>
-<button class="btn btn-primary psition-relative bottom-0 start-50 " 
-        onclick="startCacheLeeren()" 
-        data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Cache leeren
-</button>
-
-<hr>
-<h2>Spiele importieren</h2>
-<p>
-Nachdem Meisterschaften importiert wurden, können dazugehörige Spiele importiert werden.
-</p>
-<ul style="font-size:13px">
-    <li type="disc">Vorhandene Spiele werden aktualisiert</li>
-    <li type="disc">bestehende Dienste bleiben erhalten</li>
-    <li type="disc">Gegnerische Mannschaften werden automatisch mitimportiert</li>
-    <li type="disc">Sollte sich ein Spiel ändern (Anwurf oder Halle), bei dem eine Mannschaft schon Dienste zugewiesen bekommen hat, dann bekommt diese eine Email.</li>
-    <li type="disc">Auch bei mehreren sich ändernden Spielen bekommt eine Mannschaft pro Import immer nur genau <u>eine</u> Email. <i>(Ich hasse zu viele Emails!)</i></li>
-    <li type="disc">Durch den Aufruf von <code><?php echo get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> kann der Import automatisiert werden.</li>
-</ul>
-
 <button class="btn btn-primary" 
         onclick="startImportSpiele()" 
         data-bs-toggle="modal" data-bs-target="#exampleModal">
     Spiele importieren
+</button>
+<button class="btn btn-primary psition-relative bottom-0 start-50 " 
+        onclick="startCacheLeeren()" 
+        data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Cache leeren
 </button>
 
 <hr>
