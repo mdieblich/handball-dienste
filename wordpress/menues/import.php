@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__."/../import/importer.php";
 
 function addDiensteSpieleImportKonfiguration(){
     $hook_import = add_submenu_page( 'dienste', 'Dienste - Spiele importieren', 'Import', 'administrator', 'dienste-import', 'displaySpieleImport');
@@ -11,6 +12,8 @@ add_action( 'wp_ajax_meisterschaften_aktualisieren', 'meisterschaften_aktualisie
 add_action( 'wp_ajax_meldungen_aktualisieren', 'meldungen_aktualisieren' );
 add_action( 'wp_ajax_spiele_importieren', 'spiele_importieren' );
 add_action( 'wp_ajax_import_cache_leeren', 'import_cache_leeren' );
+
+add_action( 'wp_ajax_status_lesen', 'status_lesen' );
 
 add_action( 'wp_ajax_meldung_aktivieren', 'meldung_aktivieren' );
 
@@ -324,6 +327,9 @@ Nachdem Meisterschaften importiert wurden, können dazugehörige Spiele importie
 <br><br>
 <hr>
 Fortschritt
+<div class="container">
+    <div class="row" id="step-"
+</div>
 <div class="progress">
   <div class="progress-bar" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">aa</div>
   <div class="progress-bar bg-success" role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
@@ -378,35 +384,34 @@ Fortschritt
 }
 
 function alles_importieren(){
-    require_once __DIR__."/../import/importer.php";
     echo "Start\n";
 
     echo "Meisterschaften ...";
-    importMeisterschaftenFromNuliga();
+    Importer::$NULIGA_MEISTERSCHAFTEN_LESEN->run();
     echo "importiert!\n";
-
+    
     echo "Team-IDs ...";
-    importTeamIDsFromNuLiga();
+    Importer::$NULIGA_TEAM_IDS_LESEN->run();
     echo "importiert!\n";
-
+    
     echo "Mannschaften ...";
-    mannschaftenZuordnen();
+    Importer::$MANNSCHAFTEN_ZUORDNEN->run();
     echo "zugeordnet!\n";
-
+    
     echo "Meisterschaften ...";
-    updateMeisterschaften();
+    Importer::$MEISTERSCHAFTEN_AKTUALISIEREN->run();
     echo "aktualisiert!\n";
-
+    
     echo "Meldungen ...";
-    updateMannschaftsMeldungen();
+    Importer::$MELDUNGEN_AKTUALISIEREN->run();
     echo "aktualisiert !\n";
-
+    
     echo "Spiele ...";
-    importSpieleFromNuliga();
+    Importer::$SPIELE_IMPORTIEREN->run();
     echo "importiert!\n";
     
     echo "Cache ...";
-    delete_import_cache();
+    Importer::$CACHE_LEEREN->run();
     echo "geleert!\n";
 
     echo "Erfolgreich abgeschlossen";
@@ -414,49 +419,49 @@ function alles_importieren(){
 }
 
 function meisterschaften_importieren(){
-    require_once __DIR__."/../import/importer.php";
-    $importErgebnis = importMeisterschaftenFromNuliga();
+    Importer::$NULIGA_MEISTERSCHAFTEN_LESEN->run();
     echo "Erfolg";
     exit;
 }
 
 function teamIDs_importieren(){
-    require_once __DIR__."/../import/importer.php";
-    $importErgebnis = importTeamIDsFromNuLiga();
+    Importer::$NULIGA_TEAM_IDS_LESEN->run();
     echo "Erfolg\n";
     exit;
 }
 
 function mannschaften_zuordnen(){
-    require_once __DIR__."/../import/importer.php";
-    $importErgebnis = mannschaftenZuordnen();
+    Importer::$MANNSCHAFTEN_ZUORDNEN->run();
     echo "Erfolg\n";
     exit;
 }
 
 function meisterschaften_aktualisieren(){
-    require_once __DIR__."/../import/importer.php";
-    $importErgebnis = updateMeisterschaften();
+    Importer::$MEISTERSCHAFTEN_AKTUALISIEREN->run();
     echo "Erfolg\n";
     exit;
 }
 
 function meldungen_aktualisieren(){
-    require_once __DIR__."/../import/importer.php";
-    $importErgebnis = updateMannschaftsMeldungen();
+    Importer::$MELDUNGEN_AKTUALISIEREN->run();
     echo "Erfolg\n";
     exit;
 }
+
 function spiele_importieren(){
-    require_once __DIR__."/../import/importer.php";
-    $importErgebnis = importSpieleFromNuliga();
-    echo json_encode($importErgebnis, JSON_PRETTY_PRINT);
+    Importer::$SPIELE_IMPORTIEREN->run();
     exit;
 }
 function import_cache_leeren(){
-    require_once __DIR__."/../import/importer.php";
-    delete_import_cache();
+    Importer::$CACHE_LEEREN->run();
     echo "Erfolg";
+    exit;
+}
+
+function status_lesen(){
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'import_status';
+    echo json_encode($wpdb->get_Results("SELECT * FROM $table_name ORDER BY start"));
     exit;
 }
 

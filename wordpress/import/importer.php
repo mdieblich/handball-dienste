@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__."/ImportSchritt.php";
 require_once __DIR__."/SpieleGrabber.php";
 require_once __DIR__."/DienstAenderungsPlan.php";
 require_once __DIR__."/NuLigaSpiel.php";
@@ -11,48 +12,17 @@ require_once __DIR__."/../dao/dienst.php";
 
 require_once __DIR__."/../PHPMailer/NippesMailer.php";
 
-class ImportErgebnisProMannschaft{
-    public string $mannschaft;
-    public int $gesamt = 0;
-    public int $neu = 0;
-    public int $aktualisiert = 0;
-
-    public function __construct(Mannschaft $mannschaft){
-        $this->mannschaft = $mannschaft->getName();
-    }
+class Importer{
+    public static $NULIGA_MEISTERSCHAFTEN_LESEN;
+    public static $NULIGA_TEAM_IDS_LESEN;
+    public static $MANNSCHAFTEN_ZUORDNEN;
+    public static $MEISTERSCHAFTEN_AKTUALISIEREN;
+    public static $MELDUNGEN_AKTUALISIEREN;
+    public static $SPIELE_IMPORTIEREN;
+    public static $CACHE_LEEREN;
 }
 
-function initImportStatus(string $schritt): int{
-    global $wpdb;
-
-    $table_name = $wpdb->prefix . 'import_status';
-    $id = $wpdb->get_var("SELECT id FROM $table_name WHERE schritt = \"$schritt\"");
-    if(isset($id)){
-        $wpdb->update(
-            $table_name, 
-            array('start' => current_time('mysql'), 'ende' => null), 
-            array('id' => $id)
-        );
-        return $id;
-    }else{
-        $wpdb->insert(
-            $table_name, 
-            array('schritt' => $schritt)
-        );
-        return $wpdb->insert_id;
-    }
-}
-
-function finishImportStatus(int $id){
-    global $wpdb;
-
-    $table_name = $wpdb->prefix . 'import_status';
-    $wpdb->update($table_name, array('ende' => current_time('mysql')), array('id'=>$id));
-    return $wpdb->insert_id;
-}
-
-function importMeisterschaftenFromNuliga(){
-    $status_id = initImportStatus("Meisterschaften von nuLiga lesen");
+Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(1, "Meisterschaften von nuLiga lesen", function (){
     global $wpdb;
     require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
 
@@ -94,11 +64,9 @@ function importMeisterschaftenFromNuliga(){
             }
         }
     }
-    finishImportStatus($status_id);
-}
+});
 
-function importTeamIDsFromNuLiga() {
-    $status_id = initImportStatus("Team-IDs aus nuLiga auslesen");
+Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(2, "Team-IDs aus nuLiga auslesen", function (){
     global $wpdb;
     require_once __DIR__."/meisterschaft/NuLiga_Ligatabelle.php";
     
@@ -117,11 +85,9 @@ function importTeamIDsFromNuLiga() {
             array('id' => $nuliga_mannschaftseinteilung['id'])
         );
     }
-    finishImportStatus($status_id);
-}
+});
 
-function mannschaftenZuordnen(){
-    $status_id = initImportStatus("Mannschaften zuordnen");
+Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen", function (){
     global $wpdb;
 
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
@@ -141,39 +107,9 @@ function mannschaftenZuordnen(){
             array('id' => $nuliga_mannschaftsEinteilung['id'])
         );
     }
-    finishImportStatus($status_id);
-}
+});
 
-function createNuLigaMannschaftsBezeichnungen(array $mannschaften): array{
-    $nuligaBezeichnungen = array();
-    foreach($mannschaften as $mannschaft){
-        $bezeichnung = "";
-        $jugendKlasse = $mannschaft->getJugendklasse();
-        if(empty($jugendKlasse)){
-            switch($mannschaft->getGeschlecht()){
-                case GESCHLECHT_W: $bezeichnung = "Frauen"; break;
-                case GESCHLECHT_M: $bezeichnung = "Männer"; break;
-            }
-        }else {
-            switch($mannschaft->getGeschlecht()){
-                case GESCHLECHT_W: $bezeichnung = "weibliche"; break;
-                case GESCHLECHT_M: $bezeichnung = "männliche"; break;
-            }
-            $bezeichnung .= " Jugend ".strtoupper($jugendKlasse);
-        }
-        if($mannschaft->getNummer() > 1){
-            $bezeichnung .= " ";
-            for($i=0; $i<$mannschaft->getNummer(); $i++){
-                $bezeichnung .= "I";
-            }
-        }
-        $nuligaBezeichnungen[$bezeichnung] = $mannschaft;
-    }
-    return $nuligaBezeichnungen;
-}
-
-function updateMeisterschaften(){
-    $status_id = initImportStatus("Meisterschaften aktualisieren");
+Importer::$MEISTERSCHAFTEN_AKTUALISIEREN = new ImportSchritt(4, "Meisterschaften aktualisieren", function (){
     global $wpdb;
 
     $table_meisterschaft = $wpdb->prefix . 'meisterschaft';
@@ -196,11 +132,9 @@ function updateMeisterschaften(){
             $wpdb->insert($table_meisterschaft, $nuliga_meisterschaft);
         }
     }
-    finishImportStatus($status_id);
-}
+});
 
-function updateMannschaftsMeldungen(){
-    $status_id = initImportStatus("Meldungen pro Mannschaft aktualisieren");
+Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannschaft aktualisieren", function (){
     global $wpdb;
 
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
@@ -235,12 +169,9 @@ function updateMannschaftsMeldungen(){
         $wpdb->delete($table_nuliga_mannschaftseinteilung, array('id' => $nuliga_mannschaftsEinteilung['id']));
         // TODO Transaktionsende
     }
-    finishImportStatus($status_id);
-}
+});
 
-function importSpieleFromNuliga(): array{
-    $status_id = initImportStatus("Spiele importieren");
-    
+Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", function (){
     $meisterschaften = loadMeisterschaften();
     $mannschaften = loadMannschaftenMitMeldungen();
     $gegnerDAO = new GegnerDAO();
@@ -248,9 +179,7 @@ function importSpieleFromNuliga(): array{
 
     $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaften, $gegnerDAO);
 
-    $ergebnis = array();
     foreach($mannschaften as $mannschaft){
-        $importErgebnis = new ImportErgebnisProMannschaft($mannschaft);
         
         $teamName = get_option('vereinsname');
         if($mannschaft->getNummer() >= 2){
@@ -281,38 +210,29 @@ function importSpieleFromNuliga(): array{
                     $mannschaftsMeldung->getLiga()
                 )->getID();
                 $spiel = findSpiel ($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
-                $importErgebnis->gesamt ++;
                 if(isset($spiel)){
                     $hallenAenderung = ($spiel->getHalle() != $nuLigaSpiel->getHalle());
                     $AnwurfAenderung = ($spiel->getAnwurf() != $nuLigaSpiel->getAnwurf());
                     if($hallenAenderung || $AnwurfAenderung){
                         $dienstAenderungsPlan->registerSpielAenderung($spiel, $nuLigaSpiel);
                         updateSpiel($spiel->getID(), $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
-                        $importErgebnis->aktualisiert ++;
                     }
                 } else {
                     insertSpiel($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
-                    $importErgebnis->neu ++;
                 }
             }
         }
-        $ergebnis[$mannschaft->getName()]  = $importErgebnis;
     }
 
     $dienstAenderungsPlan->sendEmails();
+});
 
-    finishImportStatus($status_id);
-    return array_values($ergebnis);
-}
-
-function delete_import_cache(){
-    $status_id = initImportStatus("Cache leeren");
+Importer::$CACHE_LEEREN = new ImportSchritt(7, "Cache leeren", function (){
     global $wpdb;
     $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
     $wpdb->query("DELETE FROM $table_nuliga_mannschaftseinteilung");
     $wpdb->query("DELETE FROM $table_nuliga_meisterschaft");
-    finishImportStatus($status_id);
-}
+});
 
 ?>

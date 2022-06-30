@@ -211,11 +211,11 @@ function dienste_nuliga_import_status_initialisieren(){
     $charset_collate = $wpdb->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
-        id INT NOT NULL AUTO_INCREMENT , 
-        schritt VARCHAR(256) NOT NULL,
+        schritt INT NOT NULL,
+        beschreibung VARCHAR(1024) NOT NULL,
         start DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
         ende DATETIME NULL , 
-        PRIMARY KEY (id)
+        PRIMARY KEY (schritt)
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );
