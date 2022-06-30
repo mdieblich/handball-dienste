@@ -22,7 +22,37 @@ class ImportErgebnisProMannschaft{
     }
 }
 
+function initImportStatus(string $schritt): int{
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . 'import_status';
+    $id = $wpdb->get_var("SELECT id FROM $table_name WHERE schritt = \"$schritt\"");
+    if(isset($id)){
+        $wpdb->update(
+            $table_name, 
+            array('start' => current_time('mysql'), 'ende' => null), 
+            array('id' => $id)
+        );
+        return $id;
+    }else{
+        $wpdb->insert(
+            $table_name, 
+            array('schritt' => $schritt)
+        );
+        return $wpdb->insert_id;
+    }
+}
+
+function finishImportStatus(int $id){
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . 'import_status';
+    $wpdb->update($table_name, array('ende' => current_time('mysql')), array('id'=>$id));
+    return $wpdb->insert_id;
+}
+
 function importMeisterschaftenFromNuliga(){
+    $status_id = initImportStatus("Meisterschaften von nuLiga lesen");
     global $wpdb;
     require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
 
@@ -64,9 +94,11 @@ function importMeisterschaftenFromNuliga(){
             }
         }
     }
+    finishImportStatus($status_id);
 }
 
 function importTeamIDsFromNuLiga() {
+    $status_id = initImportStatus("Team-IDs aus nuLiga auslesen");
     global $wpdb;
     require_once __DIR__."/meisterschaft/NuLiga_Ligatabelle.php";
     
@@ -85,9 +117,11 @@ function importTeamIDsFromNuLiga() {
             array('id' => $nuliga_mannschaftseinteilung['id'])
         );
     }
+    finishImportStatus($status_id);
 }
 
 function mannschaftenZuordnen(){
+    $status_id = initImportStatus("Mannschaften zuordnen");
     global $wpdb;
 
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
@@ -107,6 +141,7 @@ function mannschaftenZuordnen(){
             array('id' => $nuliga_mannschaftsEinteilung['id'])
         );
     }
+    finishImportStatus($status_id);
 }
 
 function createNuLigaMannschaftsBezeichnungen(array $mannschaften): array{
@@ -138,6 +173,7 @@ function createNuLigaMannschaftsBezeichnungen(array $mannschaften): array{
 }
 
 function updateMeisterschaften(){
+    $status_id = initImportStatus("Meisterschaften aktualisieren");
     global $wpdb;
 
     $table_meisterschaft = $wpdb->prefix . 'meisterschaft';
@@ -160,9 +196,11 @@ function updateMeisterschaften(){
             $wpdb->insert($table_meisterschaft, $nuliga_meisterschaft);
         }
     }
+    finishImportStatus($status_id);
 }
 
 function updateMannschaftsMeldungen(){
+    $status_id = initImportStatus("Meldungen pro Mannschaft aktualisieren");
     global $wpdb;
 
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
@@ -197,12 +235,11 @@ function updateMannschaftsMeldungen(){
         $wpdb->delete($table_nuliga_mannschaftseinteilung, array('id' => $nuliga_mannschaftsEinteilung['id']));
         // TODO Transaktionsende
     }
-    // Löschen überflüssiger Meisterschaften in der nuliga-Import-Tabelle
-    $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
-    $wpdb->query("DELETE FROM $table_nuliga_meisterschaft WHERE id NOT IN (SELECT nuliga_meisterschaft FROM $table_nuliga_mannschaftseinteilung)");
+    finishImportStatus($status_id);
 }
 
 function importSpieleFromNuliga(): array{
+    $status_id = initImportStatus("Spiele importieren");
     
     $meisterschaften = loadMeisterschaften();
     $mannschaften = loadMannschaftenMitMeldungen();
@@ -264,15 +301,18 @@ function importSpieleFromNuliga(): array{
 
     $dienstAenderungsPlan->sendEmails();
 
+    finishImportStatus($status_id);
     return array_values($ergebnis);
 }
 
 function delete_import_cache(){
+    $status_id = initImportStatus("Cache leeren");
     global $wpdb;
     $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
     $wpdb->query("DELETE FROM $table_nuliga_mannschaftseinteilung");
     $wpdb->query("DELETE FROM $table_nuliga_meisterschaft");
+    finishImportStatus($status_id);
 }
 
 ?>

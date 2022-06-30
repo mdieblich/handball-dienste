@@ -321,7 +321,15 @@ Nachdem Meisterschaften importiert wurden, können dazugehörige Spiele importie
         data-bs-toggle="modal" data-bs-target="#exampleModal">
     Cache leeren
 </button>
-
+<br><br>
+<hr>
+Fortschritt
+<div class="progress">
+  <div class="progress-bar" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">aa</div>
+  <div class="progress-bar bg-success" role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+  <div class="progress-bar bg-info" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+<br>
 <hr>
     <div class="accordion" id="accordionMeisterschaften">
         <?php foreach($meisterschaften as $meisterschaft){  ?>

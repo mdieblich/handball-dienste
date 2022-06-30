@@ -164,6 +164,7 @@ function dienste_nuliga_import_initialisieren(){
     
     dienste_nuliga_import_meisterschaft_initialisieren();
     dienste_nuliga_import_mannschaftseinteilung_initialisieren();
+    dienste_nuliga_import_status_initialisieren();
 }
 
 function dienste_nuliga_import_meisterschaft_initialisieren(){
@@ -198,6 +199,23 @@ function dienste_nuliga_import_mannschaftseinteilung_initialisieren(){
         team_id INT NULL,
         PRIMARY KEY (id),
         FOREIGN KEY (nuliga_meisterschaft) REFERENCES ".$wpdb->prefix."nuliga_meisterschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
+    ) $charset_collate, ENGINE = InnoDB;";
+
+    dbDelta( $sql );
+}
+
+function dienste_nuliga_import_status_initialisieren(){
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . 'import_status';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $table_name (
+        id INT NOT NULL AUTO_INCREMENT , 
+        schritt VARCHAR(256) NOT NULL,
+        start DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+        ende DATETIME NULL , 
+        PRIMARY KEY (id)
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );
