@@ -18,7 +18,7 @@ function dienste_datenbank_initialisieren() {
     dienste_mannschaftsMeldung_initialisieren();
     dienste_gegner_initialisieren();
     dienste_spiele_initialisieren();
-    dienste_zuweisungen_initialisieren();
+    dienste_dienste_initialisieren();
 
     dienste_nuliga_import_initialisieren();
 
@@ -141,7 +141,7 @@ function dienste_spiele_initialisieren(){
     dbDelta( $sql );
 }
 
-function dienste_zuweisungen_initialisieren(){
+function dienste_dienste_initialisieren(){
     global $wpdb;
 
     $table_name = $wpdb->prefix . 'dienst';
