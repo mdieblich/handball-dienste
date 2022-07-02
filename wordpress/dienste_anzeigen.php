@@ -48,6 +48,8 @@ function dienste_tabellen_ersetzen(array $matches){
     $kopfzeile .= "</tr>";
 
     require_once __DIR__."/dao/spiel.php";
+    global $wpdb;
+    $table_name_spiel = $wpdb->prefix."spiel";
     $filter = array();
     if(isset($seit)){
         $filter[] = "anwurf > \"".$seit->format("Y-m-d")."\""; // nur aktuelle Spiele
@@ -55,11 +57,11 @@ function dienste_tabellen_ersetzen(array $matches){
         $filter[] = "anwurf > subdate(current_date, 1)"; // nur aktuelle Spiele
     }
     if(isset($fuerMannschaft)){
-        $filter[] = "mannschaft=".$fuerMannschaft->getID();
+        $filter[] = "$table_name_spiel.mannschaft=".$fuerMannschaft->getID();
     }
     if(isset($vonMannschaft)){
         global $wpdb;
-        $filter[] = "id IN (SELECT spiel FROM ". $wpdb->prefix ."dienst WHERE mannschaft=".$vonMannschaft->getID().")";
+        $filter[] = "$table_name_spiel.id IN (SELECT spiel FROM ". $wpdb->prefix ."dienst WHERE $table_name_spiel.mannschaft=".$vonMannschaft->getID().")";
     }
     $spiele = loadSpieleDeep(implode(" AND ", $filter)); 
 
