@@ -79,7 +79,7 @@ setInterval(function(){
 <div class="accordion" id="accordionAnleitung">
     <div class="accordion-item">
         <h2 class="accordion-header" id="anleitungAufklappen">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnleitung" aria-expanded="false" aria-controls="collapseOne">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnleitung" aria-expanded="false" aria-controls="collapseOne">
             Anleitung
         </button>
         </h2>
