@@ -159,7 +159,7 @@ setInterval(function(){
     $mannschaften = loadMannschaftenMitMeldungen();
     
     global $wpdb;
-    $meisterschaften = loadMeisterschaften("id in (SELECT meisterschaft FROM ".$wpdb->prefix."mannschaftsmeldung)");
+    $meisterschaften = loadMeisterschaften("id in (SELECT meisterschaft FROM ".$wpdb->prefix."mannschaftsMeldung)");
     if(count($meisterschaften) === 0){
         echo "<div class='card'><i>Keine Meisterschaften gefunden</i></div>";
     }
