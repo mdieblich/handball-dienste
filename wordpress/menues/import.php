@@ -160,6 +160,9 @@ setInterval(function(){
     
     global $wpdb;
     $meisterschaften = loadMeisterschaften("id in (SELECT meisterschaft FROM ".$wpdb->prefix."mannschaftsmeldung)");
+    if(count($meisterschaften) === 0){
+        echo "<div class='card'><i>Keine Meisterschaften gefunden</i></div>";
+    }
 ?>
 <div class="accordion" id="accordionMeisterschaften">
     <?php foreach($meisterschaften as $meisterschaft){  ?>
