@@ -50,7 +50,7 @@ function meldungAktivieren(meldung_id, aktiv){
 
     // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
     jQuery.post(ajaxurl, data);
-}
+}   
 
 setInterval(function(){
     jQuery.post(ajaxurl, {'action': 'status_lesen'}, function(response) {
@@ -59,6 +59,7 @@ setInterval(function(){
             if(schritt.start === null){
                 hinweistext = "wartet";
                 jQuery("#spinner-schritt-"+schritt.schritt).show();
+                schritt.start = "Noch nicht";
             } else if(schritt.ende === null){
                 hinweistext = "";
                 jQuery("#spinner-schritt-"+schritt.schritt).show();
@@ -67,6 +68,7 @@ setInterval(function(){
                 jQuery("#spinner-schritt-"+schritt.schritt).hide();
 
             }
+            jQuery("#letzter-start-schritt-"+schritt.schritt).html(schritt.start);
             jQuery("#hinweis-schritt-"+schritt.schritt).html(hinweistext);
         });
     });
@@ -75,82 +77,86 @@ setInterval(function(){
 </script>
 
 <div class="wrap">
-<h2>Meisterschaften importieren</h2>
-<div class="accordion" id="accordionAnleitung">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="anleitungAufklappen">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnleitung" aria-expanded="false" aria-controls="collapseOne">
-            Anleitung
-        </button>
-        </h2>
-        <div id="collapseAnleitung" class="accordion-collapse collapse" aria-labelledby="anleitungAufklappen" data-bs-parent="#accordionAnleitung">
-        <div class="accordion-body">
-            <p>
-                Zuerst müssen Meisterschaften importiert werden, welche dann unten auftauchen. Für jede 
-                <a href="<?php echo get_permalink( get_page_by_path( 'dienste-mannschaften' ) );?>">Mannschaft, die zuvor konfiguriert wurde</a> werden dann Mannschaftsmeldungen geladen und hier dargestellt.<br>
-                Bestehende Meisterschaften und Meldungen bleiben bei jedem weiterem Import erhalten. Der Import dauert recht lange, da viele Seiten von nuLiga gescannt werden.
-            </p>
-            <p>
-                Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden. Dazugehörige Spiele werden zwar noch aktualisiert, aber die Spiele werden nicht mehr in der Liste der Dienste dargestellt.
-            </p>
 
-            <h3>Spiele importieren</h3>
-            <p>
-                Nachdem Meisterschaften importiert wurden, können dazugehörige Spiele importiert werden.
+<div class="card-group">
+    <div class="bootstrap-card">
+        <h5 class="card-header">Import</h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <p class="card-text">
+                    In der Regel reicht es einmalig alles zu importieren. <br>
+                    Der Import dauert recht lange, da viele Seiten von nuLiga gescannt werden.
+                </p>
+                <p class="card-text">
+                    Es werden nur Meisterschaften und Spiele importiert von 
+                    <a href="<?php echo get_admin_url() ;?>admin.php?page=dienste-mannschaften">Mannschaft, die zuvor konfiguriert wurden</a>.
+                </p>
+            </li>
+            <li class="list-group-item">
+                <a class="card-link" href="javascript:startImportAlles()">Alles importieren</a>
+                <i>(inklusive Spiele)</i>
+            </li>
+            <li class="list-group-item">
+                <p class="card-text">
+                    Der Spiele-Import kann zusätzlich manuell gestartet werden.<br>
+                    Über den Endpunkt <code><?php echo get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> wird er jede Nacht gestartet.
+                </p>
+                <ul style="font-size:13px">
+                    <li type="disc">Bei vorhandenen Spiele werden Datum, Uhrzeit & Halle aktualisiert</li>
+                    <li type="disc">Zugewiesene Dienste bleiben erhalten</li>
+                    <li type="disc">Gegnerische Mannschaften werden automatisch mitimportiert</li>
+                    <li type="disc">Sollte sich ein Spiel ändern (Datum, Uhrzeit oder Halle), bei dem eine Mannschaft schon Dienste zugewiesen bekommen hat, dann bekommt diese eine Email.</li>
+                    <li type="disc">Auch bei mehreren sich ändernden Spielen bekommt eine Mannschaft pro Import immer nur genau <u>eine</u> Email. <i>(Ich hasse zu viele Emails!)</i></li>
+                </ul>
+            </li>
+            <li class="list-group-item">
+                <i>(nur)</i> <a class="card-link" href="javascript:startImportSchritt(<?php echo Importer::$SPIELE_IMPORTIEREN->schritt;?>)">Spiele importieren</a>
+            </li>
+        </ul>
+    </div> <!-- bootstrap-card Import -->
+    <div class="bootstrap-card">
+        <h5 class="card-header">Manueller Import</h5>
+        <div class="card-body">
+            <p class="card-text">
+                Sollte es Schwierigkeiten beim Import geben kann dieser hier überwacht und Schritte können einzeln gestartet werden.
             </p>
-            <ul style="font-size:13px">
-                <li type="disc">Vorhandene Spiele werden aktualisiert</li>
-                <li type="disc">bestehende Dienste bleiben erhalten</li>
-                <li type="disc">Gegnerische Mannschaften werden automatisch mitimportiert</li>
-                <li type="disc">Sollte sich ein Spiel ändern (Anwurf oder Halle), bei dem eine Mannschaft schon Dienste zugewiesen bekommen hat, dann bekommt diese eine Email.</li>
-                <li type="disc">Auch bei mehreren sich ändernden Spielen bekommt eine Mannschaft pro Import immer nur genau <u>eine</u> Email. <i>(Ich hasse zu viele Emails!)</i></li>
-                <li type="disc">Durch den Aufruf von <code><?php echo get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> kann der Import automatisiert werden.</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<button class="btn btn-primary" 
-    onclick="startImportAlles()" >
-    Alles importieren
-</button>
-<button class="btn btn-primary" 
-    onclick="startImportSchritt(<?php echo Importer::$SPIELE_IMPORTIEREN->schritt;?>)">
-    (nur) Spiele importieren
-</button>
-<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManuellerImport" aria-expanded="false" aria-controls="collapseManuellerImport">
-    Manueller Import...
-</button>
-<div class="collapse" id="collapseManuellerImport">
-    <div class="card card-body">
-        <table class="table">
-            <tr>
-                <th>Beschreibung</th>
-                <th>Status</th>
-                <th></th>
-            </tr>
-            <?php foreach(Importer::alleSchritte() as $importSchritt){ ?>
+            <table class="table">
                 <tr>
-                    <td>
-                        <?php echo $importSchritt->beschreibung;?>
-                    </td>
-                    <td>
-                        <span id="spinner-schritt-<?php echo $importSchritt->schritt;?>" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                        <span id="hinweis-schritt-<?php echo $importSchritt->schritt;?>"></span>                    
-                    </td>
-                    <td>
-                        <button class="btn btn-secondary btn-sm" 
-                            onclick="startImportSchritt(<?php echo $importSchritt->schritt;?>)" >
-                            starten
-                        </button>
-                    </td>
+                    <th>Beschreibung</th>
+                    <th>Start</th>
+                    <th>Status</th>
+                    <th></th>
                 </tr>
-            <?php } ?>
-        </table>
-    </div>
-</div>
+                <?php foreach(Importer::alleSchritte() as $importSchritt){ ?>
+                    <tr>
+                        <td>
+                            <?php echo $importSchritt->beschreibung;?>
+                        </td>
+                        <td id="letzter-start-schritt-<?php echo $importSchritt->schritt;?>" style="width:200px">
+                            Noch nicht
+                        </td>
+                        <td>
+                            <span id="spinner-schritt-<?php echo $importSchritt->schritt;?>" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            <span id="hinweis-schritt-<?php echo $importSchritt->schritt;?>"></span>                    
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm" 
+                                onclick="startImportSchritt(<?php echo $importSchritt->schritt;?>)" >
+                                starten
+                            </button>
+                        </td>
+                    </tr>
+                <?php } ?>
+            </table>
+        </div>
+    </div> <!-- bootstrap-card -->
+</div> <!-- card-group -->
 
 <hr>
+<h1> Meisterschaften aktivieren & deaktivieren</h1>
+<p>
+    Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden. Dazugehörige Spiele werden zwar noch aktualisiert, aber die Spiele werden nicht mehr in der Liste der Dienste dargestellt.
+</p>
 <div class="accordion" id="accordionMeisterschaften">
     <?php foreach($meisterschaften as $meisterschaft){  ?>
         <div class="accordion-item">
@@ -164,7 +170,7 @@ setInterval(function(){
                     <table class="table">  
                         <tr>
                             <th>Mannschaft</th>
-                            <th>Liga</th>
+                            <th>Meldung für Liga</th>
                             <th>Spiele</th>
                             <th>aktiv</th>
                         </tr>            
