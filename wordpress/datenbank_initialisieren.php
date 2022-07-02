@@ -151,7 +151,7 @@ function dienste_dienste_initialisieren(){
         id INT NOT NULL AUTO_INCREMENT , 
         spiel INT NOT NULL , 
         dienstart VARCHAR(256) NOT NULL , 
-        mannschaft INT NOT NULL , 
+        mannschaft INT NULL , 
         PRIMARY KEY (id),
         FOREIGN KEY (spiel) REFERENCES ".$wpdb->prefix."spiel(id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (mannschaft) REFERENCES ".$wpdb->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
