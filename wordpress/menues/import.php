@@ -22,11 +22,6 @@ function meldung_aktivieren(){
 }
 
 function displaySpieleImport(){
-    require_once __DIR__."/../dao/mannschaft.php";
-    require_once __DIR__."/../dao/meisterschaft.php";
-    require_once __DIR__."/../dao/spiel.php";
-    $mannschaften = loadMannschaftenMitMeldungen();
-    $meisterschaften = loadMeisterschaften();
 ?>
 <script>
 function startImportAlles(){
@@ -157,6 +152,15 @@ setInterval(function(){
 <p>
     Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden. Dazugehörige Spiele werden zwar noch aktualisiert, aber die Spiele werden nicht mehr in der Liste der Dienste dargestellt.
 </p>
+<?php
+    require_once __DIR__."/../dao/mannschaft.php";
+    require_once __DIR__."/../dao/meisterschaft.php";
+    require_once __DIR__."/../dao/spiel.php";
+    $mannschaften = loadMannschaftenMitMeldungen();
+    
+    global $wpdb;
+    $meisterschaften = loadMeisterschaften("id in (SELECT meisterschaft FROM ".$wpdb->prefix."mannschaftsmeldung)");
+?>
 <div class="accordion" id="accordionMeisterschaften">
     <?php foreach($meisterschaften as $meisterschaft){  ?>
         <div class="accordion-item">
