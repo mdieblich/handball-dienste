@@ -133,7 +133,7 @@ function dienste_spiele_initialisieren(){
         anwurf DATETIME NULL , 
         PRIMARY KEY (id), 
         KEY index_anwurf (anwurf),
-        FOREIGN KEY (mannschaftsmeldung) REFERENCES ".$wpdb->prefix."mannschaftsmeldung(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (mannschaftsmeldung) REFERENCES ".$wpdb->prefix."mannschaftsMeldung(id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (mannschaft) REFERENCES ".$wpdb->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (gegner) REFERENCES ".$wpdb->prefix."gegner(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";

@@ -5,7 +5,7 @@ function loadSpiele(string $whereClause="anwurf > subdate(current_date, 1) AND a
   global $wpdb;
   
   $table_spiel = $wpdb->prefix . 'spiel'; 
-  $table_meldung = $wpdb->prefix . 'mannschaftsmeldung'; 
+  $table_meldung = $wpdb->prefix . 'mannschaftsMeldung'; 
   $tables = "$table_spiel LEFT JOIN $table_meldung ON $table_spiel.mannschaftsmeldung=$table_meldung.id";
   $sql = "SELECT $table_spiel.*, $table_meldung.aktiv FROM $tables WHERE $whereClause ORDER BY $orderBy";
   $result = $wpdb->get_results($sql, ARRAY_A);
