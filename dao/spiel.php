@@ -2,22 +2,22 @@
 require_once WP_PLUGIN_DIR."/dienstedienst/entity/spiel.php";
 
 function loadSpiele(string $whereClause="anwurf > subdate(current_date, 1) AND aktiv=1", string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"): array{
-  global $wpdb;
-  
-  $table_spiel = $wpdb->prefix . 'spiel'; 
-  $table_meldung = $wpdb->prefix . 'mannschaftsMeldung'; 
-  $tables = "$table_spiel LEFT JOIN $table_meldung ON $table_spiel.mannschaftsmeldung=$table_meldung.id";
-  $sql = "SELECT $table_spiel.*, $table_meldung.aktiv FROM $tables WHERE $whereClause ORDER BY $orderBy";
-  $result = $wpdb->get_results($sql, ARRAY_A);
-  
-  $spiele = array();
-  if (count($result) > 0) {
-    foreach($result as $spiel) {
-      $spielObj = new Spiel($spiel);
-      $spiele[$spielObj->getID()] = $spielObj;
+    global $wpdb;
+    
+    $table_spiel = $wpdb->prefix . 'spiel'; 
+    $table_meldung = $wpdb->prefix . 'mannschaftsMeldung'; 
+    $tables = "$table_spiel LEFT JOIN $table_meldung ON $table_spiel.mannschaftsmeldung=$table_meldung.id";
+    $sql = "SELECT $table_spiel.*, $table_meldung.aktiv FROM $tables WHERE $whereClause ORDER BY $orderBy";
+    $result = $wpdb->get_results($sql, ARRAY_A);
+    
+    $spiele = array();
+    if (count($result) > 0) {
+        foreach($result as $spiel) {
+            $spielObj = new Spiel($spiel);
+            $spiele[$spielObj->getID()] = $spielObj;
+        }
     }
-  }
-  return $spiele;
+    return $spiele;
 }
 
 function loadSpieleDeep(string $whereClause="anwurf > subdate(current_date, 1) AND aktiv=1", string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"){
