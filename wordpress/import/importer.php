@@ -272,7 +272,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
                         updateSpiel($spiel->getID(), $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
                     }
                 } else {
-                    insertSpiel($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
+                    $spielDAO->insertSpiel($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
                 }
             }
         }

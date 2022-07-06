@@ -64,26 +64,26 @@ class SpielDAO{
         return $spiele;
     }
 
-    function countSpiele(int $mannschaftsmeldung, int $mannschaftsID): int {
+    public function countSpiele(int $mannschaftsmeldung, int $mannschaftsID): int {
         return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".$this->getTableName()." WHERE mannschaftsmeldung=$mannschaftsmeldung AND mannschaft=$mannschaftsID");
+    }
+    
+    public function insertSpiel(int $mannschaftsmeldung, int $spielnr, int $mannschaft_id, int $gegner_id, bool $isHeimspiel, int $halle, ?DateTime $anwurf){
+        
+        $this->dbhandle->insert($this->getTableName(), array(
+            'mannschaftsmeldung' => $mannschaftsmeldung, 
+            'spielnr' => $spielnr, 
+            'mannschaft' => $mannschaft_id, 
+            'gegner' => $gegner_id, 
+            'heimspiel' => $isHeimspiel, 
+            'halle' => $halle, 
+            'anwurf' => isset($anwurf) ? $anwurf->format('Y-m-d H:i:s') : null
+        ));
     }
 }
 
 
-function insertSpiel(int $mannschaftsmeldung, int $spielnr, int $mannschaft_id, int $gegner_id, bool $isHeimspiel, int $halle, ?DateTime $anwurf){
-    global $wpdb;
-    
-    $table_name = $wpdb->prefix . 'spiel';
-    $wpdb->insert($table_name, array(
-        'mannschaftsmeldung' => $mannschaftsmeldung, 
-        'spielnr' => $spielnr, 
-        'mannschaft' => $mannschaft_id, 
-        'gegner' => $gegner_id, 
-        'heimspiel' => $isHeimspiel, 
-        'halle' => $halle, 
-        'anwurf' => isset($anwurf) ? $anwurf->format('Y-m-d H:i:s') : null
-    ));
-}
+
 function updateSpiel(int $id, int $halle, ?DateTime $anwurf){
     global $wpdb;
     
