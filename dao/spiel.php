@@ -1,5 +1,6 @@
 <?php
 require_once WP_PLUGIN_DIR."/dienstedienst/entity/spiel.php";
+require_once WP_PLUGIN_DIR."/dienstedienst/dao/dienst.php";
 
 class SpielDAO{
     private $dbhandle;
@@ -11,7 +12,6 @@ class SpielDAO{
         global $wpdb;
         $this->dbhandle = $wpdb;
         $this->table_name = $wpdb->prefix."spiel";
-        echo $this->table_name ;
     }
 
     public function getTableName(): string{
@@ -27,37 +27,42 @@ class SpielDAO{
         }
         return new Spiel($result);
     }
-}
 
-function loadSpiele(string $whereClause="anwurf > subdate(current_date, 1) AND aktiv=1", string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"): array{
-    global $wpdb;
-    
-    $table_spiel = $wpdb->prefix . 'spiel'; 
-    $table_meldung = $wpdb->prefix . 'mannschaftsMeldung'; 
-    $tables = "$table_spiel LEFT JOIN $table_meldung ON $table_spiel.mannschaftsmeldung=$table_meldung.id";
-    $sql = "SELECT $table_spiel.*, $table_meldung.aktiv FROM $tables WHERE $whereClause ORDER BY $orderBy";
-    $result = $wpdb->get_results($sql, ARRAY_A);
-    
-    $spiele = array();
-    if (count($result) > 0) {
-        foreach($result as $spiel) {
-            $spielObj = new Spiel($spiel);
-            $spiele[$spielObj->getID()] = $spielObj;
+    public function loadSpiele(
+            string $whereClause="anwurf > subdate(current_date, 1) AND aktiv=1", 
+            string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"
+        ): array{
+        
+        $table_meldung = $this->dbhandle->prefix . 'mannschaftsMeldung'; 
+        $tables = $this->getTableName()." LEFT JOIN $table_meldung ON ".$this->getTableName().".mannschaftsmeldung=$table_meldung.id";
+        $sql = "SELECT ".$this->getTableName().".*, $table_meldung.aktiv FROM $tables WHERE $whereClause ORDER BY $orderBy";
+        $result = $this->dbhandle->get_results($sql, ARRAY_A);
+        
+        $spiele = array();
+        if (count($result) > 0) {
+            foreach($result as $spiel) {
+                $spielObj = new Spiel($spiel);
+                $spiele[$spielObj->getID()] = $spielObj;
+            }
         }
+        return $spiele;
     }
-    return $spiele;
-}
+    
+    public function loadSpieleDeep(
+            string $whereClause="anwurf > subdate(current_date, 1) AND aktiv=1", 
+            string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"
+        ){
+        $dienstDAO = new DienstDAO();
 
-function loadSpieleDeep(string $whereClause="anwurf > subdate(current_date, 1) AND aktiv=1", string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"){
-    $spiele = loadSpiele($whereClause, $orderBy);
-    require_once WP_PLUGIN_DIR."/dienstedienst/dao/dienst.php";
-    $dienstDAO = new DienstDAO();
-    $spielIDs = Spiel::getIDs($spiele);
-    $filter = "spiel in (".implode(", ", $spielIDs).")";
-    foreach( $dienstDAO->loadAllDienste($filter) as $dienst){
-        $spiele[$dienst->getSpiel()]->addDienst($dienst);
-    } 
-    return $spiele;
+        $spiele = $this->loadSpiele($whereClause, $orderBy);
+        $spielIDs = Spiel::getIDs($spiele);
+        $filter = "spiel in (".implode(", ", $spielIDs).")";
+
+        foreach($dienstDAO->loadAllDienste($filter) as $dienst){
+            $spiele[$dienst->getSpiel()]->addDienst($dienst);
+        } 
+        return $spiele;
+    }
 }
 
 function countSpiele(int $mannschaftsmeldung, int $mannschaftsID): int {

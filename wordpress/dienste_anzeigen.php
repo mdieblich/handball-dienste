@@ -63,7 +63,8 @@ function dienste_tabellen_ersetzen(array $matches){
     if(isset($vonMannschaft)){
         $filter[] = "$table_name_spiel.id IN (SELECT spiel FROM ". $wpdb->prefix ."dienst WHERE $table_name_dienst.mannschaft=".$vonMannschaft->getID().")";
     }
-    $spiele = loadSpieleDeep(implode(" AND ", $filter)); 
+    $spielDAO = new SpielDAO();
+    $spiele = $spielDAO->loadSpieleDeep(implode(" AND ", $filter)); 
 
     $tabellenkoerper = "";
     foreach($spiele as $spiel){

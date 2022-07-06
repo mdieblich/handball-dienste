@@ -45,9 +45,10 @@ function displayDiensteZuweisen(){
     require_once __DIR__."/../dao/spiel.php";
     $mannschaften = loadMannschaften();
     $gegnerDAO = new GegnerDAO();
+    $spielDAO = new SpielDAO();
     $gegnerDAO->loadGegner();
     $alleGegner = $gegnerDAO->getAlleGegner();
-    $spieleListe = new SpieleListe( loadSpieleDeep() ); 
+    $spieleListe = new SpieleListe( $spielDAO->loadSpieleDeep() ); 
  ?>
 <div class="wrap">
     <div style="float:right; width: 200px; background-color:#ddddff; padding: 5px">
