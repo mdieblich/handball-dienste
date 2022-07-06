@@ -213,7 +213,7 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
         if(isset($mannschaftsMeldung)){
             $meldungDAO->updateMannschaftsMeldung($mannschaftsMeldung->getID(), $nuliga_mannschaftsEinteilung['nuliga_liga_id'], $nuliga_mannschaftsEinteilung['nuliga_team_id']);
         } else{
-            insertMannschaftsMeldung($nuliga_mannschaftsEinteilung['meisterschaft'], $nuliga_mannschaftsEinteilung['mannschaft'], 
+            $meldungDAO->insertMannschaftsMeldung($nuliga_mannschaftsEinteilung['meisterschaft'], $nuliga_mannschaftsEinteilung['mannschaft'], 
                 $nuliga_mannschaftsEinteilung['liga'], $nuliga_mannschaftsEinteilung['nuliga_liga_id'],
                 $nuliga_mannschaftsEinteilung['nuliga_team_id']
             );

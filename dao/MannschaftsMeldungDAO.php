@@ -33,20 +33,16 @@ class MannschaftsMeldungDAO extends DAO{
             'nuliga_team_id' => $nuliga_team_id
         ));
     }
-}
 
-function insertMannschaftsMeldung(int $meisterschaft, int $mannschaft, string $liga, int $nuliga_liga_id, int $nuliga_team_id){
-    global $wpdb;
-    
-    $values = array(
-        'meisterschaft' => $meisterschaft, 
-        'mannschaft' => $mannschaft, 
-        'liga' => $liga, 
-        'nuliga_liga_id' => $nuliga_liga_id, 
-        'nuliga_team_id' => $nuliga_team_id
-    );
-    
-    $table_name = $wpdb->prefix . 'mannschaftsMeldung';
-    $wpdb->insert($table_name, $values);
+    public function insertMannschaftsMeldung(int $meisterschaft, int $mannschaft, string $liga, int $nuliga_liga_id, int $nuliga_team_id){
+        $values = array(
+            'meisterschaft' => $meisterschaft, 
+            'mannschaft' => $mannschaft, 
+            'liga' => $liga, 
+            'nuliga_liga_id' => $nuliga_liga_id, 
+            'nuliga_team_id' => $nuliga_team_id
+        );
+        $this->insert($values);
+    }
 }
 ?>
