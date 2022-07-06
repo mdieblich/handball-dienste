@@ -26,5 +26,9 @@ abstract class DAO{
         $sql = "SELECT * FROM ".static::tableName($this->dbhandle)." WHERE $whereClause";
         return $this->dbhandle->get_row($sql, ARRAY_A);
     }
+
+    public function count(string $whereClause): int {
+        return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".self::tableName()." WHERE $whereClause");
+    }
 }
 ?>

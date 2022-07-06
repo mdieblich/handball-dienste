@@ -52,7 +52,7 @@ class SpielDAO extends DAO{
     }
 
     public function countSpiele(int $mannschaftsmeldung, int $mannschaftsID): int {
-        return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".self::tableName()." WHERE mannschaftsmeldung=$mannschaftsmeldung AND mannschaft=$mannschaftsID");
+        return $this->count("mannschaftsmeldung=$mannschaftsmeldung AND mannschaft=$mannschaftsID");
     }
     
     public function insertSpiel(int $mannschaftsmeldung, int $spielnr, int $mannschaft_id, int $gegner_id, bool $isHeimspiel, int $halle, ?DateTime $anwurf){
