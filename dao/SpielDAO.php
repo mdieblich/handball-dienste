@@ -56,8 +56,7 @@ class SpielDAO extends DAO{
     }
     
     public function insertSpiel(int $mannschaftsmeldung, int $spielnr, int $mannschaft_id, int $gegner_id, bool $isHeimspiel, int $halle, ?DateTime $anwurf){
-        
-        $this->dbhandle->insert(self::tableName(), array(
+        $this->insert(array(
             'mannschaftsmeldung' => $mannschaftsmeldung, 
             'spielnr' => $spielnr, 
             'mannschaft' => $mannschaft_id, 
