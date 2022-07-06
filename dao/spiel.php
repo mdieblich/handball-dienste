@@ -63,13 +63,12 @@ class SpielDAO{
         } 
         return $spiele;
     }
+
+    function countSpiele(int $mannschaftsmeldung, int $mannschaftsID): int {
+        return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".$this->getTableName()." WHERE mannschaftsmeldung=$mannschaftsmeldung AND mannschaft=$mannschaftsID");
+    }
 }
 
-function countSpiele(int $mannschaftsmeldung, int $mannschaftsID): int {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'spiel';
-    return $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE mannschaftsmeldung=$mannschaftsmeldung AND mannschaft=$mannschaftsID");
-}
 
 function insertSpiel(int $mannschaftsmeldung, int $spielnr, int $mannschaft_id, int $gegner_id, bool $isHeimspiel, int $halle, ?DateTime $anwurf){
     global $wpdb;

@@ -158,6 +158,7 @@ setInterval(function(){
     require_once __DIR__."/../dao/spiel.php";
     $mannschaften = loadMannschaftenMitMeldungen();
     
+    $spielDAO = new SpielDAO();
     global $wpdb;
     $meisterschaften = loadMeisterschaften("id in (SELECT meisterschaft FROM ".$wpdb->prefix."mannschaftsMeldung)");
     if(count($meisterschaften) === 0){
@@ -187,7 +188,7 @@ setInterval(function(){
                                 continue;
                             }
                             foreach ($meisterschaftsMeldungen as $meldung) {
-                                $anzahlSpiele = countSpiele($meldung->getID(), $mannschaft->getID());
+                                $anzahlSpiele = $spielDAO->countSpiele($meldung->getID(), $mannschaft->getID());
                                 $input_id = "aktiv_".$meldung->getID();
                                 $checked = $meldung->isAktiv()?"checked":""; 
                                 echo "<tr>"
