@@ -1,6 +1,6 @@
 <?php
 require_once WP_PLUGIN_DIR."/dienstedienst/entity/mannschaft.php";
-require_once __dir__."/MannschaftsMeldung.php";
+require_once __dir__."/MannschaftsMeldungDAO.php";
 
 function loadMannschaften(): array{
     global $wpdb;

@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__."/../import/importer.php";
-require_once __DIR__."/../dao/MannschaftsMeldung.php";
+require_once __DIR__."/../dao/MannschaftsMeldungDAO.php";
 
 function addDiensteSpieleImportKonfiguration(){
     $hook_import = add_submenu_page( 'dienste', 'Dienste - Spiele importieren', 'Import', 'administrator', 'dienste-import', 'displaySpieleImport');
