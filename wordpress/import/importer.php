@@ -227,6 +227,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
     $meisterschaften = loadMeisterschaften();
     $mannschaften = loadMannschaftenMitMeldungen();
     $gegnerDAO = new GegnerDAO();
+    $spielDAO = new SpielDAO();
     $gegnerDAO->loadGegner();
 
     $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaften, $gegnerDAO);
@@ -261,7 +262,8 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
                     $mannschaft->getGeschlecht(), 
                     $mannschaftsMeldung->getLiga()
                 )->getID();
-                $spiel = findSpiel ($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
+                $spiel = $spielDAO->findSpiel ($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
+                var_dump($spiel);
                 if(isset($spiel)){
                     $hallenAenderung = ($spiel->getHalle() != $nuLigaSpiel->getHalle());
                     $AnwurfAenderung = ($spiel->getAnwurf() != $nuLigaSpiel->getAnwurf());
