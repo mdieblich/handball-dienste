@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__."/../import/importer.php";
+require_once __DIR__."/../dao/MannschaftsMeldung.php";
 
 function addDiensteSpieleImportKonfiguration(){
     $hook_import = add_submenu_page( 'dienste', 'Dienste - Spiele importieren', 'Import', 'administrator', 'dienste-import', 'displaySpieleImport');
@@ -11,12 +12,12 @@ add_action( 'wp_ajax_status_lesen', 'status_lesen' );
 add_action( 'wp_ajax_meldung_aktivieren', 'meldung_aktivieren' );
 
 function meldung_aktivieren(){
-    require_once __DIR__."/../dao/MannschaftsMeldung.php";
 
     $meldung_id = filter_var($_POST['meldung'], FILTER_VALIDATE_INT);
     $aktiv = filter_var($_POST['aktiv'], FILTER_VALIDATE_BOOLEAN);
 
-    meldungAktivieren($meldung_id, $aktiv);
+    $meldungDAO = new MannschaftsMeldungDAO();
+    $meldungDAO->meldungAktivieren($meldung_id, $aktiv);
     http_response_code(200);
     wp_die();
 }

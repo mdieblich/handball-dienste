@@ -13,19 +13,12 @@ class MannschaftsMeldungDAO extends DAO{
         }
         return $meldungen;
     }
+    
+    public function meldungAktivieren(int $id, bool $aktiv){
+        $this->update($id, array('aktiv' => $aktiv ? 1 : 0));
+    }
 }
 
-function meldungAktivieren(int $id, bool $aktiv){
-    global $wpdb;
-    
-    $table_name = $wpdb->prefix . 'mannschaftsMeldung';
-    $wpdb->update($table_name, 
-        array(
-            'aktiv' => $aktiv ? 1 : 0, 
-        ), array(
-            'id' => $id
-        ));
-}
 
 function findMannschaftsMeldung(int $meisterschaft, int $mannschaft, string $liga): ?MannschaftsMeldung {
     global $wpdb;
