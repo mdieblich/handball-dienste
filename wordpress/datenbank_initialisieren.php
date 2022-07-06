@@ -1,6 +1,7 @@
 <?php
 
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+require_once __DIR__.'/dao/SpielDAO.php';
 
 global $dienste_db_version;
 $dienste_db_version = '1.7';
@@ -119,7 +120,7 @@ function dienste_gegner_initialisieren(){
 function dienste_spiele_initialisieren(){
     global $wpdb;
 
-    $table_name = $wpdb->prefix . 'spiel';
+    $table_name = SpielDAO::tableName($wpdb);
     $charset_collate = $wpdb->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
