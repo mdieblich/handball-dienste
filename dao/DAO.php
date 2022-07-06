@@ -21,5 +21,10 @@ abstract class DAO{
         $table_suffix = strtolower($entityName);
         return $dbhandle->prefix.$table_suffix;
     }
+
+    public function fetch(string $whereClause): array {
+        $sql = "SELECT * FROM ".static::tableName($this->dbhandle)." WHERE $whereClause";
+        return $this->dbhandle->get_row($sql, ARRAY_A);
+    }
 }
 ?>

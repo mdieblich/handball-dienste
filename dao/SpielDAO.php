@@ -8,9 +8,7 @@ class SpielDAO extends DAO{
     // TODO spaltennamen als Klassenkonstanten
 
     public function findSpiel(int $mannschaftsmeldung, int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): ?Spiel{
-        $sql = "SELECT * FROM ".self::tableName()." "
-                ."WHERE mannschaftsmeldung=$mannschaftsmeldung AND spielnr=$spielnr AND mannschaft=$mannschaft_id AND gegner=$gegner_id AND heimspiel=$isHeimspiel";
-        $result = $this->dbhandle->get_row($sql, ARRAY_A);
+        $result = $this->fetch("mannschaftsmeldung=$mannschaftsmeldung AND spielnr=$spielnr AND mannschaft=$mannschaft_id AND gegner=$gegner_id AND heimspiel=$isHeimspiel");
         if(empty($result)){
           return null;
         }
