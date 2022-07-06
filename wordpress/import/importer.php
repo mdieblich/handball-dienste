@@ -206,8 +206,9 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
         AND mannschaft IS NOT NULL";
     $results = $wpdb->get_results($sql, ARRAY_A);
     
+    $meldungDAO = new MannschaftsMeldungDAO();
     foreach($results as $nuliga_mannschaftsEinteilung){
-        $mannschaftsMeldung = findMannschaftsMeldung($nuliga_mannschaftsEinteilung['meisterschaft'], $nuliga_mannschaftsEinteilung['mannschaft'], $nuliga_mannschaftsEinteilung['liga']);
+        $mannschaftsMeldung = $meldungDAO->findMannschaftsMeldung($nuliga_mannschaftsEinteilung['meisterschaft'], $nuliga_mannschaftsEinteilung['mannschaft'], $nuliga_mannschaftsEinteilung['liga']);
         // TODO Transaktionsstart
         if(isset($mannschaftsMeldung)){
             updateMannschaftsMeldung($mannschaftsMeldung->getID(), $nuliga_mannschaftsEinteilung['nuliga_liga_id'], $nuliga_mannschaftsEinteilung['nuliga_team_id']);

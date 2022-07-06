@@ -14,24 +14,20 @@ class MannschaftsMeldungDAO extends DAO{
         return $meldungen;
     }
     
+    public function findMannschaftsMeldung(int $meisterschaft, int $mannschaft, string $liga): ?MannschaftsMeldung {
+        $result = $this->fetch("meisterschaft=$meisterschaft AND mannschaft=$mannschaft AND liga=\"$liga\"");
+        if(empty($result)){
+            return null;
+        }
+
+        return new MannschaftsMeldung($result);
+    }
+
     public function meldungAktivieren(int $id, bool $aktiv){
         $this->update($id, array('aktiv' => $aktiv ? 1 : 0));
     }
 }
 
-
-function findMannschaftsMeldung(int $meisterschaft, int $mannschaft, string $liga): ?MannschaftsMeldung {
-    global $wpdb;
-    
-    $table_name = $wpdb->prefix . 'mannschaftsMeldung';
-    $sql = "SELECT * FROM $table_name WHERE meisterschaft=$meisterschaft AND mannschaft=$mannschaft AND liga=\"$liga\"";
-    $result = $wpdb->get_row($sql, ARRAY_A);
-    if(empty($result)){
-        return null;
-    }
-
-    return new MannschaftsMeldung($result);
-}
 function updateMannschaftsMeldung(int $id, int $nuliga_liga_id, int $nuliga_team_id){
     global $wpdb;
     
