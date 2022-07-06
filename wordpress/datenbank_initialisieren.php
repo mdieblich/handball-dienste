@@ -8,29 +8,28 @@ $dienste_db_version = '1.7';
 
 function dienste_datenbank_initialisieren() {
     global $dienste_db_version;
+    global $wpdb;
 
     $previous_version = get_option('dienste_db_version');
     if($previous_version && $previous_version < '1.6'){
-        dienste_mannschaft_aktualisiern();
+        dienste_mannschaft_aktualisiern($wpdb);
     }
     
-    dienste_mannschaft_initialisieren();
-    dienste_meisterschaft_initialisieren();
-    dienste_mannschaftsMeldung_initialisieren();
-    dienste_gegner_initialisieren();
-    dienste_spiele_initialisieren();
-    dienste_dienste_initialisieren();
+    dienste_mannschaft_initialisieren($wpdb);
+    dienste_meisterschaft_initialisieren($wpdb);
+    dienste_mannschaftsMeldung_initialisieren($wpdb);
+    dienste_gegner_initialisieren($wpdb);
+    dienste_spiele_initialisieren($wpdb);
+    dienste_dienste_initialisieren($wpdb);
 
-    dienste_nuliga_import_initialisieren();
+    dienste_nuliga_import_initialisieren($wpdb);
 
     update_option( 'dienste_db_version', $dienste_db_version );
 }
 
-function dienste_mannschaft_initialisieren(){
-    global $wpdb;
-
-    $table_name = $wpdb->prefix . 'mannschaft';
-    $charset_collate = $wpdb->get_charset_collate();
+function dienste_mannschaft_initialisieren($dbhandle){
+    $table_name = $dbhandle->prefix . 'mannschaft';
+    $charset_collate = $dbhandle->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
@@ -44,11 +43,9 @@ function dienste_mannschaft_initialisieren(){
 dbDelta( $sql );
 }
 
-function dienste_meisterschaft_initialisieren(){
-    global $wpdb;
-    
-    $table_name = $wpdb->prefix . 'meisterschaft';
-    $charset_collate = $wpdb->get_charset_collate();
+function dienste_meisterschaft_initialisieren($dbhandle){
+    $table_name = $dbhandle->prefix . 'meisterschaft';
+    $charset_collate = $dbhandle->get_charset_collate();
     
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
@@ -63,11 +60,9 @@ function dienste_meisterschaft_initialisieren(){
     fwrite($myFile, $message);
 }
 
-function dienste_mannschaftsMeldung_initialisieren(){
-    global $wpdb;
-
-    $table_name = $wpdb->prefix . 'mannschaftsMeldung';
-    $charset_collate = $wpdb->get_charset_collate();
+function dienste_mannschaftsMeldung_initialisieren($dbhandle){
+    $table_name = $dbhandle->prefix . 'mannschaftsMeldung';
+    $charset_collate = $dbhandle->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
@@ -78,31 +73,27 @@ function dienste_mannschaftsMeldung_initialisieren(){
         nuliga_liga_id INT NULL , 
         nuliga_team_id INT NULL , 
         PRIMARY KEY (id), 
-        FOREIGN KEY (meisterschaft) REFERENCES ".$wpdb->prefix."meisterschaft(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (mannschaft) REFERENCES ".$wpdb->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (meisterschaft) REFERENCES ".$dbhandle->prefix."meisterschaft(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (mannschaft) REFERENCES ".$dbhandle->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );
 }
 
-function dienste_mannschaft_aktualisiern(){
-    global $wpdb;
-
-    $table_name    = $wpdb->prefix . 'mannschaft';
+function dienste_mannschaft_aktualisiern($dbhandle){
+    $table_name    = $dbhandle->prefix . 'mannschaft';
     $sql = "ALTER TABLE $table_name 
         DROP meisterschaft, 
         DROP liga, 
         DROP nuliga_liga_id, 
         DROP nuliga_team_id";
 
-    $wpdb->query($sql);
+    $dbhandle->query($sql);
 }
 
-function dienste_gegner_initialisieren(){
-    global $wpdb;
-    
-    $table_name = $wpdb->prefix . 'gegner';
-    $charset_collate = $wpdb->get_charset_collate();
+function dienste_gegner_initialisieren($dbhandle){
+    $table_name = $dbhandle->prefix . 'gegner';
+    $charset_collate = $dbhandle->get_charset_collate();
     
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
@@ -117,11 +108,9 @@ function dienste_gegner_initialisieren(){
     dbDelta( $sql );
 }
 
-function dienste_spiele_initialisieren(){
-    global $wpdb;
-
-    $table_name = SpielDAO::tableName($wpdb);
-    $charset_collate = $wpdb->get_charset_collate();
+function dienste_spiele_initialisieren($dbhandle){
+    $table_name = SpielDAO::tableName($dbhandle);
+    $charset_collate = $dbhandle->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
@@ -134,19 +123,17 @@ function dienste_spiele_initialisieren(){
         anwurf DATETIME NULL , 
         PRIMARY KEY (id), 
         KEY index_anwurf (anwurf),
-        FOREIGN KEY (mannschaftsmeldung) REFERENCES ".$wpdb->prefix."mannschaftsMeldung(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (mannschaft) REFERENCES ".$wpdb->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (gegner) REFERENCES ".$wpdb->prefix."gegner(id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (mannschaftsmeldung) REFERENCES ".$dbhandle->prefix."mannschaftsMeldung(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (mannschaft) REFERENCES ".$dbhandle->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (gegner) REFERENCES ".$dbhandle->prefix."gegner(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );
 }
 
-function dienste_dienste_initialisieren(){
-    global $wpdb;
-
-    $table_name = $wpdb->prefix . 'dienst';
-    $charset_collate = $wpdb->get_charset_collate();
+function dienste_dienste_initialisieren($dbhandle){
+    $table_name = $dbhandle->prefix . 'dienst';
+    $charset_collate = $dbhandle->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
@@ -154,25 +141,22 @@ function dienste_dienste_initialisieren(){
         dienstart VARCHAR(256) NOT NULL , 
         mannschaft INT NULL , 
         PRIMARY KEY (id),
-        FOREIGN KEY (spiel) REFERENCES ".$wpdb->prefix."spiel(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (mannschaft) REFERENCES ".$wpdb->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (spiel) REFERENCES ".SpielDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (mannschaft) REFERENCES ".$dbhandle->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );
 }
 
-function dienste_nuliga_import_initialisieren(){
-    
-    dienste_nuliga_import_meisterschaft_initialisieren();
-    dienste_nuliga_import_mannschaftseinteilung_initialisieren();
-    dienste_nuliga_import_status_initialisieren();
+function dienste_nuliga_import_initialisieren($dbhandle){
+    dienste_nuliga_import_meisterschaft_initialisieren($dbhandle);
+    dienste_nuliga_import_mannschaftseinteilung_initialisieren($dbhandle);
+    dienste_nuliga_import_status_initialisieren($dbhandle);
 }
 
-function dienste_nuliga_import_meisterschaft_initialisieren(){
-    global $wpdb;
-
-    $table_name = $wpdb->prefix . 'nuliga_meisterschaft';
-    $charset_collate = $wpdb->get_charset_collate();
+function dienste_nuliga_import_meisterschaft_initialisieren($dbhandle){
+    $table_name = $dbhandle->prefix . 'nuliga_meisterschaft';
+    $charset_collate = $dbhandle->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
@@ -183,11 +167,9 @@ function dienste_nuliga_import_meisterschaft_initialisieren(){
     dbDelta( $sql );
 }
 
-function dienste_nuliga_import_mannschaftseinteilung_initialisieren(){
-    global $wpdb;
-
-    $table_name = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
-    $charset_collate = $wpdb->get_charset_collate();
+function dienste_nuliga_import_mannschaftseinteilung_initialisieren($dbhandle){
+    $table_name = $dbhandle->prefix . 'nuliga_mannschaftseinteilung';
+    $charset_collate = $dbhandle->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
@@ -199,17 +181,15 @@ function dienste_nuliga_import_mannschaftseinteilung_initialisieren(){
         liga_id INT NOT NULL,
         team_id INT NULL,
         PRIMARY KEY (id),
-        FOREIGN KEY (nuliga_meisterschaft) REFERENCES ".$wpdb->prefix."nuliga_meisterschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (nuliga_meisterschaft) REFERENCES ".$dbhandle->prefix."nuliga_meisterschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );
 }
 
-function dienste_nuliga_import_status_initialisieren(){
-    global $wpdb;
-
-    $table_name = $wpdb->prefix . 'import_status';
-    $charset_collate = $wpdb->get_charset_collate();
+function dienste_nuliga_import_status_initialisieren($dbhandle){
+    $table_name = $dbhandle->prefix . 'import_status';
+    $charset_collate = $dbhandle->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
         schritt INT NOT NULL,
