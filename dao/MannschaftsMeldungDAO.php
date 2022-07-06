@@ -26,19 +26,13 @@ class MannschaftsMeldungDAO extends DAO{
     public function meldungAktivieren(int $id, bool $aktiv){
         $this->update($id, array('aktiv' => $aktiv ? 1 : 0));
     }
-}
 
-function updateMannschaftsMeldung(int $id, int $nuliga_liga_id, int $nuliga_team_id){
-    global $wpdb;
-    
-    $table_name = $wpdb->prefix . 'mannschaftsMeldung';
-    $wpdb->update($table_name, 
-        array(
+    public function updateMannschaftsMeldung(int $id, int $nuliga_liga_id, int $nuliga_team_id){
+        $this->update($id, array(
             'nuliga_liga_id' => $nuliga_liga_id, 
             'nuliga_team_id' => $nuliga_team_id
-        ), array(
-            'id' => $id
         ));
+    }
 }
 
 function insertMannschaftsMeldung(int $meisterschaft, int $mannschaft, string $liga, int $nuliga_liga_id, int $nuliga_team_id){
