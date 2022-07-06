@@ -11,14 +11,18 @@ abstract class DAO{
         }
     }
 
+    public static function entityName(): string{
+        $className = static::class;
+        $entityName = substr($className, 0, -3);
+        return $entityName;
+    }
+
     public static function tableName($dbhandle = null): string{
         if(empty($dbhandle)){
             global $wpdb;
             $dbhandle = $wpdb;
         }
-        $className = static::class;
-        $entityName = substr($className, 0, -3);
-        $table_suffix = strtolower($entityName);
+        $table_suffix = strtolower(static::entityName());
         return $dbhandle->prefix.$table_suffix;
     }
 
