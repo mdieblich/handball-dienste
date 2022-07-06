@@ -1,25 +1,14 @@
 <?php
+require_once __DIR__."/DAO.php";
 require_once WP_PLUGIN_DIR."/dienstedienst/entity/spiel.php";
 require_once WP_PLUGIN_DIR."/dienstedienst/dao/dienst.php";
 
-class SpielDAO{
-    private $dbhandle;
-    private string $table_name;
+class SpielDAO extends DAO{
     // TODO function zum erstellen der DB-Tabelle
     // TODO spaltennamen als Klassenkonstanten
 
-    public function __construct(){
-        global $wpdb;
-        $this->dbhandle = $wpdb;
-        $this->table_name = $wpdb->prefix."spiel";
-    }
-
-    public function getTableName(): string{
-        return $this->table_name;
-    }
-
     public function findSpiel(int $mannschaftsmeldung, int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): ?Spiel{
-        $sql = "SELECT * FROM ".$this->getTableName()." "
+        $sql = "SELECT * FROM ".self::tableName()." "
                 ."WHERE mannschaftsmeldung=$mannschaftsmeldung AND spielnr=$spielnr AND mannschaft=$mannschaft_id AND gegner=$gegner_id AND heimspiel=$isHeimspiel";
         $result = $this->dbhandle->get_row($sql, ARRAY_A);
         if(empty($result)){
@@ -34,8 +23,8 @@ class SpielDAO{
         ): array{
         
         $table_meldung = $this->dbhandle->prefix . 'mannschaftsMeldung'; 
-        $tables = $this->getTableName()." LEFT JOIN $table_meldung ON ".$this->getTableName().".mannschaftsmeldung=$table_meldung.id";
-        $sql = "SELECT ".$this->getTableName().".*, $table_meldung.aktiv FROM $tables WHERE $whereClause ORDER BY $orderBy";
+        $tables = self::tableName()." LEFT JOIN $table_meldung ON ".self::tableName().".mannschaftsmeldung=$table_meldung.id";
+        $sql = "SELECT ".self::tableName().".*, $table_meldung.aktiv FROM $tables WHERE $whereClause ORDER BY $orderBy";
         $result = $this->dbhandle->get_results($sql, ARRAY_A);
         
         $spiele = array();
@@ -65,12 +54,12 @@ class SpielDAO{
     }
 
     public function countSpiele(int $mannschaftsmeldung, int $mannschaftsID): int {
-        return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".$this->getTableName()." WHERE mannschaftsmeldung=$mannschaftsmeldung AND mannschaft=$mannschaftsID");
+        return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".self::tableName()." WHERE mannschaftsmeldung=$mannschaftsmeldung AND mannschaft=$mannschaftsID");
     }
     
     public function insertSpiel(int $mannschaftsmeldung, int $spielnr, int $mannschaft_id, int $gegner_id, bool $isHeimspiel, int $halle, ?DateTime $anwurf){
         
-        $this->dbhandle->insert($this->getTableName(), array(
+        $this->dbhandle->insert(self::tableName(), array(
             'mannschaftsmeldung' => $mannschaftsmeldung, 
             'spielnr' => $spielnr, 
             'mannschaft' => $mannschaft_id, 

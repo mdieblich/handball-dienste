@@ -1,6 +1,6 @@
 <?php
 abstract class DAO{
-    private $dbhandle;
+    protected $dbhandle;
 
     public function __construct($dbhandle = null){
         if(isset($dbhandle)){
