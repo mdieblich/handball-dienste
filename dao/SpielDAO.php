@@ -63,21 +63,11 @@ class SpielDAO extends DAO{
             'anwurf' => isset($anwurf) ? $anwurf->format('Y-m-d H:i:s') : null
         ));
     }
-}
-
-
-
-function updateSpiel(int $id, int $halle, ?DateTime $anwurf){
-    global $wpdb;
-    
-    $table_name = $wpdb->prefix . 'spiel';
-    $wpdb->update($table_name, 
-        array(
-          'halle' => $halle, 
-          'anwurf' => isset($anwurf) ? $anwurf->format('Y-m-d H:i:s') : null
-        ), array(
-          'id' => $id
-        )
-    );
+    public function updateSpiel(int $id, int $halle, ?DateTime $anwurf){
+        $this->update($id, array(
+              'halle' => $halle, 
+              'anwurf' => isset($anwurf) ? $anwurf->format('Y-m-d H:i:s') : null
+        ));
+    }
 }
 ?>

@@ -28,7 +28,7 @@ abstract class DAO{
     }
 
     public function fetchAll(string $whereClause=null, string $orderBy=null): array {
-        $sql = "SELECT * FROM ".self::tableName();
+        $sql = "SELECT * FROM ".self::tableName($this->dbhandle);
         if(isset($whereClause)){
             $sql.= " WHERE $whereClause";
         } 
@@ -39,11 +39,15 @@ abstract class DAO{
     }
 
     public function count(string $whereClause): int {
-        return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".self::tableName()." WHERE $whereClause");
+        return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".self::tableName($this->dbhandle)." WHERE $whereClause");
     }
 
     public function insert(array $entity) {
-        $this->dbhandle->insert(self::tableName(), $entity);
+        $this->dbhandle->insert(self::tableName($this->dbhandle), $entity);
+    }
+
+    public function update(int $id, array $values){
+        $this->dbhandle->update(self::tableName($this->dbhandle), $values, array('id' => $id));
     }
 }
 ?>
