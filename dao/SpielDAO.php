@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__."/DAO.php";
+require_once __DIR__."/MannschaftsMeldungDAO.php";
 require_once WP_PLUGIN_DIR."/dienstedienst/entity/spiel.php";
 require_once WP_PLUGIN_DIR."/dienstedienst/dao/dienst.php";
 
@@ -20,8 +21,7 @@ class SpielDAO extends DAO{
             string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"
         ): array{
         
-        $table_meldung = $this->dbhandle->prefix . 'mannschaftsmeldung'; 
-        $whereClause .= " AND mannschaftsmeldung in (SELECT id FROM $table_meldung WHERE aktiv=1)";
+        $whereClause .= " AND mannschaftsmeldung in (SELECT id FROM ".MannschaftsMeldungDAO::tableName($this->dbhandle)." WHERE aktiv=1)";
         $result = $this->fetchAll($whereClause, $orderBy);
         
         $spiele = array();
