@@ -16,27 +16,24 @@ class SpielDAO extends DAO{
     }
 
     public function loadSpiele(
-            string $whereClause="anwurf > subdate(current_date, 1) AND aktiv=1", 
+            string $whereClause="anwurf > subdate(current_date, 1)", 
             string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"
         ): array{
         
-        $table_meldung = $this->dbhandle->prefix . 'mannschaftsMeldung'; 
-        $tables = self::tableName()." LEFT JOIN $table_meldung ON ".self::tableName().".mannschaftsmeldung=$table_meldung.id";
-        $sql = "SELECT ".self::tableName().".*, $table_meldung.aktiv FROM $tables WHERE $whereClause ORDER BY $orderBy";
-        $result = $this->dbhandle->get_results($sql, ARRAY_A);
+        $table_meldung = $this->dbhandle->prefix . 'mannschaftsmeldung'; 
+        $whereClause .= " AND mannschaftsmeldung in (SELECT id FROM $table_meldung WHERE aktiv=1)";
+        $result = $this->fetchAll($whereClause, $orderBy);
         
         $spiele = array();
-        if (count($result) > 0) {
-            foreach($result as $spiel) {
-                $spielObj = new Spiel($spiel);
-                $spiele[$spielObj->getID()] = $spielObj;
-            }
+        foreach($result as $spiel) {
+            $spielObj = new Spiel($spiel);
+            $spiele[$spielObj->getID()] = $spielObj;
         }
         return $spiele;
     }
     
     public function loadSpieleDeep(
-            string $whereClause="anwurf > subdate(current_date, 1) AND aktiv=1", 
+            string $whereClause="anwurf > subdate(current_date, 1)", 
             string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"
         ){
         $dienstDAO = new DienstDAO();

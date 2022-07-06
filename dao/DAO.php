@@ -27,6 +27,17 @@ abstract class DAO{
         return $this->dbhandle->get_row($sql, ARRAY_A);
     }
 
+    public function fetchAll(string $whereClause=null, string $orderBy=null): array {
+        $sql = "SELECT * FROM ".self::tableName();
+        if(isset($whereClause)){
+            $sql.= " WHERE $whereClause";
+        } 
+        if(isset($orderBy)){
+            $sql .= "ORDER BY $orderBy";
+        }
+        return $this->dbhandle->get_results($sql, ARRAY_A);
+    }
+
     public function count(string $whereClause): int {
         return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".self::tableName()." WHERE $whereClause");
     }
