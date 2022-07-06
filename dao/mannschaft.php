@@ -24,7 +24,8 @@ function loadMannschaftenMitMeldungen(): array{
     $mannschaftIDs = Mannschaft::getIDs($mannschaften);
     $filter = "mannschaft in (".implode(", ", $mannschaftIDs).")";
 
-    $meldungen = loadMannschaftsMeldungen($filter);
+    $meldungDAO = new MannschaftsMeldungDAO();
+    $meldungen = $meldungDAO->loadMannschaftsMeldungen($filter);
     foreach($meldungen as $meldung){
         $mannschaften[$meldung->getMannschaft()]->addMeldung($meldung);
     }
