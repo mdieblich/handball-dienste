@@ -42,7 +42,7 @@ function dienst_entfernen(){
 
 function displayDiensteZuweisen(){
     require_once __DIR__."/../dao/mannschaft.php";
-    require_once __DIR__."/../dao/spiel.php";
+    require_once __DIR__."/../dao/SpielDAO.php";
     $mannschaften = loadMannschaften();
     $gegnerDAO = new GegnerDAO();
     $spielDAO = new SpielDAO();

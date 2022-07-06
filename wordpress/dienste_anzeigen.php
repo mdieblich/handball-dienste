@@ -47,7 +47,7 @@ function dienste_tabellen_ersetzen(array $matches){
     }
     $kopfzeile .= "</tr>";
 
-    require_once __DIR__."/dao/spiel.php";
+    require_once __DIR__."/dao/SpielDAO.php";
     global $wpdb;
     $table_name_spiel = $wpdb->prefix."spiel";
     $table_name_dienst = $wpdb->prefix."dienst";
