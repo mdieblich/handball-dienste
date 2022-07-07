@@ -47,8 +47,7 @@ function displayDiensteZuweisen(){
     $spielDAO = new SpielDAO();
 
     $mannschaften = $mannschaftDAO->loadMannschaften();
-    $gegnerDAO->loadGegner();
-    $alleGegner = $gegnerDAO->getAlleGegner();
+    $alleGegner = $gegnerDAO->loadGegner();
     $spieleListe = new SpieleListe( $spielDAO->loadSpieleDeep() ); 
  ?>
 <div class="wrap">

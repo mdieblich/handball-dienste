@@ -34,8 +34,7 @@ function dienste_tabellen_ersetzen(array $matches){
     require_once __DIR__."/entity/dienst.php";
     require_once __DIR__."/dao/gegner.php";
     $gegnerDAO = new GegnerDAO();
-    $gegnerDAO->loadGegner();
-    $alleGegner = $gegnerDAO->getAlleGegner();
+    $alleGegner = $gegnerDAO->loadGegner();
 
     $kopfzeile = 
         "<tr style=\"background-color:#00407d; color:white\">"
