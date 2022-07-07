@@ -1,8 +1,11 @@
 <?php
 
 require_once __DIR__."/entity/Dienst.php";
+
 require_once __DIR__."/dao/MannschaftDAO.php";
 require_once __DIR__."/dao/GegnerDAO.php";
+
+require_once __DIR__."/service/SpielService.php";
 
 function dienst_tabelle_einblenden($content){
     return preg_replace_callback(
@@ -48,7 +51,6 @@ function dienste_tabellen_ersetzen(array $matches){
     }
     $kopfzeile .= "</tr>";
 
-    require_once __DIR__."/dao/SpielDAO.php";
     global $wpdb;
     $table_name_spiel = $wpdb->prefix."spiel";
     $table_name_dienst = $wpdb->prefix."dienst";
@@ -64,8 +66,8 @@ function dienste_tabellen_ersetzen(array $matches){
     if(isset($vonMannschaft)){
         $filter[] = "$table_name_spiel.id IN (SELECT spiel FROM ". $wpdb->prefix ."dienst WHERE $table_name_dienst.mannschaft=".$vonMannschaft->getID().")";
     }
-    $spielDAO = new SpielDAO();
-    $spiele = $spielDAO->loadSpieleDeep(implode(" AND ", $filter)); 
+    $spielService = new SpielService();
+    $spiele = $spielService->loadSpieleMitDiensten(implode(" AND ", $filter)); 
 
     $tabellenkoerper = "";
     foreach($spiele as $spiel){

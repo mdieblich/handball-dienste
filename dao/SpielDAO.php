@@ -39,24 +39,6 @@ class SpielDAO extends DAO{
         }
         return $spiele;
     }
-    
-    public function loadSpieleDeep(
-            string $whereClause="anwurf > subdate(current_date, 1)", 
-            string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"
-        ){
-
-        $spiele = $this->loadSpiele($whereClause, $orderBy);
-        if(count($spiele) == 0){
-            return $spiele;
-        }
-        $spielIDs = Spiel::getIDs($spiele);
-        $filter = "spiel in (".implode(", ", $spielIDs).")";
-
-        foreach($this->dienstDAO->loadAllDienste($filter) as $dienst){
-            $spiele[$dienst->getSpiel()]->addDienst($dienst);
-        } 
-        return $spiele;
-    }
 
     public function countSpiele(int $mannschaftsmeldung, int $mannschaftsID): int {
         return $this->count("mannschaftsmeldung=$mannschaftsmeldung AND mannschaft=$mannschaftsID");

@@ -2,8 +2,9 @@
 require_once __DIR__."/../entity/Dienst.php";
 require_once __DIR__."/../entity/Spieleliste.php";
 require_once __DIR__."/../dao/MannschaftDAO.php";
-require_once __DIR__."/../dao/SpielDAO.php";
 require_once __DIR__."/../dao/DienstDAO.php";
+
+require_once __DIR__."/../service/SpielService.php";
 
 $hook_zuweisen;
 function addDiensteZuweisenKonfiguration(){
@@ -44,11 +45,11 @@ function dienst_entfernen(){
 function displayDiensteZuweisen(){
     $mannschaftDAO = new MannschaftDAO();
     $gegnerDAO = new GegnerDAO();
-    $spielDAO = new SpielDAO();
+    $spielService = new SpielService();
 
     $mannschaften = $mannschaftDAO->loadMannschaften();
     $alleGegner = $gegnerDAO->loadGegner();
-    $spieleListe = new SpieleListe( $spielDAO->loadSpieleDeep() ); 
+    $spieleListe = new SpieleListe( $spielService->loadSpieleMitDiensten() ); 
  ?>
 <div class="wrap">
     <div style="float:right; width: 200px; background-color:#ddddff; padding: 5px">
