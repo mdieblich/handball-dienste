@@ -61,7 +61,7 @@ function dienste_meisterschaft_initialisieren($dbhandle){
 }
 
 function dienste_mannschaftsMeldung_initialisieren($dbhandle){
-    $table_name = $dbhandle->prefix . 'mannschaftsMeldung';
+    $table_name = MannschaftsMeldungDAO::tableName($dbhandle);
     $charset_collate = $dbhandle->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
@@ -110,6 +110,7 @@ function dienste_gegner_initialisieren($dbhandle){
 
 function dienste_spiele_initialisieren($dbhandle){
     $table_name = SpielDAO::tableName($dbhandle);
+    $table_name_meldung = MannschaftsMeldungDAO::tableName($dbhandle);
     $charset_collate = $dbhandle->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
@@ -123,7 +124,7 @@ function dienste_spiele_initialisieren($dbhandle){
         anwurf DATETIME NULL , 
         PRIMARY KEY (id), 
         KEY index_anwurf (anwurf),
-        FOREIGN KEY (mannschaftsmeldung) REFERENCES ".$dbhandle->prefix."mannschaftsMeldung(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (mannschaftsmeldung) REFERENCES $table_name_meldung(id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (mannschaft) REFERENCES ".$dbhandle->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (gegner) REFERENCES ".$dbhandle->prefix."gegner(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
