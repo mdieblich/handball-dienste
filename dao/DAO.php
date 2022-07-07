@@ -31,10 +31,41 @@ abstract class DAO{
         return $this->dbhandle->get_row($sql, ARRAY_A);
     }
 
-    public function fetchAll(string $whereClause=null, string $orderBy=null): array {
+    public function fetchObject(string $where): ?object {
+        $sql = "SELECT * FROM ".static::tableName($this->dbhandle);
+        if(isset($where)){
+            $sql .= " WHERE $where";
+        }
+
+        $array = $this->dbhandle->get_row($sql, ARRAY_A);
+        if(empty($array)){
+            return null;
+        }
+
+        return $this->createEntityFromArray($array);
+    }
+
+    public function createEntityFromArray(array $array): object{
+        $entityName = static::entityName();
+        require_once __dir__."/../entity/$entityName.php";
+        return new $entityName($array);
+    }
+
+    public function fetchAllObjects(string $where = null, string $orderBy = null): array{
+        $rows = $this->fetchAll($where, $orderBy);
+    
+        $objects = array();
+        foreach($rows as $row) {
+            $object = $this->createEntityFromArray($row);
+            $objects[$object->getID()] = $object;
+        }
+        return $objects;
+    }
+
+    public function fetchAll(string $where=null, string $orderBy=null): array {
         $sql = "SELECT * FROM ".self::tableName($this->dbhandle);
-        if(isset($whereClause)){
-            $sql .= " WHERE $whereClause";
+        if(isset($where)){
+            $sql .= " WHERE $where";
         } 
         if(isset($orderBy)){
             $sql .= " ORDER BY $orderBy";
