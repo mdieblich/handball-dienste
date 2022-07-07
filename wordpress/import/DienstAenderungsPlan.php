@@ -6,7 +6,7 @@ require_once __DIR__."/NuLigaSpiel.php";
 require_once __DIR__."/../entity/mannschaft.php";
 require_once __DIR__."/../entity/spiel.php";
 require_once __DIR__."/../entity/dienst.php";
-require_once __DIR__."/../dao/gegner.php";
+require_once __DIR__."/../dao/GegnerDAO.php";
 
 class DienstAenderungsPlan{
     private DienstDAO $dao;

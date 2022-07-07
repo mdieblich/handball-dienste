@@ -1,6 +1,8 @@
 <?php
 
+require_once __DIR__."/entity/dienst.php";
 require_once __DIR__."/dao/MannschaftDAO.php";
+require_once __DIR__."/dao/GegnerDAO.php";
 
 function dienst_tabelle_einblenden($content){
     return preg_replace_callback(
@@ -31,8 +33,6 @@ function dienste_tabellen_ersetzen(array $matches){
             case "seit": $seit = getDateFromString($attributeValues[$i]); break;
         }
     }
-    require_once __DIR__."/entity/dienst.php";
-    require_once __DIR__."/dao/gegner.php";
     $gegnerDAO = new GegnerDAO();
     $alleGegner = $gegnerDAO->loadGegner();
 

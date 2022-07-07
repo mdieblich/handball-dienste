@@ -5,7 +5,7 @@ require_once __DIR__."/DienstAenderungsPlan.php";
 require_once __DIR__."/NuLigaSpiel.php";
 
 require_once __DIR__."/../dao/MannschaftDAO.php";
-require_once __DIR__."/../dao/gegner.php";
+require_once __DIR__."/../dao/GegnerDAO.php";
 require_once __DIR__."/../dao/meisterschaft.php";
 require_once __DIR__."/../dao/SpielDAO.php";
 require_once __DIR__."/../dao/DienstDAO.php";

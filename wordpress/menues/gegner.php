@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__."/../dao/gegner.php";
 require_once __DIR__."/../entity/mannschaft.php";   // Für GESCHLECHT_W und GESCHLECHT_M
+require_once __DIR__."/../dao/GegnerDAO.php";
 
 function addDiensteGegnerKonfiguration(){
     //add_submenu_page( '$parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
