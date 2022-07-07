@@ -26,7 +26,7 @@ abstract class DAO{
         return $dbhandle->prefix.$table_suffix;
     }
 
-    public function fetchObject(string $where): ?object {
+    public function fetch(string $where): ?object {
         $sql = "SELECT * FROM ".static::tableName($this->dbhandle);
         if(isset($where)){
             $sql .= " WHERE $where";

@@ -25,7 +25,7 @@ class MeisterschaftDAO extends DAO {
     }
 
     public function findMeisterschaft(string $kuerzel, string $name): ?Meisterschaft{
-        return $this->fetchObject("kuerzel=\"$kuerzel\" AND name=\"$name\"");
+        return $this->fetch("kuerzel=\"$kuerzel\" AND name=\"$name\"");
     }
 
     public function upsertMeisterschaft(string $kuerzel, string $name): int{

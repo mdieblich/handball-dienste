@@ -8,7 +8,7 @@ class GegnerDAO extends DAO{
 
     public function findGegner(int $id): ?Gegner{
         if(!array_key_exists($id, $this->alleGegner)){
-            $gegner = $this->fetchObject("id=$id");
+            $gegner = $this->fetch("id=$id");
             if(empty($gegner)){
                 return null;
             }
