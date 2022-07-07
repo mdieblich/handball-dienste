@@ -17,11 +17,7 @@ class SpielDAO extends DAO{
     }
 
     public function findSpiel(int $mannschaftsmeldung, int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): ?Spiel{
-        $result = $this->fetch("mannschaftsmeldung=$mannschaftsmeldung AND spielnr=$spielnr AND mannschaft=$mannschaft_id AND gegner=$gegner_id AND heimspiel=$isHeimspiel");
-        if(empty($result)){
-          return null;
-        }
-        return new Spiel($result);
+        return $this->fetchObject("mannschaftsmeldung=$mannschaftsmeldung AND spielnr=$spielnr AND mannschaft=$mannschaft_id AND gegner=$gegner_id AND heimspiel=$isHeimspiel");
     }
 
     public function loadSpiele(

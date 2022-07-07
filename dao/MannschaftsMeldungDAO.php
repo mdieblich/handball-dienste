@@ -3,17 +3,13 @@ require_once __DIR__."/DAO.php";
 require_once __DIR__."/../entity/MannschaftsMeldung.php";
 
 class MannschaftsMeldungDAO extends DAO{
+    
     public function loadMannschaftsMeldungen(string $where = null, string $orderBy = null): array{
         return $this->fetchAll($where, $orderBy);
     }
     
     public function findMannschaftsMeldung(int $meisterschaft, int $mannschaft, string $liga): ?MannschaftsMeldung {
-        $result = $this->fetch("meisterschaft=$meisterschaft AND mannschaft=$mannschaft AND liga=\"$liga\"");
-        if(empty($result)){
-            return null;
-        }
-
-        return new MannschaftsMeldung($result);
+        return $this->fetchObject("meisterschaft=$meisterschaft AND mannschaft=$mannschaft AND liga=\"$liga\"");
     }
 
     public function meldungAktivieren(int $id, bool $aktiv){

@@ -3,15 +3,15 @@ require_once __dir__."/../entity/Gegner.php";
 require_once __DIR__."/DAO.php";
 
 class GegnerDAO extends DAO{
+    // TODO der Cache muss raus! Das ist nicht Aufgabe des DAO
     private $alleGegner = array();
 
     public function findGegner(int $id): ?Gegner{
         if(!array_key_exists($id, $this->alleGegner)){
-            $result = $this->fetch("id=$id");
-            if(empty($result)){
+            $gegner = $this->fetchObject("id=$id");
+            if(empty($gegner)){
                 return null;
             }
-            $gegner = new Gegner($result);
             $this->alleGegner[$id] = $gegner;
         }
         return $this->alleGegner[$id];
