@@ -34,10 +34,10 @@ abstract class DAO{
     public function fetchAll(string $whereClause=null, string $orderBy=null): array {
         $sql = "SELECT * FROM ".self::tableName($this->dbhandle);
         if(isset($whereClause)){
-            $sql.= " WHERE $whereClause";
+            $sql .= " WHERE $whereClause";
         } 
         if(isset($orderBy)){
-            $sql .= "ORDER BY $orderBy";
+            $sql .= " ORDER BY $orderBy";
         }
         return $this->dbhandle->get_results($sql, ARRAY_A);
     }

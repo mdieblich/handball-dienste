@@ -116,7 +116,8 @@ Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen",
 
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
 
-    $mannschaften = loadMannschaften();
+    $mannschaftDAO = new MannschaftDAO();
+    $mannschaften = $mannschaftDAO->loadMannschaften();
     $nuligaBezeichnungen = createNuLigaMannschaftsBezeichnungen($mannschaften);
 
     $results = $wpdb->get_results("SELECT id, mannschaftsBezeichnung FROM $table_nuliga_mannschaftseinteilung WHERE mannschaft IS NULL", ARRAY_A);

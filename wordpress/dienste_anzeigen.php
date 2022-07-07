@@ -14,7 +14,8 @@ function dienste_tabellen_ersetzen(array $matches){
     $innerHTML = $matches[2];
 
     require_once __DIR__."/dao/mannschaft.php";
-    $mannschaften = loadMannschaften();
+    $mannschaftDAO = new MannschaftDAO();
+    $mannschaften = $mannschaftDAO->loadMannschaften();
 
     preg_match_all("/(\w*)=\"([\w\d\s\.]*)\"/", $attributString, $attributeArray);
     $attributeKeys = $attributeArray[1];

@@ -1,25 +1,24 @@
 <?php
-require_once WP_PLUGIN_DIR."/dienstedienst/entity/mannschaft.php";
+require_once __dir__."/../entity/mannschaft.php";
+require_once __DIR__."/DAO.php";
 require_once __dir__."/MannschaftsMeldungDAO.php";
 
-function loadMannschaften(): array{
-    global $wpdb;
+class MannschaftDAO extends DAO{
+    public function loadMannschaften(): array{
+        $result = $this->fetchAll("1=1", "jugendklasse, nummer, geschlecht");
     
-    $table_name = $wpdb->prefix . 'mannschaft';
-    $sql = "SELECT * FROM $table_name ORDER BY jugendklasse, nummer, geschlecht";
-    $result = $wpdb->get_results($sql, ARRAY_A);
-
-    $mannschaften = array();
-    if (count($result) > 0) {
+        $mannschaften = array();
         foreach($result as $mannschaft) {
             $mannschaftObj = new Mannschaft($mannschaft);
             $mannschaften[$mannschaftObj->getID()] = $mannschaftObj;
         }
+        return $mannschaften;
     }
-    return $mannschaften;
 }
+
 function loadMannschaftenMitMeldungen(): array{
-    $mannschaften = loadMannschaften();
+    $mannschaftDAO = new MannschaftDAO();
+    $mannschaften = $mannschaftDAO->loadMannschaften();
     
     $mannschaftIDs = Mannschaft::getIDs($mannschaften);
     $filter = "mannschaft in (".implode(", ", $mannschaftIDs).")";
