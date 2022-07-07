@@ -14,54 +14,42 @@ class MeisterschaftDAO extends DAO {
         }
         return $meisterschaften;
     }
-}
 
-
-function upsertMeisterschaft(string $kuerzel, string $name): int{
-    $meisterschaft = findMeisterschaft($kuerzel, $name);
-    if(isset($meisterschaft)){
-        updateMeisterschaft($meisterschaft->getID(), $kuerzel, $name);
-    } else {
-        $meisterschaft = insertMeisterschaft($kuerzel, $name);
+    public function insertMeisterschaft(string $kuerzel, string $name): Meisterschaft{
+        $values = array(
+            'kuerzel' => $kuerzel, 
+            'name' => $name
+        );
+        $values['id'] = $this->insert($values);
+        return new Meisterschaft($values);
     }
 
-    return $meisterschaft->getID();
-}
-
-
-function findMeisterschaft(string $kuerzel, string $name): ?Meisterschaft{
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'meisterschaft';
-    $result = $wpdb->get_row("SELECT * FROM $table_name WHERE kuerzel=\"$kuerzel\" AND name=\"$name\"", ARRAY_A);
-    if(empty($result)){
-      return null;
+    public function updateMeisterschaft(int $id, string $kuerzel, string $name){
+        $this->update($id, array(
+            'kuerzel' => $kuerzel,
+            'name' => $name
+        ));
     }
-    return new Meisterschaft($result);
+
+    public function findMeisterschaft(string $kuerzel, string $name): ?Meisterschaft{
+        $result = $this->fetch("kuerzel=\"$kuerzel\" AND name=\"$name\"");
+        if(empty($result)){
+          return null;
+        }
+        return new Meisterschaft($result);
+    }
+
+    public function upsertMeisterschaft(string $kuerzel, string $name): int{
+        $meisterschaft = $this->findMeisterschaft($kuerzel, $name);
+        if(isset($meisterschaft)){
+            $this->updateMeisterschaft($meisterschaft->getID(), $kuerzel, $name);
+        } else {
+            $meisterschaft = $this->insertMeisterschaft($kuerzel, $name);
+        }
+    
+        return $meisterschaft->getID();
+    }
 }
 
-function insertMeisterschaft(string $kuerzel, string $name): Meisterschaft{
-    global $wpdb;
-    
-    $table_name = $wpdb->prefix . 'meisterschaft';
-    $values = array(
-        'kuerzel' => $kuerzel, 
-        'name' => $name
-    );
-    $wpdb->insert($table_name, $values);
-    $values['id'] = $wpdb->insert_id;
-    return new Meisterschaft($values);
-}
-function updateMeisterschaft(int $id, string $kuerzel, string $name){
-    global $wpdb;
-    
-    $table_name = $wpdb->prefix . 'meisterschaft';
-    $wpdb->update($table_name, 
-        array(
-          'kuerzel' => $kuerzel,
-          'name' => $name
-        ), array(
-          'id' => $id
-        )
-    );
-}
+
 ?>
