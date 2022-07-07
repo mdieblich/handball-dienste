@@ -35,7 +35,7 @@ function dienst_zuweisen(){
 function dienst_entfernen(){
     require_once __DIR__."/../dao/dienst.php";
     $dienstDAO = new DienstDAO();
-    $dienstDAO->delete($_POST['spiel'], $_POST['dienstart'], $_POST['mannschaft']);
+    $dienstDAO->deleteDienst($_POST['spiel'], $_POST['dienstart'], $_POST['mannschaft']);
     http_response_code(200);
     wp_die();
 }

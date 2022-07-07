@@ -53,5 +53,8 @@ abstract class DAO{
     public function update(int $id, array $values){
         $this->dbhandle->update(self::tableName($this->dbhandle), $values, array('id' => $id));
     }
+    public function delete(array $identifiers){
+        $this->dbhandle->delete(self::tableName($this->dbhandle), $identifiers);
+    }
 }
 ?>

@@ -23,21 +23,13 @@ class DienstDAO extends DAO{
         );
         $this->insert($params);
     }
-    public function delete(int $spiel, string $dienstart, int $mannschaft){
-        
-        global $wpdb;
-            
-        $table_name = $wpdb->prefix . 'dienst';
-
+    public function deleteDienst(int $spiel, string $dienstart, int $mannschaft){
         $params = array(
             'spiel' => $spiel,
             'dienstart' => $dienstart,
             'mannschaft' => $mannschaft
         );
-
-        $wpdb->delete($table_name, $params);
-  
+        $this->delete($params);
     }
 }
-
 ?>
