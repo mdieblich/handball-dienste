@@ -1,9 +1,10 @@
 <?php
 require_once __DIR__."/../import/importer.php";
-require_once __DIR__."/../dao/MannschaftDAO.php";
 require_once __DIR__."/../dao/MeisterschaftDAO.php";
 require_once __DIR__."/../dao/MannschaftsMeldungDAO.php";
 require_once __DIR__."/../dao/SpielDAO.php";
+
+require_once __DIR__."/../service/MannschaftService.php";
 
 function addDiensteSpieleImportKonfiguration(){
     $hook_import = add_submenu_page( 'dienste', 'Dienste - Spiele importieren', 'Import', 'administrator', 'dienste-import', 'displaySpieleImport');
@@ -157,11 +158,11 @@ setInterval(function(){
     Importierte Mannschaftsmeldungen können einzeln aktiviert & deaktiviert werden. Dazugehörige Spiele werden zwar noch aktualisiert, aber die Spiele werden nicht mehr in der Liste der Dienste dargestellt.
 </p>
 <?php
-    $mannschaftDAO = new MannschaftDAO();
+    $mannschaftService = new MannschaftService();
     $spielDAO = new SpielDAO();
     $meisterschaftDAO = new MeisterschaftDAO();
 
-    $mannschaften = $mannschaftDAO->loadMannschaftenMitMeldungen();
+    $mannschaften = $mannschaftService->loadMannschaftenMitMeldungen();
     
     global $wpdb;
     $meisterschaften = $meisterschaftDAO->loadMeisterschaften("id in (SELECT meisterschaft FROM ".$wpdb->prefix."mannschaftsMeldung)");

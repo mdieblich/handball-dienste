@@ -10,6 +10,8 @@ require_once __DIR__."/../dao/MeisterschaftDAO.php";
 require_once __DIR__."/../dao/SpielDAO.php";
 require_once __DIR__."/../dao/DienstDAO.php";
 
+require_once __DIR__."/../service/MannschaftService.php";
+
 require_once __DIR__."/../PHPMailer/NippesMailer.php";
 
 class Importer{
@@ -227,11 +229,11 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
 
 Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", function (){
     $meisterschaftDAO = new MeisterschaftDAO();
-    $mannschaftDAO = new MannschaftDAO();
+    $mannschaftService = new MannschaftService();
     $gegnerDAO = new GegnerDAO();
     $spielDAO = new SpielDAO();
     $meisterschaften = $meisterschaftDAO->loadMeisterschaften();
-    $mannschaften = $mannschaftDAO->loadMannschaftenMitMeldungen();
+    $mannschaften = $mannschaftService->loadMannschaftenMitMeldungen();
     $gegnerDAO->loadGegner();
 
     $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaften, $gegnerDAO);
