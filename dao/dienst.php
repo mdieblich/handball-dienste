@@ -15,20 +15,13 @@ class DienstDAO extends DAO{
         return $dienste;
     }
 
-    public function insert(int $spiel, string $dienstart, int $mannschaft){
-        
-        global $wpdb;
-            
-        $table_name = $wpdb->prefix . 'dienst';
-
+    public function insertDienst(int $spiel, string $dienstart, int $mannschaft){
         $params = array(
             'spiel' => $spiel,
             'dienstart' => $dienstart,
             'mannschaft' => $mannschaft
         );
-
-        $wpdb->insert($table_name, $params);
-  
+        $this->insert($params);
     }
     public function delete(int $spiel, string $dienstart, int $mannschaft){
         

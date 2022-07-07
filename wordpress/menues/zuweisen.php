@@ -28,7 +28,7 @@ function enqueue_dienste_js($hook){
 function dienst_zuweisen(){
     require_once __DIR__."/../dao/dienst.php";
     $dienstDAO = new DienstDAO();
-    $dienstDAO->insert($_POST['spiel'], $_POST['dienstart'], $_POST['mannschaft']);
+    $dienstDAO->insertDienst($_POST['spiel'], $_POST['dienstart'], $_POST['mannschaft']);
     http_response_code(200);
     wp_die();
 }
