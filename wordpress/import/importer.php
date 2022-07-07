@@ -226,11 +226,12 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
 });
 
 Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", function (){
-    $meisterschaften = loadMeisterschaften();
+    $meisterschaftDAO = new MeisterschaftDAO();
     $mannschaftDAO = new MannschaftDAO();
-    $mannschaften = $mannschaftDAO->loadMannschaftenMitMeldungen();
     $gegnerDAO = new GegnerDAO();
     $spielDAO = new SpielDAO();
+    $meisterschaften = $meisterschaftDAO->loadMeisterschaften();
+    $mannschaften = $mannschaftDAO->loadMannschaftenMitMeldungen();
     $gegnerDAO->loadGegner();
 
     $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaften, $gegnerDAO);

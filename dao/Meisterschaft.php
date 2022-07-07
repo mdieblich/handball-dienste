@@ -1,22 +1,21 @@
 <?php
 require_once __DIR__."/../entity/Meisterschaft.php";
+require_once __DIR__."/DAO.php";
 
-function loadMeisterschaften(string $where = "1=1", string $orderby = "id"): array{
-    global $wpdb;
-    
-    $table_name = $wpdb->prefix . 'meisterschaft';
-    $sql = "SELECT * FROM $table_name WHERE $where ORDER BY $orderby";
-    $result = $wpdb->get_results($sql, ARRAY_A);
-    
-    $meisterschaften = array();
-    if (count($result) > 0) {
+class MeisterschaftDAO extends DAO {
+
+    public function loadMeisterschaften(string $where = "1=1", string $orderby = "id"): array{
+        $result = $this->fetchAll($where, $orderBy);
+        
+        $meisterschaften = array();
         foreach($result as $meisterschaft) {
             $meisterschaftObj = new Meisterschaft($meisterschaft);
             $meisterschaften[$meisterschaftObj->getID()] = $meisterschaftObj;
         }
+        return $meisterschaften;
     }
-    return $meisterschaften;
 }
+
 
 function upsertMeisterschaft(string $kuerzel, string $name): int{
     $meisterschaft = findMeisterschaft($kuerzel, $name);
