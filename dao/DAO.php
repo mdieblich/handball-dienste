@@ -46,8 +46,9 @@ abstract class DAO{
         return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".self::tableName($this->dbhandle)." WHERE $whereClause");
     }
 
-    public function insert(array $entity) {
+    public function insert(array $entity): int{
         $this->dbhandle->insert(self::tableName($this->dbhandle), $entity);
+        return $this->dbhandle->insert_id;
     }
 
     public function update(int $id, array $values){

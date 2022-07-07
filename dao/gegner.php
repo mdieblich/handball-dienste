@@ -18,17 +18,11 @@ class GegnerDAO extends DAO{
     }
 
     public function loadGegner($where = "1=1", $orderBy = "verein ASC, nummer ASC"){
-        global $wpdb;
-        
-        $table_name = $wpdb->prefix . 'gegner';
-        $sql = "SELECT * FROM $table_name WHERE $where ORDER BY $orderBy";
-        $result = $wpdb->get_results($sql, ARRAY_A);
+        $result = $this->fetchAll($where, $orderBy);
 
-        if (count($result) > 0) {
-            foreach($result as $gegner) {
-                $gegnerObj = new Gegner($gegner);
-                $this->alleGegner[$gegnerObj->getID()] = $gegnerObj;
-            }
+        foreach($result as $gegner) {
+            $gegnerObj = new Gegner($gegner);
+            $this->alleGegner[$gegnerObj->getID()] = $gegnerObj;
         }
     }
 
@@ -37,9 +31,6 @@ class GegnerDAO extends DAO{
     }
 
     public function insertGegner(string $name, string $geschlecht, string $liga): Gegner{
-        global $wpdb;
-            
-        $table_name = $wpdb->prefix . 'gegner';
 
         $verein = $name;
         $nummer = 1;
@@ -69,8 +60,7 @@ class GegnerDAO extends DAO{
             'liga' => $liga
         );
 
-        $wpdb->insert($table_name, $params);
-        $params["id"] = $wpdb->insert_id;
+        $params["id"] = $this->insert($params);
 
         $newGegner = new Gegner($params);
         $this->alleGegner[$newGegner->getID()] = $newGegner;
