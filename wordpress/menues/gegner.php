@@ -29,7 +29,7 @@ function addDiensteGegnerKonfiguration(){
 function displayDiensteGegner(){
     
     $gegnerDAO = new GegnerDAO();
-    $gegnerDAO->loadGegner();
+    $alleGegner = $gegnerDAO->loadGegner();
 
     ?>
     <div class="wrap">
@@ -50,7 +50,7 @@ function displayDiensteGegner(){
                 <th> Liga </th>
                 <th> Stellt Sekretär </th>
             </tr>
-        <?php foreach($gegnerDAO->getAlleGegner() as $gegner){ ?>
+        <?php foreach($alleGegner as $gegner){ ?>
             <tr>
                 <td> <?php echo $gegner->getName(); ?> </td>
                 <td style="text-align:center"> 
