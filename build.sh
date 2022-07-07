@@ -15,6 +15,7 @@ rm dienstedienst.zip
 
 # 2. Alles rüberkopieren
 cp -r ../wordpress/* dienstedienst
+cp -r ../handball dienstedienst
 cp -r ../entity dienstedienst
 cp -r ../dao dienstedienst
 cp -r ../service dienstedienst
