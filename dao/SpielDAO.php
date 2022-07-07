@@ -43,8 +43,11 @@ class SpielDAO extends DAO{
             string $whereClause="anwurf > subdate(current_date, 1)", 
             string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"
         ){
-            
+
         $spiele = $this->loadSpiele($whereClause, $orderBy);
+        if(count($spiele) == 0){
+            return $spiele;
+        }
         $spielIDs = Spiel::getIDs($spiele);
         $filter = "spiel in (".implode(", ", $spielIDs).")";
 
