@@ -123,21 +123,6 @@ class Spiel {
         $this->getSpielEnde()->format("H:i")." - ".
             $this->getRueckkehr()->format("H:i");
     }
-    
-    public function getDebugOutput(): string {
-        return 
-            "<div>".
-            $this->getSpielNr().". <b>".$this->getSpielnameDebugOutput()."</b>".
-            "</div>";
-    }
-
-    private function getSpielnameDebugOutput(): string {
-        if($this->isHeimspiel()){
-            return $this->getMannschaft()." gegen #".$this->getGegner();
-        } 
-        return "#".$this->getGegner()." gegen ".$this->getMannschaft();
-
-    }
 
     public function addDienst(Dienst $dienst){
         $this->dienste[$dienst->getDienstart()] = $dienst;
