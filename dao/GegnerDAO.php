@@ -12,6 +12,7 @@ class GegnerDAO extends DAO{
         return $this->fetchAll2($where, $orderBy);
     }
 
+    // TODO insertGegner muss ein Gegner-Objekt erhalten
     public function insertGegner(string $name, string $geschlecht, string $liga): Gegner{
 
         $gegner = new Gegner();

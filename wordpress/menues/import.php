@@ -165,7 +165,7 @@ setInterval(function(){
     $mannschaften = $mannschaftService->loadMannschaftenMitMeldungen();
     
     global $wpdb;
-    $meisterschaften = $meisterschaftDAO->loadMeisterschaften("id in (SELECT meisterschaft FROM ".$wpdb->prefix."mannschaftsMeldung)");
+    $meisterschaften = $meisterschaftDAO->loadMeisterschaften("id in (SELECT meisterschaft FROM ".MannschaftsMeldungDAO::tableName($wpdb).")");
     if(count($meisterschaften) === 0){
         echo "<div class='card'><i>Keine Meisterschaften gefunden</i></div>";
     }
@@ -173,12 +173,12 @@ setInterval(function(){
 <div class="accordion" id="accordionMeisterschaften">
     <?php foreach($meisterschaften as $meisterschaft){  ?>
         <div class="accordion-item">
-            <h2 class="accordion-header" id="heading<?php echo $meisterschaft->getID(); ?>">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $meisterschaft->getID(); ?>" aria-expanded="true" aria-controls="collapse<?php echo $meisterschaft->getID(); ?>">
-                    <?php echo $meisterschaft->getName(); ?>
+            <h2 class="accordion-header" id="heading<?php echo $meisterschaft->id; ?>">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $meisterschaft->id; ?>" aria-expanded="true" aria-controls="collapse<?= $meisterschaft->id; ?>">
+                    <?= $meisterschaft->name; ?>
                 </button>
             </h2>
-            <div id="collapse<?php echo $meisterschaft->getID(); ?>" class="accordion-collapse collapse" aria-labelledby="heading<?php echo $meisterschaft->getID(); ?>" data-bs-parent="#accordionMeisterschaften">
+            <div id="collapse<?= $meisterschaft->id; ?>" class="accordion-collapse collapse" aria-labelledby="heading<?= $meisterschaft->id; ?>" data-bs-parent="#accordionMeisterschaften">
                 <div class="accordion-body">    
                     <table class="table">  
                         <tr>
@@ -188,7 +188,7 @@ setInterval(function(){
                             <th>aktiv</th>
                         </tr>            
                         <?php foreach($mannschaften as $mannschaft){  
-                            $meisterschaftsMeldungen = $mannschaft->getMeldungenFuerMeisterschaft($meisterschaft->getID());
+                            $meisterschaftsMeldungen = $mannschaft->getMeldungenFuerMeisterschaft($meisterschaft->id);
                             if(count($meisterschaftsMeldungen) === 0){
                                 continue;
                             }

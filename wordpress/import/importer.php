@@ -167,7 +167,7 @@ function createNuLigaMannschaftsBezeichnungen(array $mannschaften): array{
 Importer::$MEISTERSCHAFTEN_AKTUALISIEREN = new ImportSchritt(4, "Meisterschaften aktualisieren", function (){
     global $wpdb;
 
-    $table_meisterschaft = $wpdb->prefix . 'meisterschaft';
+    $table_meisterschaft = MeisterschaftDAO::tableName($wpdb);
     $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
 
@@ -193,7 +193,7 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
     global $wpdb;
 
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
-    $table_meisterschaft = $wpdb->prefix . 'meisterschaft';
+    $table_meisterschaft = MeisterschaftDAO::tableName($wpdb);
 
     $sql = "SELECT 
             $table_nuliga_mannschaftseinteilung.id,
@@ -250,7 +250,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
         foreach($mannschaft->getMeldungen() as $mannschaftsMeldung) {
             $meisterschaft = $meisterschaften[$mannschaftsMeldung->getMeisterschaft()];
             $spielGrabber = new SpieleGrabber(
-                $meisterschaft->getKuerzel(), 
+                $meisterschaft->kuerzel, 
                 $mannschaftsMeldung->getNuligaLigaID(), 
                 $mannschaftsMeldung->getNuligaTeamID()
             );
