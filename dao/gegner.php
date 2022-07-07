@@ -6,15 +6,15 @@ class GegnerDAO extends DAO{
     private $alleGegner = array();
 
     public function findGegner(int $id): ?Gegner{
-        if(array_key_exists($id, $this->alleGegner)){
-            return $this->alleGegner[$id];
+        if(!array_key_exists($id, $this->alleGegner)){
+            $result = $this->fetch("id=$id");
+            if(empty($result)){
+                return null;
+            }
+            $gegner = new Gegner($result);
+            $this->alleGegner[$id] = $gegner;
         }
-
-        $result = $this->fetch("id=$id");
-        if(empty($result)){
-          return null;
-        }
-        return new Gegner($result);
+        return $this->alleGegner[$id];
     }
 
     public function loadGegner($where = "1=1", $orderBy = "verein ASC, nummer ASC"){
