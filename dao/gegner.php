@@ -1,13 +1,16 @@
 <?php
-require_once WP_PLUGIN_DIR."/dienstedienst/entity/gegner.php";
+require_once __dir__."/../entity/gegner.php";
+require_once __DIR__."/DAO.php";
 
-class GegnerDAO{
+class GegnerDAO extends DAO{
     private $alleGegner = array();
 
-    public function fetch(int $id): ?Gegner{
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'gegner';
-        $result = $wpdb->get_row("SELECT * FROM $table_name WHERE id=$id", ARRAY_A);
+    public function findGegner(int $id): ?Gegner{
+        if(array_key_exists($id, $this->alleGegner)){
+            return $this->alleGegner[$id];
+        }
+
+        $result = $this->fetch("id=$id");
         if(empty($result)){
           return null;
         }
