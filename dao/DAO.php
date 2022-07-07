@@ -69,17 +69,6 @@ abstract class DAO{
         return $objects;
     }
 
-    public function fetchAll(string $where=null, string $orderBy=null): array {
-        $sql = "SELECT * FROM ".self::tableName($this->dbhandle);
-        if(isset($where)){
-            $sql .= " WHERE $where";
-        } 
-        if(isset($orderBy)){
-            $sql .= " ORDER BY $orderBy";
-        }
-        return $this->dbhandle->get_results($sql, ARRAY_A);
-    }
-
     public function count(string $whereClause): int {
         return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".self::tableName($this->dbhandle)." WHERE $whereClause");
     }
