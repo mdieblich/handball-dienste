@@ -11,7 +11,7 @@ abstract class DAO{
         }
     }
 
-    public static function entityName(): string{
+    private static function entityName(): string{
         $className = static::class;
         $entityName = substr($className, 0, -3);
         return $entityName;
@@ -40,7 +40,7 @@ abstract class DAO{
         return $this->createEntityFromArray($array);
     }
 
-    public function createEntityFromArray(array $array): object{
+    private function createEntityFromArray(array $array): object{
         $entityName = static::entityName();
         require_once __dir__."/../entity/$entityName.php";
         return new $entityName($array);
@@ -64,19 +64,19 @@ abstract class DAO{
         return $objects;
     }
 
-    public function count(string $whereClause): int {
+    protected function count(string $whereClause): int {
         return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".self::tableName($this->dbhandle)." WHERE $whereClause");
     }
 
-    public function insert(array $entity): int{
+    protected function insert(array $entity): int{
         $this->dbhandle->insert(self::tableName($this->dbhandle), $entity);
         return $this->dbhandle->insert_id;
     }
 
-    public function update(int $id, array $values){
+    protected function update(int $id, array $values){
         $this->dbhandle->update(self::tableName($this->dbhandle), $values, array('id' => $id));
     }
-    public function delete(array $identifiers){
+    protected function delete(array $identifiers){
         $this->dbhandle->delete(self::tableName($this->dbhandle), $identifiers);
     }
 }
