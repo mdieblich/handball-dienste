@@ -37,13 +37,45 @@ abstract class DAO{
             return null;
         }
 
-        return $this->createEntityFromArray($array);
+        return $this->createEntityBackedByArray($array);
     }
 
-    private function createEntityFromArray(array $array): object{
+    private function createEntityBackedByArray(array $array): object{
         $entityName = static::entityName();
         require_once __dir__."/../entity/$entityName.php";
         return new $entityName($array);
+    }
+    
+    public function fetch2(string $where): ?object {
+        $sql = "SELECT * FROM ".static::tableName($this->dbhandle);
+        if(isset($where)){
+            $sql .= " WHERE $where";
+        }
+
+        $array = $this->dbhandle->get_row($sql, ARRAY_A);
+        if(empty($array)){
+            return null;
+        }
+
+        return $this->createEntity($array);
+    }
+
+    private function createEntity($array): object{
+        $entityName = static::entityName();
+        require_once __dir__."/../handball/$entityName.php";
+        $entity = new $entityName();
+        foreach($array as $key => $value){
+            if($this->isBooleanProperty($entity, $key)){
+                $entity->$key = ($value != 0);
+            }else{
+                $entity->$key = $value;
+            }
+        }
+        return $entity;
+    }
+    private function isBooleanProperty($class, $property): bool{
+        $rp = new ReflectionProperty($class, $property);
+        return $rp->getType()->getName() === "boolean";
     }
 
     public function fetchAll(string $where = null, string $orderBy = null): array{
@@ -60,6 +92,24 @@ abstract class DAO{
         foreach($rows as $row) {
             $object = $this->createEntityFromArray($row);
             $objects[$object->getID()] = $object;
+        }
+        return $objects;
+    }
+
+    public function fetchAll2(string $where = null, string $orderBy = null): array{
+        $sql = "SELECT * FROM ".self::tableName($this->dbhandle);
+        if(isset($where)){
+            $sql .= " WHERE $where";
+        } 
+        if(isset($orderBy)){
+            $sql .= " ORDER BY $orderBy";
+        }
+
+        $rows = $this->dbhandle->get_results($sql, ARRAY_A);    
+        $objects = array();
+        foreach($rows as $row) {
+            $object = $this->createEntity($row);
+            $objects[$object->id] = $object;
         }
         return $objects;
     }
