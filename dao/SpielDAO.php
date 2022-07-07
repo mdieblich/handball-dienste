@@ -8,6 +8,13 @@ class SpielDAO extends DAO{
     // TODO function zum erstellen der DB-Tabelle
     // TODO spaltennamen als Klassenkonstanten
 
+    private DienstDAO $dienstDAO;
+
+    public function __construct($dbhandle = null){
+        parent::__construct($dbhandle);
+        $this->dienstDAO = new DienstDAO($dbhandle);
+    }
+
     public function findSpiel(int $mannschaftsmeldung, int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): ?Spiel{
         $result = $this->fetch("mannschaftsmeldung=$mannschaftsmeldung AND spielnr=$spielnr AND mannschaft=$mannschaft_id AND gegner=$gegner_id AND heimspiel=$isHeimspiel");
         if(empty($result)){
@@ -36,13 +43,12 @@ class SpielDAO extends DAO{
             string $whereClause="anwurf > subdate(current_date, 1)", 
             string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"
         ){
-        $dienstDAO = new DienstDAO();
-
+            
         $spiele = $this->loadSpiele($whereClause, $orderBy);
         $spielIDs = Spiel::getIDs($spiele);
         $filter = "spiel in (".implode(", ", $spielIDs).")";
 
-        foreach($dienstDAO->loadAllDienste($filter) as $dienst){
+        foreach($this->dienstDAO->loadAllDienste($filter) as $dienst){
             $spiele[$dienst->getSpiel()]->addDienst($dienst);
         } 
         return $spiele;
