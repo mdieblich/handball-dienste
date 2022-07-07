@@ -25,8 +25,8 @@ function dienste_tabellen_ersetzen(array $matches){
     $seit = null;
     for($i=0; $i<count($attributeKeys); $i++){
         switch($attributeKeys[$i]){
-            case "von" : $vonMannschaft  = getMannschaftFromName($mannschaften, $attributeValues[$i]); break;
-            case "fuer": $fuerMannschaft = getMannschaftFromName($mannschaften, $attributeValues[$i]); break;
+            case "von" : $vonMannschaft  = Mannschaft::getMannschaftFromName($mannschaften, $attributeValues[$i]); break;
+            case "fuer": $fuerMannschaft = Mannschaft::getMannschaftFromName($mannschaften, $attributeValues[$i]); break;
             case "seit": $seit = getDateFromString($attributeValues[$i]); break;
         }
     }

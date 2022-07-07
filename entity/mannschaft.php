@@ -98,6 +98,7 @@ class Mannschaft {
         return "<ul>".$spielerListe."</ul>";
     }
 
+    // TODO die folgenden Funktion evtl. in eine Klasse Mannschaftsliste auslagern
     public static function getIDs(array $mannschaften): array {
         $ids = array();
         foreach($mannschaften as $mannschaft){
@@ -106,5 +107,14 @@ class Mannschaft {
         return $ids;
     }
     
+    // TODO die folgenden Funktion evtl. in eine Klasse Mannschaftsliste auslagern
+    public static function getMannschaftFromName(array $mannschaften, string $name): ?Mannschaft{
+        foreach($mannschaften as $mannschaft){
+            if($mannschaft->getName() === $name){
+                return $mannschaft;
+            }
+        }
+        return null;
+    }
 }
 ?>

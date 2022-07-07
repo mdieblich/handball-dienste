@@ -31,13 +31,4 @@ class MannschaftDAO extends DAO{
     }
 }
 
-
-function getMannschaftFromName(array $mannschaften, string $name): ?Mannschaft{
-    foreach($mannschaften as $mannschaft){
-        if($mannschaft->getName() === $name){
-            return $mannschaft;
-        }
-    }
-    return null;
-}
 ?>
