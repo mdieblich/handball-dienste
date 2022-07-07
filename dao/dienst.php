@@ -1,21 +1,16 @@
 <?php
-require_once WP_PLUGIN_DIR."/dienstedienst/entity/dienst.php";
+require_once __DIR__."/DAO.php";
+require_once __DIR__."/../entity/Dienst.php";
 
-class DienstDAO{
+class DienstDAO extends DAO{
 
     public function loadAllDienste(string $whereClause="1=1", string $orderBy="id ASC"): array{
-        global $wpdb;
-  
-        $table_name = $wpdb->prefix . 'dienst';
-        $sql = "SELECT * FROM $table_name WHERE $whereClause ORDER BY $orderBy";
-        $result = $wpdb->get_results($sql, ARRAY_A);
+        $result = $this->fetchAll($whereClause, $orderBy);
       
         $dienste = array();
-        if (count($result) > 0) {
-            foreach($result as $dienst) {
-                $dienstObj = new Dienst($dienst);
-                $dienste[$dienstObj->getID()] = $dienstObj;
-            }
+        foreach($result as $dienst) {
+            $dienstObj = new Dienst($dienst);
+            $dienste[$dienstObj->getID()] = $dienstObj;
         }
         return $dienste;
     }
