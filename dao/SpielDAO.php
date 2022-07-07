@@ -25,19 +25,12 @@ class SpielDAO extends DAO{
     }
 
     public function loadSpiele(
-            string $whereClause="anwurf > subdate(current_date, 1)", 
+            string $where="anwurf > subdate(current_date, 1)", 
             string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft"
         ): array{
         
-        $whereClause .= " AND mannschaftsmeldung in (SELECT id FROM ".MannschaftsMeldungDAO::tableName($this->dbhandle)." WHERE aktiv=1)";
-        $result = $this->fetchAll($whereClause, $orderBy);
-        
-        $spiele = array();
-        foreach($result as $spiel) {
-            $spielObj = new Spiel($spiel);
-            $spiele[$spielObj->getID()] = $spielObj;
-        }
-        return $spiele;
+        $where .= " AND mannschaftsmeldung in (SELECT id FROM ".MannschaftsMeldungDAO::tableName($this->dbhandle)." WHERE aktiv=1)";
+        return $this->fetchAllObjects($where, $orderBy);
     }
 
     public function countSpiele(int $mannschaftsmeldung, int $mannschaftsID): int {
