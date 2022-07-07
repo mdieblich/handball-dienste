@@ -14,23 +14,23 @@ class MannschaftDAO extends DAO{
         }
         return $mannschaften;
     }
-}
-
-function loadMannschaftenMitMeldungen(): array{
-    $mannschaftDAO = new MannschaftDAO();
-    $mannschaften = $mannschaftDAO->loadMannschaften();
     
-    $mannschaftIDs = Mannschaft::getIDs($mannschaften);
-    $filter = "mannschaft in (".implode(", ", $mannschaftIDs).")";
+    public function loadMannschaftenMitMeldungen(): array{
+        $mannschaften = $this->loadMannschaften();
 
-    $meldungDAO = new MannschaftsMeldungDAO();
-    $meldungen = $meldungDAO->loadMannschaftsMeldungen($filter);
-    foreach($meldungen as $meldung){
-        $mannschaften[$meldung->getMannschaft()]->addMeldung($meldung);
+        $mannschaftIDs = Mannschaft::getIDs($mannschaften);
+        $filter = "mannschaft in (".implode(", ", $mannschaftIDs).")";
+        $meldungDAO = new MannschaftsMeldungDAO($this->dbhandle);
+        $meldungen = $meldungDAO->loadMannschaftsMeldungen($filter);
+
+        foreach($meldungen as $meldung){
+            $mannschaften[$meldung->getMannschaft()]->addMeldung($meldung);
+        }
+
+        return $mannschaften;
     }
-
-    return $mannschaften;
 }
+
 
 function getMannschaftFromName(array $mannschaften, string $name): ?Mannschaft{
     foreach($mannschaften as $mannschaft){

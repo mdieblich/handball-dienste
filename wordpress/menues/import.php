@@ -157,9 +157,11 @@ setInterval(function(){
     require_once __DIR__."/../dao/mannschaft.php";
     require_once __DIR__."/../dao/meisterschaft.php";
     require_once __DIR__."/../dao/SpielDAO.php";
-    $mannschaften = loadMannschaftenMitMeldungen();
-    
+    $mannschaftDAO = new MannschaftDAO();
     $spielDAO = new SpielDAO();
+    
+    $mannschaften = $mannschaftDAO->loadMannschaftenMitMeldungen();
+    
     global $wpdb;
     $meisterschaften = loadMeisterschaften("id in (SELECT meisterschaft FROM ".$wpdb->prefix."mannschaftsMeldung)");
     if(count($meisterschaften) === 0){
