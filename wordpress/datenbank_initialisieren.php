@@ -1,6 +1,9 @@
 <?php
 
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+require_once __DIR__.'/dao/MannschaftDAO.php';
+require_once __DIR__.'/dao/GegnerDAO.php';
+require_once __DIR__.'/dao/MeisterschaftDAO.php';
 require_once __DIR__.'/dao/MannschaftsMeldungDAO.php';
 require_once __DIR__.'/dao/SpielDAO.php';
 require_once __DIR__.'/dao/DienstDAO.php';
@@ -30,7 +33,7 @@ function dienste_datenbank_initialisieren() {
 }
 
 function dienste_mannschaft_initialisieren($dbhandle){
-    $table_name = $dbhandle->prefix . 'mannschaft';
+    $table_name = MannschaftDAO::tableName($dbhandle);
     $charset_collate = $dbhandle->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
@@ -42,11 +45,11 @@ function dienste_mannschaft_initialisieren($dbhandle){
         PRIMARY KEY (id)
     ) $charset_collate, ENGINE = InnoDB;";
 
-dbDelta( $sql );
+    dbDelta( $sql );
 }
 
 function dienste_meisterschaft_initialisieren($dbhandle){
-    $table_name = $dbhandle->prefix . 'meisterschaft';
+    $table_name = MeisterschaftDAO::tableName($dbhandle);
     $charset_collate = $dbhandle->get_charset_collate();
     
     $sql = "CREATE TABLE $table_name (
@@ -57,9 +60,6 @@ function dienste_meisterschaft_initialisieren($dbhandle){
     ) $charset_collate, ENGINE = InnoDB;";
 
     $result = dbDelta( $sql );
-    $message = var_export($result, true);
-    $myFile = fopen("Testdatei.txt", "w");
-    fwrite($myFile, $message);
 }
 
 function dienste_mannschaftsMeldung_initialisieren($dbhandle){
@@ -75,15 +75,15 @@ function dienste_mannschaftsMeldung_initialisieren($dbhandle){
         nuliga_liga_id INT NULL , 
         nuliga_team_id INT NULL , 
         PRIMARY KEY (id), 
-        FOREIGN KEY (meisterschaft) REFERENCES ".$dbhandle->prefix."meisterschaft(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (mannschaft) REFERENCES ".$dbhandle->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (meisterschaft) REFERENCES ".MeisterschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (mannschaft) REFERENCES ".MannschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );
 }
 
 function dienste_mannschaft_aktualisiern($dbhandle){
-    $table_name    = $dbhandle->prefix . 'mannschaft';
+    $table_name = MannschaftDAO::tableName($dbhandle);
     $sql = "ALTER TABLE $table_name 
         DROP meisterschaft, 
         DROP liga, 
@@ -94,7 +94,7 @@ function dienste_mannschaft_aktualisiern($dbhandle){
 }
 
 function dienste_gegner_initialisieren($dbhandle){
-    $table_name = $dbhandle->prefix . 'gegner';
+    $table_name = GegnerDAO::tableName($dbhandle);
     $charset_collate = $dbhandle->get_charset_collate();
     
     $sql = "CREATE TABLE $table_name (
@@ -112,7 +112,6 @@ function dienste_gegner_initialisieren($dbhandle){
 
 function dienste_spiele_initialisieren($dbhandle){
     $table_name = SpielDAO::tableName($dbhandle);
-    $table_name_meldung = MannschaftsMeldungDAO::tableName($dbhandle);
     $charset_collate = $dbhandle->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
@@ -126,9 +125,9 @@ function dienste_spiele_initialisieren($dbhandle){
         anwurf DATETIME NULL , 
         PRIMARY KEY (id), 
         KEY index_anwurf (anwurf),
-        FOREIGN KEY (mannschaftsmeldung) REFERENCES $table_name_meldung(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (mannschaft) REFERENCES ".$dbhandle->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (gegner) REFERENCES ".$dbhandle->prefix."gegner(id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (mannschaftsmeldung) REFERENCES ".MannschaftsMeldungDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (mannschaft) REFERENCES ".MannschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (gegner) REFERENCES ".GegnerDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );
@@ -145,7 +144,7 @@ function dienste_dienste_initialisieren($dbhandle){
         mannschaft INT NULL , 
         PRIMARY KEY (id),
         FOREIGN KEY (spiel) REFERENCES ".SpielDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (mannschaft) REFERENCES ".$dbhandle->prefix."mannschaft(id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (mannschaft) REFERENCES ".MannschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );
