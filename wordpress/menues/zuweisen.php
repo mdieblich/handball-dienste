@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__."/../entity/dienst.php";
 require_once __DIR__."/../entity/spieleliste.php";
+require_once __DIR__."/../dao/DienstDAO.php";
 
 $hook_zuweisen;
 function addDiensteZuweisenKonfiguration(){
@@ -26,14 +27,12 @@ function enqueue_dienste_js($hook){
 }
 
 function dienst_zuweisen(){
-    require_once __DIR__."/../dao/dienst.php";
     $dienstDAO = new DienstDAO();
     $dienstDAO->insertDienst($_POST['spiel'], $_POST['dienstart'], $_POST['mannschaft']);
     http_response_code(200);
     wp_die();
 }
 function dienst_entfernen(){
-    require_once __DIR__."/../dao/dienst.php";
     $dienstDAO = new DienstDAO();
     $dienstDAO->deleteDienst($_POST['spiel'], $_POST['dienstart'], $_POST['mannschaft']);
     http_response_code(200);

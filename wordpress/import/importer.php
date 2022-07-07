@@ -8,7 +8,7 @@ require_once __DIR__."/../dao/mannschaft.php";
 require_once __DIR__."/../dao/gegner.php";
 require_once __DIR__."/../dao/meisterschaft.php";
 require_once __DIR__."/../dao/SpielDAO.php";
-require_once __DIR__."/../dao/dienst.php";
+require_once __DIR__."/../dao/DienstDAO.php";
 
 require_once __DIR__."/../PHPMailer/NippesMailer.php";
 
