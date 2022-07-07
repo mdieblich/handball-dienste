@@ -4,7 +4,7 @@ require_once __DIR__."/DAO.php";
 
 class MeisterschaftDAO extends DAO {
 
-    public function loadMeisterschaften(string $where = "1=1", string $orderby = "id"): array{
+    public function loadMeisterschaften(string $where = "1=1", string $orderBy = "id"): array{
         $result = $this->fetchAll($where, $orderBy);
         
         $meisterschaften = array();
