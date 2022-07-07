@@ -1,7 +1,9 @@
 <?php
 
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+require_once __DIR__.'/dao/MannschaftsMeldungDAO.php';
 require_once __DIR__.'/dao/SpielDAO.php';
+require_once __DIR__.'/dao/DienstDAO.php';
 
 global $dienste_db_version;
 $dienste_db_version = '1.7';
@@ -133,7 +135,7 @@ function dienste_spiele_initialisieren($dbhandle){
 }
 
 function dienste_dienste_initialisieren($dbhandle){
-    $table_name = $dbhandle->prefix . 'dienst';
+    $table_name = DienstDAO::tableName($dbhandle);
     $charset_collate = $dbhandle->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
