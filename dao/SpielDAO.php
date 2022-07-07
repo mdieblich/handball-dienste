@@ -1,8 +1,9 @@
 <?php
+require_once __DIR__."/../entity/spiel.php";
+
 require_once __DIR__."/DAO.php";
 require_once __DIR__."/MannschaftsMeldungDAO.php";
-require_once WP_PLUGIN_DIR."/dienstedienst/entity/spiel.php";
-require_once WP_PLUGIN_DIR."/dienstedienst/dao/DienstDAO.php";
+require_once __DIR__."/DienstDAO.php";
 
 class SpielDAO extends DAO{
     // TODO function zum erstellen der DB-Tabelle
