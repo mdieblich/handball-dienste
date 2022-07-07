@@ -26,6 +26,7 @@ abstract class DAO{
         return $dbhandle->prefix.$table_suffix;
     }
 
+    // TODO ersetzen durch fetch2
     public function fetch(string $where): ?object {
         $sql = "SELECT * FROM ".static::tableName($this->dbhandle);
         if(isset($where)){
@@ -45,7 +46,7 @@ abstract class DAO{
         require_once __dir__."/../entity/$entityName.php";
         return new $entityName($array);
     }
-    
+
     public function fetch2(string $where): ?object {
         $sql = "SELECT * FROM ".static::tableName($this->dbhandle);
         if(isset($where)){
@@ -78,6 +79,7 @@ abstract class DAO{
         return $rp->getType()->getName() === "boolean";
     }
 
+    // TODO ersetzen durch fetchAll2
     public function fetchAll(string $where = null, string $orderBy = null): array{
         $sql = "SELECT * FROM ".self::tableName($this->dbhandle);
         if(isset($where)){
@@ -90,7 +92,7 @@ abstract class DAO{
         $rows = $this->dbhandle->get_results($sql, ARRAY_A);    
         $objects = array();
         foreach($rows as $row) {
-            $object = $this->createEntityFromArray($row);
+            $object = $this->createEntityBackedByArray($row);
             $objects[$object->getID()] = $object;
         }
         return $objects;
@@ -118,8 +120,14 @@ abstract class DAO{
         return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".self::tableName($this->dbhandle)." WHERE $whereClause");
     }
 
+    // TODO ersetzen durch insert2
     protected function insert(array $entity): int{
         $this->dbhandle->insert(self::tableName($this->dbhandle), $entity);
+        return $this->dbhandle->insert_id;
+    }
+    protected function insert2(object $entity): int{
+        $this->dbhandle->insert(self::tableName($this->dbhandle), (array) $entity);
+        $entity->id = $this->dbhandle->insert_id;
         return $this->dbhandle->insert_id;
     }
 
