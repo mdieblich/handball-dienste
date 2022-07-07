@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__."/../entity/dienst.php";
 require_once __DIR__."/../entity/spieleliste.php";
+require_once __DIR__."/../dao/MannschaftDAO.php";
+require_once __DIR__."/../dao/SpielDAO.php";
 require_once __DIR__."/../dao/DienstDAO.php";
 
 $hook_zuweisen;
@@ -40,12 +42,10 @@ function dienst_entfernen(){
 }
 
 function displayDiensteZuweisen(){
-    require_once __DIR__."/../dao/mannschaft.php";
-    require_once __DIR__."/../dao/SpielDAO.php";
     $mannschaftDAO = new MannschaftDAO();
     $gegnerDAO = new GegnerDAO();
     $spielDAO = new SpielDAO();
-    
+
     $mannschaften = $mannschaftDAO->loadMannschaften();
     $gegnerDAO->loadGegner();
     $alleGegner = $gegnerDAO->getAlleGegner();

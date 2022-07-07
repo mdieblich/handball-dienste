@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__."/../dao/MannschaftDAO.php";
+
 function addDiensteMannschaftsKonfiguration(){
     //add_submenu_page( '$parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
     $hook_mannschaften = add_submenu_page( 'dienste', 'Dienste - Mannschaften einrichten', 'Mannschaften', 'administrator', 'dienste-mannschaften', 'displayDiensteMannschaften');
@@ -58,8 +60,6 @@ function addDiensteMannschaftsKonfiguration(){
 }
 
 function displayDiensteMannschaften(){
-    
-    require_once __DIR__."/../dao/mannschaft.php";
     $mannschaftDAO = new MannschaftDAO();
     $mannschaften = $mannschaftDAO->loadMannschaften();
 
