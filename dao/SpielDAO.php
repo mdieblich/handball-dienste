@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."/../entity/spiel.php";
+require_once __DIR__."/../entity/Spiel.php";
 
 require_once __DIR__."/DAO.php";
 require_once __DIR__."/MannschaftsMeldungDAO.php";

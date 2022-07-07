@@ -3,9 +3,9 @@
 require_once __DIR__."/SpielAenderung.php";
 require_once __DIR__."/NuLigaSpiel.php";
 
-require_once __DIR__."/../entity/mannschaft.php";
-require_once __DIR__."/../entity/spiel.php";
-require_once __DIR__."/../entity/dienst.php";
+require_once __DIR__."/../entity/Mannschaft.php";
+require_once __DIR__."/../entity/Spiel.php";
+require_once __DIR__."/../entity/Dienst.php";
 require_once __DIR__."/../dao/GegnerDAO.php";
 
 class DienstAenderungsPlan{

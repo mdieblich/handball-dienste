@@ -1,5 +1,5 @@
 <?php
-require_once __dir__."/../entity/gegner.php";
+require_once __dir__."/../entity/Gegner.php";
 require_once __DIR__."/DAO.php";
 
 class GegnerDAO extends DAO{

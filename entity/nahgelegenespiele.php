@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."/spiel.php";
+require_once __DIR__."/Spiel.php";
 
 class NahgelegeneSpiele {
     public ?Spiel $vorher = null;

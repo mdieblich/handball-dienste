@@ -1,6 +1,6 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/spiel.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/dienstedienst/entity/Spiel.php";
 
 function checkSuccess(bool $success){
     $OK = "<div style='background-color:#bbffbb'>OK</div>";

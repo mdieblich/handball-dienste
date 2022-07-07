@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."/../entity/mannschaft.php";   // Für GESCHLECHT_W und GESCHLECHT_M
+require_once __DIR__."/../entity/Mannschaft.php";   // Für GESCHLECHT_W und GESCHLECHT_M
 require_once __DIR__."/../dao/GegnerDAO.php";
 
 function addDiensteGegnerKonfiguration(){

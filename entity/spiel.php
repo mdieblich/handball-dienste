@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."/dienst.php";
+require_once __DIR__."/Dienst.php";
 require_once __DIR__."/ZeitKlassen.php";
 
 class Spiel {

@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__."/entity/dienst.php";
+require_once __DIR__."/entity/Dienst.php";
 require_once __DIR__."/dao/MannschaftDAO.php";
 require_once __DIR__."/dao/GegnerDAO.php";
 
