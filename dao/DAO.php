@@ -52,8 +52,15 @@ abstract class DAO{
     }
 
     public function fetchAllObjects(string $where = null, string $orderBy = null): array{
-        $rows = $this->fetchAll($where, $orderBy);
-    
+        $sql = "SELECT * FROM ".self::tableName($this->dbhandle);
+        if(isset($where)){
+            $sql .= " WHERE $where";
+        } 
+        if(isset($orderBy)){
+            $sql .= " ORDER BY $orderBy";
+        }
+
+        $rows = $this->dbhandle->get_results($sql, ARRAY_A);    
         $objects = array();
         foreach($rows as $row) {
             $object = $this->createEntityFromArray($row);
