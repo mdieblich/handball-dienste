@@ -5,7 +5,7 @@ require_once __DIR__."/../entity/Dienst.php";
 class DienstDAO extends DAO{
 
     public function loadAllDienste(string $where=null, string $orderBy=null): array{
-        return $this->fetchAllObjects($where, $orderBy);
+        return $this->fetchAll($where, $orderBy);
     }
 
     public function insertDienst(int $spiel, string $dienstart, int $mannschaft){

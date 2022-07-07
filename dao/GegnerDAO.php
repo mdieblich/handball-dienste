@@ -18,7 +18,7 @@ class GegnerDAO extends DAO{
     }
 
     public function loadGegner(string $where = null, string $orderBy = "verein ASC, nummer ASC"): array{
-        $this->alleGegner = $this->fetchAllObjects($where, $orderBy);
+        $this->alleGegner = $this->fetchAll($where, $orderBy);
         return $this->alleGegner;
     }
 

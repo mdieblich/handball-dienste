@@ -30,7 +30,7 @@ class SpielDAO extends DAO{
         ): array{
         
         $where .= " AND mannschaftsmeldung in (SELECT id FROM ".MannschaftsMeldungDAO::tableName($this->dbhandle)." WHERE aktiv=1)";
-        return $this->fetchAllObjects($where, $orderBy);
+        return $this->fetchAll($where, $orderBy);
     }
 
     public function countSpiele(int $mannschaftsmeldung, int $mannschaftsID): int {
