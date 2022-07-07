@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__."/../import/importer.php";
 require_once __DIR__."/../dao/MannschaftDAO.php";
-require_once __DIR__."/../dao/meisterschaft.php";
+require_once __DIR__."/../dao/MeisterschaftDAO.php";
 require_once __DIR__."/../dao/MannschaftsMeldungDAO.php";
 require_once __DIR__."/../dao/SpielDAO.php";
 
