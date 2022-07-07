@@ -234,7 +234,6 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
     $spielDAO = new SpielDAO();
     $meisterschaften = $meisterschaftDAO->loadMeisterschaften();
     $mannschaften = $mannschaftService->loadMannschaftenMitMeldungen();
-    $gegnerDAO->loadGegner();
 
     $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaften, $gegnerDAO);
 
@@ -263,12 +262,12 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
                     $isHeimspiel = 0;
                     $gegnerName = $nuLigaSpiel->getHeimmannschaft();
                 }
-                $gegner_id = $gegnerDAO->findOrInsertGegner( 
+                $gegner = $gegnerDAO->findOrInsertGegner( 
                     $gegnerName, 
                     $mannschaft->getGeschlecht(), 
                     $mannschaftsMeldung->getLiga()
-                )->getID();
-                $spiel = $spielDAO->findSpiel ($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel);
+                );
+                $spiel = $spielDAO->findSpiel ($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner->id, $isHeimspiel);
                 var_dump($spiel);
                 if(isset($spiel)){
                     $hallenAenderung = ($spiel->getHalle() != $nuLigaSpiel->getHalle());
@@ -278,7 +277,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
                         $spielDAO->updateSpiel($spiel->getID(), $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
                     }
                 } else {
-                    $spielDAO->insertSpiel($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner_id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
+                    $spielDAO->insertSpiel($mannschaftsMeldung->getID(), $nuLigaSpiel->getSpielNr(), $mannschaft->getID(), $gegner->id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
                 }
             }
         }

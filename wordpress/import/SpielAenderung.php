@@ -15,13 +15,13 @@ class SpielAenderung{
 
     public function getBegegnungsbezeichnung(array $alleMannschaften, GegnerDAO $gegnerDAO): string{
         $message = "";
-        $mannschaft = $alleMannschaften[$this->alt->getMannschaft()]->getName();
-        $gegner = $gegnerDAO->findGegner($this->alt->getGegner())->getName();
+        $mannschaftsName = $alleMannschaften[$this->alt->getMannschaft()]->getName();
+        $gegnerName = $gegnerDAO->findGegner($this->alt->getGegner())->name();
         
         if($this->alt->isHeimspiel()){
-            return "HEIM $mannschaft vs. $gegner";
+            return "HEIM $mannschaftsName vs. $gegnerName";
         } else{
-            return "AUSWÄRTS $gegner vs. $mannschaft";
+            return "AUSWÄRTS $gegnerName vs. $mannschaftsName";
         }   
     }
 

@@ -120,7 +120,7 @@ foreach($spieleListe->getSpiele() as $spiel){
     $zelleMannschaft = "<td id=\"spiel-".$spiel->getID()."-mannschaft\">".$mannschaftDesSpiels->getName()."</td>";
     $zelleGegner = "<td "
         ."id=\"spiel-".$spiel->getID()."-gegner\" "
-        .($gegner->stelltSekretearBeiHeimspiel()?"title='Stellt Sekretär in deren Halle'":"")
+        .($gegner->stelltSekretaerBeiHeimspiel ? "title='Stellt Sekretär in deren Halle'" : "")
         .">".$gegner->getName()."</td>";
     if($spiel->isHeimspiel()){
         echo $zelleMannschaft;
@@ -237,14 +237,14 @@ foreach($spieleListe->getSpiele() as $spiel){
         // Zelleninhalt zusammenbauen
         $cellContent = "";
         if($spiel->isHeimspiel()){
-            if($gegner->stelltSekretearBeiHeimspiel()){
+            if($gegner->stelltSekretaerBeiHeimspiel){
                 $cellContent = $checkboxZeitnehmer.$checkboxSekretaer;
             } else {
                 $cellContent = $checkboxZeitnehmer;
             }
             $cellContent .= $checkboxCatering;
         } else {
-            if($gegner->stelltSekretearBeiHeimspiel()){
+            if($gegner->stelltSekretaerBeiHeimspiel){
                 $cellContent = "";
             } else {
                 $cellContent = $checkboxSekretaer;

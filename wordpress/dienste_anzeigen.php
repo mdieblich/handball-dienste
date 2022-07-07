@@ -77,13 +77,13 @@ function dienste_tabellen_ersetzen(array $matches){
             $anwurfZeit = "<span style='color:red'>$anwurfZeit</span>";
         }
         $halle = $spiel->getHalle();
-        $mannschaft = $mannschaften[$spiel->getMannschaft()]->getName();
-        $gegner = $alleGegner[$spiel->getGegner()]->getName();
-        $heim = $mannschaft;
-        $gast = $gegner;
+        $mannschaftsName = $mannschaften[$spiel->getMannschaft()]->getName();
+        $gegnerName = $alleGegner[$spiel->getGegner()]->getName();
+        $heim = $mannschaftsName;
+        $gast = $gegnerName;
         if(!$spiel->isHeimspiel()){
-            $heim = $gegner;
-            $gast = $mannschaft;
+            $heim = $gegnerName;
+            $gast = $mannschaftsName;
         }
         $spielzeile = 
             "<tr>"

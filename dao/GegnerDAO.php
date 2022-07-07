@@ -1,35 +1,27 @@
 <?php
-require_once __dir__."/../entity/Gegner.php";
+require_once __dir__."/../handball/Gegner.php";
 require_once __DIR__."/DAO.php";
 
 class GegnerDAO extends DAO{
 
     public function findGegner(int $id): ?Gegner{
-        return $this->fetch("id=$id");
+        return $this->fetch2("id=$id");
     }
 
     public function loadGegner(string $where = null, string $orderBy = "verein ASC, nummer ASC"): array{
-        return $this->fetchAll($where, $orderBy);
+        return $this->fetchAll2($where, $orderBy);
     }
 
     public function insertGegner(string $name, string $geschlecht, string $liga): Gegner{
 
-        $verein = $this->getVereinFromName($name);
-        $nummer = $this->getNummerFromName($name);
+        $gegner = new Gegner();
+        $gegner->verein = $this->getVereinFromName($name);
+        $gegner->nummer = $this->getNummerFromName($name);
+        $gegner->geschlecht = $geschlecht;
+        $gegner->liga = $liga;
 
-        $params = array(
-            'verein' => $verein,
-            'nummer' => $nummer,
-            'geschlecht' => $geschlecht,
-            'liga' => $liga
-        );
-
-        $params["id"] = $this->insert($params);
-
-        $newGegner = new Gegner($params);
-        $this->alleGegner[$newGegner->getID()] = $newGegner;
-
-        return $newGegner;
+        $this->insert2($gegner);
+        return $gegner;
     }
 
     private function getVereinFromName(string $name): string{
@@ -73,7 +65,7 @@ class GegnerDAO extends DAO{
         $verein = $this->getVereinFromName($name);
         $nummer = $this->getNummerFromName($name);
 
-        $gegner = $this->fetch("verein=\"$verein\" AND nummer=$nummer AND geschlecht=\"$geschlecht\" AND liga=\"$liga\"");
+        $gegner = $this->fetch2("verein=\"$verein\" AND nummer=$nummer AND geschlecht=\"$geschlecht\" AND liga=\"$liga\"");
         if(isset($gegner)){
             return $gegner;
             
