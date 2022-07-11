@@ -66,22 +66,27 @@ abstract class DAO{
         require_once __dir__."/../handball/$entityClassName.php";
         $entity = new $entityClassName();
         foreach($array as $key => $value){
-            if($this->isBooleanProperty($entityClassName, $key)){
+            $this->assignValue($entity, $key, $value);
+        }
+        return $entity;
+    }
+    private function assignValue($entity, $key, $value){
+        $rc = new ReflectionClass(static::entityClassName());
+        if(!$rc->hasProperty($key)){
+            // Relationen werden in der DB- als "XXX_id" abgebildet und sind somit nicht Teil der Klasse
+            $entity->$key = $value;
+            return;
+        }
+        $propertyType = $rc->getProperty($key)->getType();
+        if($propertyType->isBuiltin()){
+            if($propertyType->getName() === "boolean"){
                 $entity->$key = ($value != 0);
             }else{
                 $entity->$key = $value;
             }
+        } else if($propertyType->getName() === "DateTime"){
+            $entity->$key = DateTime::createFromFormat('Y-m-d H:i:s', $value);
         }
-        return $entity;
-    }
-    private function isBooleanProperty($entityClassName, $property): bool{
-        $rc = new ReflectionClass($entityClassName);
-        if(!$rc->hasProperty($property)){
-            // Relationen werden in der DB- als "XXX_id" abgebildet
-            return false;
-        }
-        $rp = $rc->getProperty($property);
-        return $rp->getType()->getName() === "boolean";
     }
 
     // TODO ersetzen durch fetchAll2
@@ -131,9 +136,25 @@ abstract class DAO{
         return $this->dbhandle->insert_id;
     }
     protected function insert2(object $entity): int{
-        $this->dbhandle->insert(self::tableName($this->dbhandle), (array) $entity);
+        $array = $this->entityToArray($entity);
+        $this->dbhandle->insert(self::tableName($this->dbhandle), $array);
         $entity->id = $this->dbhandle->insert_id;
         return $this->dbhandle->insert_id;
+    }
+
+    private function entityToArray($entity): array{
+        $array = (array) $entity;    
+        foreach($array as $key => $value){
+            $rc = new ReflectionClass(static::entityClassName());
+            if(!$rc->hasProperty($key)){
+                unset($array[$key]);
+            }
+            $propertyType = $rc->getProperty($key)->getType();
+            if($propertyType->getName() === "DateTime"){
+                $array[$key] = $value->format('Y-m-d H:i:s');
+            }
+        }
+        return $array;
     }
 
     protected function update(int $id, array $values){
