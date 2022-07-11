@@ -4,21 +4,18 @@ require_once __DIR__."/SpielAenderung.php";
 require_once __DIR__."/NuLigaSpiel.php";
 
 require_once __DIR__."/../handball/Mannschaft.php";
-require_once __DIR__."/../entity/Spiel.php";
-require_once __DIR__."/../entity/Dienst.php";
-require_once __DIR__."/../dao/GegnerDAO.php";
+require_once __DIR__."/../handball/Spiel.php";
+require_once __DIR__."/../handball/Dienst.php";
 
 class DienstAenderungsPlan{
     private DienstDAO $dao;
     private array $mannschaften;
-    private GegnerDAO $gegnerDAO;
     private $geanderteDienste = array();
     private $geanderteSpiele = array();
 
-    public function __construct(array $mannschaften, GegnerDAO $gegnerDAO){
+    public function __construct(array $mannschaften){
         $this->dao = new DienstDAO();
         $this->mannschaften = $mannschaften;
-        $this->gegnerDAO = $gegnerDAO;
         
         foreach($mannschaften as $mannschaft){
             $this->geanderteDienste[$mannschaft->id] = array();
@@ -26,10 +23,10 @@ class DienstAenderungsPlan{
     }
 
     public function registerSpielAenderung(Spiel $alt, NuLigaSpiel $neu){ 
-        $this->geanderteSpiele[$alt->getID()] = new SpielAenderung($alt, $neu);
-        $bisherigeDienste = $this->dao->loadAllDienste("spiel=".$alt->getID());
+        $this->geanderteSpiele[$alt->id] = new SpielAenderung($alt, $neu);
+        $bisherigeDienste = $this->dao->loadAllDienste("spiel_id=".$alt->id);
         foreach($bisherigeDienste as $dienst){
-            array_push($this->geanderteDienste[$dienst->getMannschaft()], $dienst);
+            array_push($this->geanderteDienste[$dienst->mannschaft_id], $dienst);
         }
     }
 
@@ -62,7 +59,7 @@ class DienstAenderungsPlan{
         foreach($spieleUndDienste as $spielID => $dienstarten){
             $spielAenderung = $this->geanderteSpiele[$spielID];
             $message .= "<div style='padding-left:2em'>";
-            $message .= "<b>".$spielAenderung->getBegegnungsbezeichnung($this->mannschaften, $this->gegnerDAO)."</b>";
+            $message .= "<b>".$spielAenderung->getBegegnungsbezeichnung()."</b>";
             $message .= "<ul>";
             $message .= "<li>ÄNDERUNG: ".$spielAenderung->getAenderung()."</li>";
             $message .= "<li>EURE DIENSTE: ".implode(", ", $dienstarten)."</li>";
@@ -81,11 +78,11 @@ class DienstAenderungsPlan{
         
         $spieleUndDienste = array();
         foreach($this->geanderteDienste[$mannschaft->id] as $dienst){
-            $spielID = $dienst->getSpiel();
+            $spielID = $dienst->spiel->id;
             if(empty($spieleUndDienste[$spielID])){
                 $spieleUndDienste[$spielID] = array();
             }
-            array_push($spieleUndDienste[$spielID], $dienst->getDienstart());
+            array_push($spieleUndDienste[$spielID], $dienst->dienstart);
         }
         return $spieleUndDienste;
     }

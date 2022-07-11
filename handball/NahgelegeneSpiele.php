@@ -20,7 +20,7 @@ class NahgelegeneSpiele {
         if(empty($spiel)) {
             return "null";
         }
-        return $spiel->getID();
+        return $spiel->id;
     }
 }
 ?>

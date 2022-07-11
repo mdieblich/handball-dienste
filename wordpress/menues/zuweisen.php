@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__."/../entity/Dienst.php";
-require_once __DIR__."/../entity/Spieleliste.php";
+require_once __DIR__."/../handball/Dienst.php";
+require_once __DIR__."/../handball/Spieleliste.php";
 require_once __DIR__."/../dao/MannschaftDAO.php";
 require_once __DIR__."/../dao/DienstDAO.php";
 
@@ -44,12 +44,10 @@ function dienst_entfernen(){
 
 function displayDiensteZuweisen(){
     $mannschaftDAO = new MannschaftDAO();
-    $gegnerDAO = new GegnerDAO();
     $spielService = new SpielService();
 
     $mannschaftsListe = $mannschaftDAO->loadMannschaften();
-    $alleGegner = $gegnerDAO->loadGegner();
-    $spieleListe = new SpieleListe( $spielService->loadSpieleMitDiensten() ); 
+    $spieleListe = $spielService->loadSpieleMitDiensten(); 
  ?>
 <div class="wrap">
     <div style="float:right; width: 200px; background-color:#ddddff; padding: 5px">
@@ -85,10 +83,10 @@ foreach($mannschaftsListe->mannschaften as $mannschaft){
 
 $vorherigesSpiel = null;
 $zeilenFarbePrimaer = true;
-foreach($spieleListe->getSpiele() as $spiel){
-    $anwurf = $spiel->getAnwurf();
-    $mannschaftDesSpiels = $mannschaftsListe->mannschaften[$spiel->getMannschaft()];
-    $gegner = $alleGegner[$spiel->getGegner()];
+foreach($spieleListe->spiele as $spiel){
+    $anwurf = $spiel->anwurf;
+    $mannschaftDesSpiels = $spiel->mannschaft;
+    $gegner = $spiel->gegner;
     $zeitnehmerDienst = $spiel->getDienst(Dienstart::ZEITNEHMER);
     $sekretaerDienst = $spiel->getDienst(Dienstart::SEKRETAER);
     $cateringDienst = $spiel->getDienst(Dienstart::CATERING);
@@ -102,9 +100,9 @@ foreach($spieleListe->getSpiele() as $spiel){
         $backgroundColor = "#ffffff";
     }
     echo "<tr style=\"background-color:$backgroundColor\" mannschaft=\"".$mannschaftDesSpiels->id."\">";
-    echo "<td>".$spiel->getSpielNr()."</td>";
+    echo "<td>".$spiel->spielNr."</td>";
     if(isset($anwurf)){
-        echo "<td id=\"spiel-".$spiel->getID()."-anwurf\">".$anwurf->format("d.m.Y ");
+        echo "<td id=\"spiel-".$spiel->id."-anwurf\">".$anwurf->format("d.m.Y ");
         $uhrzeit = $anwurf->format("H:i");
         if($uhrzeit !== "00:00"){
            echo $uhrzeit;
@@ -113,16 +111,16 @@ foreach($spieleListe->getSpiele() as $spiel){
         }
         echo "</td>";
     }else {
-        echo "<td id=\"spiel-".$spiel->getID()."-anwurf\">Termin offen</td>";
+        echo "<td id=\"spiel-".$spiel->id."-anwurf\">Termin offen</td>";
     }
-    echo "<td id=\"spiel-".$spiel->getID()."-halle\">".$spiel->getHalle()."</td>";
+    echo "<td id=\"spiel-".$spiel->id."-halle\">".$spiel->halle."</td>";
 
-    $zelleMannschaft = "<td id=\"spiel-".$spiel->getID()."-mannschaft\">".$mannschaftDesSpiels->getName()."</td>";
+    $zelleMannschaft = "<td id=\"spiel-".$spiel->id."-mannschaft\">".$mannschaftDesSpiels->getName()."</td>";
     $zelleGegner = "<td "
-        ."id=\"spiel-".$spiel->getID()."-gegner\" "
+        ."id=\"spiel-".$spiel->id."-gegner\" "
         .($gegner->stelltSekretaerBeiHeimspiel ? "title='Stellt Sekretär in deren Halle'" : "")
         .">".$gegner->getName()."</td>";
-    if($spiel->isHeimspiel()){
+    if($spiel->heimspiel){
         echo $zelleMannschaft;
         echo $zelleGegner;
     }
@@ -137,7 +135,7 @@ foreach($spieleListe->getSpiele() as $spiel){
         $textColor = "black";
         $tooltip = "";
         $nahgelegeneSpiele = $spieleListe->findNahgelegeneSpiele($spiel, $mannschaft);
-        if($spiel->getMannschaft() == $mannschaft->id){
+        if($spiel->mannschaft->id == $mannschaft->id){
             // TODO Warnung wegen eigenem Spiel bei Anklicken
             $textColor = "silver";
             $tooltip = "Eigenes Spiel";
@@ -153,7 +151,7 @@ foreach($spieleListe->getSpiele() as $spiel){
                 if($spiel->isAmGleichenTag($nahgelegeneSpiele->vorher)){
                     $highlightColorVorher = "#ffd";
                     $hatSpielAmGleichenTag = true;
-                    if($spiel->getHalle() == $nahgelegeneSpiele->vorher->getHalle()){
+                    if($spiel->halle == $nahgelegeneSpiele->vorher->halle){
                         $highlightColorVorher = "#dfd";
                         $hatSpielinGleicherHalle = true;
                     }
@@ -164,7 +162,7 @@ foreach($spieleListe->getSpiele() as $spiel){
                 if($spiel->isAmGleichenTag($nahgelegeneSpiele->nachher)){
                     $highlightColorNachher = "#ffd";
                     $hatSpielAmGleichenTag = true;
-                    if($spiel->getHalle() == $nahgelegeneSpiele->nachher->getHalle()){
+                    if($spiel->halle == $nahgelegeneSpiele->nachher->halle){
                         $highlightColorNachher = "#dfd";
                         $hatSpielinGleicherHalle = true;
                     }
@@ -180,10 +178,10 @@ foreach($spieleListe->getSpiele() as $spiel){
                 }
             }
         }
-        $checkBoxID = $spiel->getID()."-".$mannschaft->id;
+        $checkBoxID = $spiel->id."-".$mannschaft->id;
         $zeitnehmerChecked = "";
         if(isset($zeitnehmerDienst)){
-            if( $zeitnehmerDienst->getMannschaft() == $mannschaft->id){
+            if( $zeitnehmerDienst->mannschaft->id == $mannschaft->id){
                 // wir haben den Dienst!
                 $zeitnehmerChecked = "checked";
             }
@@ -194,15 +192,15 @@ foreach($spieleListe->getSpiele() as $spiel){
         }
         $checkboxZeitnehmer = 
             "<input type=\"checkbox\" ".
-            "name=\"Zeitnehmer-".$spiel->getID()."\"".
+            "name=\"Zeitnehmer-".$spiel->id."\"".
             "id=\"Zeitnehmer-$checkBoxID\" ".
-            "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::ZEITNEHMER."',".$mannschaft->id.", this.checked)\"".
+            "onclick=\"assignDienst(".$spiel->id.",'".Dienstart::ZEITNEHMER."',".$mannschaft->id.", this.checked)\"".
             " $zeitnehmerChecked>".
             "<label for=\"Zeitnehmer-$checkBoxID\">Z</label><br>";
             
         $sekretaerChecked = "";
         if(isset($sekretaerDienst)){
-            if($sekretaerDienst->getMannschaft() == $mannschaft->id){
+            if($sekretaerDienst->mannschaft->id == $mannschaft->id){
                 // wir haben den Dienst!
                 $sekretaerChecked = "checked";
             } else{
@@ -211,15 +209,15 @@ foreach($spieleListe->getSpiele() as $spiel){
             }
         }
         $checkboxSekretaer = "<input type=\"checkbox\" ".
-        "name=\"Sekretär-".$spiel->getID()."\"".
+        "name=\"Sekretär-".$spiel->id."\"".
         "id=\"Sekretär-$checkBoxID\" ".
-        "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::SEKRETAER."',".$mannschaft->id.", this.checked)\"".
+        "onclick=\"assignDienst(".$spiel->id.",'".Dienstart::SEKRETAER."',".$mannschaft->id.", this.checked)\"".
         " $sekretaerChecked>".
         "<label for=\"Sekretär-$checkBoxID\">S</label><br>";
             
         $cateringChecked = "";
         if(isset($cateringDienst)){
-            if($cateringDienst->getMannschaft() == $mannschaft->id){
+            if($cateringDienst->mannschaft->id == $mannschaft->id){
                 // wir haben den Dienst!
                 $cateringChecked = "checked";
             } else{
@@ -228,15 +226,15 @@ foreach($spieleListe->getSpiele() as $spiel){
             }
         }
         $checkboxCatering = "<input type=\"checkbox\" ".
-        "name=\"Catering-".$spiel->getID()."\"".
+        "name=\"Catering-".$spiel->id."\"".
         "id=\"Catering-$checkBoxID\" ".
-        "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::CATERING."',".$mannschaft->id.", this.checked)\"".
+        "onclick=\"assignDienst(".$spiel->id.",'".Dienstart::CATERING."',".$mannschaft->id.", this.checked)\"".
         " $cateringChecked>".
         "<label for=\"Catering-$checkBoxID\">C</label><br>";
 
         // Zelleninhalt zusammenbauen
         $cellContent = "";
-        if($spiel->isHeimspiel()){
+        if($spiel->heimspiel){
             if($gegner->stelltSekretaerBeiHeimspiel){
                 $cellContent = $checkboxZeitnehmer.$checkboxSekretaer;
             } else {

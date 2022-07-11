@@ -121,6 +121,7 @@ Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen",
     $mannschaftDAO = new MannschaftDAO();
     $mannschaftsListe = $mannschaftDAO->loadMannschaften();
     $nuligaBezeichnungen = $mannschaftsListe->createNuLigaMannschaftsBezeichnungen();
+    var_dump($nuligaBezeichnungen);
 
     $results = $wpdb->get_results("SELECT id, mannschaftsBezeichnung FROM $table_nuliga_mannschaftseinteilung WHERE mannschaft IS NULL", ARRAY_A);
     foreach($results as $nuliga_mannschaftsEinteilung){
@@ -205,7 +206,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
     $spielDAO = new SpielDAO();
     $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
 
-    $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaftsListe->mannschaften, $gegnerDAO);
+    $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaftsListe->mannschaften);
 
     foreach($mannschaftsListe->mannschaften as $mannschaft){
         
@@ -238,13 +239,13 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
                     $mannschaftsMeldung->liga
                 );
                 $spiel = $spielDAO->findSpiel ($mannschaftsMeldung->id, $nuLigaSpiel->getSpielNr(), $mannschaft->id, $gegner->id, $isHeimspiel);
-                var_dump($spiel);
+                
                 if(isset($spiel)){
-                    $hallenAenderung = ($spiel->getHalle() != $nuLigaSpiel->getHalle());
-                    $AnwurfAenderung = ($spiel->getAnwurf() != $nuLigaSpiel->getAnwurf());
+                    $hallenAenderung = ($spiel->halle != $nuLigaSpiel->getHalle());
+                    $AnwurfAenderung = ($spiel->anwurf != $nuLigaSpiel->getAnwurf());
                     if($hallenAenderung || $AnwurfAenderung){
                         $dienstAenderungsPlan->registerSpielAenderung($spiel, $nuLigaSpiel);
-                        $spielDAO->updateSpiel($spiel->getID(), $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
+                        $spielDAO->updateSpiel($spiel->id, $nuLigaSpiel->getHalle(), $nuLigaSpiel->anwurf);
                     }
                 } else {
                     $spielDAO->insertSpiel($mannschaftsMeldung->id, $nuLigaSpiel->getSpielNr(), $mannschaft->id, $gegner->id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());

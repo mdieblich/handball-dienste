@@ -150,8 +150,12 @@ abstract class DAO{
                 unset($array[$key]);
             }
             $propertyType = $rc->getProperty($key)->getType();
-            if($propertyType->getName() === "DateTime"){
-                $array[$key] = $value->format('Y-m-d H:i:s');
+            if(!$propertyType->isBuiltin()){
+                if($propertyType->getName() === "DateTime"){
+                    $array[$key] = $value->format('Y-m-d H:i:s');
+                }else{
+                    $array[$key."_id"] = $value->id;
+                }
             }
         }
         return $array;

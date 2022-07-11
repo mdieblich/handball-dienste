@@ -1,29 +1,28 @@
 <?php
-require_once __DIR__."/../handball/Mannschaft.php";
-require_once __DIR__."/Spiel.php";
-require_once __DIR__."/Dienst.php";
-require_once __DIR__."/Nahgelegenespiele.php";
 
-class SpieleListe {
-    private array $spiele;
+require_once __DIR__."/Spiel.php";
+require_once __DIR__."/Dienstart.php";
+require_once __DIR__."/Dienst.php";
+require_once __DIR__."/NahgelegeneSpiele.php";
+
+class SpieleListe{
+
+    public array $spiele;
 
     public function __construct(array $spiele){
         $this->spiele = $spiele;
     }
-
-    public function getSpiele(): array{
-        return $this->spiele;
-    }
-
+    
+    // TODO ersetzen durch getDiensteProMannschaft
     public function zaehleDienste(Mannschaft $mannschaft): array{
         $anzahl = array();
         foreach(Dienstart::values as $dienstart){
             $anzahl[$dienstart] = 0;
         }
         foreach($this->spiele as $spiel){
-            foreach($spiel->getDienste() as $dienst){
-                if($dienst->getMannschaft() == $mannschaft->id){
-                    $anzahl[$dienst->getDienstart()]++;
+            foreach($spiel->dienste as $dienst){
+                if($dienst->mannschaft->id == $mannschaft->id){
+                    $anzahl[$dienst->dienstart]++;
                 }
             }
         }
@@ -37,7 +36,7 @@ class SpieleListe {
         $distanzNachher = null;
         foreach($this->spiele as $spiel){
             // TODO das geht definitiv einfacher: Alle Spiele als Array in Mannschaft
-            if($spiel->getMannschaft() != $mannschaft->id){
+            if($spiel->mannschaft->id != $mannschaft->id){
                 continue;
             }
             $zeitlicheDistanz = $spiel->getZeitlicheDistanz($zuPruefendesSpiel);
@@ -62,6 +61,14 @@ class SpieleListe {
         }
         return $nahgelegeneSpiele;
     }
-
+    
+    public function getIDs(): array {
+        $ids = array();
+        foreach($this->spiele as $spiel){
+            $ids[] = $spiel->id;
+        }
+        return $ids;
+    }
 }
+
 ?>

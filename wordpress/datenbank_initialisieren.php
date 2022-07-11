@@ -116,18 +116,18 @@ function dienste_spiele_initialisieren($dbhandle){
 
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
-        mannschaftsmeldung INT NOT NULL,
-        spielnr INT NOT NULL , 
-        mannschaft INT NOT NULL , 
-        gegner INT NOT NULL , 
+        mannschaftsmeldung_id INT NOT NULL,
+        spielNr INT NOT NULL , 
+        mannschaft_id INT NOT NULL , 
+        gegner_id INT NOT NULL , 
         heimspiel TINYINT NOT NULL DEFAULT '0' , 
         halle int NOT NULL , 
         anwurf DATETIME NULL , 
         PRIMARY KEY (id), 
         KEY index_anwurf (anwurf),
-        FOREIGN KEY (mannschaftsmeldung) REFERENCES ".MannschaftsMeldungDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (mannschaft) REFERENCES ".MannschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (gegner) REFERENCES ".GegnerDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (mannschaftsmeldung_id) REFERENCES ".MannschaftsMeldungDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (mannschaft_id) REFERENCES ".MannschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (gegner_id) REFERENCES ".GegnerDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );
@@ -139,12 +139,12 @@ function dienste_dienste_initialisieren($dbhandle){
 
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
-        spiel INT NOT NULL , 
+        spiel_id INT NOT NULL , 
         dienstart VARCHAR(256) NOT NULL , 
-        mannschaft INT NULL , 
+        mannschaft_id INT NULL , 
         PRIMARY KEY (id),
-        FOREIGN KEY (spiel) REFERENCES ".SpielDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (mannschaft) REFERENCES ".MannschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (spiel_id) REFERENCES ".SpielDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (mannschaft_id) REFERENCES ".MannschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );

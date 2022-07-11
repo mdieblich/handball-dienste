@@ -39,17 +39,17 @@ class Mannschaft {
     
     function createNuLigaMannschaftsBezeichnung(): string{
         $bezeichnung = "";
-        if(empty($this->jugendKlasse)){
-            switch($this->geschlecht){
-                case GESCHLECHT_W: $bezeichnung = "Frauen"; break;
-                case GESCHLECHT_M: $bezeichnung = "Männer"; break;
-            }
-        }else {
+        if(!empty($this->jugendklasse)){
             switch($this->geschlecht){
                 case GESCHLECHT_W: $bezeichnung = "weibliche"; break;
                 case GESCHLECHT_M: $bezeichnung = "männliche"; break;
             }
-            $bezeichnung .= " Jugend ".strtoupper($this->jugendKlasse);
+            $bezeichnung .= " Jugend ".strtoupper($this->jugendklasse);
+        }else {
+            switch($this->geschlecht){
+                case GESCHLECHT_W: $bezeichnung = "Frauen"; break;
+                case GESCHLECHT_M: $bezeichnung = "Männer"; break;
+            }
         }
         if($this->nummer > 1){
             $bezeichnung .= " ";

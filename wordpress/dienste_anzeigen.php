@@ -1,10 +1,7 @@
 <?php
 
-require_once __DIR__."/entity/Dienst.php";
-
+require_once __DIR__."/handball/Dienst.php";
 require_once __DIR__."/dao/MannschaftDAO.php";
-require_once __DIR__."/dao/GegnerDAO.php";
-
 require_once __DIR__."/service/SpielService.php";
 
 function dienst_tabelle_einblenden($content){
@@ -36,8 +33,6 @@ function dienste_tabellen_ersetzen(array $matches){
             case "seit": $seit = getDateFromString($attributeValues[$i]); break;
         }
     }
-    $gegnerDAO = new GegnerDAO();
-    $alleGegner = $gegnerDAO->loadGegner();
 
     $kopfzeile = 
         "<tr style=\"background-color:#00407d; color:white\">"
@@ -53,8 +48,8 @@ function dienste_tabellen_ersetzen(array $matches){
 
     global $wpdb;
     // TODO DAOs für Tabellennamen nutzen
-    $table_name_spiel = $wpdb->prefix."spiel";
-    $table_name_dienst = $wpdb->prefix."dienst";
+    $table_name_spiel = SpielDAO::tableName($wpdb);
+    $table_name_dienst = DienstDAO::tableName($wpdb);
     $filter = array();
     if(isset($seit)){
         $filter[] = "anwurf > \"".$seit->format("Y-m-d")."\""; // nur aktuelle Spiele
@@ -62,27 +57,27 @@ function dienste_tabellen_ersetzen(array $matches){
         $filter[] = "anwurf > subdate(current_date, 1)"; // nur aktuelle Spiele
     }
     if(isset($fuerMannschaft)){
-        $filter[] = "$table_name_spiel.mannschaft=".$fuerMannschaft->id;
+        $filter[] = "$table_name_spiel.mannschaft_id=".$fuerMannschaft->id;
     }
     if(isset($vonMannschaft)){
-        $filter[] = "$table_name_spiel.id IN (SELECT spiel FROM ". $wpdb->prefix ."dienst WHERE $table_name_dienst.mannschaft=".$vonMannschaft->id.")";
+        $filter[] = "$table_name_spiel.id IN (SELECT spiel_id FROM ". $wpdb->prefix ."dienst WHERE $table_name_dienst.mannschaft_id=".$vonMannschaft->id.")";
     }
     $spielService = new SpielService();
-    $spiele = $spielService->loadSpieleMitDiensten(implode(" AND ", $filter)); 
+    $spieleListe = $spielService->loadSpieleMitDiensten(implode(" AND ", $filter)); 
 
     $tabellenkoerper = "";
-    foreach($spiele as $spiel){
-        $anwurfDatum = $spiel->getAnwurf()->format("d.m.Y");
-        $anwurfZeit = $spiel->getAnwurf()->format("H:i");
+    foreach($spieleListe->spiele as $spiel){
+        $anwurfDatum = $spiel->anwurf->format("d.m.Y");
+        $anwurfZeit = $spiel->anwurf->format("H:i");
         if($anwurfZeit === "00:00"){
             $anwurfZeit = "<span style='color:red'>$anwurfZeit</span>";
         }
-        $halle = $spiel->getHalle();
-        $mannschaftsName = $mannschaftsListe->mannschaften[$spiel->getMannschaft()]->getName();
-        $gegnerName = $alleGegner[$spiel->getGegner()]->getName();
+        $halle = $spiel->halle;
+        $mannschaftsName = $spiel->mannschaft->getName();
+        $gegnerName = $spiel->gegner->getName();
         $heim = $mannschaftsName;
         $gast = $gegnerName;
-        if(!$spiel->isHeimspiel()){
+        if(!$spiel->heimspiel){
             $heim = $gegnerName;
             $gast = $mannschaftsName;
         }
@@ -96,7 +91,7 @@ function dienste_tabellen_ersetzen(array $matches){
             $spielzeile .= "<td style=\"padding: 3px;\">";
             $dienst = $spiel->getDienst($dienstart);
             if(isset($dienst)){
-                $spielzeile .= $mannschaftsListe->mannschaften[$dienst->getMannschaft()]->getKurzname();
+                $spielzeile .= $dienst->mannschaft->getKurzname();
             }
             $spielzeile .= "</td>";
         }

@@ -5,6 +5,10 @@ class Spieler{
 
 class Mannschaft{
     public Spieler $kapitaen;
+    public DateTime $naechstesSpiel;
+    public int $anzahl;
+    public string $liga;
+    public bool $frauen;
 }
 
 $brings = new Spieler();
@@ -15,14 +19,10 @@ $nippes->kapitaen = $brings;
 $nippes->kapitaen_id = 3;
 
 $rc = new ReflectionClass ("Mannschaft");
-var_dump($rc->hasProperty("kapitaen"));
-var_dump($rc->hasProperty("kapitaen_id"));
-$rp_k = $rc->getProperty("kapitaen");
-var_dump($rp_k);
+$rp = $rc->getProperty("frauen");
+$typ = $rp->getType();
+$builtin =  $typ->isBuiltin();
+var_dump($builtin);
 
-$rp_ki = $rc->getProperty("kapitaen_id");
-var_dump($rp_ki);
-// $rp = new ReflectionProperty("Mannschaft", "kapitaen_id");
-// echo $rp->getType()->getName();
 ?>
 <br>ENDE

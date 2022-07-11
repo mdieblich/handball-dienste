@@ -1,8 +1,6 @@
 <?php
 require_once __DIR__."/NuLigaSpiel.php";
-
-require_once __DIR__."/../entity/Spiel.php";
-require_once __DIR__."/../dao/GegnerDAO.php";
+require_once __DIR__."/../handball/Spiel.php";
 
 class SpielAenderung{
     public Spiel $alt;
@@ -13,12 +11,12 @@ class SpielAenderung{
         $this->neu = $neu;
     }
 
-    public function getBegegnungsbezeichnung(array $alleMannschaften, GegnerDAO $gegnerDAO): string{
+    public function getBegegnungsbezeichnung(): string{
         $message = "";
-        $mannschaftsName = $alleMannschaften[$this->alt->getMannschaft()]->getName();
-        $gegnerName = $gegnerDAO->findGegner($this->alt->getGegner())->name();
+        $mannschaftsName = $this->alt->mannschaft->getName();
+        $gegnerName = $this->alt->gegner->getName();
         
-        if($this->alt->isHeimspiel()){
+        if($this->alt->heimspiel){
             return "HEIM $mannschaftsName vs. $gegnerName";
         } else{
             return "AUSWÄRTS $gegnerName vs. $mannschaftsName";
@@ -27,16 +25,16 @@ class SpielAenderung{
 
     public function getAenderung(): string{
         $message = "";
-        if($this->alt->getAnwurf() != $this->neu->getAnwurf()){
+        if($this->alt->anwurf != $this->neu->anwurf){
 
             $message .= "Anwurf "
-                ."von [".$this->alt->getAnwurf()->format("d.m.Y H:i")."]"
-                ." zu [".$this->neu->getAnwurf()->format("d.m.Y H:i")."]";
+                ."von [".$this->alt->anwurf->format("d.m.Y H:i")."]"
+                ." zu [".$this->neu->anwurf->format("d.m.Y H:i")."]";
         }
-        if($this->alt->getHalle() != $this->neu->getHalle()){
+        if($this->alt->halle != $this->neu->halle){
             $message .= " Halle "
-                ."von [".$this->alt->getHalle()."]"
-                ." zu [".$this->neu->getHalle()."]";
+                ."von [".$this->alt->halle."]"
+                ." zu [".$this->neu->halle."]";
         }
         return $message;
     }

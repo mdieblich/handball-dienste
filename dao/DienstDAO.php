@@ -1,26 +1,26 @@
 <?php
 require_once __DIR__."/DAO.php";
-require_once __DIR__."/../entity/Dienst.php";
+require_once __DIR__."/../handball/Dienst.php";
 
 class DienstDAO extends DAO{
 
     public function loadAllDienste(string $where=null, string $orderBy=null): array{
-        return $this->fetchAll($where, $orderBy);
+        return $this->fetchAll2($where, $orderBy);
     }
 
     public function insertDienst(int $spiel, string $dienstart, int $mannschaft){
         $params = array(
-            'spiel' => $spiel,
+            'spiel_id' => $spiel,
             'dienstart' => $dienstart,
-            'mannschaft' => $mannschaft
+            'mannschaft_id' => $mannschaft
         );
         $this->insert($params);
     }
     public function deleteDienst(int $spiel, string $dienstart, int $mannschaft){
         $params = array(
-            'spiel' => $spiel,
+            'spiel_id' => $spiel,
             'dienstart' => $dienstart,
-            'mannschaft' => $mannschaft
+            'mannschaft_id' => $mannschaft
         );
         $this->delete($params);
     }
