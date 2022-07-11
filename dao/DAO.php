@@ -11,10 +11,10 @@ abstract class DAO{
         }
     }
 
-    private static function entityName(): string{
+    private static function entityClassName(): string{
         $className = static::class;
-        $entityName = substr($className, 0, -3);
-        return $entityName;
+        $entityClassName = substr($className, 0, -3);
+        return $entityClassName;
     }
 
     public static function tableName($dbhandle = null): string{
@@ -22,7 +22,7 @@ abstract class DAO{
             global $wpdb;
             $dbhandle = $wpdb;
         }
-        $table_suffix = strtolower(static::entityName());
+        $table_suffix = strtolower(static::entityClassName());
         return $dbhandle->prefix.$table_suffix;
     }
 
@@ -42,9 +42,9 @@ abstract class DAO{
     }
 
     private function createEntityBackedByArray(array $array): object{
-        $entityName = static::entityName();
-        require_once __dir__."/../entity/$entityName.php";
-        return new $entityName($array);
+        $entityClassName = static::entityClassName();
+        require_once __dir__."/../entity/$entityClassName.php";
+        return new $entityClassName($array);
     }
 
     public function fetch2(string $where): ?object {
@@ -62,11 +62,11 @@ abstract class DAO{
     }
 
     private function createEntity($array): object{
-        $entityName = static::entityName();
-        require_once __dir__."/../handball/$entityName.php";
-        $entity = new $entityName();
+        $entityClassName = static::entityClassName();
+        require_once __dir__."/../handball/$entityClassName.php";
+        $entity = new $entityClassName();
         foreach($array as $key => $value){
-            if($this->isBooleanProperty($entity, $key)){
+            if($this->isBooleanProperty($entityClassName, $key)){
                 $entity->$key = ($value != 0);
             }else{
                 $entity->$key = $value;
@@ -74,8 +74,13 @@ abstract class DAO{
         }
         return $entity;
     }
-    private function isBooleanProperty($class, $property): bool{
-        $rp = new ReflectionProperty($class, $property);
+    private function isBooleanProperty($entityClassName, $property): bool{
+        $rc = new ReflectionClass($entityClassName);
+        if(!$rc->hasProperty($property)){
+            // Relationen werden in der DB- als "XXX_id" abgebildet
+            return false;
+        }
+        $rp = $rc->getProperty($property);
         return $rp->getType()->getName() === "boolean";
     }
 

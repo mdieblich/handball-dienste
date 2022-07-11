@@ -47,17 +47,17 @@ function displayDiensteZuweisen(){
     $gegnerDAO = new GegnerDAO();
     $spielService = new SpielService();
 
-    $mannschaften = $mannschaftDAO->loadMannschaften();
+    $mannschaftsListe = $mannschaftDAO->loadMannschaften();
     $alleGegner = $gegnerDAO->loadGegner();
     $spieleListe = new SpieleListe( $spielService->loadSpieleMitDiensten() ); 
  ?>
 <div class="wrap">
     <div style="float:right; width: 200px; background-color:#ddddff; padding: 5px">
     Filter
-    <?php foreach ($mannschaften as $mannschaft) { ?>
+    <?php foreach ($mannschaftsListe->mannschaften as $mannschaft) { ?>
         <br>
-        <input type="checkbox" name="filter-<?php echo $mannschaft->getID();?>" checked onchange="mannschaftDarstellen(<?php echo $mannschaft->getID();?>, this.checked)" id="filter-<?php echo $mannschaft->getID();?>">
-        <label for="filter-<?php echo $mannschaft->getID();?>"><?php echo $mannschaft->getKurzname(); ?></label>
+        <input type="checkbox" name="filter-<?= $mannschaft->id;?>" checked onchange="mannschaftDarstellen(<?= $mannschaft->id;?>, this.checked)" id="filter-<?= $mannschaft->id;?>">
+        <label for="filter-<?= $mannschaft->id;?>"><?= $mannschaft->getKurzname(); ?></label>
     <?php } ?>
     </div>
     <h1>Dienste zuweisen</h1>
@@ -70,12 +70,12 @@ function displayDiensteZuweisen(){
         <th>Heim</th>
         <th>Auswärts</th>
         <?php
-foreach($mannschaften as $mannschaft){
+foreach($mannschaftsListe->mannschaften as $mannschaft){
     $anzahlDienste = $spieleListe->zaehleDienste($mannschaft);
-    echo "<td mannschaft=\"".$mannschaft->getID()."\">".$mannschaft->getName()."<br>";
+    echo "<td mannschaft=\"".$mannschaft->id."\">".$mannschaft->getName()."<br>";
     foreach($anzahlDienste as $dienstart => $anzahl){
         $dienstartKurz = substr($dienstart,0,1);
-        echo $dienstartKurz.": <span id=\"$dienstartKurz-counter-".$mannschaft->getID()."\">".$anzahl."</span><br>"; 
+        echo $dienstartKurz.": <span id=\"$dienstartKurz-counter-".$mannschaft->id."\">".$anzahl."</span><br>"; 
     }
     echo "</td>";
 }
@@ -87,7 +87,7 @@ $vorherigesSpiel = null;
 $zeilenFarbePrimaer = true;
 foreach($spieleListe->getSpiele() as $spiel){
     $anwurf = $spiel->getAnwurf();
-    $mannschaftDesSpiels = $mannschaften[$spiel->getMannschaft()];
+    $mannschaftDesSpiels = $mannschaftsListe->mannschaften[$spiel->getMannschaft()];
     $gegner = $alleGegner[$spiel->getGegner()];
     $zeitnehmerDienst = $spiel->getDienst(Dienstart::ZEITNEHMER);
     $sekretaerDienst = $spiel->getDienst(Dienstart::SEKRETAER);
@@ -101,7 +101,7 @@ foreach($spieleListe->getSpiele() as $spiel){
     else {
         $backgroundColor = "#ffffff";
     }
-    echo "<tr style=\"background-color:$backgroundColor\" mannschaft=\"".$mannschaftDesSpiels->getID()."\">";
+    echo "<tr style=\"background-color:$backgroundColor\" mannschaft=\"".$mannschaftDesSpiels->id."\">";
     echo "<td>".$spiel->getSpielNr()."</td>";
     if(isset($anwurf)){
         echo "<td id=\"spiel-".$spiel->getID()."-anwurf\">".$anwurf->format("d.m.Y ");
@@ -130,14 +130,14 @@ foreach($spieleListe->getSpiele() as $spiel){
         echo $zelleGegner;
         echo $zelleMannschaft;
     }
-    foreach($mannschaften as $mannschaft){
+    foreach($mannschaftsListe->mannschaften as $mannschaft){
         $backgroundColor = "inherit";
         $highlightColorVorher = "#bbf";
         $highlightColorNachher = "#bbf";
         $textColor = "black";
         $tooltip = "";
         $nahgelegeneSpiele = $spieleListe->findNahgelegeneSpiele($spiel, $mannschaft);
-        if($spiel->getMannschaft() == $mannschaft->getID()){
+        if($spiel->getMannschaft() == $mannschaft->id){
             // TODO Warnung wegen eigenem Spiel bei Anklicken
             $textColor = "silver";
             $tooltip = "Eigenes Spiel";
@@ -180,10 +180,10 @@ foreach($spieleListe->getSpiele() as $spiel){
                 }
             }
         }
-        $checkBoxID = $spiel->getID()."-".$mannschaft->getID();
+        $checkBoxID = $spiel->getID()."-".$mannschaft->id;
         $zeitnehmerChecked = "";
         if(isset($zeitnehmerDienst)){
-            if( $zeitnehmerDienst->getMannschaft() == $mannschaft->getID()){
+            if( $zeitnehmerDienst->getMannschaft() == $mannschaft->id){
                 // wir haben den Dienst!
                 $zeitnehmerChecked = "checked";
             }
@@ -196,13 +196,13 @@ foreach($spieleListe->getSpiele() as $spiel){
             "<input type=\"checkbox\" ".
             "name=\"Zeitnehmer-".$spiel->getID()."\"".
             "id=\"Zeitnehmer-$checkBoxID\" ".
-            "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::ZEITNEHMER."',".$mannschaft->getID().", this.checked)\"".
+            "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::ZEITNEHMER."',".$mannschaft->id.", this.checked)\"".
             " $zeitnehmerChecked>".
             "<label for=\"Zeitnehmer-$checkBoxID\">Z</label><br>";
             
         $sekretaerChecked = "";
         if(isset($sekretaerDienst)){
-            if($sekretaerDienst->getMannschaft() == $mannschaft->getID()){
+            if($sekretaerDienst->getMannschaft() == $mannschaft->id){
                 // wir haben den Dienst!
                 $sekretaerChecked = "checked";
             } else{
@@ -213,13 +213,13 @@ foreach($spieleListe->getSpiele() as $spiel){
         $checkboxSekretaer = "<input type=\"checkbox\" ".
         "name=\"Sekretär-".$spiel->getID()."\"".
         "id=\"Sekretär-$checkBoxID\" ".
-        "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::SEKRETAER."',".$mannschaft->getID().", this.checked)\"".
+        "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::SEKRETAER."',".$mannschaft->id.", this.checked)\"".
         " $sekretaerChecked>".
         "<label for=\"Sekretär-$checkBoxID\">S</label><br>";
             
         $cateringChecked = "";
         if(isset($cateringDienst)){
-            if($cateringDienst->getMannschaft() == $mannschaft->getID()){
+            if($cateringDienst->getMannschaft() == $mannschaft->id){
                 // wir haben den Dienst!
                 $cateringChecked = "checked";
             } else{
@@ -230,7 +230,7 @@ foreach($spieleListe->getSpiele() as $spiel){
         $checkboxCatering = "<input type=\"checkbox\" ".
         "name=\"Catering-".$spiel->getID()."\"".
         "id=\"Catering-$checkBoxID\" ".
-        "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::CATERING."',".$mannschaft->getID().", this.checked)\"".
+        "onclick=\"assignDienst(".$spiel->getID().",'".Dienstart::CATERING."',".$mannschaft->id.", this.checked)\"".
         " $cateringChecked>".
         "<label for=\"Catering-$checkBoxID\">C</label><br>";
 
@@ -252,7 +252,7 @@ foreach($spieleListe->getSpiele() as $spiel){
         }
         
         echo "<td "
-            ."mannschaft=\"".$mannschaft->getID()."\""
+            ."mannschaft=\"".$mannschaft->id."\""
             ."style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" "
             ."title=\"$tooltip\" "
             ."onmouseover=\"highlightGames("

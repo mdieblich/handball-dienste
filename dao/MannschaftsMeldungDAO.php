@@ -1,35 +1,35 @@
 <?php
 require_once __DIR__."/DAO.php";
-require_once __DIR__."/../entity/MannschaftsMeldung.php";
+require_once __DIR__."/../handball/MannschaftsMeldung.php";
 
 class MannschaftsMeldungDAO extends DAO{
 
     public function loadMannschaftsMeldungen(string $where = null, string $orderBy = null): array{
-        return $this->fetchAll($where, $orderBy);
+        return $this->fetchAll2($where, $orderBy);
     }
     
     public function findMannschaftsMeldung(int $meisterschaft, int $mannschaft, string $liga): ?MannschaftsMeldung {
-        return $this->fetch("meisterschaft=$meisterschaft AND mannschaft=$mannschaft AND liga=\"$liga\"");
+        return $this->fetch2("meisterschaft_id=$meisterschaft AND mannschaft_id=$mannschaft AND liga=\"$liga\"");
     }
 
     public function meldungAktivieren(int $id, bool $aktiv){
         $this->update($id, array('aktiv' => $aktiv ? 1 : 0));
     }
 
-    public function updateMannschaftsMeldung(int $id, int $nuliga_liga_id, int $nuliga_team_id){
+    public function updateMannschaftsMeldung(int $id, int $nuligaLigaID, int $nuligaTeamID){
         $this->update($id, array(
-            'nuliga_liga_id' => $nuliga_liga_id, 
-            'nuliga_team_id' => $nuliga_team_id
+            'nuligaLigaID' => $nuligaLigaID, 
+            'nuligaTeamID' => $nuligaTeamID
         ));
     }
 
-    public function insertMannschaftsMeldung(int $meisterschaft, int $mannschaft, string $liga, int $nuliga_liga_id, int $nuliga_team_id){
+    public function insertMannschaftsMeldung(int $meisterschaft, int $mannschaft, string $liga, int $nuligaLigaID, int $nuligaTeamID){
         $values = array(
-            'meisterschaft' => $meisterschaft, 
-            'mannschaft' => $mannschaft, 
+            'meisterschaft_id' => $meisterschaft, 
+            'mannschaft_id' => $mannschaft, 
             'liga' => $liga, 
-            'nuliga_liga_id' => $nuliga_liga_id, 
-            'nuliga_team_id' => $nuliga_team_id
+            'nuligaLigaID' => $nuligaLigaID, 
+            'nuligaTeamID' => $nuligaTeamID
         );
         $this->insert($values);
     }

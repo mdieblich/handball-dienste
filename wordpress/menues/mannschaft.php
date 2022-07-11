@@ -61,7 +61,7 @@ function addDiensteMannschaftsKonfiguration(){
 
 function displayDiensteMannschaften(){
     $mannschaftDAO = new MannschaftDAO();
-    $mannschaften = $mannschaftDAO->loadMannschaften();
+    $mannschaftsListe = $mannschaftDAO->loadMannschaften();
 
     ?>
     <script>
@@ -75,54 +75,54 @@ function updateGeschlecht(jugendklasse, id){
     <div class="wrap">
         <h1>Mannschaften einrichten</h1>
         <div class="accordion" id="accordionMannschaften">
-            <?php foreach ($mannschaften as $mannschaft) { 
-            $bezeichnungW = ($mannschaft->getJugendklasse() !== null) ? "Mädchen" : "Damen";
-            $bezeichnungM = ($mannschaft->getJugendklasse() !== null) ? "Jungen"  : "Herren";
+            <?php foreach ($mannschaftsListe->mannschaften as $mannschaft) { 
+            $bezeichnungW = ($mannschaft->jugendklasse !== null) ? "Mädchen" : "Damen";
+            $bezeichnungM = ($mannschaft->jugendklasse !== null) ? "Jungen"  : "Herren";
             ?>
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="heading<?php echo $mannschaft->getID(); ?>">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $mannschaft->getID(); ?>" aria-expanded="true" aria-controls="collapse<?php echo $mannschaft->getID(); ?>">
-                            <?php echo $mannschaft->getName(); ?>
+                    <h2 class="accordion-header" id="heading<?= $mannschaft->id; ?>">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $mannschaft->id; ?>" aria-expanded="true" aria-controls="collapse<?= $mannschaft->id; ?>">
+                            <?= $mannschaft->getName(); ?>
                         </button>
                     </h2>
-                    <div id="collapse<?php echo $mannschaft->getID(); ?>" class="accordion-collapse collapse" aria-labelledby="heading<?php echo $mannschaft->getID(); ?>" data-bs-parent="#accordionMannschaften">
+                    <div id="collapse<?= $mannschaft->id; ?>" class="accordion-collapse collapse" aria-labelledby="heading<?= $mannschaft->id; ?>" data-bs-parent="#accordionMannschaften">
                         <div class="accordion-body">    
                             <form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
-                                <input type="hidden" name="mannschafts-id" value="<?php echo $mannschaft->getID(); ?>">
+                                <input type="hidden" name="mannschafts-id" value="<?= $mannschaft->id; ?>">
                                 <div class="row">
                                     <div class="col-2"><div class="form-floating">
-                                        <input title="Die fortlaufende Nummer, unter der eine Mannschaft gemeldet ist, also z.B. 1. Herren, 2. Herren, 3. Herren usw.." type="number" class="form-control" placeholder="XX" name="mannschafts-nummer" value="<?php echo $mannschaft->getNummer(); ?>" min="1" id="mannschafts-nummer-<?php echo $mannschaft->getID(); ?>">
-                                        <label for="mannschafts-nummer-<?php echo $mannschaft->getID(); ?>">Nummer</label>
+                                        <input title="Die fortlaufende Nummer, unter der eine Mannschaft gemeldet ist, also z.B. 1. Herren, 2. Herren, 3. Herren usw.." type="number" class="form-control" placeholder="XX" name="mannschafts-nummer" value="<?= $mannschaft->nummer; ?>" min="1" id="mannschafts-nummer-<?= $mannschaft->id; ?>">
+                                        <label for="mannschafts-nummer-<?= $mannschaft->id; ?>">Nummer</label>
                                     </div></div>
                                     <div class="col-2"><div class="form-floating">
-                                        <select name="mannschafts-geschlecht" class="form-select" id="mannschafts-geschlecht-<?php echo $mannschaft->getID(); ?>"> 
-                                            <option value="w" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_W) echo "selected"; ?> id="option-w-<?php echo $mannschaft->getID(); ?>"><?php echo $bezeichnungW; ?></option>
-                                            <option value="m" <?php if($mannschaft->getGeschlecht()==GESCHLECHT_M) echo "selected"; ?> id="option-m-<?php echo $mannschaft->getID(); ?>"><?php echo $bezeichnungM; ?></option>
+                                        <select name="mannschafts-geschlecht" class="form-select" id="mannschafts-geschlecht-<?= $mannschaft->id; ?>"> 
+                                            <option value="w" <?php if($mannschaft->geschlecht==GESCHLECHT_W) echo "selected"; ?> id="option-w-<?= $mannschaft->id; ?>"><?= $bezeichnungW; ?></option>
+                                            <option value="m" <?php if($mannschaft->geschlecht==GESCHLECHT_M) echo "selected"; ?> id="option-m-<?= $mannschaft->id; ?>"><?= $bezeichnungM; ?></option>
                                         </select> 
-                                        <label for="mannschafts-geschlecht-<?php echo $mannschaft->getID(); ?>">Geschlecht</label>
+                                        <label for="mannschafts-geschlecht-<?= $mannschaft->id; ?>">Geschlecht</label>
                                     </div></div>
                                     <div class="col-2"><div class="form-floating">
-                                        <input type="text" class="form-control" title='Sollte mit "A", "B"  usw. befüllt werden, wenn es sich um eine Jugend-Mannschaft handelt. Auch "Minis" ist möglich. Für Senioren-Mannschaften dies leer lassen.' placeholder="Mädels" name="mannschafts-jugendklasse" value="<?php echo $mannschaft->getJugendklasse(); ?>" onchange="updateGeschlecht(this.value, '<?php echo $mannschaft->getID(); ?>')" id="mannschafts-jugendklasse-<?php echo $mannschaft->getID(); ?>">
-                                        <label for="mannschafts-jugendklasse-<?php echo $mannschaft->getID(); ?>">Jugendklasse (optional)</label>
+                                        <input type="text" class="form-control" title='Sollte mit "A", "B"  usw. befüllt werden, wenn es sich um eine Jugend-Mannschaft handelt. Auch "Minis" ist möglich. Für Senioren-Mannschaften dies leer lassen.' placeholder="Mädels" name="mannschafts-jugendklasse" value="<?= $mannschaft->jugendklasse; ?>" onchange="updateGeschlecht(this.value, '<?= $mannschaft->id; ?>')" id="mannschafts-jugendklasse-<?= $mannschaft->id; ?>">
+                                        <label for="mannschafts-jugendklasse-<?= $mannschaft->id; ?>">Jugendklasse (optional)</label>
                                     </div></div>
                                     <div class="col-2"><div class="form-floating">
-                                        <input type="text" class="form-control" title='An diese Adresse werden Updates geschickt, wenn sich nach einem Import an den Spielen etwas ändert, bei denen diese Mannschaft Dienste hat.' placeholder="example@turnerkreisnippes.de" name="mannschafts-email" value="<?php echo $mannschaft->getEmail(); ?>" id="mannschafts-email-<?php echo $mannschaft->getID(); ?>">
-                                        <label for="mannschafts-email-<?php echo $mannschaft->getID(); ?>">E-Mail (optional)</label>
+                                        <input type="text" class="form-control" title='An diese Adresse werden Updates geschickt, wenn sich nach einem Import an den Spielen etwas ändert, bei denen diese Mannschaft Dienste hat.' placeholder="example@turnerkreisnippes.de" name="mannschafts-email" value="<?= $mannschaft->email; ?>" id="mannschafts-email-<?= $mannschaft->id; ?>">
+                                        <label for="mannschafts-email-<?= $mannschaft->id; ?>">E-Mail (optional)</label>
                                     </div></div>
                                     <div class="col">
                                     <?php
                                         settings_fields( 'alte_mannschaft' );
                                         do_settings_sections( 'dienste_mannschaft_aendern' );
-                                        wp_nonce_field('dienste-mannschaft-aendern_'.$mannschaft->getID());
+                                        wp_nonce_field('dienste-mannschaft-aendern_'.$mannschaft->id);
                                         submit_button( 'Ändern', 'btn btn-primary btn-lg' , 'submit-change', false);
                                     ?><!--input type="submit" class="btn btn-primary btn-lg" value="Ändern" //-->
                                     </form>
                                     <form action="<?php menu_page_url( 'dienste-mannschaften' ) ?>" method="post">
-                                        <input type="hidden" name="mannschafts-id" value="<?php echo $mannschaft->getID(); ?>">
+                                        <input type="hidden" name="mannschafts-id" value="<?= $mannschaft->id; ?>">
                                         <?php
                                         settings_fields( 'loesche_mannschaft' );
                                         do_settings_sections( 'dienste_mannschaft_loeschen' );
-                                        wp_nonce_field('dienste-mannschaft-loeschen_'.$mannschaft->getID());
+                                        wp_nonce_field('dienste-mannschaft-loeschen_'.$mannschaft->id);
                                         submit_button( 'Löschen', 'delete', 'submit-delete', false );
                                         ?>
                                         </form>

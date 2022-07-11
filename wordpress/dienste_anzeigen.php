@@ -21,7 +21,7 @@ function dienste_tabellen_ersetzen(array $matches){
     $innerHTML = $matches[2];
 
     $mannschaftDAO = new MannschaftDAO();
-    $mannschaften = $mannschaftDAO->loadMannschaften();
+    $mannschaftsListe = $mannschaftDAO->loadMannschaften();
 
     preg_match_all("/(\w*)=\"([\w\d\s\.]*)\"/", $attributString, $attributeArray);
     $attributeKeys = $attributeArray[1];
@@ -31,8 +31,8 @@ function dienste_tabellen_ersetzen(array $matches){
     $seit = null;
     for($i=0; $i<count($attributeKeys); $i++){
         switch($attributeKeys[$i]){
-            case "von" : $vonMannschaft  = Mannschaft::getMannschaftFromName($mannschaften, $attributeValues[$i]); break;
-            case "fuer": $fuerMannschaft = Mannschaft::getMannschaftFromName($mannschaften, $attributeValues[$i]); break;
+            case "von" : $vonMannschaft  = $mannschaftsListe->getMannschaftFromName($attributeValues[$i]); break;
+            case "fuer": $fuerMannschaft = $mannschaftsListe->getMannschaftFromName($attributeValues[$i]); break;
             case "seit": $seit = getDateFromString($attributeValues[$i]); break;
         }
     }
@@ -52,6 +52,7 @@ function dienste_tabellen_ersetzen(array $matches){
     $kopfzeile .= "</tr>";
 
     global $wpdb;
+    // TODO DAOs für Tabellennamen nutzen
     $table_name_spiel = $wpdb->prefix."spiel";
     $table_name_dienst = $wpdb->prefix."dienst";
     $filter = array();
@@ -61,10 +62,10 @@ function dienste_tabellen_ersetzen(array $matches){
         $filter[] = "anwurf > subdate(current_date, 1)"; // nur aktuelle Spiele
     }
     if(isset($fuerMannschaft)){
-        $filter[] = "$table_name_spiel.mannschaft=".$fuerMannschaft->getID();
+        $filter[] = "$table_name_spiel.mannschaft=".$fuerMannschaft->id;
     }
     if(isset($vonMannschaft)){
-        $filter[] = "$table_name_spiel.id IN (SELECT spiel FROM ". $wpdb->prefix ."dienst WHERE $table_name_dienst.mannschaft=".$vonMannschaft->getID().")";
+        $filter[] = "$table_name_spiel.id IN (SELECT spiel FROM ". $wpdb->prefix ."dienst WHERE $table_name_dienst.mannschaft=".$vonMannschaft->id.")";
     }
     $spielService = new SpielService();
     $spiele = $spielService->loadSpieleMitDiensten(implode(" AND ", $filter)); 
@@ -77,7 +78,7 @@ function dienste_tabellen_ersetzen(array $matches){
             $anwurfZeit = "<span style='color:red'>$anwurfZeit</span>";
         }
         $halle = $spiel->getHalle();
-        $mannschaftsName = $mannschaften[$spiel->getMannschaft()]->getName();
+        $mannschaftsName = $mannschaftsListe->mannschaften[$spiel->getMannschaft()]->getName();
         $gegnerName = $alleGegner[$spiel->getGegner()]->getName();
         $heim = $mannschaftsName;
         $gast = $gegnerName;
@@ -95,7 +96,7 @@ function dienste_tabellen_ersetzen(array $matches){
             $spielzeile .= "<td style=\"padding: 3px;\">";
             $dienst = $spiel->getDienst($dienstart);
             if(isset($dienst)){
-                $spielzeile .= $mannschaften[$dienst->getMannschaft()]->getKurzname();
+                $spielzeile .= $mannschaftsListe->mannschaften[$dienst->getMannschaft()]->getKurzname();
             }
             $spielzeile .= "</td>";
         }

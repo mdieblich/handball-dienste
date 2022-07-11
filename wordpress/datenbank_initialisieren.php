@@ -68,15 +68,15 @@ function dienste_mannschaftsMeldung_initialisieren($dbhandle){
 
     $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT , 
-        meisterschaft INT NOT NULL,
-        mannschaft INT NOT NULL , 
+        meisterschaft_id INT NOT NULL,
+        mannschaft_id INT NOT NULL , 
         liga VARCHAR(256) NULL , 
         aktiv TINYINT NOT NULL DEFAULT '1' , 
-        nuliga_liga_id INT NULL , 
-        nuliga_team_id INT NULL , 
+        nuligaLigaID INT NULL , 
+        nuligaTeamID INT NULL , 
         PRIMARY KEY (id), 
-        FOREIGN KEY (meisterschaft) REFERENCES ".MeisterschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (mannschaft) REFERENCES ".MannschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (meisterschaft_id) REFERENCES ".MeisterschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (mannschaft_id) REFERENCES ".MannschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );

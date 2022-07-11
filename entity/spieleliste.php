@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."/Mannschaft.php";
+require_once __DIR__."/../handball/Mannschaft.php";
 require_once __DIR__."/Spiel.php";
 require_once __DIR__."/Dienst.php";
 require_once __DIR__."/Nahgelegenespiele.php";
@@ -22,7 +22,7 @@ class SpieleListe {
         }
         foreach($this->spiele as $spiel){
             foreach($spiel->getDienste() as $dienst){
-                if($dienst->getMannschaft() == $mannschaft->getID()){
+                if($dienst->getMannschaft() == $mannschaft->id){
                     $anzahl[$dienst->getDienstart()]++;
                 }
             }
@@ -37,7 +37,7 @@ class SpieleListe {
         $distanzNachher = null;
         foreach($this->spiele as $spiel){
             // TODO das geht definitiv einfacher: Alle Spiele als Array in Mannschaft
-            if($spiel->getMannschaft() != $mannschaft->getID()){
+            if($spiel->getMannschaft() != $mannschaft->id){
                 continue;
             }
             $zeitlicheDistanz = $spiel->getZeitlicheDistanz($zuPruefendesSpiel);

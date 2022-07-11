@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."/Mannschaft.php";
+require_once __DIR__."/../handball/Mannschaft.php";
 
 class Dienstart{
     const ZEITNEHMER = "Zeitnehmer";

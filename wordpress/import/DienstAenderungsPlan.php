@@ -3,7 +3,7 @@
 require_once __DIR__."/SpielAenderung.php";
 require_once __DIR__."/NuLigaSpiel.php";
 
-require_once __DIR__."/../entity/Mannschaft.php";
+require_once __DIR__."/../handball/Mannschaft.php";
 require_once __DIR__."/../entity/Spiel.php";
 require_once __DIR__."/../entity/Dienst.php";
 require_once __DIR__."/../dao/GegnerDAO.php";
@@ -21,7 +21,7 @@ class DienstAenderungsPlan{
         $this->gegnerDAO = $gegnerDAO;
         
         foreach($mannschaften as $mannschaft){
-            $this->geanderteDienste[$mannschaft->getID()] = array();
+            $this->geanderteDienste[$mannschaft->id] = array();
         }
     }
 
@@ -40,7 +40,7 @@ class DienstAenderungsPlan{
             }
             
             $mail = init_nippes_mailer();
-            $mail->addAddress($mannschaft->getEmail());
+            $mail->addAddress($mannschaft->email);
             $mail->Subject = "Spielplanänderungen, bei denen ihr Dienste habt";
             $mail->Body = $this->createMessageForMannschaft($mannschaft);
             $mail->isHTML(true);
@@ -49,7 +49,7 @@ class DienstAenderungsPlan{
     }
 
     private function hatKeineGeandertenDienste(Mannschaft $mannschaft): bool{
-        return count($this->geanderteDienste[$mannschaft->getID()]) == 0;
+        return count($this->geanderteDienste[$mannschaft->id]) == 0;
     }
 
     private function createMessageForMannschaft(Mannschaft $mannschaft): string{
@@ -80,7 +80,7 @@ class DienstAenderungsPlan{
     private function getGeanderteSpieleUndDienste(Mannschaft $mannschaft): array{
         
         $spieleUndDienste = array();
-        foreach($this->geanderteDienste[$mannschaft->getID()] as $dienst){
+        foreach($this->geanderteDienste[$mannschaft->id] as $dienst){
             $spielID = $dienst->getSpiel();
             if(empty($spieleUndDienste[$spielID])){
                 $spieleUndDienste[$spielID] = array();

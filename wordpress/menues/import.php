@@ -160,12 +160,10 @@ setInterval(function(){
 <?php
     $mannschaftService = new MannschaftService();
     $spielDAO = new SpielDAO();
-    $meisterschaftDAO = new MeisterschaftDAO();
 
-    $mannschaften = $mannschaftService->loadMannschaftenMitMeldungen();
+    $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
     
-    global $wpdb;
-    $meisterschaften = $meisterschaftDAO->loadMeisterschaften("id in (SELECT meisterschaft FROM ".MannschaftsMeldungDAO::tableName($wpdb).")");
+    $meisterschaften = $mannschaftsListe->getMeisterschaften();
     if(count($meisterschaften) === 0){
         echo "<div class='card'><i>Keine Meisterschaften gefunden</i></div>";
     }
@@ -187,21 +185,21 @@ setInterval(function(){
                             <th>Spiele</th>
                             <th>aktiv</th>
                         </tr>            
-                        <?php foreach($mannschaften as $mannschaft){  
-                            $meisterschaftsMeldungen = $mannschaft->getMeldungenFuerMeisterschaft($meisterschaft->id);
+                        <?php foreach($mannschaftsListe->mannschaften as $mannschaft){  
+                            $meisterschaftsMeldungen = $mannschaft->getMeldungenFuerMeisterschaft($meisterschaft);
                             if(count($meisterschaftsMeldungen) === 0){
                                 continue;
                             }
                             foreach ($meisterschaftsMeldungen as $meldung) {
-                                $anzahlSpiele = $spielDAO->countSpiele($meldung->getID(), $mannschaft->getID());
-                                $input_id = "aktiv_".$meldung->getID();
-                                $checked = $meldung->isAktiv()?"checked":""; 
+                                $anzahlSpiele = $spielDAO->countSpiele($meldung->id, $mannschaft->id);
+                                $input_id = "aktiv_".$meldung->id;
+                                $checked = $meldung->aktiv?"checked":""; 
                                 echo "<tr>"
                                     ."<td>".$mannschaft->getName()."</td>"
-                                    ."<td>".$meldung->getLiga()   ."</td>"
+                                    ."<td>".$meldung->liga   ."</td>"
                                     ."<td>".$anzahlSpiele         ."</td>"
                                     ."<td>"
-                                        ."<input type=\"checkbox\" id=\"$input_id\" $checked onClick=\"meldungAktivieren(".$meldung->getID().", this.checked)\">"
+                                        ."<input type=\"checkbox\" id=\"$input_id\" $checked onClick=\"meldungAktivieren(".$meldung->id.", this.checked)\">"
                                     ."</td>"
                                     ."</tr>";
                             }
