@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__."/Dienst.php";
-require_once __DIR__."/ZeitKlassen.php";
+require_once __DIR__."/../zeit/ZeitRaum.php";
+require_once __DIR__."/../zeit/ZeitlicheDistanz.php";
 
 class Spiel {
 

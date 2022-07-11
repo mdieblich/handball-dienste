@@ -19,6 +19,7 @@ cp -r ../handball dienstedienst
 cp -r ../entity dienstedienst
 cp -r ../dao dienstedienst
 cp -r ../service dienstedienst
+cp -r ../zeit dienstedienst
 
 # 3. Zippen
 ./7za.exe a -r dienstedienst.zip dienstedienst
