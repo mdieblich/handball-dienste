@@ -105,7 +105,7 @@ abstract class DAO{
         return "FOREIGN KEY (".$property->name."_id) REFERENCES ".static::classToTableName($propertyType->getName(), $dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE";
     }
 
-    public function fetch2(string $where): ?object {
+    public function fetch(string $where): ?object {
         $sql = "SELECT * FROM ".static::tableName($this->dbhandle);
         if(isset($where)){
             $sql .= " WHERE $where";

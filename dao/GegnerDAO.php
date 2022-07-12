@@ -5,7 +5,7 @@ require_once __DIR__."/DAO.php";
 class GegnerDAO extends DAO{
 
     public function findGegner(int $id): ?Gegner{
-        return $this->fetch2("id=$id");
+        return $this->fetch("id=$id");
     }
 
     public function loadGegner(string $where = null, string $orderBy = "verein ASC, nummer ASC"): array{
@@ -66,7 +66,7 @@ class GegnerDAO extends DAO{
         $verein = $this->getVereinFromName($name);
         $nummer = $this->getNummerFromName($name);
 
-        $gegner = $this->fetch2("verein=\"$verein\" AND nummer=$nummer AND geschlecht=\"$geschlecht\" AND liga=\"$liga\"");
+        $gegner = $this->fetch("verein=\"$verein\" AND nummer=$nummer AND geschlecht=\"$geschlecht\" AND liga=\"$liga\"");
         if(isset($gegner)){
             return $gegner;
             

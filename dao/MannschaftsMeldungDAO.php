@@ -9,7 +9,7 @@ class MannschaftsMeldungDAO extends DAO{
     }
     
     public function findMannschaftsMeldung(int $meisterschaft, int $mannschaft, string $liga): ?MannschaftsMeldung {
-        return $this->fetch2("meisterschaft_id=$meisterschaft AND mannschaft_id=$mannschaft AND liga=\"$liga\"");
+        return $this->fetch("meisterschaft_id=$meisterschaft AND mannschaft_id=$mannschaft AND liga=\"$liga\"");
     }
 
     public function meldungAktivieren(int $id, bool $aktiv){
