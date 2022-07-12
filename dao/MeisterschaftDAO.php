@@ -15,7 +15,7 @@ class MeisterschaftDAO extends DAO {
         $meisterschaft->name = $name;
         
         $this->insert2($meisterschaft);
-        return new Meisterschaft($values);
+        return $meisterschaft;
     }
 }
 
