@@ -41,23 +41,25 @@ class Spiel{
         if(empty($this->anwurf)){
             return null;
         }
-        return  $this->anwurf->add(new DateInterval(self::SPIELDAUER));
+        $anwurfCopy = clone $this->anwurf;
+        return $anwurfCopy->add(new DateInterval(self::SPIELDAUER));
     }
-
+    
     public function getSpielzeit(): ?ZeitRaum {
         if(empty($this->anwurf)){
             return null;
         }
         return new Zeitraum($this->anwurf, $this->getSpielEnde());
     }
-
+    
     public function getAbfahrt(): ?DateTime {
         if(empty($this->anwurf)){
             return null;
         }
-        $abfahrt = $this->anwurf->sub(new DateInterval(self::VORBEREITUNG_VOR_ANWURF));
+        $anwurfCopy = clone $this->anwurf;
+        $abfahrt = $anwurfCopy->sub(new DateInterval(self::VORBEREITUNG_VOR_ANWURF));
         if(!$this->heimspiel){
-            $abfahrt = $abfahrt->sub(new DateInterval(self::FAHRTZEIT_AUSWAERTS));
+            $abfahrt->sub(new DateInterval(self::FAHRTZEIT_AUSWAERTS));
         }
         return $abfahrt;
     }
