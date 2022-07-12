@@ -33,52 +33,17 @@ function dienste_datenbank_initialisieren() {
 }
 
 function dienste_mannschaft_initialisieren($dbhandle){
-    $table_name = MannschaftDAO::tableName($dbhandle);
-    $charset_collate = $dbhandle->get_charset_collate();
-
-    $sql = "CREATE TABLE $table_name (
-        id INT NOT NULL AUTO_INCREMENT , 
-        nummer INT NOT NULL , 
-        geschlecht enum('m','w') NOT NULL, 
-        jugendklasse VARCHAR(256) NULL, 
-        email VARCHAR(1024) NULL ,
-        PRIMARY KEY (id)
-    ) $charset_collate, ENGINE = InnoDB;";
-
+    $sql = MannschaftDAO::tableCreation($dbhandle);
     dbDelta( $sql );
 }
 
 function dienste_meisterschaft_initialisieren($dbhandle){
-    $table_name = MeisterschaftDAO::tableName($dbhandle);
-    $charset_collate = $dbhandle->get_charset_collate();
-    
-    $sql = "CREATE TABLE $table_name (
-        id INT NOT NULL AUTO_INCREMENT , 
-        kuerzel VARCHAR(256) NOT NULL,
-        name VARCHAR(1024) NOT NULL,
-        PRIMARY KEY (id)
-    ) $charset_collate, ENGINE = InnoDB;";
-
+    $sql = MeisterschaftDAO::tableCreation($dbhandle);
     $result = dbDelta( $sql );
 }
 
 function dienste_mannschaftsMeldung_initialisieren($dbhandle){
-    $table_name = MannschaftsMeldungDAO::tableName($dbhandle);
-    $charset_collate = $dbhandle->get_charset_collate();
-
-    $sql = "CREATE TABLE $table_name (
-        id INT NOT NULL AUTO_INCREMENT , 
-        meisterschaft_id INT NOT NULL,
-        mannschaft_id INT NOT NULL , 
-        liga VARCHAR(256) NULL , 
-        aktiv TINYINT NOT NULL DEFAULT '1' , 
-        nuligaLigaID INT NULL , 
-        nuligaTeamID INT NULL , 
-        PRIMARY KEY (id), 
-        FOREIGN KEY (meisterschaft_id) REFERENCES ".MeisterschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (mannschaft_id) REFERENCES ".MannschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE
-    ) $charset_collate, ENGINE = InnoDB;";
-
+    $sql = MannschaftsMeldungDAO::tableCreation($dbhandle);
     dbDelta( $sql );
 }
 
@@ -94,59 +59,17 @@ function dienste_mannschaft_aktualisiern($dbhandle){
 }
 
 function dienste_gegner_initialisieren($dbhandle){
-    $table_name = GegnerDAO::tableName($dbhandle);
-    $charset_collate = $dbhandle->get_charset_collate();
-    
-    $sql = "CREATE TABLE $table_name (
-        id INT NOT NULL AUTO_INCREMENT , 
-        verein VARCHAR(256) NOT NULL ,
-        nummer INT NOT NULL ,
-        geschlecht enum('m','w') NOT NULL, 
-        liga VARCHAR(256) NULL , 
-        stelltSekretaerBeiHeimspiel TINYINT NOT NULL DEFAULT '0' , 
-        PRIMARY KEY (id)
-    ) $charset_collate, ENGINE = InnoDB;";
-    
+    $sql = GegnerDAO::tableCreation($dbhandle);
     dbDelta( $sql );
 }
 
 function dienste_spiele_initialisieren($dbhandle){
-    $table_name = SpielDAO::tableName($dbhandle);
-    $charset_collate = $dbhandle->get_charset_collate();
-
-    $sql = "CREATE TABLE $table_name (
-        id INT NOT NULL AUTO_INCREMENT , 
-        mannschaftsmeldung_id INT NOT NULL,
-        spielNr INT NOT NULL , 
-        mannschaft_id INT NOT NULL , 
-        gegner_id INT NOT NULL , 
-        heimspiel TINYINT NOT NULL DEFAULT '0' , 
-        halle int NOT NULL , 
-        anwurf DATETIME NULL , 
-        PRIMARY KEY (id), 
-        KEY index_anwurf (anwurf),
-        FOREIGN KEY (mannschaftsmeldung_id) REFERENCES ".MannschaftsMeldungDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (mannschaft_id) REFERENCES ".MannschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (gegner_id) REFERENCES ".GegnerDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE
-    ) $charset_collate, ENGINE = InnoDB;";
-
+    $sql = SpielDAO::tableCreation($dbhandle);
     dbDelta( $sql );
 }
 
 function dienste_dienste_initialisieren($dbhandle){
-    $table_name = DienstDAO::tableName($dbhandle);
-    $charset_collate = $dbhandle->get_charset_collate();
-
-    $sql = "CREATE TABLE $table_name (
-        id INT NOT NULL AUTO_INCREMENT , 
-        spiel_id INT NOT NULL , 
-        dienstart VARCHAR(256) NOT NULL , 
-        mannschaft_id INT NULL , 
-        PRIMARY KEY (id),
-        FOREIGN KEY (spiel_id) REFERENCES ".SpielDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (mannschaft_id) REFERENCES ".MannschaftDAO::tableName($dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE
-    ) $charset_collate, ENGINE = InnoDB;";
-
+    $sql = DienstDAO::tableCreation($dbhandle);
     dbDelta( $sql );
 }
 

@@ -19,10 +19,10 @@ $nippes->kapitaen = $brings;
 $nippes->kapitaen_id = 3;
 
 $rc = new ReflectionClass ("Mannschaft");
-$rp = $rc->getProperty("frauen");
-$typ = $rp->getType();
-$builtin =  $typ->isBuiltin();
-var_dump($builtin);
+foreach($rc->getProperties() as $rp){
+    $typ = $rp->getType();
+    echo $typ->getName()."<br>";
+}
 
 ?>
 <br>ENDE
