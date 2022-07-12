@@ -105,26 +105,6 @@ abstract class DAO{
         return "FOREIGN KEY (".$property->name."_id) REFERENCES ".static::classToTableName($propertyType->getName(), $dbhandle)."(id) ON DELETE CASCADE ON UPDATE CASCADE";
     }
 
-    // TODO ersetzen durch fetch2
-    public function fetch(string $where): ?object {
-        $sql = "SELECT * FROM ".static::tableName($this->dbhandle);
-        if(isset($where)){
-            $sql .= " WHERE $where";
-        }
-
-        $array = $this->dbhandle->get_row($sql, ARRAY_A);
-        if(empty($array)){
-            return null;
-        }
-
-        return $this->createEntityBackedByArray($array);
-    }
-
-    private function createEntityBackedByArray(array $array): object{
-        $entityClassName = static::entityClassName();
-        return new $entityClassName($array);
-    }
-
     public function fetch2(string $where): ?object {
         $sql = "SELECT * FROM ".static::tableName($this->dbhandle);
         if(isset($where)){
@@ -164,25 +144,6 @@ abstract class DAO{
         } else if($propertyType->getName() === "DateTime"){
             $entity->$key = DateTime::createFromFormat('Y-m-d H:i:s', $value);
         }
-    }
-
-    // TODO ersetzen durch fetchAll2
-    public function fetchAll(string $where = null, string $orderBy = null): array{
-        $sql = "SELECT * FROM ".self::tableName($this->dbhandle);
-        if(isset($where)){
-            $sql .= " WHERE $where";
-        } 
-        if(isset($orderBy)){
-            $sql .= " ORDER BY $orderBy";
-        }
-
-        $rows = $this->dbhandle->get_results($sql, ARRAY_A);    
-        $objects = array();
-        foreach($rows as $row) {
-            $object = $this->createEntityBackedByArray($row);
-            $objects[$object->getID()] = $object;
-        }
-        return $objects;
     }
 
     public function fetchAll2(string $where = null, string $orderBy = null): array{
