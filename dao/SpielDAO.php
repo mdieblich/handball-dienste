@@ -19,7 +19,7 @@ class SpielDAO extends DAO{
         ): SpieleListe{
         
         $where .= " AND mannschaftsmeldung_id in (SELECT id FROM ".MannschaftsMeldungDAO::tableName($this->dbhandle)." WHERE aktiv=1)";
-        $spiele = $this->fetchAll2($where, $orderBy);
+        $spiele = $this->fetchAll($where, $orderBy);
         return new SpieleListe($spiele);
     }
 

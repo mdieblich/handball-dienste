@@ -9,7 +9,7 @@ class GegnerDAO extends DAO{
     }
 
     public function loadGegner(string $where = null, string $orderBy = "verein ASC, nummer ASC"): array{
-        return $this->fetchAll2($where, $orderBy);
+        return $this->fetchAll($where, $orderBy);
     }
 
     // TODO insertGegner muss ein Gegner-Objekt erhalten

@@ -7,7 +7,7 @@ require_once __dir__."/MannschaftsMeldungDAO.php";
 class MannschaftDAO extends DAO{
 
     public function loadMannschaften(): MannschaftsListe{
-        $mannschaften = $this->fetchAll2(null, "jugendklasse, nummer, geschlecht");
+        $mannschaften = $this->fetchAll(null, "jugendklasse, nummer, geschlecht");
         return new MannschaftsListe($mannschaften);
     }
 }

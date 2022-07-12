@@ -146,7 +146,7 @@ abstract class DAO{
         }
     }
 
-    public function fetchAll2(string $where = null, string $orderBy = null): array{
+    public function fetchAll(string $where = null, string $orderBy = null): array{
         $sql = "SELECT * FROM ".self::tableName($this->dbhandle);
         if(isset($where)){
             $sql .= " WHERE $where";
