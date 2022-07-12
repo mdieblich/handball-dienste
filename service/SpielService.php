@@ -24,7 +24,7 @@ class SpielService{
     ): SpieleListe{
         $spieleListe = $this->spielDAO->loadSpiele($whereClause, $orderBy);
         if(count($spieleListe->spiele) == 0){
-            return $spielListe;
+            return $spieleListe;
         }
         
         $mannschaftsListe = $this->mannschaftDAO->loadMannschaften();
