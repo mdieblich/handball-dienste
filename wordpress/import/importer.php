@@ -4,11 +4,16 @@ require_once __DIR__."/SpieleGrabber.php";
 require_once __DIR__."/DienstAenderungsPlan.php";
 require_once __DIR__."/NuLigaSpiel.php";
 
+require_once __DIR__."/meisterschaft/NuLiga_Ligatabelle.php";
+require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
+
 require_once __DIR__."/../dao/MannschaftDAO.php";
+require_once __DIR__."/../dao/MannschaftsMeldungDAO.php";
 require_once __DIR__."/../dao/GegnerDAO.php";
 require_once __DIR__."/../dao/MeisterschaftDAO.php";
 require_once __DIR__."/../dao/SpielDAO.php";
 require_once __DIR__."/../dao/DienstDAO.php";
+
 
 require_once __DIR__."/../service/MannschaftService.php";
 
@@ -50,7 +55,6 @@ class Importer{
 
 Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(1, "Meisterschaften von nuLiga lesen", function (){
     global $wpdb;
-    require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
 
     $ligeneinteilung = new NuLiga_MannschaftsUndLigenEinteilung(get_option('nuliga-clubid'));
     $nuliga_meisterschaften = $ligeneinteilung->getMeisterschaften();
@@ -94,7 +98,6 @@ Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(1, "Meisterschaften 
 
 Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(2, "Team-IDs aus nuLiga auslesen", function (){
     global $wpdb;
-    require_once __DIR__."/meisterschaft/NuLiga_Ligatabelle.php";
     
     $vereinsname = get_option('vereinsname');
 
@@ -170,32 +173,29 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
 
     $sql = "SELECT 
             $table_nuliga_mannschaftseinteilung.id,
-            nuliga_meisterschaft,
             $table_meisterschaft.id as meisterschaft_id, 
             mannschaft as mannschaft_id, 
             liga, 
+            1 as aktiv,
             liga_id as nuligaLigaID, 
             team_id as nuligaTeamID 
         FROM $table_nuliga_mannschaftseinteilung
         LEFT JOIN $table_meisterschaft on $table_meisterschaft.kuerzel=$table_nuliga_mannschaftseinteilung.meisterschaftsKuerzel
         WHERE team_id IS NOT NULL
         AND mannschaft IS NOT NULL";
-    $results = $wpdb->get_results($sql, ARRAY_A);
+    $results = $wpdb->get_results($sql);
     
     $meldungDAO = new MannschaftsMeldungDAO($wpdb);
-    foreach($results as $nuliga_mannschaftsEinteilung){
-        $mannschaftsMeldung = $meldungDAO->findMannschaftsMeldung($nuliga_mannschaftsEinteilung['meisterschaft_id'], $nuliga_mannschaftsEinteilung['mannschaft_id'], $nuliga_mannschaftsEinteilung['liga']);
+    foreach($results as $newMeldung){
+        $oldMeldung = $meldungDAO->findMannschaftsMeldung($newMeldung->meisterschaft_id, $newMeldung->mannschaft_id, $newMeldung->liga);
         // TODO Transaktionsstart
-        if(isset($mannschaftsMeldung)){
-            $meldungDAO->updateMannschaftsMeldung($mannschaftsMeldung->id, $nuliga_mannschaftsEinteilung['nuligaLigaID'], $nuliga_mannschaftsEinteilung['nuligaTeamID']);
+        if(isset($oldMeldung)){
+            $meldungDAO->updateMannschaftsMeldung($oldMeldung->id, $newMeldung->nuligaLigaID, $newMeldung->nuligaTeamID);
         } else{
-            $meldungDAO->insertMannschaftsMeldung($nuliga_mannschaftsEinteilung['meisterschaft_id'], $nuliga_mannschaftsEinteilung['mannschaft_id'], 
-                $nuliga_mannschaftsEinteilung['liga'], $nuliga_mannschaftsEinteilung['nuligaLigaID'],
-                $nuliga_mannschaftsEinteilung['nuligaTeamID']
-            );
+            $meldungDAO->insert2($newMeldung);
         }
         // Löschen der Einteilung in der nuliga-Import-Tabelle
-        $wpdb->delete($table_nuliga_mannschaftseinteilung, array('id' => $nuliga_mannschaftsEinteilung['id']));
+        $wpdb->delete($table_nuliga_mannschaftseinteilung, array('id' => $newMeldung->id));
         // TODO Transaktionsende
     }
 });
@@ -204,6 +204,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
     $mannschaftService = new MannschaftService();
     $gegnerDAO = new GegnerDAO();
     $spielDAO = new SpielDAO();
+    $spielService = new SpielService();
     $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
 
     $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaftsListe->mannschaften);
@@ -219,36 +220,32 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
         }
         
         foreach($mannschaft->meldungen as $mannschaftsMeldung) {
-            var_dump($mannschaftsMeldung);
             $spielGrabber = new SpieleGrabber(
                 $mannschaftsMeldung->meisterschaft->kuerzel, 
                 $mannschaftsMeldung->nuligaLigaID, 
                 $mannschaftsMeldung->nuligaTeamID
             );
             foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
-                if($nuLigaSpiel->getHeimmannschaft() === $teamName){
-                    $isHeimspiel = 1;
-                    $gegnerName = $nuLigaSpiel->getGastmannschaft();
-                } else {
-                    $isHeimspiel = 0;
-                    $gegnerName = $nuLigaSpiel->getHeimmannschaft();
-                }
-                $gegner = $gegnerDAO->findOrInsertGegner( 
-                    $gegnerName, 
-                    $mannschaft->geschlecht, 
-                    $mannschaftsMeldung->liga
+                $spielNeu = $nuLigaSpiel->extractSpiel($mannschaftsMeldung, $teamName, 
+                    function (string $gegnerName) use ($gegnerDAO, $mannschaftsMeldung) {
+                        return $gegnerDAO->findOrInsertGegner( 
+                            $gegnerName, 
+                            $mannschaftsMeldung->mannschaft->geschlecht, 
+                            $mannschaftsMeldung->liga
+                        );
+                    }
                 );
-                $spiel = $spielDAO->findSpiel ($mannschaftsMeldung->id, $nuLigaSpiel->getSpielNr(), $mannschaft->id, $gegner->id, $isHeimspiel);
+                $spielAlt = $spielService->findOriginalSpiel ($spielNeu);
                 
-                if(isset($spiel)){
-                    $hallenAenderung = ($spiel->halle != $nuLigaSpiel->getHalle());
-                    $AnwurfAenderung = ($spiel->anwurf != $nuLigaSpiel->getAnwurf());
+                if(isset($spielAlt)){
+                    $hallenAenderung = ($spielAlt->halle != $spielNeu->halle);
+                    $AnwurfAenderung = ($spielAlt->anwurf != $spielNeu->anwurf);
                     if($hallenAenderung || $AnwurfAenderung){
-                        $dienstAenderungsPlan->registerSpielAenderung($spiel, $nuLigaSpiel);
-                        $spielDAO->updateSpiel($spiel->id, $nuLigaSpiel->getHalle(), $nuLigaSpiel->anwurf);
+                        $dienstAenderungsPlan->registerSpielAenderung($spielAlt, $spielNeu);
+                        $spielDAO->update2($spielAlt->id, $spielNeu);
                     }
                 } else {
-                    $spielDAO->insertSpiel($mannschaftsMeldung->id, $nuLigaSpiel->getSpielNr(), $mannschaft->id, $gegner->id, $isHeimspiel, $nuLigaSpiel->getHalle(), $nuLigaSpiel->getAnwurf());
+                    $spielDAO->insert2($spielNeu);
                 }
             }
         }

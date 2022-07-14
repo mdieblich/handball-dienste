@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__."/SpielAenderung.php";
-require_once __DIR__."/NuLigaSpiel.php";
 
 require_once __DIR__."/../handball/Mannschaft.php";
 require_once __DIR__."/../handball/Spiel.php";
@@ -22,11 +21,10 @@ class DienstAenderungsPlan{
         }
     }
 
-    public function registerSpielAenderung(Spiel $alt, NuLigaSpiel $neu){ 
+    public function registerSpielAenderung(Spiel $alt, Spiel $neu){ 
         $this->geanderteSpiele[$alt->id] = new SpielAenderung($alt, $neu);
-        $bisherigeDienste = $this->dao->loadAllDienste("spiel_id=".$alt->id);
-        foreach($bisherigeDienste as $dienst){
-            array_push($this->geanderteDienste[$dienst->mannschaft_id], $dienst);
+        foreach($alt->dienste as $dienst){
+            array_push($this->geanderteDienste[$dienst->mannschaft->id], $dienst);
         }
     }
 

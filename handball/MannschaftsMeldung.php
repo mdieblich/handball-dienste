@@ -8,7 +8,7 @@ class MannschaftsMeldung{
     public int $id;
     public Mannschaft $mannschaft;
     public Meisterschaft $meisterschaft;
-    public bool $aktiv;
+    public bool $aktiv = true;
     public string $liga;
     public int $nuligaLigaID;
     public int $nuligaTeamID;

@@ -27,22 +27,5 @@ class SpielDAO extends DAO{
         return $this->count("mannschaftsmeldung_id=$mannschaftsmeldung AND mannschaft_id=$mannschaftsID");
     }
     
-    public function insertSpiel(int $mannschaftsmeldung, int $spielnr, int $mannschaft_id, int $gegner_id, bool $isHeimspiel, int $halle, ?DateTime $anwurf){
-        $this->insert(array(
-            'mannschaftsmeldung_id' => $mannschaftsmeldung, 
-            'spielnr' => $spielnr, 
-            'mannschaft_id' => $mannschaft_id, 
-            'gegner_id' => $gegner_id, 
-            'heimspiel' => $isHeimspiel, 
-            'halle' => $halle, 
-            'anwurf' => isset($anwurf) ? $anwurf->format('Y-m-d H:i:s') : null
-        ));
-    }
-    public function updateSpiel(int $id, int $halle, ?DateTime $anwurf){
-        $this->update($id, array(
-              'halle' => $halle, 
-              'anwurf' => isset($anwurf) ? $anwurf->format('Y-m-d H:i:s') : null
-        ));
-    }
 }
 ?>

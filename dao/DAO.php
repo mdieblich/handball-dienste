@@ -119,6 +119,17 @@ abstract class DAO{
         return $this->createEntity($array);
     }
 
+    public function findSimilar(object $entity): ?object {
+        $comparisons = array();
+        foreach($this->entityToArray($entity) as $key => $value){
+            if($key === 'id'){ continue; }
+            if($value === null){ continue; }
+            $comparisons[] = "$key = '$value'";
+        }
+        $where = implode(" AND ", $comparisons);
+        return $this->fetch($where);
+    }
+
     private function createEntity($array): object{
         $entityClassName = static::entityClassName();
         $entity = new $entityClassName();
@@ -164,16 +175,12 @@ abstract class DAO{
         return $objects;
     }
 
-    protected function count(string $whereClause): int {
+    public function count(string $whereClause): int {
         return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".self::tableName($this->dbhandle)." WHERE $whereClause");
     }
 
-    // TODO ersetzen durch insert2
-    protected function insert(array $entity): int{
-        $this->dbhandle->insert(self::tableName($this->dbhandle), $entity);
-        return $this->dbhandle->insert_id;
-    }
-    protected function insert2(object $entity): int{
+    // TODO umbenennen zu insert
+    public function insert2(object $entity): int{
         $array = $this->entityToArray($entity);
         $this->dbhandle->insert(self::tableName($this->dbhandle), $array);
         $entity->id = $this->dbhandle->insert_id;
@@ -181,25 +188,47 @@ abstract class DAO{
     }
 
     private function entityToArray($entity): array{
+        $rc = new ReflectionClass(static::entityClassName());
         $array = (array) $entity;    
         foreach($array as $key => $value){
-            $rc = new ReflectionClass(static::entityClassName());
-            if(!$rc->hasProperty($key)){
-                unset($array[$key]);
+            if($this->isIdFromOtherClass($key)){
+                continue;
             }
             $propertyType = $rc->getProperty($key)->getType();
             if(!$propertyType->isBuiltin()){
                 if($propertyType->getName() === "DateTime"){
                     $array[$key] = $value->format('Y-m-d H:i:s');
                 }else{
+                    unset($array[$key]);
                     $array[$key."_id"] = $value->id;
                 }
+            } else if($propertyType->getName() === "array"){
+                // arrays werden nicht unterstützt
+                unset($array[$key]);
             }
         }
         return $array;
     }
 
+    private function isIdFromOtherClass($propertyName): bool{
+        $rc = new ReflectionClass(static::entityClassName());
+        if($rc->hasProperty($propertyName)){
+            return false;
+        }
+        if(substr($propertyName, -3)!=="_id"){
+            // muss auf _id enden
+            return false;
+        }
+        $originalPropertyName = substr($propertyName, 0, strlen($propertyName)-3);
+        return $rc->hasProperty($originalPropertyName);
+    }
+
     protected function update(int $id, array $values){
+        $this->dbhandle->update(self::tableName($this->dbhandle), $values, array('id' => $id));
+    }
+    public function update2(int $id, object $object){
+        $values = $this->entityToArray($object);
+        unset($values['id']);
         $this->dbhandle->update(self::tableName($this->dbhandle), $values, array('id' => $id));
     }
     protected function delete(array $identifiers){

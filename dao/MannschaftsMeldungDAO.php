@@ -22,16 +22,5 @@ class MannschaftsMeldungDAO extends DAO{
             'nuligaTeamID' => $nuligaTeamID
         ));
     }
-
-    public function insertMannschaftsMeldung(int $meisterschaft, int $mannschaft, string $liga, int $nuligaLigaID, int $nuligaTeamID){
-        $values = array(
-            'meisterschaft_id' => $meisterschaft, 
-            'mannschaft_id' => $mannschaft, 
-            'liga' => $liga, 
-            'nuligaLigaID' => $nuligaLigaID, 
-            'nuligaTeamID' => $nuligaTeamID
-        );
-        $this->insert($values);
-    }
 }
 ?>

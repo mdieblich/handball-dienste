@@ -31,7 +31,12 @@ function enqueue_dienste_js($hook){
 
 function dienst_zuweisen(){
     $dienstDAO = new DienstDAO();
-    $dienstDAO->insertDienst($_POST['spiel'], $_POST['dienstart'], $_POST['mannschaft']);
+    
+    $dienst = new Dienst();
+    $dienst->spiel_id = $_POST['spiel'];
+    $dienst->dienstart = $_POST['dienstart'];
+    $dienst->mannschaft_id = $_POST['mannschaft'];
+    $dienstDAO->insert2($dienst);
     http_response_code(200);
     wp_die();
 }
@@ -47,7 +52,7 @@ function displayDiensteZuweisen(){
     $spielService = new SpielService();
 
     $mannschaftsListe = $mannschaftDAO->loadMannschaften();
-    $spieleListe = $spielService->loadSpieleMitDiensten(); 
+    $spieleListe = $spielService->loadSpieleMitDiensten();
  ?>
 <div class="wrap">
     <div style="float:right; width: 200px; background-color:#ddddff; padding: 5px">
@@ -80,7 +85,6 @@ foreach($mannschaftsListe->mannschaften as $mannschaft){
 ?>
     </tr>
 <?php
-
 $vorherigesSpiel = null;
 $zeilenFarbePrimaer = true;
 foreach($spieleListe->spiele as $spiel){

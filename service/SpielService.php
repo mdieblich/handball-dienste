@@ -18,6 +18,7 @@ class SpielService{
         $this->gegnerDAO = new GegnerDAO($dbhandle);
     }
     
+    // TODO umbenennen zu loadSpiele
     public function loadSpieleMitDiensten(
         string $whereClause="anwurf > subdate(current_date, 1)", 
         string $orderBy="-date(anwurf) DESC, heimspiel desc, anwurf, mannschaft_id"
@@ -32,6 +33,38 @@ class SpielService{
         $this->appendGegner($spieleListe);
         $this->appendDienste($spieleListe, $mannschaftsListe);
         return $spieleListe;
+    }
+
+    public function findOriginalSpiel(Spiel $newSpiel): ?Spiel{
+        $searchSpiel = clone $newSpiel;
+        unset($searchSpiel->id);
+        unset($searchSpiel->anwurf);
+        unset($searchSpiel->halle);
+        $oldSpiel = $this->spielDAO->findSimilar($searchSpiel);
+        if(empty($oldSpiel)){
+            return null;
+        }
+        
+        $mannschaftsListe = $this->mannschaftDAO->loadMannschaften();
+        $mannschaft = $mannschaftsListe->mannschaften[$oldSpiel->mannschaft_id];
+        $oldSpiel->mannschaft = $mannschaft;
+        unset($oldSpiel->mannschaft_id);
+
+        $gegner = $this->gegnerDAO->fetch("id=".$oldSpiel->gegner_id);
+        $oldSpiel->gegner = $gegner;
+        unset($oldSpiel->gegner_id);
+
+        $dienste = $this->dienstDAO->loadAllDienste("spiel_id=".$oldSpiel->id);
+        foreach($dienste as $dienst){
+            $oldSpiel->dienste[$dienst->dienstart] = $dienst;
+            $dienst->spiel = $oldSpiel;
+            unset($dienst->spiel_id);
+
+            $mannschaft = $mannschaftsListe->mannschaften[$dienst->mannschaft_id];
+            $dienst->mannschaft = $mannschaft;
+            unset($dienst->mannschaft_id);
+        } 
+        return $oldSpiel;
     }
 
     private function appendMannschaften(SpieleListe $spieleListe, MannschaftsListe $mannschaftsListe){

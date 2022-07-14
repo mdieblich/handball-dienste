@@ -1,4 +1,9 @@
 <?php
+
+require_once __DIR__."/../handball/Mannschaft.php";
+require_once __DIR__."/../handball/MannschaftsMeldung.php";
+require_once __DIR__."/../handball/Spiel.php";
+
 class NuLigaSpiel {
     
     private $wochentag;
@@ -85,6 +90,26 @@ class NuLigaSpiel {
 
     private static function extractTrimmedContent(DOMElement $zelle): string {
         return sanitizeContent($zelle->textContent);
+    }
+
+    public function extractSpiel(MannschaftsMeldung $meldung, string $teamName, callable $findGegner): Spiel{
+        $spiel = new Spiel();
+        $spiel->spielNr = $this->spielNr;
+        $spiel->mannschaftsMeldung = $meldung;
+
+        $spiel->mannschaft = $meldung->mannschaft;
+        $spiel->anwurf = $this->getAnwurf();
+        $spiel->halle = $this->halle;
+
+        if($this->heimmannschaft === $teamName){
+            $spiel->heimspiel = true;
+            $spiel->gegner = $findGegner($this->gastmannschaft);
+        } else {
+            $spiel->heimspiel = false;
+            $spiel->gegner = $findGegner($this->gastmannschaft);
+        }
+
+        return $spiel;
     }
 
 }
