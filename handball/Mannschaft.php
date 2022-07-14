@@ -15,7 +15,13 @@ class Mannschaft {
     
     public function getName(): string {
         if(!empty($this->jugendklasse)){
-            return $this->geschlecht.$this->jugendklasse.$this->nummer;
+            if($this->geschlecht === GESCHLECHT_M){
+                return "männliche ".$this->jugendklasse.$this->nummer;
+            }
+            if($this->geschlecht === GESCHLECHT_W){
+                return "weibliche ".$this->jugendklasse.$this->nummer;
+            }
+            return "andersgeschlechtlich ".$this->jugendklasse.$this->nummer;
         }
         if($this->geschlecht === GESCHLECHT_M){
             return "Herren ".$this->nummer;
@@ -24,7 +30,7 @@ class Mannschaft {
             return "Damen ".$this->nummer;
         }
         
-        return "Andersgeschlechtlich ".$this->getNummer();
+        return "Andersgeschlechtlich ".$this->nummer;
     }
 
     public function getKurzname(): string {

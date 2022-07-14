@@ -75,7 +75,7 @@ function displayDiensteZuweisen(){
         <?php
 foreach($mannschaftsListe->mannschaften as $mannschaft){
     $anzahlDienste = $spieleListe->zaehleDienste($mannschaft);
-    echo "<td mannschaft=\"".$mannschaft->id."\">".$mannschaft->getName()."<br>";
+    echo "<td mannschaft=\"".$mannschaft->id."\">".$mannschaft->getKurzname()."<br>";
     foreach($anzahlDienste as $dienstart => $anzahl){
         $dienstartKurz = substr($dienstart,0,1);
         echo $dienstartKurz.": <span id=\"$dienstartKurz-counter-".$mannschaft->id."\">".$anzahl."</span><br>"; 
