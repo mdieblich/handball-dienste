@@ -14,7 +14,7 @@ class MeisterschaftDAO extends DAO {
         $meisterschaft->kuerzel = $kuerzel;
         $meisterschaft->name = $name;
         
-        $this->insert2($meisterschaft);
+        $this->insert($meisterschaft);
         return $meisterschaft;
     }
 }

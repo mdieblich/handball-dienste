@@ -21,7 +21,7 @@ class GegnerDAO extends DAO{
         $gegner->geschlecht = $geschlecht;
         $gegner->liga = $liga;
 
-        $this->insert2($gegner);
+        $this->insert($gegner);
         return $gegner;
     }
 

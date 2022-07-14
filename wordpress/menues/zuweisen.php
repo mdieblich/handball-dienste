@@ -36,7 +36,7 @@ function dienst_zuweisen(){
     $dienst->spiel_id = $_POST['spiel'];
     $dienst->dienstart = $_POST['dienstart'];
     $dienst->mannschaft_id = $_POST['mannschaft'];
-    $dienstDAO->insert2($dienst);
+    $dienstDAO->insert($dienst);
     http_response_code(200);
     wp_die();
 }

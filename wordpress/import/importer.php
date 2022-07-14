@@ -192,7 +192,7 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
         if(isset($oldMeldung)){
             $meldungDAO->updateMannschaftsMeldung($oldMeldung->id, $newMeldung->nuligaLigaID, $newMeldung->nuligaTeamID);
         } else{
-            $meldungDAO->insert2($newMeldung);
+            $meldungDAO->insert($newMeldung);
         }
         // Löschen der Einteilung in der nuliga-Import-Tabelle
         $wpdb->delete($table_nuliga_mannschaftseinteilung, array('id' => $newMeldung->id));
@@ -245,7 +245,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
                         $spielDAO->update2($spielAlt->id, $spielNeu);
                     }
                 } else {
-                    $spielDAO->insert2($spielNeu);
+                    $spielDAO->insert($spielNeu);
                 }
             }
         }
