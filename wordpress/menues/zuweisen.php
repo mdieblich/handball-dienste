@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__."/../handball/Dienst.php";
-require_once __DIR__."/../handball/Spieleliste.php";
+require_once __DIR__."/../handball/SpieleListe.php";
 require_once __DIR__."/../dao/MannschaftDAO.php";
 require_once __DIR__."/../dao/DienstDAO.php";
 
