@@ -60,7 +60,7 @@ function dienste_tabellen_ersetzen(array $matches){
         $filter[] = "$table_name_spiel.mannschaft_id=".$fuerMannschaft->id;
     }
     if(isset($vonMannschaft)){
-        $filter[] = "$table_name_spiel.id IN (SELECT spiel_id FROM ". $wpdb->prefix ."dienst WHERE $table_name_dienst.mannschaft_id=".$vonMannschaft->id.")";
+        $filter[] = "$table_name_spiel.id IN (SELECT spiel_id FROM ". $table_name_dienst ." WHERE $table_name_dienst.mannschaft_id=".$vonMannschaft->id.")";
     }
     $spielService = new SpielService();
     $spieleListe = $spielService->loadSpieleMitDiensten(implode(" AND ", $filter)); 

@@ -94,7 +94,7 @@ function handleGegnerAendern(){
 function updateGegnerFrom_POST(){
     global $wpdb;
     
-	$table_name = $wpdb->prefix . 'gegner';
+	$table_name = GegnerDAO::tableName($wpdb);
 
     $sql = "UPDATE $table_name SET stelltSekretaerBeiHeimspiel=(id in (".implode(",", $_POST['gegner-id'])."))";
     $result = $wpdb->query($sql);

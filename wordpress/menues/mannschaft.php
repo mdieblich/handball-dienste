@@ -263,7 +263,7 @@ function isGueltigeMannschaftUebertragen(){
 function insertNeueMannschaftFrom_POST(){
     global $wpdb;
     
-	$table_name = $wpdb->prefix . 'mannschaft';
+	$table_name = MannschaftDAO::tableName($wpdb);
 
     $wpdb->insert($table_name, array(
         'nummer' => $_POST['mannschafts-nummer'],
@@ -278,7 +278,7 @@ function insertNeueMannschaftFrom_POST(){
 function updateMannschaftFrom_POST(){
     global $wpdb;
     
-	$table_name = $wpdb->prefix . 'mannschaft';
+	$table_name = MannschaftDAO::tableName($wpdb);
     $jugendklasse = null;
     if(!empty($_POST['mannschafts-jugendklasse'])){
         $jugendklasse = $_POST['mannschafts-jugendklasse'];
@@ -297,7 +297,7 @@ function updateMannschaftFrom_POST(){
 function deleteMannschaftFrom_POST(){
     global $wpdb;
     
-	$table_name = $wpdb->prefix . 'mannschaft';
+	$table_name = MannschaftDAO::tableName($wpdb);
 
     $wpdb->delete($table_name, array(
         'id' => $_POST['mannschafts-id']
