@@ -1,5 +1,6 @@
 <?php
 require_once __dir__."/../handball/Gegner.php";
+require_once __dir__."/../handball/MannschaftsMeldung.php";
 require_once __DIR__."/DAO.php";
 
 class GegnerDAO extends DAO{
@@ -11,7 +12,7 @@ class GegnerDAO extends DAO{
     public function loadGegner(string $where = null, string $orderBy = "verein ASC, nummer ASC"): array{
         return $this->fetchAll($where, $orderBy);
     }
-    
+
     private function getVereinFromName(string $name): string{
         $verein = $name;
 
@@ -48,18 +49,20 @@ class GegnerDAO extends DAO{
         return $nummer;
     }
 
-    function findOrInsertGegner(string $name, string $geschlecht, string $liga): Gegner{
+    function findOrInsertGegner(string $name, MannschaftsMeldung $meldung): Gegner{
 
-        $verein = $this->getVereinFromName($name);
-        $nummer = $this->getNummerFromName($name);
+        $newGegner = new Gegner();
 
-        $gegner = $this->fetch("verein=\"$verein\" AND nummer=$nummer AND geschlecht=\"$geschlecht\" AND liga=\"$liga\"");
-        if(isset($gegner)){
-            return $gegner;
-            
+        $newGegner->verein = $this->getVereinFromName($name);
+        $newGegner->nummer = $this->getNummerFromName($name);
+        $newGegner->zugehoerigeMeldung = $meldung;
+
+        $oldGegner = $this->findSimilar($newGegner);
+        if(isset($oldGegner)){
+            return $oldGegner;
         }
         // Nix gefunden - einfügen!
-        return $this->insertGegner($name, $geschlecht, $liga);
+        return $this->insert($newGegner);
     }
 }
 ?>

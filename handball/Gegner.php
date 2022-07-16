@@ -1,11 +1,16 @@
 <?php
 
+require_once __DIR__."/MannschaftsMeldung.php";
+
 class Gegner {
     public int $id;
     public string $verein;
     public int $nummer;
+
+    // TODO geschlecht und Liga entfernen - kann man der Meldung entnehmen
     public string $geschlecht;
     public string $liga;
+    public MannschaftsMeldung $zugehoerigeMeldung;
     public bool $stelltSekretaerBeiHeimspiel;
 
     public function getName(): string {

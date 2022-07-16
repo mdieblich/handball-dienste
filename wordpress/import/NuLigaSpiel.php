@@ -103,10 +103,10 @@ class NuLigaSpiel {
 
         if($this->heimmannschaft === $teamName){
             $spiel->heimspiel = true;
-            $spiel->gegner = $findGegner($this->gastmannschaft);
+            $spiel->gegner = $findGegner($this->gastmannschaft, $meldung);
         } else {
             $spiel->heimspiel = false;
-            $spiel->gegner = $findGegner($this->heimmannschaft);
+            $spiel->gegner = $findGegner($this->heimmannschaft, $meldung);
         }
 
         return $spiel;

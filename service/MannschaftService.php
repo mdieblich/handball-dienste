@@ -3,6 +3,7 @@
 require_once __dir__."/../handball/MannschaftsListe.php";
 require_once __dir__."/../dao/MannschaftDAO.php";
 require_once __dir__."/../dao/MannschaftsMeldungDAO.php";
+require_once __dir__."/../dao/MeisterschaftDAO.php";
 
 class MannschaftService{
     private MannschaftDAO $mannschaftDAO;

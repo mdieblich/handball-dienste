@@ -227,12 +227,8 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
             );
             foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
                 $spielNeu = $nuLigaSpiel->extractSpiel($mannschaftsMeldung, $teamName, 
-                    function (string $gegnerName) use ($gegnerDAO, $mannschaftsMeldung) {
-                        return $gegnerDAO->findOrInsertGegner( 
-                            $gegnerName, 
-                            $mannschaftsMeldung->mannschaft->geschlecht, 
-                            $mannschaftsMeldung->liga
-                        );
+                    function (string $gegnerName, $mannschaftsMeldung) use ($gegnerDAO) {
+                        return $gegnerDAO->findOrInsertGegner( $gegnerName, $mannschaftsMeldung);
                     }
                 );
                 $spielAlt = $spielService->findOriginalSpiel ($spielNeu);
