@@ -7,8 +7,7 @@ class Gegner {
     public string $verein;
     public int $nummer;
 
-    // TODO geschlecht und Liga entfernen - kann man der Meldung entnehmen
-    public string $geschlecht;
+    // TODO Liga entfernen - kann man der Meldung entnehmen
     public string $liga;
     public MannschaftsMeldung $zugehoerigeMeldung;
     public bool $stelltSekretaerBeiHeimspiel;
@@ -26,6 +25,10 @@ class Gegner {
                 default: return $this->verein." ".$this->getNummer();
             }
         }
+    }
+
+    public function getGeschlecht(): string{
+        return $this->zugehoerigeMeldung->mannschaft->geschlecht;
     }
 }
 

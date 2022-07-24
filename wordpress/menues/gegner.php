@@ -55,8 +55,8 @@ function displayDiensteGegner(){
                 <td> <?php echo $gegner->getName(); ?> </td>
                 <td style="text-align:center"> 
                     <select name="gegner-geschlecht" disabled> 
-                        <option value="w" <?php if($gegner->geschlecht==GESCHLECHT_W) echo "selected"; ?>>Damen</option>
-                        <option value="m" <?php if($gegner->geschlecht==GESCHLECHT_M) echo "selected"; ?>>Herren</option>
+                        <option value="w" <?php if($gegner->getGeschlecht()==GESCHLECHT_W) echo "selected"; ?>>Damen</option>
+                        <option value="m" <?php if($gegner->getGeschlecht()==GESCHLECHT_M) echo "selected"; ?>>Herren</option>
                     </select> 
                 </td>
                 <td style="text-align:center"> <?php echo $gegner->liga; ?> </td>
