@@ -4,12 +4,14 @@ class ImportSchritt{
     public string $beschreibung;
     private Closure $method;
 
+    
     public function __construct(int $schritt, string $beschreibung, Closure $method){
         $this->schritt = $schritt;
         $this->beschreibung = $beschreibung;
         $this->method = $method;
     }
-
+    
+    // TODO dbHandle als parameter hereinreichen
     public function run(){
         $this->initImportStatus();
         call_user_func($this->method);

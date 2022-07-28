@@ -204,6 +204,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
     $mannschaftService = new MannschaftService();
     $gegnerDAO = new GegnerDAO();
     $spielDAO = new SpielDAO();
+    $dienstDAO = new DienstDAO();
     $spielService = new SpielService();
     $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
 
@@ -234,14 +235,18 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
                 $spielAlt = $spielService->findOriginalSpiel ($spielNeu);
                 
                 if(isset($spielAlt)){
+                    // ein bereits vorhandenes Spiel
                     $hallenAenderung = ($spielAlt->halle != $spielNeu->halle);
                     $AnwurfAenderung = ($spielAlt->anwurf != $spielNeu->anwurf);
                     if($hallenAenderung || $AnwurfAenderung){
                         $dienstAenderungsPlan->registerSpielAenderung($spielAlt, $spielNeu);
                         $spielDAO->update($spielAlt->id, $spielNeu);
                     }
+                    // TODO Spiel in eine Liste aufnehmen um zu prüfen, ob Hallenaufbau oder -abbau neu vergeben werden muss
                 } else {
+                    // ein neues Spiel
                     $spielDAO->insert($spielNeu);
+                    // Dienste generieren
                 }
             }
         }
