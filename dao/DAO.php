@@ -191,6 +191,12 @@ abstract class DAO{
         return $this->dbhandle->insert_id;
     }
 
+    public function insertAll(array $entities){
+        foreach($entities as $entity){
+            $this->insert($entity);
+        }
+    }
+
     private function entityToArray($entity): array{
         $rc = new ReflectionClass(static::entityClassName());
         $array = (array) $entity;    
