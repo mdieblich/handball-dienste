@@ -112,6 +112,27 @@ class Spiel{
         return $this->anwurf->format("Y-m-d") == $other->anwurf->format("Y-m-d");
     }
 
+    public function createDienste(){
+        if($this->heimspiel){
+            $this->createDienst(Dienstart::ZEITNEHMER);
+            $this->createDienst(Dienstart::CATERING);
+            if($this->gegner->stelltSekretaerBeiHeimspiel){
+                // wenn der Gegner beim Heimspiel den Sekretär stellt, so müssen wir das auch
+                $this->createDienst(Dienstart::SEKRETAER);
+            }
+        } else {
+            if(!$this->gegner->stelltSekretaerBeiHeimspiel){
+                $this->createDienst(Dienstart::SEKRETAER);
+            }
+        }
+    }
+    private function createDienst(string $dienstart): Dienst{
+        $dienst = new Dienst();
+        $dienst->spiel = $this;
+        $dienst->dienstart = $dienstart;
+        $this->dienste[$dienstart] = $dienst;
+        return $dienst;
+    }
 }
 
 ?>
