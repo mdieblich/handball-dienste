@@ -9,11 +9,11 @@ class MannschaftsMeldungDAO extends DAO{
     }
 
     public function meldungAktivieren(int $id, bool $aktiv){
-        $this->update($id, array('aktiv' => $aktiv ? 1 : 0));
+        $this->updateFields($id, array('aktiv' => $aktiv ? 1 : 0));
     }
 
     public function updateMannschaftsMeldung(int $id, int $nuligaLigaID, int $nuligaTeamID){
-        $this->update($id, array(
+        $this->updateFields($id, array(
             'nuligaLigaID' => $nuligaLigaID, 
             'nuligaTeamID' => $nuligaTeamID
         ));

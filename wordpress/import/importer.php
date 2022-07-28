@@ -238,7 +238,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
                     $AnwurfAenderung = ($spielAlt->anwurf != $spielNeu->anwurf);
                     if($hallenAenderung || $AnwurfAenderung){
                         $dienstAenderungsPlan->registerSpielAenderung($spielAlt, $spielNeu);
-                        $spielDAO->update2($spielAlt->id, $spielNeu);
+                        $spielDAO->update($spielAlt->id, $spielNeu);
                     }
                 } else {
                     $spielDAO->insert($spielNeu);

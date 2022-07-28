@@ -227,10 +227,10 @@ abstract class DAO{
         return $rc->hasProperty($originalPropertyName);
     }
 
-    protected function update(int $id, array $values){
+    protected function updateFields(int $id, array $values){
         $this->dbhandle->update(self::tableName($this->dbhandle), $values, array('id' => $id));
     }
-    public function update2(int $id, object $object){
+    public function update(int $id, object $object){
         $values = $this->entityToArray($object);
         unset($values['id']);
         $this->dbhandle->update(self::tableName($this->dbhandle), $values, array('id' => $id));
