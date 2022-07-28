@@ -175,6 +175,11 @@ abstract class DAO{
         return $objects;
     }
 
+    public function fetchAllByIds(array $ids){
+        $where = "id in (".implode(",", $ids).")";
+        return $this->fetchAll($where);
+    }
+
     public function count(string $whereClause): int {
         return $this->dbhandle->get_var("SELECT COUNT(*) FROM ".self::tableName($this->dbhandle)." WHERE $whereClause");
     }
