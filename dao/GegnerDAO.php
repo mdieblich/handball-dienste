@@ -62,7 +62,8 @@ class GegnerDAO extends DAO{
             return $oldGegner;
         }
         // Nix gefunden - einfügen!
-        return $this->insert($newGegner);
+        $this->insert($newGegner);
+        return $newGegner;
     }
 }
 ?>
