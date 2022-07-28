@@ -246,7 +246,10 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
                 } else {
                     // ein neues Spiel
                     $spielDAO->insert($spielNeu);
-                    // Dienste generieren
+                    $spielNeu->createDienste();
+                    // TODO das Insert sollte über den SpielService laufen. Dabei wird auch der Gegner eingefügt, falls nicht vorhanden
+                    // In der Folge wird oben bei extractSpiel ein neuer Gegner erstellt und der dann nur eingefügt, wenn er noch nicht existiert
+                    $dienstDAO->insertAll($spielNeu->dienste);
                 }
             }
         }
