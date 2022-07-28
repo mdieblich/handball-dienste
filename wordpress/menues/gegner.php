@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__."/../handball/Mannschaft.php";   // Für GESCHLECHT_W und GESCHLECHT_M
-require_once __DIR__."/../dao/GegnerDAO.php";
+require_once __DIR__."/../service/GegnerService.php";
 
 function addDiensteGegnerKonfiguration(){
     //add_submenu_page( '$parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
@@ -28,8 +28,8 @@ function addDiensteGegnerKonfiguration(){
 
 function displayDiensteGegner(){
     
-    $gegnerDAO = new GegnerDAO();
-    $alleGegner = $gegnerDAO->loadGegner();
+    $gegnerService = new GegnerService();
+    $alleGegner = $gegnerService->loadAlleGegner();
 
     ?>
     <div class="wrap">
@@ -59,7 +59,7 @@ function displayDiensteGegner(){
                         <option value="m" <?php if($gegner->getGeschlecht()==GESCHLECHT_M) echo "selected"; ?>>Herren</option>
                     </select> 
                 </td>
-                <td style="text-align:center"> <?php echo $gegner->liga; ?> </td>
+                <td style="text-align:center"> <?php echo $gegner->getLiga(); ?> </td>
                 <td style="text-align:center"> <input type="checkbox" name="gegner-id[]" value="<?php echo $gegner->id; ?>" <?php if($gegner->stelltSekretaerBeiHeimspiel){echo "checked";} ?>></td>
             </tr> 
         <?php } ?>
