@@ -27,7 +27,7 @@ class MannschaftService{
 
         $mannschaftIDs = $mannschaftsListe->getIDs();
         $filter = "mannschaft_id in (".implode(", ", $mannschaftIDs).")";
-        $meldungen = $this->meldungDAO->loadMannschaftsMeldungen($filter);
+        $meldungen = $this->meldungDAO->fetchAll($filter);
 
         foreach($meldungen as $meldung){
             // Mannschaft zuweisen
