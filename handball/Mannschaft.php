@@ -11,6 +11,7 @@ class Mannschaft {
     public ?string $jugendklasse;
     public ?string $email;
 
+    // TODO referenz auf Meldung entfernen!
     public array $meldungen = array();
     
     public function getName(): string {

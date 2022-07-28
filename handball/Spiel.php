@@ -19,6 +19,7 @@ class Spiel{
     public int $spielNr;
     public MannschaftsMeldung $mannschaftsMeldung;
     
+    // TODO Referenz auf Mannschaft enfternen: Redundant über die Meldung
     public Mannschaft $mannschaft;
     public Gegner $gegner;
 
@@ -26,6 +27,7 @@ class Spiel{
     public int $halle;
     public bool $heimspiel;
     
+    // TODO prüfen: kann auf diese Referenz verzichtet werden?
     public array $dienste = array();
     
     // Zuweisung von Diensten
