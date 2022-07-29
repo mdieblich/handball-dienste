@@ -2,9 +2,9 @@
 
 require_once __DIR__."/SpielAenderung.php";
 
-require_once __DIR__."/../handball/Mannschaft.php";
-require_once __DIR__."/../handball/Spiel.php";
-require_once __DIR__."/../handball/Dienst.php";
+require_once __DIR__."/../Mannschaft.php";
+require_once __DIR__."/../Spiel.php";
+require_once __DIR__."/../Dienst.php";
 
 class DienstAenderungsPlan{
     private DienstDAO $dao;

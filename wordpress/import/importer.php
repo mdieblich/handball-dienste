@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__."/ImportSchritt.php";
 require_once __DIR__."/SpieleGrabber.php";
-require_once __DIR__."/DienstAenderungsPlan.php";
+require_once __DIR__."/../handball/dienstDienstAenderungsPlan.php";
 require_once __DIR__."/NuLigaSpiel.php";
 
 require_once __DIR__."/meisterschaft/NuLiga_Ligatabelle.php";

@@ -170,7 +170,7 @@ function updateGegnerFrom_POST(){
         $zuLoeschendeDienste = $dienstDAO->fetchAll("dienstart='".Dienstart::SEKRETAER."' AND spiel_id in (".implode(",",$spieleDieKeineDiensteMehrBrauchen->getIDs()).")");
         $wpdb->query($deleteDienste);
     }
-
+    
     // TODO Mannschaften per Email informieren, dass Dienste entfallen sind
 }
 
