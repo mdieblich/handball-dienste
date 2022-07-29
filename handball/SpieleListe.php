@@ -69,6 +69,11 @@ class SpieleListe{
         }
         return $ids;
     }
+
+    public function hasEntries(): bool {
+        return count($this->spiele) > 0;
+    }
+
 }
 
 ?>
