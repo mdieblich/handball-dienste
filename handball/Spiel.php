@@ -133,6 +133,18 @@ class Spiel{
         $this->dienste[$dienstart] = $dienst;
         return $dienst;
     }
+
+    public function getBegegnungsbezeichnung(): string{
+        $anwurf = $this->anwurf->format("d.m.Y H:i");
+        $mannschaftsName = $this->mannschaft->getName();
+        $gegnerName = $this->gegner->getName();
+        
+        if($this->heimspiel){
+            return "$anwurf HEIM (".$this->halle.") $mannschaftsName vs. $gegnerName";
+        } else{
+            return "$anwurf AUSWÄRTS (".$this->halle.") $gegnerName vs. $mannschaftsName";
+        }   
+    }
 }
 
 ?>
