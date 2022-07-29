@@ -97,6 +97,7 @@ Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(1, "Meisterschaften 
 });
 
 Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(2, "Team-IDs aus nuLiga auslesen", function (){
+    // TODO Team-IDs nur lesen, wenn zuvor eine Mannschaftzugeordnet wurde
     global $wpdb;
     
     $vereinsname = get_option('vereinsname');
@@ -227,6 +228,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
                 $mannschaftsMeldung->nuligaTeamID
             );
             foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
+                // TODO nur spiele in der Zukunft importieren
                 $spielNeu = $nuLigaSpiel->extractSpiel($mannschaftsMeldung, $teamName, 
                     function (string $gegnerName, $mannschaftsMeldung) use ($gegnerDAO) {
                         return $gegnerDAO->findOrInsertGegner( $gegnerName, $mannschaftsMeldung);
