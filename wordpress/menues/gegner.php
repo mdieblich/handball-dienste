@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__."/../handball/Mannschaft.php";   // Für GESCHLECHT_W und GESCHLECHT_M
 require_once __DIR__."/../service/GegnerService.php";
+require_once __DIR__."/../dao/SpielDAO.php";
+require_once __DIR__."/../dao/DienstDAO.php";
 
 function addDiensteGegnerKonfiguration(){
     //add_submenu_page( '$parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
@@ -35,7 +37,8 @@ function displayDiensteGegner(){
     <div class="wrap">
         <h1>Gegner einrichten</h1>
         Hier kann eingestellt werden, ob die gegnerische Mannschaft bei ihren Spielen einen Sekretär stellt.<br>
-        Dies bedeutet, dass bei Auswärtsspielen kein Sekretär-Dienst übernommen werden muss, aber bei Heimspielen der Sekretär-Dienst zusätzlich übernommen werden muss.
+        Dies bedeutet, dass bei Auswärtsspielen kein Sekretär-Dienst übernommen werden muss, aber bei Heimspielen der Sekretär-Dienst zusätzlich übernommen werden muss.<br>
+        <b><i>Wichtig:</i></b> Werden hier Einstellungen geändert, kann es dazu kommen, dass bereits zugewiesene Dienste entfallen (<i>d.h. gelöscht werden</i>). Dann wird eine Email an die entsprechende Mannschaft versendet.
         <form action="<?php menu_page_url( 'dienste-gegner' ) ?>" method="post">
         <?php
             settings_fields( 'gegner_aendern' );
@@ -93,11 +96,82 @@ function handleGegnerAendern(){
 
 function updateGegnerFrom_POST(){
     global $wpdb;
-    
-	$table_name = GegnerDAO::tableName($wpdb);
+    $gegner_table_name = GegnerDAO::tableName($wpdb);
+    $gegnerDAO = new GegnerDAO($wpdb);
 
-    $sql = "UPDATE $table_name SET stelltSekretaerBeiHeimspiel=(id in (".implode(",", $_POST['gegner-id'])."))";
-    $result = $wpdb->query($sql);
+    if(isset($_POST['gegner-id'])){
+        $zuAenderndeGegner_idListe = "(" . implode(",", $_POST['gegner-id']) . ")";
+        $zuAenderndeGegner_filter = "stelltSekretaerBeiHeimspiel != (id in $zuAenderndeGegner_idListe)";
+        $gegnerUpdate = "stelltSekretaerBeiHeimspiel = (id in $zuAenderndeGegner_idListe)";
+    } else {
+        $zuAenderndeGegner_filter = "stelltSekretaerBeiHeimspiel = 1";
+        $gegnerUpdate = "stelltSekretaerBeiHeimspiel = 0";
+    }
+    $zuAenderndeGegner = $gegnerDAO->fetchAll($zuAenderndeGegner_filter);
+
+    // Gegner aktualisieren
+    $wpdb->query("UPDATE $gegner_table_name SET $gegnerUpdate");
+
+    // Dienste aktualisieren
+    $gegnerDieAbJetztSekretaerStellen = array();
+    $gegnerDieNichtMehrSekretaerStellen = array();
+    foreach($zuAenderndeGegner as $gegner){
+        if($gegner->stelltSekretaerBeiHeimspiel){
+            $gegnerDieNichtMehrSekretaerStellen[$gegner->id] = $gegner;
+        } else {
+            $gegnerDieAbJetztSekretaerStellen[$gegner->id] = $gegner;
+        }
+    }
+    
+    // Gegner stellt ab jetzt Sekretär: 
+    if(!empty($gegnerDieAbJetztSekretaerStellen)){
+        //  -> Bei unseren Heimspielen müssen wir jetzt auch Sekretär stellen
+        //  -> Bei den Auswärtsspielen müssen wir keinen Sekretär mehr stellen
+        $gegnerDieAbJetztSekretaerStellen_idListe = implode(",", array_keys($gegnerDieAbJetztSekretaerStellen));
+        $heimSpieleDieDiensteBrauchen = "heimspiel=1 AND gegner_id in ($gegnerDieAbJetztSekretaerStellen_idListe)";
+        $auswaertsSpieleDieKeineDiensteMehrBrauchen = "heimspiel=0 AND gegner_id in ($gegnerDieAbJetztSekretaerStellen_idListe)";
+    } else {
+        // auf "false" setzen, damit die spätere SQL-Abfrage Sinn macht
+        $heimSpieleDieDiensteBrauchen = "false";
+        $auswaertsSpieleDieKeineDiensteMehrBrauchen = "false";
+    }
+    
+    // Gegner stellt ab jetzt nicht mehr Sekretär:
+    if(!empty($gegnerDieNichtMehrSekretaerStellen)){
+        //  -> Bei unseren Heimspielen müssen wir auch keinen Sekretär mehr stellen
+        //  -> Bei den Auswärtsspielen müssen wir aber ab jetzt einen Sekretär stellen
+        $gegnerDieNichtMehrSekretaerStellen_idListe = implode(",", array_keys($gegnerDieNichtMehrSekretaerStellen));
+        $heimSpieleDieKeineDiensteMehrBrauchen = "heimspiel=1 AND gegner_id in ($gegnerDieNichtMehrSekretaerStellen_idListe)";
+        $auswaertsSpieleDieDiensteBrauchen = "heimspiel=0 AND gegner_id in ($gegnerDieNichtMehrSekretaerStellen_idListe)";
+    } else {
+        // auf "false" setzen, damit die spätere SQL-Abfrage Sinn macht
+        $heimSpieleDieKeineDiensteMehrBrauchen = "false";
+        $auswaertsSpieleDieDiensteBrauchen = "false";
+    }
+
+    $filterFuerSpieleDieDiensteBrauchen = "($heimSpieleDieDiensteBrauchen) OR ($auswaertsSpieleDieDiensteBrauchen)";
+    $filterFuerSpieleDieKeineDiensteMehrBrauchen = "($heimSpieleDieDiensteBrauchen) OR ($auswaertsSpieleDieDiensteBrauchen)";
+    
+    $spielDAO = new SpielDAO($wpdb);
+    $spielService = new SpielService($wpdb);
+    $spieleDieDiensteBrauchen = $spielDAO->loadSpiele("($filterFuerSpieleDieDiensteBrauchen) AND anwurf > CURRENT_TIMESTAMP");
+    $spieleDieKeineDiensteMehrBrauchen = $spielService->loadSpieleMitDiensten("($filterFuerSpieleDieKeineDiensteMehrBrauchen) AND anwurf > CURRENT_TIMESTAMP");
+
+    // Dienste anlegen
+    $dienste_table_name = DienstDAO::tableName($wpdb);
+    if($spieleDieDiensteBrauchen->hasEntries()){
+        $insertDienste = "INSERT INTO $dienste_table_name (spiel_id, dienstart) VALUES (".implode(", '".Dienstart::SEKRETAER."'),(", $spieleDieDiensteBrauchen->getIDs()).", '".Dienstart::SEKRETAER."')";
+        $wpdb->query($insertDienste);
+    }
+    
+    // Dienste löschen
+    if($spieleDieKeineDiensteMehrBrauchen->hasEntries()){
+        $dienstDAO  = new DienstDAO($wpdb);
+        $zuLoeschendeDienste = $dienstDAO->fetchAll("dienstart='".Dienstart::SEKRETAER."' AND spiel_id in (".implode(",",$spieleDieKeineDiensteMehrBrauchen->getIDs()).")");
+        $wpdb->query($deleteDienste);
+    }
+
+    // TODO Mannschaften per Email informieren, dass Dienste entfallen sind
 }
 
 ?>
