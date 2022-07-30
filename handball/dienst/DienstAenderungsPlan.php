@@ -57,7 +57,7 @@ class DienstAenderungsPlan{
         foreach($spieleUndDienste as $spielID => $dienstarten){
             $spielAenderung = $this->geanderteSpiele[$spielID];
             $message .= "<div style='padding-left:2em'>";
-            $message .= "<b>".$spielAenderung->getBegegnungsbezeichnung()."</b>";
+                $message .= "<b>".$spielAenderung->alt->getBegegnungsbezeichnung()."</b>";
             $message .= "<ul>";
             $message .= "<li>ÄNDERUNG: ".$spielAenderung->getAenderung()."</li>";
             $message .= "<li>EURE DIENSTE: ".implode(", ", $dienstarten)."</li>";

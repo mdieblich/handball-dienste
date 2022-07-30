@@ -10,18 +10,6 @@ class SpielAenderung{
         $this->neu = $neu;
     }
 
-    public function getBegegnungsbezeichnung(): string{
-        $anwurf = $this->neu->anwurf->format("d.m.Y H:i");
-        $mannschaftsName = $this->alt->mannschaft->getName();
-        $gegnerName = $this->alt->gegner->getName();
-        
-        if($this->alt->heimspiel){
-            return "$anwurf HEIM (".$this->neu->halle.") $mannschaftsName vs. $gegnerName";
-        } else{
-            return "$anwurf AUSWÄRTS (".$this->neu->halle.") $gegnerName vs. $mannschaftsName";
-        }   
-    }
-
     public function getAenderung(): string{
         $message = "";
         if($this->alt->anwurf != $this->neu->anwurf){
