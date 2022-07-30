@@ -11,6 +11,7 @@ class DienstAenderungsPlan{
     private array $mannschaften;
     private $geanderteDienste = array();
     private $geanderteSpiele = array();
+    private $entfalleneDienste = array();
 
     public function __construct(array $mannschaften){
         $this->dao = new DienstDAO();
@@ -18,6 +19,7 @@ class DienstAenderungsPlan{
         
         foreach($mannschaften as $mannschaft){
             $this->geanderteDienste[$mannschaft->id] = array();
+            $this->entfalleneDienste[$mannschaft->id] = array();
         }
     }
 
@@ -28,9 +30,23 @@ class DienstAenderungsPlan{
         }
     }
 
+    public function registerEntfalleneDienste(array $dienste){
+        foreach($dienste as $dienst){
+            $this->registerEntfallenenDienst($dienst);
+        }
+    }
+    
+
+    public function registerEntfallenenDienst(Dienst $dienst){
+        if(empty($dienst->mannschaft)){
+            return;
+        }
+        $this->entfalleneDienste[$dienst->mannschaft->id][$dienst->spiel->id] = $dienst;
+    }
+
     public function sendEmails(){
         foreach($this->mannschaften as $mannschaft){
-            if($this->hatKeineGeandertenDienste($mannschaft)){
+            if($this->brauchtKeineNachricht($mannschaft)){
                 continue;
             }
             
@@ -43,8 +59,16 @@ class DienstAenderungsPlan{
         }
     }
 
+    private function brauchtKeineNachricht($mannschaft): bool{
+        return $this->hatKeineGeandertenDienste($mannschaft) && $this->hatKeineEntfallenenDienste($mannschaft);
+    }
+
     private function hatKeineGeandertenDienste(Mannschaft $mannschaft): bool{
         return count($this->geanderteDienste[$mannschaft->id]) == 0;
+    }
+
+    private function hatKeineEntfallenenDienste(Mannschaft $mannschaft): bool{
+        return count($this->entfalleneDienste[$mannschaft->id]) == 0;
     }
 
     private function createMessageForMannschaft(Mannschaft $mannschaft): string{
@@ -56,11 +80,23 @@ class DienstAenderungsPlan{
 
         foreach($spieleUndDienste as $spielID => $dienstarten){
             $spielAenderung = $this->geanderteSpiele[$spielID];
+            $entfallenerDienst = $this->entfalleneDienste[$mannschaft->id][$spielID];
+            
             $message .= "<div style='padding-left:2em'>";
+            if(isset($spielAenderung)){
                 $message .= "<b>".$spielAenderung->alt->getBegegnungsbezeichnung()."</b>";
+            } else {
+                $message .= "<b>".$entfallenerDienst->spiel->getBegegnungsbezeichnung()."</b>";
+            }
+            
             $message .= "<ul>";
-            $message .= "<li>ÄNDERUNG: ".$spielAenderung->getAenderung()."</li>";
+            if(isset($spielAenderung)){
+                $message .= "<li>ÄNDERUNG: ".$spielAenderung->getAenderung()."</li>";
+            }
             $message .= "<li>EURE DIENSTE: ".implode(", ", $dienstarten)."</li>";
+            if(isset($entfallenerDienst)){
+                $message .= "<li>ES ENTFÄLLT: ".$entfallenerDienst->dienstart()."</li>";
+            }
             $message .= "</ul>";
             $message .= "</div>";
         }
@@ -75,6 +111,8 @@ class DienstAenderungsPlan{
     private function getGeanderteSpieleUndDienste(Mannschaft $mannschaft): array{
         
         $spieleUndDienste = array();
+
+        // Geänderte Spiele
         foreach($this->geanderteDienste[$mannschaft->id] as $dienst){
             $spielID = $dienst->spiel->id;
             if(empty($spieleUndDienste[$spielID])){
@@ -82,6 +120,17 @@ class DienstAenderungsPlan{
             }
             array_push($spieleUndDienste[$spielID], $dienst->dienstart);
         }
+
+        // Entfallene Dienste
+        foreach($this->entfalleneDienste[$mannschaft->id] as $entfallenerDienst){
+            $spielID = $entfallenerDienst->spiel->id;
+            if(empty($spieleUndDienste[$spielID])){
+                $spieleUndDienste[$spielID] = array();
+            }
+            array_push($spieleUndDienste[$spielID], $entfallenerDienst->dienstart);
+
+        }
+
         return $spieleUndDienste;
     }
 }
