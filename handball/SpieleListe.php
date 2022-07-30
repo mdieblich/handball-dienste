@@ -75,9 +75,14 @@ class SpieleListe{
     }
 
     public function getDienste(string $dienstart): array{
-        return array_map(function($spiel) {
-            return $spiel->getDienst($dienstart);
-        },$this->spiele);
+        $dienste = array();
+        foreach($this->spiele as $spiel){
+            $dienst = $spiel->getDienst($dienstart);
+            if(isset($dienst)){
+                $dienste[$dienst->id] = $dienst;
+            }
+        }
+        return $dienste;
     }
 
     public function getMannschaften(): array {
