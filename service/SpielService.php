@@ -60,9 +60,11 @@ class SpielService{
             $dienst->spiel = $oldSpiel;
             unset($dienst->spiel_id);
 
-            $mannschaft = $mannschaftsListe->mannschaften[$dienst->mannschaft_id];
-            $dienst->mannschaft = $mannschaft;
-            unset($dienst->mannschaft_id);
+            if(isset($dienst->mannschaft_id)){
+                $mannschaft = $mannschaftsListe->mannschaften[$dienst->mannschaft_id];
+                $dienst->mannschaft = $mannschaft;
+                unset($dienst->mannschaft_id);
+            }
         } 
         return $oldSpiel;
     }
