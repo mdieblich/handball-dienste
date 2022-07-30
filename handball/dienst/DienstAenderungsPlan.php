@@ -9,8 +9,8 @@ require_once __DIR__."/../Dienst.php";
 class DienstAenderungsPlan{
     private DienstDAO $dao;
     private array $mannschaften;
-    private $geanderteDienste = array();
-    private $geanderteSpiele = array();
+    private $geaenderteDienste = array();
+    private $geaenderteSpiele = array();
     private $entfalleneDienste = array();
 
     public function __construct(array $mannschaften){
@@ -18,15 +18,15 @@ class DienstAenderungsPlan{
         $this->mannschaften = $mannschaften;
         
         foreach($mannschaften as $mannschaft){
-            $this->geanderteDienste[$mannschaft->id] = array();
+            $this->geaenderteDienste[$mannschaft->id] = array();
             $this->entfalleneDienste[$mannschaft->id] = array();
         }
     }
 
     public function registerSpielAenderung(Spiel $alt, Spiel $neu){ 
-        $this->geanderteSpiele[$alt->id] = new SpielAenderung($alt, $neu);
+        $this->geaenderteSpiele[$alt->id] = new SpielAenderung($alt, $neu);
         foreach($alt->dienste as $dienst){
-            array_push($this->geanderteDienste[$dienst->mannschaft->id], $dienst);
+            array_push($this->geaenderteDienste[$dienst->mannschaft->id], $dienst);
         }
     }
 
@@ -45,6 +45,7 @@ class DienstAenderungsPlan{
     }
 
     public function sendEmails(){
+        error_log(print_r($this->mannschaften, true));
         foreach($this->mannschaften as $mannschaft){
             if($this->brauchtKeineNachricht($mannschaft)){
                 continue;
@@ -64,7 +65,7 @@ class DienstAenderungsPlan{
     }
 
     private function hatKeineGeandertenDienste(Mannschaft $mannschaft): bool{
-        return count($this->geanderteDienste[$mannschaft->id]) == 0;
+        return count($this->geaenderteDienste[$mannschaft->id]) == 0;
     }
 
     private function hatKeineEntfallenenDienste(Mannschaft $mannschaft): bool{
@@ -76,12 +77,17 @@ class DienstAenderungsPlan{
             "<p>Hallo ".$mannschaft->getName().",</p>"
             ."<p>es haben sich Spiele geändert, bei denen ihr Dienste übernehmt:</p>";
         
-        $spieleUndDienste = $this->getGeanderteSpieleUndDienste($mannschaft);
+        $spieleUndDienste = $this->getGeaenderteSpieleUndDienste($mannschaft);
 
+        error_log(print_r($spieleUndDienste, true));
         foreach($spieleUndDienste as $spielID => $dienstarten){
-            $spielAenderung = $this->geanderteSpiele[$spielID];
-            $entfallenerDienst = $this->entfalleneDienste[$mannschaft->id][$spielID];
-            
+            if(array_key_exists($spielID, $this->geaenderteSpiele)){
+                $spielAenderung = $this->geaenderteSpiele[$spielID];
+            }
+            if(array_key_exists($spielID, $this->entfalleneDienste[$mannschaft->id])){
+                $entfallenerDienst = $this->entfalleneDienste[$mannschaft->id][$spielID];
+            }
+
             $message .= "<div style='padding-left:2em'>";
             if(isset($spielAenderung)){
                 $message .= "<b>".$spielAenderung->alt->getBegegnungsbezeichnung()."</b>";
@@ -108,12 +114,12 @@ class DienstAenderungsPlan{
         return $message;
     }
 
-    private function getGeanderteSpieleUndDienste(Mannschaft $mannschaft): array{
+    private function getGeaenderteSpieleUndDienste(Mannschaft $mannschaft): array{
         
         $spieleUndDienste = array();
 
         // Geänderte Spiele
-        foreach($this->geanderteDienste[$mannschaft->id] as $dienst){
+        foreach($this->geaenderteDienste[$mannschaft->id] as $dienst){
             $spielID = $dienst->spiel->id;
             if(empty($spieleUndDienste[$spielID])){
                 $spieleUndDienste[$spielID] = array();
