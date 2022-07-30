@@ -166,14 +166,14 @@ function updateGegnerFrom_POST(){
     }
     
     // Dienste löschen
-    $zuLoeschendeDienste = $spieleDieKeineDiensteMehrBrauchen->getDienste(Dienstar::SEKRETAER);
+    $zuLoeschendeDienste = $spieleDieKeineDiensteMehrBrauchen->getDienste(Dienstart::SEKRETAER);
 
     if(count($zuLoeschendeDienste)>0){
         $dienstAenderungsplan = new DienstAenderungsPlan($spieleDieKeineDiensteMehrBrauchen->getMannschaften());
         $dienstAenderungsplan->registerEntfalleneDienste($zuLoeschendeDienste);
         $dienstAenderungsplan->sendEmails();
         
-        $deleteDienste = "DELETE FROM dienste_table_name WHERE id IN (".implode(",", array_map(function($dienst){return $dienst->id;}, $zuLoeschendeDienste)).")";
+        $deleteDienste = "DELETE FROM dienste_table_name WHERE id IN (".implode(",", array_keys($zuLoeschendeDienste)).")";
         $wpdb->query($deleteDienste);
         
     }
