@@ -151,7 +151,7 @@ function updateGegnerFrom_POST(){
     }
 
     $filterFuerSpieleDieDiensteBrauchen = "($heimSpieleDieDiensteBrauchen) OR ($auswaertsSpieleDieDiensteBrauchen)";
-    $filterFuerSpieleDieKeineDiensteMehrBrauchen = "($heimSpieleDieDiensteBrauchen) OR ($auswaertsSpieleDieDiensteBrauchen)";
+    $filterFuerSpieleDieKeineDiensteMehrBrauchen = "($heimSpieleDieKeineDiensteMehrBrauchen) OR ($auswaertsSpieleDieKeineDiensteMehrBrauchen)";
     
     $spielDAO = new SpielDAO($wpdb);
     $spielService = new SpielService($wpdb);
