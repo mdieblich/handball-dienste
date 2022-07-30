@@ -88,17 +88,19 @@ class SpielService{
     private function appendDienste(SpieleListe $spieleListe, MannschaftsListe $mannschaftsListe){
         $spielIDs = $spieleListe->getIDs();
         $filter = "spiel_id in (".implode(", ", $spielIDs).")";
-
+        
         $dienste = $this->dienstDAO->loadAllDienste($filter);
         foreach($dienste as $dienst){
             $spiel = $spieleListe->spiele[$dienst->spiel_id];
             $spiel->dienste[$dienst->dienstart] = $dienst;
             $dienst->spiel = $spiel;
             unset($dienst->spiel_id);
-
-            $mannschaft = $mannschaftsListe->mannschaften[$dienst->mannschaft_id];
-            $dienst->mannschaft = $mannschaft;
-            unset($dienst->mannschaft_id);
+            
+            if(isset($dienst->mannschaft_id)){
+                $mannschaft = $mannschaftsListe->mannschaften[$dienst->mannschaft_id];
+                $dienst->mannschaft = $mannschaft;
+                unset($dienst->mannschaft_id);
+            }
         } 
     }
 }
