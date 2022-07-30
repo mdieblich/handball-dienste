@@ -45,7 +45,6 @@ class DienstAenderungsPlan{
     }
 
     public function sendEmails(){
-        error_log(print_r($this->mannschaften, true));
         foreach($this->mannschaften as $mannschaft){
             if($this->brauchtKeineNachricht($mannschaft)){
                 continue;
@@ -79,7 +78,6 @@ class DienstAenderungsPlan{
         
         $spieleUndDienste = $this->getGeaenderteSpieleUndDienste($mannschaft);
 
-        error_log(print_r($spieleUndDienste, true));
         foreach($spieleUndDienste as $spielID => $dienstarten){
             if(array_key_exists($spielID, $this->geaenderteSpiele)){
                 $spielAenderung = $this->geaenderteSpiele[$spielID];
@@ -101,7 +99,7 @@ class DienstAenderungsPlan{
             }
             $message .= "<li>EURE DIENSTE: ".implode(", ", $dienstarten)."</li>";
             if(isset($entfallenerDienst)){
-                $message .= "<li>ES ENTFÄLLT: ".$entfallenerDienst->dienstart()."</li>";
+                $message .= "<li>ES ENTFÄLLT: ".$entfallenerDienst->dienstart."</li>";
             }
             $message .= "</ul>";
             $message .= "</div>";
