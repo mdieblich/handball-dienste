@@ -123,56 +123,67 @@ function updateGegnerFrom_POST(){
             $gegnerDieAbJetztSekretaerStellen[$gegner->id] = $gegner;
         }
     }
-    
-    // Gegner stellt ab jetzt Sekretär: 
+
+    updateDiensteFuerGegner($wpdb, $gegnerDieAbJetztSekretaerStellen, $gegnerDieNichtMehrSekretaerStellen);
+}
+
+function updateDiensteFuerGegner($wpdb, $gegnerDieAbJetztSekretaerStellen, $gegnerDieNichtMehrSekretaerStellen){
+    createNewDienste($wpdb, $gegnerDieAbJetztSekretaerStellen, $gegnerDieNichtMehrSekretaerStellen);
+    deleteNeedlessDienste($wpdb, $gegnerDieAbJetztSekretaerStellen, $gegnerDieNichtMehrSekretaerStellen);
+}
+
+function createNewDienste($wpdb, $gegnerDieAbJetztSekretaerStellen, $gegnerDieNichtMehrSekretaerStellen){
     if(!empty($gegnerDieAbJetztSekretaerStellen)){
-        //  -> Bei unseren Heimspielen müssen wir jetzt auch Sekretär stellen
-        //  -> Bei den Auswärtsspielen müssen wir keinen Sekretär mehr stellen
-        $gegnerDieAbJetztSekretaerStellen_idListe = implode(",", array_keys($gegnerDieAbJetztSekretaerStellen));
-        $heimSpieleDieDiensteBrauchen = "heimspiel=1 AND gegner_id in ($gegnerDieAbJetztSekretaerStellen_idListe)";
-        $auswaertsSpieleDieKeineDiensteMehrBrauchen = "heimspiel=0 AND gegner_id in ($gegnerDieAbJetztSekretaerStellen_idListe)";
+        $heimSpieleDieDiensteBrauchen = "heimspiel=1 AND gegner_id in (".implode(",", array_keys($gegnerDieAbJetztSekretaerStellen)).")";
     } else {
-        // auf "false" setzen, damit die spätere SQL-Abfrage Sinn macht
         $heimSpieleDieDiensteBrauchen = "false";
-        $auswaertsSpieleDieKeineDiensteMehrBrauchen = "false";
     }
     
-    // Gegner stellt ab jetzt nicht mehr Sekretär:
     if(!empty($gegnerDieNichtMehrSekretaerStellen)){
-        //  -> Bei unseren Heimspielen müssen wir auch keinen Sekretär mehr stellen
-        //  -> Bei den Auswärtsspielen müssen wir aber ab jetzt einen Sekretär stellen
-        $gegnerDieNichtMehrSekretaerStellen_idListe = implode(",", array_keys($gegnerDieNichtMehrSekretaerStellen));
-        $heimSpieleDieKeineDiensteMehrBrauchen = "heimspiel=1 AND gegner_id in ($gegnerDieNichtMehrSekretaerStellen_idListe)";
-        $auswaertsSpieleDieDiensteBrauchen = "heimspiel=0 AND gegner_id in ($gegnerDieNichtMehrSekretaerStellen_idListe)";
+        $auswaertsSpieleDieDiensteBrauchen = "heimspiel=0 AND gegner_id in (".implode(",", array_keys($gegnerDieNichtMehrSekretaerStellen)).")";
     } else {
-        // auf "false" setzen, damit die spätere SQL-Abfrage Sinn macht
-        $heimSpieleDieKeineDiensteMehrBrauchen = "false";
         $auswaertsSpieleDieDiensteBrauchen = "false";
     }
-
-    $filterFuerSpieleDieDiensteBrauchen = "($heimSpieleDieDiensteBrauchen) OR ($auswaertsSpieleDieDiensteBrauchen)";
-    $filterFuerSpieleDieKeineDiensteMehrBrauchen = "($heimSpieleDieKeineDiensteMehrBrauchen) OR ($auswaertsSpieleDieKeineDiensteMehrBrauchen)";
     
-    $spielDAO = new SpielDAO($wpdb);
-    $spielService = new SpielService($wpdb);
-    $spieleDieDiensteBrauchen = $spielDAO->loadSpiele("($filterFuerSpieleDieDiensteBrauchen) AND anwurf > CURRENT_TIMESTAMP");
-    $spieleDieKeineDiensteMehrBrauchen = $spielService->loadSpieleMitDiensten("($filterFuerSpieleDieKeineDiensteMehrBrauchen) AND anwurf > CURRENT_TIMESTAMP");
+    $filterFuerSpieleDieDiensteBrauchen = "($heimSpieleDieDiensteBrauchen) OR ($auswaertsSpieleDieDiensteBrauchen)";
 
-    // Dienste anlegen
+    $spielDAO = new SpielDAO($wpdb);
+    $spieleDieDiensteBrauchen = $spielDAO->loadSpiele("($filterFuerSpieleDieDiensteBrauchen) AND anwurf > CURRENT_TIMESTAMP");
+    
     $dienste_table_name = DienstDAO::tableName($wpdb);
     if($spieleDieDiensteBrauchen->hasEntries()){
         $insertDienste = "INSERT INTO $dienste_table_name (spiel_id, dienstart) VALUES (".implode(", '".Dienstart::SEKRETAER."'),(", $spieleDieDiensteBrauchen->getIDs()).", '".Dienstart::SEKRETAER."')";
         $wpdb->query($insertDienste);
     }
-    
-    // Dienste löschen
-    $zuLoeschendeDienste = $spieleDieKeineDiensteMehrBrauchen->getDienste(Dienstart::SEKRETAER);
+}
 
+function deleteNeedlessDienste($wpdb, $gegnerDieAbJetztSekretaerStellen, $gegnerDieNichtMehrSekretaerStellen){
+    if(!empty($gegnerDieAbJetztSekretaerStellen)){
+        $auswaertsSpieleDieKeineDiensteMehrBrauchen = "heimspiel=0 AND gegner_id in (".implode(",", array_keys($gegnerDieAbJetztSekretaerStellen)).")";
+    } else {
+        $auswaertsSpieleDieKeineDiensteMehrBrauchen = "false";
+    }
+    
+    if(!empty($gegnerDieNichtMehrSekretaerStellen)){
+        $heimSpieleDieKeineDiensteMehrBrauchen = "heimspiel=1 AND gegner_id in (".implode(",", array_keys($gegnerDieNichtMehrSekretaerStellen)).")";
+    } else {
+        $heimSpieleDieKeineDiensteMehrBrauchen = "false";
+    }
+
+    $filterFuerSpieleDieKeineDiensteMehrBrauchen = "($heimSpieleDieKeineDiensteMehrBrauchen) OR ($auswaertsSpieleDieKeineDiensteMehrBrauchen)";
+
+    $spielService = new SpielService($wpdb);
+    $spieleDieKeineDiensteMehrBrauchen = $spielService->loadSpieleMitDiensten("($filterFuerSpieleDieKeineDiensteMehrBrauchen) AND anwurf > CURRENT_TIMESTAMP");
+    
+    $zuLoeschendeDienste = $spieleDieKeineDiensteMehrBrauchen->getDienste(Dienstart::SEKRETAER);
+    
     if(count($zuLoeschendeDienste)>0){
+        // Email-Benachrichtigungen!
         $dienstAenderungsplan = new DienstAenderungsPlan($spieleDieKeineDiensteMehrBrauchen->getMannschaften());
         $dienstAenderungsplan->registerEntfalleneDienste($zuLoeschendeDienste);
         $dienstAenderungsplan->sendEmails();
         
+        // Löschen
         $deleteDienste = "DELETE FROM $dienste_table_name WHERE id IN (".implode(",", array_keys($zuLoeschendeDienste)).")";
         $wpdb->query($deleteDienste);
         
