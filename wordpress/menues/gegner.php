@@ -173,7 +173,7 @@ function updateGegnerFrom_POST(){
         $dienstAenderungsplan->registerEntfalleneDienste($zuLoeschendeDienste);
         $dienstAenderungsplan->sendEmails();
         
-        $deleteDienste = "DELETE FROM dienste_table_name WHERE id IN (".implode(",", array_keys($zuLoeschendeDienste)).")";
+        $deleteDienste = "DELETE FROM $dienste_table_name WHERE id IN (".implode(",", array_keys($zuLoeschendeDienste)).")";
         $wpdb->query($deleteDienste);
         
     }
