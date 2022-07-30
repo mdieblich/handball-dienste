@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__."/../handball/Mannschaft.php";   // Für GESCHLECHT_W und GESCHLECHT_M
+require_once __DIR__."/../handball/dienst/DienstAenderungsPlan.php";
 require_once __DIR__."/../service/GegnerService.php";
 require_once __DIR__."/../dao/SpielDAO.php";
 require_once __DIR__."/../dao/DienstDAO.php";
@@ -165,13 +166,17 @@ function updateGegnerFrom_POST(){
     }
     
     // Dienste löschen
-    if($spieleDieKeineDiensteMehrBrauchen->hasEntries()){
-        $dienstDAO  = new DienstDAO($wpdb);
-        $zuLoeschendeDienste = $dienstDAO->fetchAll("dienstart='".Dienstart::SEKRETAER."' AND spiel_id in (".implode(",",$spieleDieKeineDiensteMehrBrauchen->getIDs()).")");
+    $zuLoeschendeDienste = $spieleDieKeineDiensteMehrBrauchen->getDienste(Dienstar::SEKRETAER);
+
+    if(count($zuLoeschendeDienste)>0){
+        $dienstAenderungsplan = new DienstAenderungsPlan($spieleDieKeineDiensteMehrBrauchen->getMannschaften());
+        $dienstAenderungsplan->registerEntfalleneDienste($zuLoeschendeDienste);
+        $dienstAenderungsplan->sendEmails();
+        
+        $deleteDienste = "DELETE FROM dienste_table_name WHERE id IN (".implode(",", array_map(function($dienst){return $dienst->id;}, $zuLoeschendeDienste)).")";
         $wpdb->query($deleteDienste);
+        
     }
-    
-    // TODO Mannschaften per Email informieren, dass Dienste entfallen sind
 }
 
 ?>
