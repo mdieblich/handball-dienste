@@ -74,6 +74,29 @@ class SpieleListe{
         return count($this->spiele) > 0;
     }
 
+    public function getDienste(string $dienstart): array{
+        return array_map(function($spiel) {
+            return $spiel->getDienst($dienstart);
+        },$this->spiele);
+    }
+
+    public function getMannschaften(): array {
+        $mannschaften = array();
+        foreach($this->spiele as $spiel){
+            $mannschaft = $spiel->mannschaft;
+            $mannschaften[$mannschaft->id] = $mannschaft;
+            foreach($spiel->dienste as $dienst){
+                if (empty($dienst->mannschaft)){
+                    continue;
+                }
+                $mannschaft = $dienst->mannschaft;
+                $mannschaften[$mannschaft->id] = $mannschaft;
+            }
+        }
+
+        return $mannschaften;
+    }
+
 }
 
 ?>
