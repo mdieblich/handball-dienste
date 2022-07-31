@@ -91,7 +91,11 @@ function dienste_tabellen_ersetzen(array $matches){
             $spielzeile .= "<td style=\"padding: 3px;\">";
             $dienst = $spiel->getDienst($dienstart);
             if(isset($dienst)){
-                $spielzeile .= $dienst->mannschaft->getKurzname();
+                if(isset($dienst->mannschaft)){
+                    $spielzeile .= $dienst->mannschaft->getKurzname();
+                } else {
+                    $spielzeile .= "??";
+                }
             }
             $spielzeile .= "</td>";
         }
