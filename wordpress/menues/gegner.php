@@ -150,8 +150,8 @@ function createNewDienste($wpdb, $gegnerDieAbJetztSekretaerStellen, $gegnerDieNi
     $spielDAO = new SpielDAO($wpdb);
     $spieleDieDiensteBrauchen = $spielDAO->loadSpiele("($filterFuerSpieleDieDiensteBrauchen) AND anwurf > CURRENT_TIMESTAMP");
     
-    $dienste_table_name = DienstDAO::tableName($wpdb);
     if($spieleDieDiensteBrauchen->hasEntries()){
+        $dienste_table_name = DienstDAO::tableName($wpdb);
         $insertDienste = "INSERT INTO $dienste_table_name (spiel_id, dienstart) VALUES (".implode(", '".Dienstart::SEKRETAER."'),(", $spieleDieDiensteBrauchen->getIDs()).", '".Dienstart::SEKRETAER."')";
         $wpdb->query($insertDienste);
     }
@@ -184,6 +184,7 @@ function deleteNeedlessDienste($wpdb, $gegnerDieAbJetztSekretaerStellen, $gegner
         $dienstAenderungsplan->sendEmails();
         
         // Löschen
+        $dienste_table_name = DienstDAO::tableName($wpdb);
         $deleteDienste = "DELETE FROM $dienste_table_name WHERE id IN (".implode(",", array_keys($zuLoeschendeDienste)).")";
         $wpdb->query($deleteDienste);
         
