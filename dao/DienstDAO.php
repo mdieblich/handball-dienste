@@ -17,5 +17,13 @@ class DienstDAO extends DAO{
         );
         $this->delete($params);
     }
+
+    public function assign($id, $mannschaft_id){
+        $this->updateFields( $id, array('mannschaft_id' => $mannschaft_id));
+    }
+
+    public function unassign($id){
+        $this->updateFields( $id, array('mannschaft_id' => null));
+    }
 }
 ?>
