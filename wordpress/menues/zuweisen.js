@@ -1,19 +1,18 @@
-function assignDienst(spiel, dienstart, mannschaft, assign){
+function assignDienst(dienstID, mannschaft, assign){
     var data = {
         'action': assign?'dienst_zuweisen':'dienst_entfernen',
-        'spiel': spiel,
-        'dienstart': dienstart,
+        'dienst': dienstID,
         'mannschaft': mannschaft
     };
 
     // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
     jQuery.post(ajaxurl, data);
 
-    disableOtherCheckboxes(spiel, dienstart, mannschaft, assign);
-    setDienstCounter(dienstart, mannschaft, assign);
+    disableOtherCheckboxes(dienstID, mannschaft, assign);
+    setDienstCounter(mannschaft, assign);
 }
-function disableOtherCheckboxes(spiel, dienstart, mannschaft, assign){
-    checkBoxName = dienstart+"-"+spiel;
+function disableOtherCheckboxes(dienstID, mannschaft, assign){
+    checkBoxName = "Dienst-"+dienstID;
     otherCheckBoxes = document.getElementsByName(checkBoxName);
     for(i=0; i<otherCheckBoxes.length; i++){
         otherCheckBoxes[i].disabled = assign;
@@ -22,8 +21,8 @@ function disableOtherCheckboxes(spiel, dienstart, mannschaft, assign){
     activeID = checkBoxName+"-"+mannschaft;
     document.getElementById(activeID).disabled = false;
 }
-function setDienstCounter(dienstart, mannschaft, assign){
-    id = dienstart.substring(0,1)+"-counter-"+mannschaft;
+function setDienstCounter(mannschaft, assign){
+    id = "counter-"+mannschaft;
     previousValue = parseInt(document.getElementById(id).innerText);
     if(assign){
         // erhöhen

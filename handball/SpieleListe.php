@@ -14,15 +14,12 @@ class SpieleListe{
     }
     
     // TODO ersetzen durch getDiensteProMannschaft
-    public function zaehleDienste(Mannschaft $mannschaft): array{
-        $anzahl = array();
-        foreach(Dienstart::values as $dienstart){
-            $anzahl[$dienstart] = 0;
-        }
+    public function zaehleDienste(Mannschaft $mannschaft): int{
+        $anzahl = 0;
         foreach($this->spiele as $spiel){
             foreach($spiel->dienste as $dienst){
-                if($dienst->mannschaft->id == $mannschaft->id){
-                    $anzahl[$dienst->dienstart]++;
+                if(isset($dienst->mannschaft) && $dienst->mannschaft->id == $mannschaft->id){
+                    $anzahl++;
                 }
             }
         }
