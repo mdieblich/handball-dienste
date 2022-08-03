@@ -112,6 +112,15 @@ class SpieleListe{
         return $spieleProTag;
     }
 
+    public function getErstesSpiel(): Spiel {
+        return $this->spiele[0];
+    }
+
+    public function getLetztesSpiel(): Spiel {
+        $letzterIndex = count($this->spiele)-1;
+        return $this->spiele[$letzterIndex];
+    }
+
 }
 
 ?>
