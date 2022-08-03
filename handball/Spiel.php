@@ -126,7 +126,7 @@ class Spiel{
             }
         }
     }
-    private function createDienst(string $dienstart): Dienst{
+    public function createDienst(string $dienstart): Dienst{
         $dienst = new Dienst();
         $dienst->spiel = $this;
         $dienst->dienstart = $dienstart;
