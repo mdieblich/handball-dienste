@@ -12,6 +12,7 @@ class DienstAenderungsPlan{
     private $geaenderteDienste = array();
     private $geaenderteSpiele = array();
     private $entfalleneDienste = array();
+    private $neueDienste = array();
 
     public function __construct(array $mannschaften){
         $this->dao = new DienstDAO();
@@ -44,6 +45,13 @@ class DienstAenderungsPlan{
         $this->entfalleneDienste[$dienst->mannschaft->id][$dienst->spiel->id] = $dienst;
     }
 
+    public function registerNeuenDienst(Dienst $dienst){
+        if(empty($dienst->mannschaft)){
+            return;
+        }
+        $this->neueDienste[$dienst->mannschaft->id][$dienst->spiel->id] = $dienst;
+    }
+
     public function sendEmails(){
         foreach($this->mannschaften as $mannschaft){
             if($this->brauchtKeineNachricht($mannschaft)){
@@ -60,7 +68,10 @@ class DienstAenderungsPlan{
     }
 
     private function brauchtKeineNachricht($mannschaft): bool{
-        return $this->hatKeineGeandertenDienste($mannschaft) && $this->hatKeineEntfallenenDienste($mannschaft);
+        return 
+            $this->hatKeineGeandertenDienste($mannschaft) && 
+            $this->hatKeineEntfallenenDienste($mannschaft) &&
+            $this->hatKeineNeuenDienste($mannschaft);
     }
 
     private function hatKeineGeandertenDienste(Mannschaft $mannschaft): bool{
@@ -69,6 +80,10 @@ class DienstAenderungsPlan{
 
     private function hatKeineEntfallenenDienste(Mannschaft $mannschaft): bool{
         return count($this->entfalleneDienste[$mannschaft->id]) == 0;
+    }
+
+    private function hatKeineNeuenDienste(Mannschaft $mannschaft): bool{
+        return count($this->neueDienste[$mannschaft->id]) == 0;
     }
 
     private function createMessageForMannschaft(Mannschaft $mannschaft): string{
@@ -81,17 +96,19 @@ class DienstAenderungsPlan{
         foreach($spieleUndDienste as $spielID => $dienstarten){
             if(array_key_exists($spielID, $this->geaenderteSpiele)){
                 $spielAenderung = $this->geaenderteSpiele[$spielID];
+                $betroffenesSpiel = $spielAenderung->alt;
             }
             if(array_key_exists($spielID, $this->entfalleneDienste[$mannschaft->id])){
                 $entfallenerDienst = $this->entfalleneDienste[$mannschaft->id][$spielID];
+                $betroffenesSpiel = $entfallenerDienst->spiel;
+            }
+            if(array_key_exists($spielID, $this->neueDienste[$mannschaft->id])){
+                $neuerDienst = $this->neueDienste[$mannschaft->id][$spielID];
+                $betroffenesSpiel = $neuerDienst->spiel;
             }
 
             $message .= "<div style='padding-left:2em'>";
-            if(isset($spielAenderung)){
-                $message .= "<b>".$spielAenderung->alt->getBegegnungsbezeichnung()."</b>";
-            } else {
-                $message .= "<b>".$entfallenerDienst->spiel->getBegegnungsbezeichnung()."</b>";
-            }
+            $message .= "<b>".$betroffenesSpiel->getBegegnungsbezeichnung()."</b>";
             
             $message .= "<ul>";
             if(isset($spielAenderung)){
@@ -100,6 +117,9 @@ class DienstAenderungsPlan{
             $message .= "<li>EURE DIENSTE: ".implode(", ", $dienstarten)."</li>";
             if(isset($entfallenerDienst)){
                 $message .= "<li>ES ENTFÄLLT: ".$entfallenerDienst->dienstart."</li>";
+            }
+            if(isset($neuerDienst)){
+                $message .= "<li>DABEI NEU: ".$neuerDienst->dienstart."</li>";
             }
             $message .= "</ul>";
             $message .= "</div>";
@@ -132,7 +152,15 @@ class DienstAenderungsPlan{
                 $spieleUndDienste[$spielID] = array();
             }
             array_push($spieleUndDienste[$spielID], $entfallenerDienst->dienstart);
+        }
 
+        // Neue Dienste
+        foreach($this->neueDienste[$mannschaft->id] as $neuerDienst){
+            $spielID = $neuerDienst->spiel->id;
+            if(empty($spieleUndDienste[$spielID])){
+                $spieleUndDienste[$spielID] = array();
+            }
+            array_push($spieleUndDienste[$spielID], $neuerDienst->dienstart);
         }
 
         return $spieleUndDienste;
