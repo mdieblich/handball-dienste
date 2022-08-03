@@ -26,6 +26,18 @@ class SpielDAO extends DAO{
     public function countSpiele(int $mannschaftsmeldung, int $mannschaftsID): int {
         return $this->count("mannschaftsmeldung_id=$mannschaftsmeldung AND mannschaft_id=$mannschaftsID");
     }
+
+    public function fetchSpieleProHalle(string $where = "anwurf > current_timestamp", string $orderBy = "anwurf"): array{
+        $spieleProHalle = array();
+        $spiele = $this->fetchAll($where, "halle, ".$orderBy);
+        foreach($spiele as $spiel){
+            if(!array_key_exists($spiel->halle, $spieleProHalle)){
+                $spieleProHalle[$spiel->halle] = new SpieleListe();
+            }
+            $spieleProHalle[$spiel->halle]->spiele[] = $spiel;
+        }
+        return $spieleProHalle;
+    }
     
 }
 ?>
