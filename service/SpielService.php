@@ -106,8 +106,8 @@ class SpielService{
 
     public function fetchSpieleProHalle(string $where = "anwurf > current_timestamp", string $orderBy = "anwurf"): array{
         $spieleProHalle = array();
-        $spiele = $this->loadSpieleMitDiensten($where, "halle, ".$orderBy);
-        foreach($spiele as $spiel){
+        $spieleListe = $this->loadSpieleMitDiensten($where, "halle, ".$orderBy);
+        foreach($spieleListe->spiele as $spiel){
             if(!array_key_exists($spiel->halle, $spieleProHalle)){
                 $spieleProHalle[$spiel->halle] = new SpieleListe();
             }
