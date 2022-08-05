@@ -106,7 +106,7 @@ class SpieleListe{
             if(!array_key_exists($spieltag, $spieleProTag)){
                 $spieleProTag[$spieltag] = new SpieleListe();
             }
-            $spieleProTag[$spieltag]->spiele = $spiel;
+            $spieleProTag[$spieltag]->spiele[] = $spiel;
         }
 
         return $spieleProTag;
