@@ -21,6 +21,7 @@ class DienstAenderungsPlan{
         foreach($mannschaften as $mannschaft){
             $this->geaenderteDienste[$mannschaft->id] = array();
             $this->entfalleneDienste[$mannschaft->id] = array();
+            $this->neueDienste[$mannschaft->id] = array();
         }
     }
 
