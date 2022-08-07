@@ -257,6 +257,62 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
         }
     }
 
+    // Auf- und Abbau organisieren
+    error_log("=========== START Aufbau & Abbau =========== ");
+    $heimSpieleProHalle = $spielService->fetchSpieleProHalle("heimspiel = 1");
+    foreach($heimSpieleProHalle as $halle => $spieleInDerHalle){
+        error_log("Halle: $halle");
+        $spieleProTag = $spieleInDerHalle->groupBySpielTag();
+        foreach($spieleProTag as $spieltag => $spieleAmSpielTag){
+            error_log("  Spieltag: $spieltag");
+
+            // TODO in Klasse "Spieltag" auslagern
+            $erstesSpiel = $spieleAmSpielTag->getErstesSpiel();
+            $aufbau = $erstesSpiel->getDienst(Dienstart::AUFBAU);
+            if(!isset($aufbau)){
+                $aufbau = $erstesSpiel->createDienst(Dienstart::AUFBAU);
+                $aufbau->mannschaft = $erstesSpiel->mannschaft;
+                $dienstDAO->insert($aufbau);
+                $dienstAenderungsPlan->registerNeuenDienst($aufbau);
+            }
+            
+            // TODO in Klasse "Spieltag" auslagern
+            $letztesSpiel = $spieleAmSpielTag->getLetztesSpiel();
+            $abbau = $letztesSpiel->getDienst(Dienstart::ABBAU);
+            if(!isset($abbau)){
+                $abbau = $letztesSpiel->createDienst(Dienstart::ABBAU);
+                $abbau->mannschaft = $letztesSpiel->mannschaft;
+                $dienstDAO->insert($abbau);
+                $dienstAenderungsPlan->registerNeuenDienst($abbau);
+            }
+            
+            // TODO in Klasse "Spieltag" auslagern
+            error_log("    Erstes : ".$erstesSpiel->getBegegnungsbezeichnung());
+            foreach($spieleAmSpielTag->spiele as $spiel){
+                if($spiel === $erstesSpiel || $spiel === $letztesSpiel){
+                    continue;
+                }
+                error_log("           : ".$spiel->getBegegnungsbezeichnung());
+                $unnoetigerAufbau = $spiel->getDienst(Dienstart::AUFBAU);
+                if(isset($unnoetigerAufbau)){
+                    $dienstDAO->delete($unnoetigerAufbau);
+                    $dienstAenderungsPlan->registerEntfallenenDienst($unnoetigerAufbau);
+                }
+                $unnoetigerAbbau = $spiel->getDienst(Dienstart::ABBAU);
+                if(isset($unnoetigerAbbau)){
+                    $dienstDAO->delete($unnoetigerAbbau);
+                    $dienstAenderungsPlan->registerEntfallenenDienst($unnoetigerAbbau);
+                }
+            }
+            error_log("    Letztes: ".$letztesSpiel->getBegegnungsbezeichnung());
+            
+            // Notiz an Martin: ausprobieren! 
+            // Werden Auf- und Abbau korrekt angelegt?
+            // Werden bestehende Dienste (Auf/abbau) gelöscht?
+            // Werden Emails für die Aktionen versandt?
+        }
+    }
+
     $dienstAenderungsPlan->sendEmails();
 });
 

@@ -16,7 +16,10 @@ class GegnerService {
 
     public function loadAlleGegner(): array{
         $alleGegner = $this->gegnerDAO->loadGegner();
-
+        if(empty($alleGegner)){
+            return $alleGegner;
+        }
+        
         $meldungen = $this->loadMeldungen($alleGegner);
         foreach($alleGegner as $gegner){
             $gegner->zugehoerigeMeldung = $meldungen[$gegner->zugehoerigeMeldung_id];

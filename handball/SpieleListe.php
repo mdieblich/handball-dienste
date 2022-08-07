@@ -9,7 +9,7 @@ class SpieleListe{
 
     public array $spiele;
 
-    public function __construct(array $spiele){
+    public function __construct(array $spiele = array()){
         $this->spiele = $spiele;
     }
     
@@ -97,6 +97,28 @@ class SpieleListe{
         }
 
         return $mannschaften;
+    }
+
+    public function groupBySpielTag(): array{
+        $spieleProTag = array();
+        foreach($this->spiele as $spiel){
+            $spieltag = $spiel->anwurf->format("d.m.Y");
+            if(!array_key_exists($spieltag, $spieleProTag)){
+                $spieleProTag[$spieltag] = new SpieleListe();
+            }
+            $spieleProTag[$spieltag]->spiele[] = $spiel;
+        }
+
+        return $spieleProTag;
+    }
+
+    public function getErstesSpiel(): Spiel {
+        return $this->spiele[0];
+    }
+
+    public function getLetztesSpiel(): Spiel {
+        $letzterIndex = count($this->spiele)-1;
+        return $this->spiele[$letzterIndex];
     }
 
 }
