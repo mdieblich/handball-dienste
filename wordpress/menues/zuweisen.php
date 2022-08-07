@@ -83,11 +83,6 @@ foreach($spieleListe->spiele as $spiel){
     $anwurf = $spiel->anwurf;
     $mannschaftDesSpiels = $spiel->mannschaft;
     $gegner = $spiel->gegner;
-    $aufbau = $spiel->getDienst(Dienstart::AUFBAU);
-    $zeitnehmerDienst = $spiel->getDienst(Dienstart::ZEITNEHMER);
-    $sekretaerDienst = $spiel->getDienst(Dienstart::SEKRETAER);
-    $cateringDienst = $spiel->getDienst(Dienstart::CATERING);
-    $abbau = $spiel->getDienst(Dienstart::ABBAU);
     if(isset($anwurf)){
         if(!$spiel->isAmGleichenTag($vorherigesSpiel)){
             $zeilenFarbePrimaer = !$zeilenFarbePrimaer;
