@@ -83,9 +83,11 @@ foreach($spieleListe->spiele as $spiel){
     $anwurf = $spiel->anwurf;
     $mannschaftDesSpiels = $spiel->mannschaft;
     $gegner = $spiel->gegner;
+    $aufbau = $spiel->getDienst(Dienstart::AUFBAU);
     $zeitnehmerDienst = $spiel->getDienst(Dienstart::ZEITNEHMER);
     $sekretaerDienst = $spiel->getDienst(Dienstart::SEKRETAER);
     $cateringDienst = $spiel->getDienst(Dienstart::CATERING);
+    $abbau = $spiel->getDienst(Dienstart::ABBAU);
     if(isset($anwurf)){
         if(!$spiel->isAmGleichenTag($vorherigesSpiel)){
             $zeilenFarbePrimaer = !$zeilenFarbePrimaer;
@@ -176,71 +178,31 @@ foreach($spieleListe->spiele as $spiel){
         }
 
         $cellContent = "";
-        if(isset($zeitnehmerDienst)){
-            $zeitnehmerChecked = "";
-            if( isset($zeitnehmerDienst->mannschaft) ) {
-                if( $zeitnehmerDienst->mannschaft->id == $mannschaft->id){
-                    // wir haben den Dienst!
-                    $zeitnehmerChecked = "checked";
+        foreach(Dienstart::values as $dienstart){
+            $dienst = $spiel->getDienst($dienstart);
+            if(isset($dienst)){
+                $kurzform = substr($dienstart, 0, 3);
+                $checked = "";
+                if( isset($dienst->mannschaft) ) {
+                    if( $dienst->mannschaft->id == $mannschaft->id){
+                        // wir haben den Dienst!
+                        $checked = "checked";
+                    }
+                    else{
+                        // eine andere Mannschaft hat den Dienst
+                        $checked = "disabled";
+                    }
                 }
-                else{
-                    // eine andere Mannschaft hat den Dienst
-                    $zeitnehmerChecked = "disabled";
-                }
+                $checkBoxName = "Dienst-".$dienst->id;
+                $checkBoxID = $checkBoxName."-".$mannschaft->id;
+                $cellContent .= 
+                    "<input type=\"checkbox\" ".
+                    "name=\"$checkBoxName\"".
+                    "id=\"$checkBoxID\" ".
+                    "onclick=\"assignDienst(".$dienst->id.",".$mannschaft->id.", this.checked)\"".
+                    " $checked>".
+                    "<label for=\"$checkBoxID\">$kurzform</label><br>";
             }
-            $checkBoxName = "Dienst-".$zeitnehmerDienst->id;
-            $checkBoxID = $checkBoxName."-".$mannschaft->id;
-            $cellContent .= 
-                "<input type=\"checkbox\" ".
-                "name=\"$checkBoxName\"".
-                "id=\"$checkBoxID\" ".
-                "onclick=\"assignDienst(".$zeitnehmerDienst->id.",".$mannschaft->id.", this.checked)\"".
-                " $zeitnehmerChecked>".
-                "<label for=\"$checkBoxID\">Z</label><br>";
-        }
-            
-        if(isset($sekretaerDienst)){
-            $sekretaerChecked = "";
-            if(isset($sekretaerDienst->mannschaft) ) {
-                if( $sekretaerDienst->mannschaft->id == $mannschaft->id){
-                    // wir haben den Dienst!
-                    $sekretaerChecked = "checked";
-                } else{
-                    // eine andere Mannschaft hat den Dienst
-                    $sekretaerChecked = "disabled";
-                }
-            }
-            $checkBoxName = "Dienst-".$sekretaerDienst->id;
-            $checkBoxID = $checkBoxName."-".$mannschaft->id;
-            $cellContent .= 
-                "<input type=\"checkbox\" ".
-                "name=\"$checkBoxName\"".
-                "id=\"$checkBoxID\" ".
-                "onclick=\"assignDienst(".$sekretaerDienst->id.",".$mannschaft->id.", this.checked)\"".
-                " $sekretaerChecked>".
-                "<label for=\"$checkBoxID\">S</label><br>";
-        }
-            
-        if(isset($cateringDienst)){
-            $cateringChecked = "";
-            if(isset($cateringDienst->mannschaft)){
-                if($cateringDienst->mannschaft->id == $mannschaft->id){
-                    // wir haben den Dienst!
-                    $cateringChecked = "checked";
-                } else{
-                    // eine andere Mannschaft hat den Dienst
-                    $cateringChecked = "disabled";
-                }
-            } 
-            $checkBoxName = "Dienst-".$cateringDienst->id;
-            $checkBoxID = $checkBoxName."-".$mannschaft->id;
-            $cellContent .= 
-                "<input type=\"checkbox\" ".
-                "name=\"$checkBoxName\"".
-                "id=\"$checkBoxID\" ".
-                "onclick=\"assignDienst(".$cateringDienst->id.",".$mannschaft->id.", this.checked)\"".
-                " $cateringChecked>".
-                "<label for=\"$checkBoxID\">C</label><br>";
         }
         
         echo "<td "
