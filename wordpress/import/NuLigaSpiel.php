@@ -101,7 +101,9 @@ class NuLigaSpiel {
         $spiel->anwurf = $this->getAnwurf();
         $spiel->halle = $this->halle;
 
-        if($this->heimmannschaft === $teamName){
+        if( ($this->heimmannschaft === $teamName) || 
+            // In manchen Gruppen (z.B. Turnieren) wird die erste Mannschaft hinten mit "1" ergänzt, was hier abgefangen werden soll
+            ($this->heimmannschaft === $teamName." 1") ){
             $spiel->heimspiel = true;
             $spiel->gegner = $findGegner($this->gastmannschaft, $meldung);
         } else {

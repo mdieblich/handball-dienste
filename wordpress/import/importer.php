@@ -258,13 +258,10 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
     }
 
     // Auf- und Abbau organisieren
-    error_log("=========== START Aufbau & Abbau =========== ");
     $heimSpieleProHalle = $spielService->fetchSpieleProHalle("heimspiel = 1");
     foreach($heimSpieleProHalle as $halle => $spieleInDerHalle){
-        error_log("Halle: $halle");
         $spieleProTag = $spieleInDerHalle->groupBySpielTag();
         foreach($spieleProTag as $spieltag => $spieleAmSpielTag){
-            error_log("  Spieltag: $spieltag");
 
             // TODO in Klasse "Spieltag" auslagern
             $erstesSpiel = $spieleAmSpielTag->getErstesSpiel();
@@ -287,12 +284,10 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
             }
             
             // TODO in Klasse "Spieltag" auslagern
-            error_log("    Erstes : ".$erstesSpiel->getBegegnungsbezeichnung());
             foreach($spieleAmSpielTag->spiele as $spiel){
                 if($spiel === $erstesSpiel || $spiel === $letztesSpiel){
                     continue;
                 }
-                error_log("           : ".$spiel->getBegegnungsbezeichnung());
                 $unnoetigerAufbau = $spiel->getDienst(Dienstart::AUFBAU);
                 if(isset($unnoetigerAufbau)){
                     $dienstDAO->delete($unnoetigerAufbau);
@@ -304,7 +299,6 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
                     $dienstAenderungsPlan->registerEntfallenenDienst($unnoetigerAbbau);
                 }
             }
-            error_log("    Letztes: ".$letztesSpiel->getBegegnungsbezeichnung());
             
             // Notiz an Martin: ausprobieren! 
             // Werden Auf- und Abbau korrekt angelegt?
