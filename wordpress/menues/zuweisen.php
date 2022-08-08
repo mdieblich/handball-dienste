@@ -179,27 +179,6 @@ foreach($spieleListe->spiele as $spiel){
             if(isset($dienst)){
                 $checkBox = new DienstCheckBox($dienst, $mannschaft);
                 $cellContent .= $checkBox->toHTML()."<br>";
-                // $kurzform = substr($dienstart, 0, 3);
-                // $checked = "";
-                // if( isset($dienst->mannschaft) ) {
-                //     if( $dienst->mannschaft->id == $mannschaft->id){
-                //         // wir haben den Dienst!
-                //         $checked = "checked";
-                //     }
-                //     else{
-                //         // eine andere Mannschaft hat den Dienst
-                //         $checked = "disabled";
-                //     }
-                // }
-                // $checkBoxName = "Dienst-".$dienst->id;
-                // $checkBoxID = $checkBoxName."-".$mannschaft->id;
-                // $cellContent .= 
-                //     "<input type=\"checkbox\" ".
-                //     "name=\"$checkBoxName\"".
-                //     "id=\"$checkBoxID\" ".
-                //     "onclick=\"assignDienst(".$dienst->id.",".$mannschaft->id.", this.checked)\"".
-                //     " $checked>".
-                //     "<label for=\"$checkBoxID\">$kurzform</label><br>";
             }
         }
         
