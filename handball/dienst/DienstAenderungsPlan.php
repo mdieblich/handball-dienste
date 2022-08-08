@@ -25,10 +25,12 @@ class DienstAenderungsPlan{
         }
     }
 
-    public function registerSpielAenderung(Spiel $alt, Spiel $neu){ 
+    public function registerSpielAenderung(Spiel $alt, Spiel $neu){
         $this->geaenderteSpiele[$alt->id] = new SpielAenderung($alt, $neu);
         foreach($alt->dienste as $dienst){
-            array_push($this->geaenderteDienste[$dienst->mannschaft->id], $dienst);
+            if(isset($dienst->mannschaft)){
+                array_push($this->geaenderteDienste[$dienst->mannschaft->id], $dienst);
+            }
         }
     }
 
