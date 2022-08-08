@@ -50,7 +50,7 @@ function displayDiensteZuweisen(){
     $spieleListe = $spielService->loadSpieleMitDiensten();
  ?>
 <div class="wrap">
-    <div style="float:right; width: 200px; background-color:#ddddff; padding: 5px">
+    <div style="float:right; width: 200px; background-color:#ddd; padding: 5px">
     Filter
     <?php foreach ($mannschaftsListe->mannschaften as $mannschaft) { ?>
         <br>
@@ -61,7 +61,7 @@ function displayDiensteZuweisen(){
     <h1>Dienste zuweisen</h1>
     Die Eingaben der Checkboxen werden direkt gespeichert.
     <table cellpadding="3" cellspacing="3" id="tabelle-dienste-zuweisen">
-    <tr style="background-color:#ddddff; position: sticky; top: 32px">
+    <tr style="background-color:#ddd; position: sticky; top: 32px">
         <th>Spiel-Nr.</th>
         <th>Datum</th>
         <th>Halle</th>
@@ -87,10 +87,10 @@ foreach($spieleListe->spiele as $spiel){
         if(!$spiel->isAmGleichenTag($vorherigesSpiel)){
             $zeilenFarbePrimaer = !$zeilenFarbePrimaer;
         }
-        $backgroundColor = $zeilenFarbePrimaer?"#ddddff":"#dddddd";
+        $backgroundColor = $zeilenFarbePrimaer?"#ddd":"#eee";
     }
     else {
-        $backgroundColor = "#ffffff";
+        $backgroundColor = "#fff";
     }
     echo "<tr style=\"background-color:$backgroundColor\" mannschaft=\"".$mannschaftDesSpiels->id."\">";
     echo "<td>".$spiel->spielNr."</td>";
