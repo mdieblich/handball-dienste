@@ -241,7 +241,7 @@ abstract class DAO{
         unset($values['id']);
         $this->dbhandle->update(self::tableName($this->dbhandle), $values, array('id' => $id));
     }
-    protected function delete(array $identifiers){
+    public function delete(array $identifiers){
         $this->dbhandle->delete(self::tableName($this->dbhandle), $identifiers);
     }
 }
