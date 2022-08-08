@@ -5,7 +5,7 @@ require_once __DIR__."/../dao/MannschaftDAO.php";
 require_once __DIR__."/../dao/DienstDAO.php";
 
 require_once __DIR__."/../service/SpielService.php";
-require_once __DIR__."/../components/DienstCheckBox.php";
+require_once __DIR__."/../components/DiensteZelle.php";
 
 $hook_zuweisen;
 function addDiensteZuweisenKonfiguration(){
@@ -123,78 +123,9 @@ foreach($spieleListe->spiele as $spiel){
         echo $zelleMannschaft;
     }
     foreach($mannschaftsListe->mannschaften as $mannschaft){
-        $backgroundColor = "inherit";
-        $highlightColorVorher = "#bbf";
-        $highlightColorNachher = "#bbf";
-        $textColor = "black";
-        $tooltip = "";
         $nahgelegeneSpiele = $spieleListe->findNahgelegeneSpiele($spiel, $mannschaft);
-        if($spiel->mannschaft->id == $mannschaft->id){
-            // TODO Warnung wegen eigenem Spiel bei Anklicken
-            $textColor = "silver";
-            $tooltip = "Eigenes Spiel";
-        } else if(isset($nahgelegeneSpiele->gleichzeitig)) {
-            // TODO Warnung wegen gleichzeitigem Spiel
-            $textColor = "silver";
-            $tooltip = "Gleichzeitiges Spiel";
-        } else {
-            $hatSpielAmGleichenTag = false;
-            $hatSpielinGleicherHalle = false;
-            
-            if(isset($nahgelegeneSpiele->vorher)){
-                if($spiel->isAmGleichenTag($nahgelegeneSpiele->vorher)){
-                    $highlightColorVorher = "#ffd";
-                    $hatSpielAmGleichenTag = true;
-                    if($spiel->halle == $nahgelegeneSpiele->vorher->halle){
-                        $highlightColorVorher = "#dfd";
-                        $hatSpielinGleicherHalle = true;
-                    }
-                }    
-            }
-            
-            if(isset($nahgelegeneSpiele->nachher)){
-                if($spiel->isAmGleichenTag($nahgelegeneSpiele->nachher)){
-                    $highlightColorNachher = "#ffd";
-                    $hatSpielAmGleichenTag = true;
-                    if($spiel->halle == $nahgelegeneSpiele->nachher->halle){
-                        $highlightColorNachher = "#dfd";
-                        $hatSpielinGleicherHalle = true;
-                    }
-                }    
-            }
-
-            if($hatSpielAmGleichenTag){
-                $tooltip = "Spiel am gleichen Tag";
-                $backgroundColor = "#ffd";
-                if($hatSpielinGleicherHalle){
-                    $tooltip .= "\nSpiel in gleicher Halle";
-                    $backgroundColor = "#dfd";
-                }
-            }
-        }
-
-        $cellContent = "";
-        foreach(Dienstart::values as $dienstart){
-            $dienst = $spiel->getDienst($dienstart);
-            if(isset($dienst)){
-                $checkBox = new DienstCheckBox($dienst, $mannschaft);
-                $cellContent .= $checkBox->toHTML()."<br>";
-            }
-        }
-        
-        echo "<td "
-            ."mannschaft=\"".$mannschaft->id."\""
-            ."style=\"background-color:$backgroundColor; color:$textColor; text-align:center\" "
-            ."title=\"$tooltip\" "
-            ."onmouseover=\"highlightGames("
-                .$nahgelegeneSpiele->getVorherID().", '$highlightColorVorher', "
-                .$nahgelegeneSpiele->getGleichzeitigID().", "
-                .$nahgelegeneSpiele->getNachherID().", '$highlightColorNachher')\" "
-            ."onmouseout=\"resetHighlight("
-                .$nahgelegeneSpiele->getVorherID().","
-                .$nahgelegeneSpiele->getGleichzeitigID().", "
-                .$nahgelegeneSpiele->getNachherID().")\" "
-            .">$cellContent</td>";
+        $diensteZelle = new DiensteZelle($spiel, $mannschaft, $nahgelegeneSpiele);
+        echo $diensteZelle->toHTML();
     }
     echo "</tr>";
     $vorherigesSpiel = $spiel;
