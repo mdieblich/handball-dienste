@@ -290,12 +290,12 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
                 }
                 $unnoetigerAufbau = $spiel->getDienst(Dienstart::AUFBAU);
                 if(isset($unnoetigerAufbau)){
-                    $dienstDAO->delete($unnoetigerAufbau);
+                    $dienstDAO->delete(array("id" => $unnoetigerAufbau->id));
                     $dienstAenderungsPlan->registerEntfallenenDienst($unnoetigerAufbau);
                 }
                 $unnoetigerAbbau = $spiel->getDienst(Dienstart::ABBAU);
                 if(isset($unnoetigerAbbau)){
-                    $dienstDAO->delete($unnoetigerAbbau);
+                    $dienstDAO->delete(array("id" => $unnoetigerAbbau->id));
                     $dienstAenderungsPlan->registerEntfallenenDienst($unnoetigerAbbau);
                 }
             }
