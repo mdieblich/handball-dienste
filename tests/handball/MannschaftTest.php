@@ -2,6 +2,7 @@
 use PHPUnit\Framework\TestCase;
 
 require_once __DIR__."/../../handball/Mannschaft.php";
+require_once __DIR__."/../../handball/Meisterschaft.php";
 
 final class MannschaftTest extends TestCase {
 
@@ -81,6 +82,43 @@ final class MannschaftTest extends TestCase {
     }
     public function testNuligaBezeichnungJugendWB1() {
         $this->assertEquals("weibliche Jugend B", $this->wB1()->createNuLigaMannschaftsBezeichnung());
+    }
+    
+    // ##########################################
+    // getMeldungenFuerMeisterschaft()
+    // ##########################################
+    public function testMeldungenFuerMeisterschaftLeer(){
+        $mannschaft = new Mannschaft();
+        $meisterschaft = new Meisterschaft();
+
+        $this->assertEmpty($mannschaft->getMeldungenFuerMeisterschaft($meisterschaft));
+    }
+    public function testMeldungenFuerMeisterschaftLeerFallsKeineMeldungInMeisterschaft(){
+        $mannschaft = new Mannschaft();
+        $hvm22_23 = new Meisterschaft();
+        $hvm22_23->id = 1;
+        $meldung = new MannschaftsMeldung();
+        $meldung->meisterschaft = $hvm22_23;
+        $mannschaft->meldungen[] = $meldung;
+
+        $hkkr22_23 = new Meisterschaft();
+        $hkkr22_23->id = 2;
+
+        $this->assertEmpty($mannschaft->getMeldungenFuerMeisterschaft($hkkr22_23));
+    }
+    public function testMeldungenFuerMeisterschaftEnthaeltMeldungen(){
+        $mannschaft = new Mannschaft();
+        $hvm22_23 = new Meisterschaft();
+        $hvm22_23->id = 1;
+        $meldung_freundschaftsspiele = new MannschaftsMeldung();
+        $meldung_freundschaftsspiele->meisterschaft = $hvm22_23;
+        $mannschaft->meldungen[] = $meldung_freundschaftsspiele;
+
+        $meldung_verbandsliga = new MannschaftsMeldung();
+        $meldung_verbandsliga->meisterschaft = $hvm22_23;
+        $mannschaft->meldungen[] = $meldung_verbandsliga;
+
+        $this->assertEquals([$meldung_freundschaftsspiele, $meldung_verbandsliga], $mannschaft->getMeldungenFuerMeisterschaft($hvm22_23));
     }
 }
 ?>
