@@ -6,15 +6,17 @@ class NahgelegeneSpiele {
     private Spiel $referenzSpiel;
 
     public ?Spiel $vorher = null;
-    private ?ZeitlicheDistanz $distanzVorher;
+    private ZeitlicheDistanz $distanzVorher;
     
     public ?Spiel $gleichzeitig = null;
     
     public ?Spiel $nachher = null;
-    private ?ZeitlicheDistanz $distanzNachher;
+    private ZeitlicheDistanz $distanzNachher;
 
     public function __construct(Spiel $referenzSpiel){
         $this->referenzSpiel = $referenzSpiel;
+        $this->distanzVorher = ZeitlicheDistanz::MAX();
+        $this->distanzNachher = ZeitlicheDistanz::MAX();
     }
 
     public function updateWith(Spiel $spiel){
