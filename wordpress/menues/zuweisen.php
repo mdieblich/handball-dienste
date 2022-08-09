@@ -5,7 +5,7 @@ require_once __DIR__."/../dao/MannschaftDAO.php";
 require_once __DIR__."/../dao/DienstDAO.php";
 
 require_once __DIR__."/../service/SpielService.php";
-require_once __DIR__."/../components/DiensteZelle.php";
+require_once __DIR__."/../components/SpielZeile.php";
 
 $hook_zuweisen;
 function addDiensteZuweisenKonfiguration(){
@@ -81,53 +81,16 @@ foreach($mannschaftsListe->mannschaften as $mannschaft){
 $vorherigesSpiel = null;
 $zeilenFarbePrimaer = true;
 foreach($spieleListe->spiele as $spiel){
-    $anwurf = $spiel->anwurf;
-    $mannschaftDesSpiels = $spiel->mannschaft;
-    $gegner = $spiel->gegner;
-    if(isset($anwurf)){
-        if(!$spiel->isAmGleichenTag($vorherigesSpiel)){
-            $zeilenFarbePrimaer = !$zeilenFarbePrimaer;
-        }
-        $backgroundColor = $zeilenFarbePrimaer?"#ddd":"#eee";
-    }
-    else {
-        $backgroundColor = "#fff";
-    }
-    echo "<tr style=\"background-color:$backgroundColor\" mannschaft=\"".$mannschaftDesSpiels->id."\">";
-    echo "<td>".$spiel->spielNr."</td>";
-    if(isset($anwurf)){
-        echo "<td id=\"spiel-".$spiel->id."-anwurf\">".$anwurf->format("d.m.Y ");
-        $uhrzeit = $anwurf->format("H:i");
-        if($uhrzeit !== "00:00"){
-           echo $uhrzeit;
-        }else{
-           echo "<span style='color:red'>$uhrzeit</span>";
-        }
-        echo "</td>";
-    }else {
-        echo "<td id=\"spiel-".$spiel->id."-anwurf\">Termin offen</td>";
-    }
-    echo "<td id=\"spiel-".$spiel->id."-halle\">".$spiel->halle."</td>";
 
-    $zelleMannschaft = "<td id=\"spiel-".$spiel->id."-mannschaft\">".$mannschaftDesSpiels->getName()."</td>";
-    $zelleGegner = "<td "
-        ."id=\"spiel-".$spiel->id."-gegner\" "
-        .($gegner->stelltSekretaerBeiHeimspiel ? "title='Stellt Sekretär in deren Halle'" : "")
-        .">".$gegner->getName()."</td>";
-    if($spiel->heimspiel){
-        echo $zelleMannschaft;
-        echo $zelleGegner;
+    if(!$spiel->isAmGleichenTag($vorherigesSpiel)){
+        $zeilenFarbePrimaer = !$zeilenFarbePrimaer;
     }
-    else{
-        echo $zelleGegner;
-        echo $zelleMannschaft;
-    }
-    foreach($mannschaftsListe->mannschaften as $mannschaft){
-        $nahgelegeneSpiele = $spieleListe->findNahgelegeneSpiele($spiel, $mannschaft);
-        $diensteZelle = new DiensteZelle($spiel, $mannschaft, $nahgelegeneSpiele);
-        echo $diensteZelle->toHTML();
-    }
-    echo "</tr>";
+    $backgroundColor = $zeilenFarbePrimaer?"#ddd":"#eee";
+    $nahgelegeneSpieleProMannschaft = $spieleListe->findNahgelegeneSpiele2($spiel);
+    
+    $spielZeile = new SpielZeile($spiel, $backgroundColor, $nahgelegeneSpieleProMannschaft, $mannschaftsListe);
+    echo $spielZeile->toHTML();
+   
     $vorherigesSpiel = $spiel;
 }
 ?>
