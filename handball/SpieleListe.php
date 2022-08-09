@@ -28,7 +28,7 @@ class SpieleListe{
     
     function findNahgelegeneSpiele(Spiel $zuPruefendesSpiel, Mannschaft $mannschaft): NahgelegeneSpiele {
 
-        $nahgelegeneSpiele = new NahgelegeneSpiele();
+        $nahgelegeneSpiele = new NahgelegeneSpiele($zuPruefendesSpiel);
         $distanzVorher = null;
         $distanzNachher = null;
         foreach($this->spiele as $spiel){
@@ -57,6 +57,22 @@ class SpieleListe{
             }
         }
         return $nahgelegeneSpiele;
+    }
+
+    function findNahgelegeneSpiele2(Spiel $zuPruefendesSpiel): array {
+
+        // Array initialisieren
+        $nahgelegeneSpieleProMannschaft = array();
+        foreach($this->getMannschaften() as $mannschaft){
+            $nahgelegeneSpieleProMannschaft[$mannschaft->id] = new NahgelegeneSpiele($zuPruefendesSpiel);
+
+        }
+
+        // Array füllen
+        foreach($this->spiele as $spiel){
+            $nahgelegeneSpieleProMannschaft[$spiel->mannschaft->id]->updateWith($spiel);
+        }
+        return $nahgelegeneSpieleProMannschaft;
     }
     
     public function getIDs(): array {

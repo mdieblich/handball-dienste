@@ -18,6 +18,7 @@ cp -r ../handball dienstedienst
 cp -r ../zeit dienstedienst
 cp -r ../dao dienstedienst
 cp -r ../service dienstedienst
+cp -r ../components dienstedienst
 cp -r ../wordpress/* dienstedienst
 
 # 3. Zippen

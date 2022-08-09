@@ -112,6 +112,13 @@ class Spiel{
         return $this->anwurf->format("Y-m-d") == $other->anwurf->format("Y-m-d");
     }
 
+    public function isInGleicherHalle(?Spiel $other): bool {
+        if(empty($other)){
+            return false;
+        }
+        return $this->halle === $other->halle;
+    }
+
     public function createDienste(){
         if($this->heimspiel){
             $this->createDienst(Dienstart::ZEITNEHMER);
