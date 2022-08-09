@@ -5,127 +5,82 @@ require_once __DIR__."/../../handball/Mannschaft.php";
 
 final class MannschaftTest extends TestCase {
 
-    // ##########################################
-    // getName()
-    // ##########################################
-    public function testNameHerren1() {
-
+    private function herren1(): Mannschaft{
         $mannschaft = new Mannschaft();
         $mannschaft->geschlecht = GESCHLECHT_M;
         $mannschaft->nummer = 1;
-
-        $this->assertEquals("Herren 1", $mannschaft->getName());
+        return $mannschaft;
     }
-    
-    public function testNameDamen3() {
 
+    private function damen3(): Mannschaft{
         $mannschaft = new Mannschaft();
         $mannschaft->geschlecht = GESCHLECHT_W;
         $mannschaft->nummer = 3;
-
-        $this->assertEquals("Damen 3", $mannschaft->getName());
+        return $mannschaft;
     }
 
-    public function testNameJugendMC2() {
-
+    private function mC2(): Mannschaft{
         $mannschaft = new Mannschaft();
         $mannschaft->geschlecht = GESCHLECHT_M;
         $mannschaft->nummer = 2;
         $mannschaft->jugendklasse = "C";
-
-        $this->assertEquals("männliche C2", $mannschaft->getName());
+        return $mannschaft;
     }
 
-    public function testNameJugendWB1() {
-
+    private function wB1(): Mannschaft{
         $mannschaft = new Mannschaft();
         $mannschaft->geschlecht = GESCHLECHT_W;
         $mannschaft->nummer = 1;
         $mannschaft->jugendklasse = "B";
+        return $mannschaft;
+    }
 
-        $this->assertEquals("weibliche B1", $mannschaft->getName());
+    // ##########################################
+    // getName()
+    // ##########################################
+    public function testNameHerren1() {
+        $this->assertEquals("Herren 1", $this->herren1()->getName());
+    }
+    public function testNameDamen3() {
+        $this->assertEquals("Damen 3", $this->damen3()->getName());
+    }
+    public function testNameJugendMC2() {
+        $this->assertEquals("männliche C2", $this->mC2()->getName());
+    }
+    public function testNameJugendWB1() {
+        $this->assertEquals("weibliche B1", $this->wB1()->getName());
     }
 
     // ##########################################
     // getKurzname()
     // ##########################################
     public function testKurznameHerren1() {
-
-        $mannschaft = new Mannschaft();
-        $mannschaft->geschlecht = GESCHLECHT_M;
-        $mannschaft->nummer = 1;
-
-        $this->assertEquals("H1", $mannschaft->getKurzname());
+        $this->assertEquals("H1", $this->herren1()->getKurzname());
     }
-    
     public function testKurznameDamen3() {
-
-        $mannschaft = new Mannschaft();
-        $mannschaft->geschlecht = GESCHLECHT_W;
-        $mannschaft->nummer = 3;
-
-        $this->assertEquals("D3", $mannschaft->getKurzname());
+        $this->assertEquals("D3", $this->damen3()->getKurzname());
     }
-
     public function testKurznameJugendMC2() {
-
-        $mannschaft = new Mannschaft();
-        $mannschaft->geschlecht = GESCHLECHT_M;
-        $mannschaft->nummer = 2;
-        $mannschaft->jugendklasse = "C";
-
-        $this->assertEquals("mC2", $mannschaft->getKurzname());
+        $this->assertEquals("mC2", $this->mC2()->getKurzname());
     }
-
     public function testKurznameJugendWB1() {
-
-        $mannschaft = new Mannschaft();
-        $mannschaft->geschlecht = GESCHLECHT_W;
-        $mannschaft->nummer = 1;
-        $mannschaft->jugendklasse = "B";
-
-        $this->assertEquals("wB1", $mannschaft->getKurzname());
+        $this->assertEquals("wB1", $this->wB1()->getKurzname());
     }
 
     // ##########################################
     // createNuLigaMannschaftsBezeichnung()
     // ##########################################
     public function testNuligaBezeichnungHerren1() {
-
-        $mannschaft = new Mannschaft();
-        $mannschaft->geschlecht = GESCHLECHT_M;
-        $mannschaft->nummer = 1;
-
-        $this->assertEquals("Männer", $mannschaft->createNuLigaMannschaftsBezeichnung());
+        $this->assertEquals("Männer", $this->herren1()->createNuLigaMannschaftsBezeichnung());
     }
-    
     public function testNuligaBezeichnungDamen3() {
-
-        $mannschaft = new Mannschaft();
-        $mannschaft->geschlecht = GESCHLECHT_W;
-        $mannschaft->nummer = 3;
-
-        $this->assertEquals("Frauen III", $mannschaft->createNuLigaMannschaftsBezeichnung());
+        $this->assertEquals("Frauen III", $this->damen3()->createNuLigaMannschaftsBezeichnung());
     }
-
     public function testNuligaBezeichnungJugendMC2() {
-
-        $mannschaft = new Mannschaft();
-        $mannschaft->geschlecht = GESCHLECHT_M;
-        $mannschaft->nummer = 2;
-        $mannschaft->jugendklasse = "C";
-
-        $this->assertEquals("männliche Jugend C II", $mannschaft->createNuLigaMannschaftsBezeichnung());
+        $this->assertEquals("männliche Jugend C II", $this->mC2()->createNuLigaMannschaftsBezeichnung());
     }
-
     public function testNuligaBezeichnungJugendWB1() {
-
-        $mannschaft = new Mannschaft();
-        $mannschaft->geschlecht = GESCHLECHT_W;
-        $mannschaft->nummer = 1;
-        $mannschaft->jugendklasse = "B";
-
-        $this->assertEquals("weibliche Jugend B", $mannschaft->createNuLigaMannschaftsBezeichnung());
+        $this->assertEquals("weibliche Jugend B", $this->wB1()->createNuLigaMannschaftsBezeichnung());
     }
 }
 ?>
