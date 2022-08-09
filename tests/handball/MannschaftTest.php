@@ -26,7 +26,7 @@ final class MannschaftTest extends TestCase {
         $this->assertEquals("Damen 3", $mannschaft->getName());
     }
 
-    public function testNameJugendmC2() {
+    public function testNameJugendMC2() {
 
         $mannschaft = new Mannschaft();
         $mannschaft->geschlecht = GESCHLECHT_M;
@@ -36,7 +36,7 @@ final class MannschaftTest extends TestCase {
         $this->assertEquals("männliche C2", $mannschaft->getName());
     }
 
-    public function testNameJugendwb1() {
+    public function testNameJugendWB1() {
 
         $mannschaft = new Mannschaft();
         $mannschaft->geschlecht = GESCHLECHT_W;
@@ -68,7 +68,7 @@ final class MannschaftTest extends TestCase {
         $this->assertEquals("D3", $mannschaft->getKurzname());
     }
 
-    public function testKurznameJugendmC2() {
+    public function testKurznameJugendMC2() {
 
         $mannschaft = new Mannschaft();
         $mannschaft->geschlecht = GESCHLECHT_M;
@@ -78,7 +78,7 @@ final class MannschaftTest extends TestCase {
         $this->assertEquals("mC2", $mannschaft->getKurzname());
     }
 
-    public function testKurznameJugendwb1() {
+    public function testKurznameJugendWB1() {
 
         $mannschaft = new Mannschaft();
         $mannschaft->geschlecht = GESCHLECHT_W;
