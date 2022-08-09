@@ -2,6 +2,7 @@
 use PHPUnit\Framework\TestCase;
 
 require_once __DIR__."/../../handball/Gegner.php";
+require_once __DIR__."/../../handball/Mannschaft.php";
 
 final class GegnerTest extends TestCase {
 
@@ -30,5 +31,30 @@ final class GegnerTest extends TestCase {
     public function test_Name_von_Hornets_9(){
         $this->assertEquals("Pulheimer SC 9", $this->hornets(9)->getName());
     }
+
+    // ##########################################
+    // verschiedene Methoden
+    // ##########################################
+    public function test_Geschlecht_über_Mannschaftsmeldung_ableiten(){
+        $damen1 = new Mannschaft();
+        $damen1->geschlecht = GESCHLECHT_W;
+        $meldung_verbandsliga = new MannschaftsMeldung();
+        $meldung_verbandsliga->mannschaft = $damen1;
+        $gegner = new Gegner();
+        $gegner->zugehoerigeMeldung = $meldung_verbandsliga;
+
+        $this->assertEquals(GESCHLECHT_W, $gegner->getGeschlecht());
+    }
+
+    public function test_Liga_über_Mannschaftsmeldung_ableiten(){
+        $meldung_verbandsliga = new MannschaftsMeldung();
+        $meldung_verbandsliga->liga = "Verbandsliga";
+        $gegner = new Gegner();
+        $gegner->zugehoerigeMeldung = $meldung_verbandsliga;
+
+        $this->assertEquals("Verbandsliga", $gegner->getLiga());
+
+    }
+
 }
 ?>
