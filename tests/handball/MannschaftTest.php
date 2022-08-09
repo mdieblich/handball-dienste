@@ -39,61 +39,61 @@ final class MannschaftTest extends TestCase {
     // ##########################################
     // getName()
     // ##########################################
-    public function testNameHerren1() {
+    public function test_Name_von_Herren_1() {
         $this->assertEquals("Herren 1", $this->herren1()->getName());
     }
-    public function testNameDamen3() {
+    public function test_Name_von_Damen_3() {
         $this->assertEquals("Damen 3", $this->damen3()->getName());
     }
-    public function testNameJugendMC2() {
+    public function test_Name_von_Jugend_mC2() {
         $this->assertEquals("männliche C2", $this->mC2()->getName());
     }
-    public function testNameJugendWB1() {
+    public function test_Name_von_Jugend_wB1() {
         $this->assertEquals("weibliche B1", $this->wB1()->getName());
     }
 
     // ##########################################
     // getKurzname()
     // ##########################################
-    public function testKurznameHerren1() {
+    public function test_Kurzname_von_Herren_1() {
         $this->assertEquals("H1", $this->herren1()->getKurzname());
     }
-    public function testKurznameDamen3() {
+    public function test_Kurzname_von_Damen_3() {
         $this->assertEquals("D3", $this->damen3()->getKurzname());
     }
-    public function testKurznameJugendMC2() {
+    public function test_Kurzname_von_Jugend_mC2() {
         $this->assertEquals("mC2", $this->mC2()->getKurzname());
     }
-    public function testKurznameJugendWB1() {
+    public function test_Kurzname_von_Jugen_wB1() {
         $this->assertEquals("wB1", $this->wB1()->getKurzname());
     }
 
     // ##########################################
     // createNuLigaMannschaftsBezeichnung()
     // ##########################################
-    public function testNuligaBezeichnungHerren1() {
+    public function test_nuLiga_Bezeichnung_von_Herren_1() {
         $this->assertEquals("Männer", $this->herren1()->createNuLigaMannschaftsBezeichnung());
     }
-    public function testNuligaBezeichnungDamen3() {
+    public function test_nuLiga_Bezeichnung_von_Damen3() {
         $this->assertEquals("Frauen III", $this->damen3()->createNuLigaMannschaftsBezeichnung());
     }
-    public function testNuligaBezeichnungJugendMC2() {
+    public function test_nuLiga_Bezeichnung_von_Jugend_mC2() {
         $this->assertEquals("männliche Jugend C II", $this->mC2()->createNuLigaMannschaftsBezeichnung());
     }
-    public function testNuligaBezeichnungJugendWB1() {
+    public function test_nuLiga_Bezeichnung_von_Jugend_wB1() {
         $this->assertEquals("weibliche Jugend B", $this->wB1()->createNuLigaMannschaftsBezeichnung());
     }
     
     // ##########################################
     // getMeldungenFuerMeisterschaft()
     // ##########################################
-    public function testMeldungenFuerMeisterschaftLeer(){
+    public function test_Meldungen_für_Meisterschaft_ist_leer_bei_keinen_Meldungen(){
         $mannschaft = new Mannschaft();
         $meisterschaft = new Meisterschaft();
 
         $this->assertEmpty($mannschaft->getMeldungenFuerMeisterschaft($meisterschaft));
     }
-    public function testMeldungenFuerMeisterschaftLeerFallsKeineMeldungInMeisterschaft(){
+    public function test_Meldungen_für_Meisterschaft_ist_leer_falls_keine_Meldung_zur_Meisterschaft_passt(){
         $mannschaft = new Mannschaft();
         $hvm22_23 = new Meisterschaft();
         $hvm22_23->id = 1;
@@ -106,7 +106,7 @@ final class MannschaftTest extends TestCase {
 
         $this->assertEmpty($mannschaft->getMeldungenFuerMeisterschaft($hkkr22_23));
     }
-    public function testMeldungenFuerMeisterschaftEnthaeltMeldungen(){
+    public function test_Meldungen_für_Meisterschaft_enthält_passende_Meldungen(){
         $mannschaft = new Mannschaft();
         $hvm22_23 = new Meisterschaft();
         $hvm22_23->id = 1;
@@ -117,6 +117,12 @@ final class MannschaftTest extends TestCase {
         $meldung_verbandsliga = new MannschaftsMeldung();
         $meldung_verbandsliga->meisterschaft = $hvm22_23;
         $mannschaft->meldungen[] = $meldung_verbandsliga;
+
+        $hkkr22_23 = new Meisterschaft();
+        $hkkr22_23->id = 2;
+        $meldung_kreisliga = new MannschaftsMeldung();
+        $meldung_kreisliga->meisterschaft = $hkkr22_23;
+        $mannschaft->meldungen[] = $meldung_kreisliga;
 
         $this->assertEquals([$meldung_freundschaftsspiele, $meldung_verbandsliga], $mannschaft->getMeldungenFuerMeisterschaft($hvm22_23));
     }
