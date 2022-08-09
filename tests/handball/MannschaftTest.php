@@ -46,7 +46,6 @@ final class MannschaftTest extends TestCase {
         $this->assertEquals("weibliche B1", $mannschaft->getName());
     }
 
-    
     // ##########################################
     // getKurzname()
     // ##########################################
@@ -86,6 +85,47 @@ final class MannschaftTest extends TestCase {
         $mannschaft->jugendklasse = "B";
 
         $this->assertEquals("wB1", $mannschaft->getKurzname());
+    }
+
+    // ##########################################
+    // createNuLigaMannschaftsBezeichnung()
+    // ##########################################
+    public function testNuligaBezeichnungHerren1() {
+
+        $mannschaft = new Mannschaft();
+        $mannschaft->geschlecht = GESCHLECHT_M;
+        $mannschaft->nummer = 1;
+
+        $this->assertEquals("Männer", $mannschaft->createNuLigaMannschaftsBezeichnung());
+    }
+    
+    public function testNuligaBezeichnungDamen3() {
+
+        $mannschaft = new Mannschaft();
+        $mannschaft->geschlecht = GESCHLECHT_W;
+        $mannschaft->nummer = 3;
+
+        $this->assertEquals("Frauen III", $mannschaft->createNuLigaMannschaftsBezeichnung());
+    }
+
+    public function testNuligaBezeichnungJugendMC2() {
+
+        $mannschaft = new Mannschaft();
+        $mannschaft->geschlecht = GESCHLECHT_M;
+        $mannschaft->nummer = 2;
+        $mannschaft->jugendklasse = "C";
+
+        $this->assertEquals("männliche Jugend C II", $mannschaft->createNuLigaMannschaftsBezeichnung());
+    }
+
+    public function testNuligaBezeichnungJugendWB1() {
+
+        $mannschaft = new Mannschaft();
+        $mannschaft->geschlecht = GESCHLECHT_W;
+        $mannschaft->nummer = 1;
+        $mannschaft->jugendklasse = "B";
+
+        $this->assertEquals("weibliche Jugend B", $mannschaft->createNuLigaMannschaftsBezeichnung());
     }
 }
 ?>
