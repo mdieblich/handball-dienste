@@ -14,6 +14,11 @@ class ZeitRaum {
     public function getZeitlicheDistanz(Zeitraum $other): ZeitlicheDistanz{
         $distanz = new ZeitlicheDistanz();
         $distanz->ueberlappend = $this->ende > $other->start && $other->ende > $this->start;
+        if($distanz->ueberlappend){
+            $distanz->seconds = 0;
+            return $distanz;
+        }
+        
         $vorher = $other->start < $this->start;
         if($vorher){
             $distanz->seconds = $other->ende->getTimestamp() - $this->start->getTimestamp();
