@@ -25,5 +25,29 @@ final class SpielTest extends TestCase {
         $this->assertNull($spiel->getDienst(Dienstart::CATERING));
     }
 
+    // ##########################################
+    // Spieldauer 
+    // ##########################################
+    public function test_getSpielEnde_ist_nach_90_Minuten(){
+        $spiel = new Spiel();
+        $spiel->anwurf = DateTime::createFromFormat("d.m.Y H:i", "11.08.2022 20:00");
+
+        $this->assertEquals(
+            DateTime::createFromFormat("d.m.Y H:i", "11.08.2022 21:30"),
+            $spiel->getSpielEnde()
+        );
+    }
+    public function test_getSpielzeit_ist_Zeitraum_von_Anwurf_bis_90_Minuten_danach(){
+        $anwurf = DateTime::createFromFormat("d.m.Y H:i", "11.08.2022 20:00");
+        $spielEnde = DateTime::createFromFormat("d.m.Y H:i", "11.08.2022 21:30");
+        $spiel = new Spiel();
+        $spiel->anwurf = $anwurf;
+
+        $this->assertEquals(
+            new ZeitRaum($anwurf, $spielEnde),
+            $spiel->getSpielZeit()
+        );
+    }
+
 }
 ?>
