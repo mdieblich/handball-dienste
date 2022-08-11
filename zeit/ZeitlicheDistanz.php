@@ -15,7 +15,13 @@ class ZeitlicheDistanz {
         return $this->seconds < 0;
     }
 
-    public static function MAX(): ZeitlicheDistanz{
+    public static function MAX_VORHER(): ZeitlicheDistanz{
+        $maximaleDistanz = new ZeitlicheDistanz();
+        $maximaleDistanz->ueberlappend = false;
+        $maximaleDistanz->seconds = -PHP_INT_MAX;
+        return $maximaleDistanz;
+    }
+    public static function MAX_NACHHER(): ZeitlicheDistanz{
         $maximaleDistanz = new ZeitlicheDistanz();
         $maximaleDistanz->ueberlappend = false;
         $maximaleDistanz->seconds = PHP_INT_MAX;
