@@ -15,8 +15,8 @@ class NahgelegeneSpiele {
 
     public function __construct(Spiel $referenzSpiel){
         $this->referenzSpiel = $referenzSpiel;
-        $this->distanzVorher = ZeitlicheDistanz::MAX();
-        $this->distanzNachher = ZeitlicheDistanz::MAX();
+        $this->distanzVorher = ZeitlicheDistanz::MAX_VORHER();
+        $this->distanzNachher = ZeitlicheDistanz::MAX_NACHHER();
     }
 
     public function updateWith(Spiel $spiel){
@@ -24,20 +24,21 @@ class NahgelegeneSpiele {
         if(empty($zeitlicheDistanz)){
             return;
         }
-
+        
         if($zeitlicheDistanz->ueberlappend){
             $this->gleichzeitig = $spiel;
+            return;
+        }
+        
+        if($zeitlicheDistanz->isVorher()){
+            if($zeitlicheDistanz->isNaeher($this->distanzVorher)){
+                $this->distanzVorher = $zeitlicheDistanz;
+                $this->vorher = $spiel;
+            }
         } else {
-            if($zeitlicheDistanz->isVorher()){
-                if($zeitlicheDistanz->isNaeher($this->distanzVorher)){
-                    $this->distanzVorher = $zeitlicheDistanz;
-                    $this->vorher = $spiel;
-                }
-            } else {
-                if($zeitlicheDistanz->isNaeher($this->distanzNachher)){
-                    $this->distanzNachher = $zeitlicheDistanz;
-                    $this->nachher = $spiel;
-                }
+            if($zeitlicheDistanz->isNaeher($this->distanzNachher)){
+                $this->distanzNachher = $zeitlicheDistanz;
+                $this->nachher = $spiel;
             }
         }
     }
@@ -58,7 +59,5 @@ class NahgelegeneSpiele {
         }
         return $spiel->id;
     }
-
-
 }
 ?>

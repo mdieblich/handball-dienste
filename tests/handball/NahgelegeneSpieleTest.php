@@ -37,7 +37,6 @@ final class NahgelegeneSpieleTest extends TestCase {
         $spielGestern = $this->createHeimspiel("09.08.2022 20:00");
         $nahgelegeneSpiele->updateWith($spielGestern);
         
-        var_dump($nahgelegeneSpiele->vorher); 
         $this->assertEquals($spielGestern, $nahgelegeneSpiele->vorher);
     }
     public function test_updateWith_näherem_Spiel_davor_überschreibt_vorheriges_Spiel(){
