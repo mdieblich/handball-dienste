@@ -99,7 +99,7 @@ class Spiel{
             $anderesSpiel = $spiel->getSpielzeit();
         }
 
-        return $eigenesSpiel->getZeitlicheDistanz($anderesSpiel);
+        return $anderesSpiel->getZeitlicheDistanz($eigenesSpiel);
     }
 
     public function isAmGleichenTag(?Spiel $other): bool {
