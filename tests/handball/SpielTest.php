@@ -5,19 +5,21 @@ require_once __DIR__."/../../handball/Spiel.php";
 
 final class SpielTest extends TestCase {
 
-    private function heimspiel(string $anwurf): Spiel {
+    private function heimspiel(string $anwurf, int $halle = 3182): Spiel {
+        // 3182 = Nippeser Tälchen
         $spiel = new Spiel();
         $spiel->heimspiel = true;
-        $spiel->halle = 3182; // Nippeser Tälchen
+        $spiel->halle = $halle;
         $spiel->anwurf = DateTime::createFromFormat("d.m.Y H:i", $anwurf);
 
         return $spiel;
     }
 
-    private function auswaertsspiel(string $anwurf): Spiel {
+    private function auswaertsspiel(string $anwurf, int $halle = 3117): Spiel {
+        // Pulheimer Hornets
         $spiel = new Spiel();
         $spiel->heimspiel = false;
-        $spiel->halle = 3117; // Pulheimer Hornets
+        $spiel->halle = $halle; 
         $spiel->anwurf = DateTime::createFromFormat("d.m.Y H:i", $anwurf);
 
         return $spiel;
@@ -171,13 +173,70 @@ final class SpielTest extends TestCase {
     public function test_zeitliche_Distanz_in_gleicher_halle_ist_negativ_wenn_Spiel_vorher() {
         $spiel_a = $this->heimspiel("12.08.2022 20:00");
         $spiel_b = $this->heimspiel("11.08.2022 20:00");
-
+        
         $abstand_in_h = 24; // Anwurf liegt 1 Tag auseinander
         $abstand_in_h -= 1.5; // abzüglich der Spielzeit von Spiel B
         $this->assertEquals(
             new ZeitlicheDistanz((int) (-$abstand_in_h * 3600)), 
             $spiel_a->calculate_distanz_to($spiel_b)
         );
+    }
+
+    // ##########################################
+    // isAmGleichenTag 
+    // ##########################################
+    public function test_gleicher_Tag(){
+        $spiel_a = $this->heimspiel("12.08.2022 20:00");
+        $spiel_b = $this->heimspiel("12.08.2022 18:00");
+
+        $this->assertTrue($spiel_a->isAmGleichenTag($spiel_b));
+    }
+    public function test_unterschiedlicher_Tag(){
+        $spiel_a = $this->heimspiel("12.08.2022 20:00");
+        $spiel_b = $this->heimspiel("13.08.2022 18:00");
+
+        $this->assertFalse($spiel_a->isAmGleichenTag($spiel_b));
+    }
+    public function test_gleicher_Tag_ist_falsch_wenn_anderes_Spiel_fehlt(){
+        $spiel_a = $this->heimspiel("12.08.2022 20:00");
+        $spiel_b = null;
+        
+        $this->assertFalse($spiel_a->isAmGleichenTag($spiel_b));
+    }
+    public function test_gleicher_Tag_ist_falsch_wenn_Anwurf_fehlt(){
+        $spiel_a = $this->heimspiel("12.08.2022 20:00");
+        $spiel_a->anwurf = null;
+        $spiel_b = $this->heimspiel("12.08.2022 18:00");
+
+        $this->assertFalse($spiel_a->isAmGleichenTag($spiel_b));
+    }
+    public function test_gleicher_Tag_ist_falsch_wenn_Anwurf_des_anderen_Spiels_fehlt(){
+        $spiel_a = $this->heimspiel("12.08.2022 20:00");
+        $spiel_b = $this->heimspiel("12.08.2022 18:00");
+        $spiel_b->anwurf = null;
+
+        $this->assertFalse($spiel_a->isAmGleichenTag($spiel_b));
+    }
+    // ##########################################
+    // isAmGleichenTag 
+    // ##########################################
+    public function test_gleiche_Halle(){
+        $spiel_a = $this->auswaertsspiel("12.08.2022 20:00", 4711);
+        $spiel_b = $this->auswaertsspiel("12.08.2022 20:00", 4711);
+        
+        $this->assertTrue($spiel_a->isInGleicherHalle($spiel_b));
+    }
+    public function test_ungleiche_Halle(){
+        $spiel_a = $this->auswaertsspiel("12.08.2022 20:00", 4711);
+        $spiel_b = $this->auswaertsspiel("12.08.2022 20:00", 4712);
+        
+        $this->assertFalse($spiel_a->isInGleicherHalle($spiel_b));
+    }
+    public function test_gleiche_Halle_ist_falsch_wenn_anderes_Spiel_fehlt(){
+        $spiel_a = $this->heimspiel("12.08.2022 20:00");
+        $spiel_b = null;
+        
+        $this->assertFalse($spiel_a->isInGleicherHalle($spiel_b));
     }
 }
 ?>
