@@ -20,12 +20,12 @@ class NahgelegeneSpiele {
     }
 
     public function updateWith(Spiel $spiel){
-        $zeitlicheDistanz = $spiel->getZeitlicheDistanz($this->referenzSpiel);
+        $zeitlicheDistanz = $this->referenzSpiel->calculate_distanz_to($spiel);
         if(empty($zeitlicheDistanz)){
             return;
         }
         
-        if($zeitlicheDistanz->ueberlappend){
+        if($zeitlicheDistanz->isUeberlappend()){
             $this->gleichzeitig = $spiel;
             return;
         }

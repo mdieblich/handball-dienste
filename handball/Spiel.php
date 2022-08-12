@@ -83,23 +83,23 @@ class Spiel{
         }
         return new ZeitRaum($this->getAbfahrt(), $this->getRueckkehr());
     }
-    
-    public function getZeitlicheDistanz(Spiel $spiel): ?ZeitlicheDistanz {
+
+    public function calculate_distanz_to(Spiel $other): ?ZeitlicheDistanz {
 
         $eigenesSpiel = $this->getAbwesenheitsZeitraum();
-        $anderesSpiel = $spiel->getAbwesenheitsZeitraum();
+        $anderesSpiel = $other->getAbwesenheitsZeitraum();
 
         if(empty($eigenesSpiel)||empty($anderesSpiel)){
             return null;
         }
         
-        $gleicheHalle = ($this->halle == $spiel->halle);
+        $gleicheHalle = ($this->halle == $other->halle);
         if($gleicheHalle){
             $eigenesSpiel = $this->getSpielzeit();
-            $anderesSpiel = $spiel->getSpielzeit();
+            $anderesSpiel = $other->getSpielzeit();
         }
 
-        return $anderesSpiel->getZeitlicheDistanz($eigenesSpiel);
+        return ZeitlicheDistanz::from_a_to_b($eigenesSpiel, $anderesSpiel);
     }
 
     public function isAmGleichenTag(?Spiel $other): bool {

@@ -8,6 +8,7 @@ final class SpielTest extends TestCase {
     private function heimspiel(string $anwurf): Spiel {
         $spiel = new Spiel();
         $spiel->heimspiel = true;
+        $spiel->halle = 3182; // Nippeser Tälchen
         $spiel->anwurf = DateTime::createFromFormat("d.m.Y H:i", $anwurf);
 
         return $spiel;
@@ -16,6 +17,7 @@ final class SpielTest extends TestCase {
     private function auswaertsspiel(string $anwurf): Spiel {
         $spiel = new Spiel();
         $spiel->heimspiel = false;
+        $spiel->halle = 3117; // Pulheimer Hornets
         $spiel->anwurf = DateTime::createFromFormat("d.m.Y H:i", $anwurf);
 
         return $spiel;
