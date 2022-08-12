@@ -115,7 +115,69 @@ final class SpielTest extends TestCase {
         );
     }
 
-     // TODO Abwesenheitszeitraum testen
+    // ##########################################
+    // calculate_distanz_to() 
+    // ##########################################
+    public function test_zeitliche_Distanz_zwischen_zwei_Spielen_ist_null_wenn_Anwurf_fehlt() {
+        $spiel_a = $this->heimspiel("12.08.2022 20:00");
+        $spiel_a->anwurf = null;
+        
+        $spiel_b = $this->heimspiel("13.08.2022 20:00");
 
+        $this->assertNull($spiel_a->calculate_distanz_to($spiel_b));
+    }
+    public function test_zeitliche_Distanz_zwischen_zwei_Spielen_ist_null_wenn_Anwurf_vom_anderen_Spiel_fehlt() {
+        $spiel_a = $this->heimspiel("12.08.2022 20:00");
+        
+        $spiel_b = $this->heimspiel("13.08.2022 20:00");
+        $spiel_b->anwurf = null;
+
+        $this->assertNull($spiel_a->calculate_distanz_to($spiel_b));
+    }
+    public function test_zeitliche_Distanz_in_gleicher_halle_beruecksichtigt_nur_Spielzeit() {
+        $spiel_a = $this->heimspiel("12.08.2022 20:00");
+        $spiel_b = $this->heimspiel("13.08.2022 20:00");
+
+        $abstand_in_h = 24; // Anwurf liegt 1 Tag auseinander
+        $abstand_in_h -= 1.5; // abzüglich der Spielzeit von Spiel A
+        $this->assertEquals(
+            new ZeitlicheDistanz((int) ($abstand_in_h * 3600)), 
+            $spiel_a->calculate_distanz_to($spiel_b)
+        );
+    }
+    public function test_zeitliche_Distanz_in_unterschiedlichen_hallen_beruecksichtigt_gesamten_Abwesenheitszeitraum() {
+        $spiel_a = $this->heimspiel("12.08.2022 20:00");
+        $spiel_b = $this->auswaertsspiel("13.08.2022 20:00");
+
+        $abstand_in_h  = 24.0; // Anwurf liegt 1 Tag auseinander
+        $abstand_in_h -=  1.5; // abzüglich der Spielzeit von Spiel A
+        $abstand_in_h -=  1.0; // abzüglich der Nachbereitung von Spiel A
+        $abstand_in_h -=  1.0; // abzüglich der Anfahrt zu Spiel B
+        $abstand_in_h -=  1.0; // abzüglich der Vorbereitung von Spiel B
+        $this->assertEquals(
+            new ZeitlicheDistanz((int) ($abstand_in_h * 3600)), 
+            $spiel_a->calculate_distanz_to($spiel_b)
+        );
+    }
+    public function test_zeitliche_Distanz_überlappender_Spiele_ist_0() {
+        $spiel_a = $this->heimspiel("12.08.2022 20:00");
+        $spiel_b = $this->heimspiel("12.08.2022 19:00");
+
+        $this->assertEquals(
+            new ZeitlicheDistanz(0), 
+            $spiel_a->calculate_distanz_to($spiel_b)
+        );
+    }
+    public function test_zeitliche_Distanz_in_gleicher_halle_ist_negativ_wenn_Spiel_vorher() {
+        $spiel_a = $this->heimspiel("12.08.2022 20:00");
+        $spiel_b = $this->heimspiel("11.08.2022 20:00");
+
+        $abstand_in_h = 24; // Anwurf liegt 1 Tag auseinander
+        $abstand_in_h -= 1.5; // abzüglich der Spielzeit von Spiel B
+        $this->assertEquals(
+            new ZeitlicheDistanz((int) (-$abstand_in_h * 3600)), 
+            $spiel_a->calculate_distanz_to($spiel_b)
+        );
+    }
 }
 ?>
