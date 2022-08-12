@@ -25,41 +25,8 @@ class SpieleListe{
         }
         return $anzahl;
     }
-    
-    function findNahgelegeneSpiele(Spiel $zuPruefendesSpiel, Mannschaft $mannschaft): NahgelegeneSpiele {
 
-        $nahgelegeneSpiele = new NahgelegeneSpiele($zuPruefendesSpiel);
-        $distanzVorher = null;
-        $distanzNachher = null;
-        foreach($this->spiele as $spiel){
-            // TODO das geht definitiv einfacher: Alle Spiele als Array in Mannschaft
-            if($spiel->mannschaft->id != $mannschaft->id){
-                continue;
-            }
-            $zeitlicheDistanz = $spiel->getZeitlicheDistanz($zuPruefendesSpiel);
-            if(empty($zeitlicheDistanz)){
-                continue;
-            }
-            if($zeitlicheDistanz->ueberlappend){
-                $nahgelegeneSpiele->gleichzeitig = $spiel;
-            } else {
-                if($zeitlicheDistanz->isVorher()){
-                    if($zeitlicheDistanz->isNaeher($distanzVorher)){
-                        $distanzVorher = $zeitlicheDistanz;
-                        $nahgelegeneSpiele->vorher = $spiel;
-                    }
-                } else {
-                    if($zeitlicheDistanz->isNaeher($distanzNachher)){
-                        $distanzNachher = $zeitlicheDistanz;
-                        $nahgelegeneSpiele->nachher = $spiel;
-                    }
-                }
-            }
-        }
-        return $nahgelegeneSpiele;
-    }
-
-    function findNahgelegeneSpiele2(Spiel $zuPruefendesSpiel): array {
+    function findNahgelegeneSpiele(Spiel $zuPruefendesSpiel): array {
 
         // Array initialisieren
         $nahgelegeneSpieleProMannschaft = array();
