@@ -20,6 +20,13 @@ final class SpielTest extends TestCase {
 
         return $spiel;
     }
+
+    private function zeitraum(string $von, string $bis): ZeitRaum {
+        return new ZeitRaum(
+            DateTime::createFromFormat("d.m.Y H:i", $von),
+            DateTime::createFromFormat("d.m.Y H:i", $bis)
+        );
+    }
     
     // ##########################################
     // getDienst()
@@ -53,14 +60,11 @@ final class SpielTest extends TestCase {
             $spiel->getSpielEnde()
         );
     }
-    public function test_Spielzeit_ist_Zeitraum_von_Anwurf_bis_90_Minuten_danach(){
-        $anwurf = DateTime::createFromFormat("d.m.Y H:i", "11.08.2022 20:00");
-        $spielEnde = DateTime::createFromFormat("d.m.Y H:i", "11.08.2022 21:30");
-        $spiel = new Spiel();
-        $spiel->anwurf = $anwurf;
+    public function test_Spielzeit_ist_von_Anwurf_bis_90_Minuten_danach(){
+        $spiel = $this->heimspiel("11.08.2022 20:00");
 
         $this->assertEquals(
-            new ZeitRaum($anwurf, $spielEnde),
+            $this->zeitraum("11.08.2022 20:00", "11.08.2022 21:30"),
             $spiel->getSpielZeit()
         );
     }
@@ -92,7 +96,22 @@ final class SpielTest extends TestCase {
         $expectedRueckkehr = DateTime::createFromFormat("d.m.Y H:i", "11.08.2022 23:30");
         $this->assertEquals($expectedRueckkehr, $auswaertsspiel->getRueckkehr());
     }
+    public function test_Abwesenheitszeitraum_eines_Heimspiels_ist_von_Abfahrt_bis_Rückfahrt() {
+        $heimspiel = $this->heimspiel("11.08.2022 20:00");
 
+        $this->assertEquals(
+            $this->zeitraum("11.08.2022 19:00", "11.08.2022 22:30"),
+            $heimspiel->getAbwesenheitsZeitraum()
+        );
+    }
+    public function test_Abwesenheitszeitraum_eines_Auswärtsspiels_ist_von_Abfahrt_bis_Rückfahrt() {
+        $auswaertsspiel = $this->auswaertsspiel("11.08.2022 20:00");
+
+        $this->assertEquals(
+            $this->zeitraum("11.08.2022 18:00", "11.08.2022 23:30"),
+            $auswaertsspiel->getAbwesenheitsZeitraum()
+        );
+    }
 
      // TODO Abwesenheitszeitraum testen
 
