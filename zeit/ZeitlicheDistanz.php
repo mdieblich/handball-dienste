@@ -32,7 +32,7 @@ class ZeitlicheDistanz {
     public static function from_a_to_b(ZeitRaum $a, ZeitRaum $b): ZeitlicheDistanz {
         $ueberlappend = $a->ende > $b->start  && $b->ende > $a->start;
         if($a->ende > $b->start  && $b->ende > $a->start){
-            return new ZeitlicheDistanz(0);
+            return self::UEBERLAPPEND();
         }
         
         $a_vor_b = $a->start < $b->start;
@@ -45,6 +45,9 @@ class ZeitlicheDistanz {
 
     public static function MAX_VORHER(): ZeitlicheDistanz{
         return new ZeitlicheDistanz(-PHP_INT_MAX);
+    }
+    public static function UEBERLAPPEND(): ZeitlicheDistanz {
+        return new ZeitlicheDistanz(0);
     }
     public static function MAX_NACHHER(): ZeitlicheDistanz{
         return new ZeitlicheDistanz(PHP_INT_MAX);
