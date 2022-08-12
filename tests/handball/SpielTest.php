@@ -217,6 +217,7 @@ final class SpielTest extends TestCase {
 
         $this->assertFalse($spiel_a->isAmGleichenTag($spiel_b));
     }
+
     // ##########################################
     // isAmGleichenTag 
     // ##########################################
@@ -237,6 +238,63 @@ final class SpielTest extends TestCase {
         $spiel_b = null;
         
         $this->assertFalse($spiel_a->isInGleicherHalle($spiel_b));
+    }
+    
+    // ##########################################
+    // Dienste erstellen 
+    // ##########################################
+    public function test_createDienst_weist_Spiel_und_Dienstart_zu() {
+        $spiel = new Spiel();
+        
+        $spiel->createDienst(Dienstart::ZEITNEHMER);
+
+        $this->assertArrayHasKey(Dienstart::ZEITNEHMER, $spiel->dienste);
+        $this->assertCount(1, $spiel->dienste);
+        $this->assertEquals(Dienstart::ZEITNEHMER, $spiel->dienste[Dienstart::ZEITNEHMER]->dienstart);
+        $this->assertEquals($spiel, $spiel->dienste[Dienstart::ZEITNEHMER]->spiel);
+    }
+    public function test_createDienste_erstellt_Zeitnehmer_und_Catering_für_Heimspiele() {
+        $gegner = new Gegner();
+        $gegner->stelltSekretaerBeiHeimspiel = false;
+        $heimspiel = $this->heimspiel("12.08.2022 20:00");
+        $heimspiel->gegner = $gegner;
+        
+        $heimspiel->createDienste();
+        
+        $this->assertCount(2, $heimspiel->dienste);
+        $this->assertArrayHasKey(Dienstart::ZEITNEHMER, $heimspiel->dienste);
+        $this->assertArrayHasKey(Dienstart::CATERING, $heimspiel->dienste);
+    }
+    public function test_createDienste_erstellt_Sekretär_für_Auswärtsspiele() {
+        $gegner = new Gegner();
+        $gegner->stelltSekretaerBeiHeimspiel = false;
+        $auswaertsspiel = $this->auswaertsspiel("12.08.2022 20:00");
+        $auswaertsspiel->gegner = $gegner;
+        
+        $auswaertsspiel->createDienste();
+        
+        $this->assertCount(1, $auswaertsspiel->dienste);
+        $this->assertArrayHasKey(Dienstart::SEKRETAER, $auswaertsspiel->dienste);
+    }
+    public function test_createDienste_erstellt_Sekretär_für_Heimspiele_wenn_Gegner_den_stellt() {
+        $gegner = new Gegner();
+        $gegner->stelltSekretaerBeiHeimspiel = true;
+        $heimspiel = $this->heimspiel("12.08.2022 20:00");
+        $heimspiel->gegner = $gegner;
+        
+        $heimspiel->createDienste();
+        
+        $this->assertArrayHasKey(Dienstart::SEKRETAER, $heimspiel->dienste);
+    }
+    public function test_createDienste_erstellt_keine_Dienste_für_Auswärtsspiele_wenn_Gegner_Sekretät_stellt() {
+        $gegner = new Gegner();
+        $gegner->stelltSekretaerBeiHeimspiel = true;
+        $auswaertsspiel = $this->auswaertsspiel("12.08.2022 20:00");
+        $auswaertsspiel->gegner = $gegner;
+        
+        $auswaertsspiel->createDienste();
+        
+        $this->assertCount(0, $auswaertsspiel->dienste);
     }
 }
 ?>
