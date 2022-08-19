@@ -20,7 +20,7 @@ class Gegner {
                 case 3:  return $this->verein." III";
                 case 4:  return $this->verein." IV";
                 case 5:  return $this->verein." V";
-                default: return $this->verein." ".$this->getNummer();
+                default: return $this->verein." ".$this->nummer;
             }
         }
     }

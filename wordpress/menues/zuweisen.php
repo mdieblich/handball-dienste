@@ -86,7 +86,7 @@ foreach($spieleListe->spiele as $spiel){
         $zeilenFarbePrimaer = !$zeilenFarbePrimaer;
     }
     $backgroundColor = $zeilenFarbePrimaer?"#ddd":"#eee";
-    $nahgelegeneSpieleProMannschaft = $spieleListe->findNahgelegeneSpiele2($spiel);
+    $nahgelegeneSpieleProMannschaft = $spieleListe->findNahgelegeneSpiele($spiel);
     
     $spielZeile = new SpielZeile($spiel, $backgroundColor, $nahgelegeneSpieleProMannschaft, $mannschaftsListe);
     echo $spielZeile->toHTML();
