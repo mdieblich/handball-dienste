@@ -3,3 +3,4 @@ build/dienstedienst.zip
 config.sh
 build/dienstedienst.zip.tmp
 vendor/**
+sandbox/**
