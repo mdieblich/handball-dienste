@@ -1,6 +1,7 @@
 <?php
 
 require_once '../vendor/autoload.php';
+require_once '../handball/Spiel.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -8,21 +9,22 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class SpielerPlusFile {
     private Spreadsheet $spreadsheet;
 
-    public function __construct(){
+    public function __construct(array $spiele){
         $this->spreadsheet = new Spreadsheet();
-        $this->fillContent();
+        $this->fillContent($spiele);
     }
 
-    private function fillContent() {
+    private function fillContent(array $spiele) {
         $this->fillHeaderRow();
-        $this->fillWithGames();
+        $this->fillWithGames($spiele);
     }
 
     private function fillHeaderRow(){
         $this->fillRow(1, [
             "Spieltyp",
             "Gegner",
-            "Start-Datum", "End-Datum (Optional)", 
+            "Start-Datum", 
+            "End-Datum", 
             "Start-Zeit", "Treffen (Optional)",
             "End-Zeit (Optional)",
             "Heimspiel",
@@ -37,7 +39,8 @@ class SpielerPlusFile {
     
     private function fillRow(int $row, array $values){
         foreach($values as $i=>$value){
-            $this->spreadsheet->getActiveSheet()->setCellValue($this->cellID($row, $i+1), $value);            
+            $cell_id = $this->cellID($row, $i+1);
+            $this->spreadsheet->getActiveSheet()->setCellValue($cell_id, $value);            
         }
     }
 
@@ -45,21 +48,26 @@ class SpielerPlusFile {
         return chr($column+64).$row;
     }
 
-    private function fillWithGames(){
-        $this->fillRow(2, [
-            "Spiel",                        // Spieltyp
-            "SpielerPlus",                  // Gegner
-            "01.09.2020", "01.09.2020",     // Start-Datum, End-Datum (Optional)
-            "14:00:00", "13:00:00",         // Start-Zeit, Treffen (Optional)
-            "14:30:00",                     // End-Zeit (Optional)
-            "ja",                           // Heimspiel
-            "In der Halle",                 // Gelände / Räumlichkeiten
-            "Im Löwental 35, 45239 Essen, Deutschland", // Adresse (optional)
-            "Vorsicht, es handelt sich um die beste Mannschaft der Welt. :)",   // Infos zum Spiel
-            "Spieler müssen zusagen",       // Teilnahme
-            "Trainer, Spieler",             // Nominierung
-            "0", "6"                        // Frist Zusage, Erinnerung Zusage
-        ]);
+    private function fillWithGames(array $spiele){
+        foreach($spiele as $i=>$spiel){
+            $this->fillRow(2, [
+                "Spiel",                        // Spieltyp
+                $spiel->gegner->getName(),                  // Gegner
+                $spiel->anwurf->format("Y-m-d"), // Start-Datum
+                $spiel->anwurf->format("Y-m-d"), // End-Datum
+                $spiel->anwurf->format("H:i:s"),                             // Start-Zeit
+                $spiel->getAbfahrt()->format("H:i:s"),                             // Treffen (Optional)
+                $spiel->getRueckkehr()->format("H:i:s"),                     // End-Zeit (Optional)
+                $spiel->heimspiel?"ja":"nein",                           // Heimspiel
+                "In der Halle",                 // Gelände / Räumlichkeiten
+                "", // Adresse (optional), TODO: Hallenadresses auslesen
+                "Nuliga-Halle: ".$spiel->halle,   // Infos zum Spiel
+                "Spieler müssen zusagen",       // Teilnahme
+                "",             // Nominierung
+                24*7,           // Frist Zusage
+                24*8            // Erinnerung Zusage
+            ]);
+        }
     }
 
     public function provideDownload() {
