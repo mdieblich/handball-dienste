@@ -8,9 +8,15 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class SpielerPlusFile {
     private Spreadsheet $spreadsheet;
+    private string $mannschaftsName;
 
     public function __construct(array $spiele){
         $this->spreadsheet = new Spreadsheet();
+        if(empty($spiele)){
+            return;
+        }
+        $erstesSpiel = reset($spiele);
+        $this->mannschaftsName = $erstesSpiel->mannschaft->getName();
         $this->fillContent($spiele);
     }
 
@@ -73,7 +79,7 @@ class SpielerPlusFile {
 
     public function provideDownload() {
         $writer = new Xlsx($this->spreadsheet);
-        $file = 'SpielerPlusExport.xlsx';
+        $file = 'SpielerPlusExport - '.$this->mannschaftsName.'.xlsx';
         $writer->save($file);
 
         header('Content-Description: File Transfer');
