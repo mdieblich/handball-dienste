@@ -43,6 +43,29 @@ class Mannschaft {
         }
         return "H".$this->nummer;
     }
+
+    public static function getGeschlechtFormKurzname(string $kurzname): string{
+        $erstesZeichen = substr($kurzname, 0, 1);
+        switch($erstesZeichen){
+            case "H": 
+            case GESCHLECHT_M: 
+                return GESCHLECHT_M;
+            case "D":
+            case GESCHLECHT_W:
+                return GESCHLECHT_W;
+        }
+        return "";
+    }
+
+    public function getJugendKlasseFromKurzname(string $kurzname): ?string {
+        if(strlen($kurzname)<3){
+            return null;
+        }
+        return substr($kurzname, 1, strlen($kurzname)-2);
+    }
+    public function getNummerFromKurzname(string $kurzname): int {
+        return substr($kurzname, strlen($kurzname)-1, 1);
+    }
     
     function createNuLigaMannschaftsBezeichnung(): string{
         $bezeichnung = "";

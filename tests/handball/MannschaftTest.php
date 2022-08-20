@@ -126,5 +126,51 @@ final class MannschaftTest extends TestCase {
 
         $this->assertEquals([$meldung_freundschaftsspiele, $meldung_verbandsliga], $mannschaft->getMeldungenFuerMeisterschaft($hvm22_23));
     }
+    
+    // ##########################################
+    // getGeschlechtFormKurzname()
+    // ##########################################
+    public function test_getGeschlechtFormKurzname_H(){
+        $this->assertEquals(GESCHLECHT_M, Mannschaft::getGeschlechtFormKurzname("H1"));
+    }
+    public function test_getGeschlechtFormKurzname_m(){
+        $this->assertEquals(GESCHLECHT_M, Mannschaft::getGeschlechtFormKurzname("mC2"));
+    }
+    public function test_getGeschlechtFormKurzname_D(){
+        $this->assertEquals(GESCHLECHT_W, Mannschaft::getGeschlechtFormKurzname("D2"));
+    }
+    public function test_getGeschlechtFormKurzname_w(){
+        $this->assertEquals(GESCHLECHT_W, Mannschaft::getGeschlechtFormKurzname("wA1"));
+    }
+    // ##########################################
+    // getJugendKlasseFromKurzname()
+    // ##########################################
+    public function test_getJugendKlasseFromKurzname_H1(){
+        $this->assertNull(Mannschaft::getJugendKlasseFromKurzname("H1"));
+    }
+    public function test_getJugendKlasseFromKurzname_mC2(){
+        $this->assertEquals("C", Mannschaft::getJugendKlasseFromKurzname("mC2"));
+    }
+    public function test_getJugendKlasseFromKurzname_D2(){
+        $this->assertNull(Mannschaft::getJugendKlasseFromKurzname("D2"));
+    }
+    public function test_getJugendKlasseFromKurzname_wA1(){
+        $this->assertEquals("A", Mannschaft::getJugendKlasseFromKurzname("wA1"));
+    }
+    // ##########################################
+    // getNummerFromKurzname()
+    // ##########################################
+    public function test_getNummerFromKurzname_H1(){
+        $this->assertEquals(1, Mannschaft::getNummerFromKurzname("H1"));
+    }
+    public function test_getNummerFromKurzname_mC2(){
+        $this->assertEquals(2, Mannschaft::getNummerFromKurzname("mC2"));
+    }
+    public function test_getNummerFromKurzname_D3(){
+        $this->assertEquals(3, Mannschaft::getNummerFromKurzname("D3"));
+    }
+    public function test_getNummerFromKurzname_wA1(){
+        $this->assertEquals(1, Mannschaft::getNummerFromKurzname("wA1"));
+    }
 }
 ?>
