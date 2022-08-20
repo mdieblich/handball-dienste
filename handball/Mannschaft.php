@@ -57,13 +57,13 @@ class Mannschaft {
         return "";
     }
 
-    public function getJugendKlasseFromKurzname(string $kurzname): ?string {
+    public static function getJugendKlasseFromKurzname(string $kurzname): ?string {
         if(strlen($kurzname)<3){
             return null;
         }
         return substr($kurzname, 1, strlen($kurzname)-2);
     }
-    public function getNummerFromKurzname(string $kurzname): int {
+    public static function getNummerFromKurzname(string $kurzname): int {
         return substr($kurzname, strlen($kurzname)-1, 1);
     }
     
