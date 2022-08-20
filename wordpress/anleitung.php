@@ -34,6 +34,9 @@ Mannschaftsnamen (für <code>von</code> und <code>fuer</code>) müssen den folge
 </ul>
 Bsp: <code>&lt;dienste von="Damen 2"&gt;&lt;/dienste&gt;</code> oder <code>&lt;dienste fuer="Herren 3" seit=01.01.2022"&gt;&lt;/dienste&gt;</code>
 
+<h2>SpielerPlus-Export</h2>
+Unter der URL <code><?= get_site_url(); ?>/wp-json/dienste/spielerPlusExport?mannschaft=H1</code> kann man eine Excel runterladen, 
+die in SpielerPlus importiert werden kann. Dabei hinten das <i>H1</i> mit dem Mannschaftskürzel verwenden (D2 für <i>Damen 2</i> oder wB2 für <i>weibliche B-Jugend 2</i>)
 <h2>Regelmäßige nuLiga-Updates</h2>
-Unter der URL <code><?php echo get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> kann man den Import von extern starten.<br>
+Unter der URL <code><?= get_site_url(); ?>/wp-json/dienste/updateFromNuliga</code> kann man den Import von extern starten.<br>
 Der Endpunkt ist öffentlich zugänglich und benötigt keine Authentifizierung

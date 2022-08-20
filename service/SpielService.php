@@ -34,6 +34,18 @@ class SpielService{
         $this->appendDienste($spieleListe, $mannschaftsListe);
         return $spieleListe;
     }
+    public function loadSpieleFuerMannschaft(int $nummer, string $geschlecht, ?string $jugendklasse
+    ): SpieleListe{
+        $table_mannschaft = MannschaftDAO::tableName();
+        $whereClause = "mannschaft_id=(SELECT id from $table_mannschaft where nummer=$nummer AND geschlecht='$geschlecht' AND jugendklasse";
+        if(empty($jugendklasse)){
+            $whereClause .= " IS NULL";
+        } else {
+            $whereClause .= "='$jugendklasse'";
+        }
+        $whereClause .= ")";
+        return $this->loadSpieleMitDiensten($whereClause);
+    }
 
     public function findOriginalSpiel(Spiel $newSpiel): ?Spiel{
         $searchSpiel = clone $newSpiel;

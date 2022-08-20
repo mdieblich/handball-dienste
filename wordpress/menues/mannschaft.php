@@ -264,11 +264,16 @@ function insertNeueMannschaftFrom_POST(){
     global $wpdb;
     
 	$table_name = MannschaftDAO::tableName($wpdb);
+    
+    $jugendklasse = $_POST['mannschafts-jugendklasse'];
+    if(empty($jugendklasse)){
+        $jugendklasse = null;
+    }
 
     $wpdb->insert($table_name, array(
         'nummer' => $_POST['mannschafts-nummer'],
         'geschlecht' => $_POST['mannschafts-geschlecht'],
-        'jugendklasse' => $_POST['mannschafts-jugendklasse'],
+        'jugendklasse' => $jugendklasse,
         'email' => $_POST['mannschafts-email']
         ));
 
