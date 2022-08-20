@@ -26,6 +26,12 @@ add_action( 'rest_api_init', function () {
         'callback' => 'updateFromNuliga',    
         'permission_callback' => '__return_true'
     ));
+    // erreichbar unter /wp-json/dienste/spielerPlusExport
+    register_rest_route( 'dienste', '/spielerPlusExport', array(
+        'methods' => 'GET',
+        'callback' => 'downloadSpielerPlusExport',    
+        'permission_callback' => '__return_true'
+    ));
 });
 
 function enqueue_scripts() {
@@ -36,5 +42,10 @@ function enqueue_scripts() {
 function updateFromNuliga(){
     require_once __DIR__."/import/importer.php";
     Importer::$SPIELE_IMPORTIEREN->run();
+}
+
+function downloadSpielerPlusExport(){
+    require_once __DIR__."/export/exporter.php";
+    exportSpielerPlus( $_GET['mannschaft'] );
 }
 ?>
