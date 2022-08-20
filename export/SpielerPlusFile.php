@@ -50,7 +50,7 @@ class SpielerPlusFile {
 
     private function fillWithGames(array $spiele){
         foreach($spiele as $i=>$spiel){
-            $this->fillRow(2, [
+            $this->fillRow($i+2, [
                 "Spiel",                        // Spieltyp
                 $spiel->gegner->getName(),                  // Gegner
                 $spiel->anwurf->format("Y-m-d"), // Start-Datum
