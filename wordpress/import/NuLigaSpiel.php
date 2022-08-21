@@ -48,9 +48,13 @@ class NuLigaSpiel {
         $datum_und_zeit = $this->datum." ".$this->uhrzeit;
         return DateTime::createFromFormat('d.m.Y H:i', $datum_und_zeit);
     }
-    public function getDebugOutput(): string {
-        return "#".$this->spielNr.", ".$this->heimmannschaft." vs. ".$this->gastmannschaft.": Halle ".$this->halle;
-    }
+    public function getLogOutput(): string {
+        $termin = "Termin offen";
+        if(!$this->terminOffen){
+            $termin = $this->datum." ".$this->uhrzeit;
+        }
+        return $termin.": ".$this->heimmannschaft." vs. ".$this->gastmannschaft.": Halle ".$this->halle;
+    } 
 
     public static function fromTabellenZellen(array $zellen, ?NuLigaSpiel $vorherigesSpiel): ?NuLigaSpiel {
         $spiel = new NuLigaSpiel();
