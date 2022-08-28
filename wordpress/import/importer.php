@@ -203,7 +203,38 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
     }
 });
 Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(6, "Gegner importieren", function (){
-    // TODO
+    echo "=================================================\n";
+    echo "Starte Gegner-Import\n";
+    echo "=================================================\n";
+    $vereinsname = get_option('vereinsname');
+
+    $mannschaftService = new MannschaftService();
+    $gegnerDAO = new GegnerDAO();
+    
+    $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
+    foreach($mannschaftsListe->mannschaften as $mannschaft){
+        echo $mannschaft->getName()."\n";
+        foreach($mannschaft->meldungen as $mannschaftsMeldung) {
+            echo "\t".$mannschaftsMeldung->liga."\n";
+            $nuliga_tabelle = new NuLiga_Ligatabelle(
+                $mannschaftsMeldung->meisterschaft->kuerzel, 
+                $mannschaftsMeldung->nuligaLigaID);
+            $gegnerNamen = $nuliga_tabelle->extractGegnerNamen($vereinsname);
+            foreach($gegnerNamen as $gegnerName){
+                echo "\t\t$gegnerName: ";
+                $gegnerNeu = Gegner::fromName($gegnerName);
+                $gegnerNeu->zugehoerigeMeldung = $mannschaftsMeldung;
+                $gegnerAlt = $gegnerDAO->findSimilar( $gegnerNeu);
+                if(isset($gegnerAlt)){
+                    echo "Bereits vorhanden";
+                } else {
+                    $gegnerDAO->insert($gegnerNeu);
+                    echo "Neu importiert mit ID: ".$gegnerNeu->id;
+                }
+                echo "\n";
+            }
+        }
+    }
 });
 
 Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", function (){
