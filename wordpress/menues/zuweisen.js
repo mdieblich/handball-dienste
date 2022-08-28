@@ -1,3 +1,13 @@
+function initCounterValues(){
+    // wichtig!
+    // Das array mit den Mannschaften muss separat befüllt initialisiert werden
+    mannschaften.forEach(mannschaft => setDienstCounter(mannschaft));
+}
+
+jQuery( document ).ready(function() {
+    initCounterValues();
+});
+
 function assignDienst(dienstID, mannschaft, assign){
     var data = {
         'action': assign?'dienst_zuweisen':'dienst_entfernen',
@@ -9,7 +19,7 @@ function assignDienst(dienstID, mannschaft, assign){
     jQuery.post(ajaxurl, data);
 
     disableOtherCheckboxes(dienstID, mannschaft, assign);
-    setDienstCounter(mannschaft, assign);
+    setDienstCounter(mannschaft);
 }
 function disableOtherCheckboxes(dienstID, mannschaft, assign){
     checkBoxName = "Dienst-"+dienstID;
@@ -21,16 +31,22 @@ function disableOtherCheckboxes(dienstID, mannschaft, assign){
     activeID = checkBoxName+"-"+mannschaft;
     document.getElementById(activeID).disabled = false;
 }
-function setDienstCounter(mannschaft, assign){
-    id = "counter-"+mannschaft;
-    previousValue = parseInt(document.getElementById(id).innerText);
-    if(assign){
-        // erhöhen
-        document.getElementById(id).innerText = previousValue + 1;
-    } else{
-        // abziehen
-        document.getElementById(id).innerText = previousValue - 1;
-    }
+function setDienstCounter(mannschaft){
+    setCounter(mannschaft, "Aufbau");
+    setCounter(mannschaft, "Zeitnehmer");
+    setCounter(mannschaft, "Sekretär");
+    setCounter(mannschaft, "Catering");
+    setCounter(mannschaft, "Abbau");
+}
+
+function setCounter(mannschaft, dienstart){
+    counter = jQuery("span[name='counter'][mannschaft='"+mannschaft+"'][dienstart='"+dienstart+"']")[0];
+    console.log(counter);
+    counter.innerText = countForMannschaft(mannschaft, dienstart);
+}
+
+function countForMannschaft(mannschaft, dienstart){
+    return jQuery("input:checked[mannschaft='"+mannschaft+"'][dienstart='"+dienstart+"']").length;
 }
 
 function highlightGames(
