@@ -25,6 +25,7 @@ class Importer{
     public static $MANNSCHAFTEN_ZUORDNEN;
     public static $MEISTERSCHAFTEN_AKTUALISIEREN;
     public static $MELDUNGEN_AKTUALISIEREN;
+    public static $GEGNER_IMPORTIEREN;
     public static $SPIELE_IMPORTIEREN;
     public static $CACHE_LEEREN;
 
@@ -35,6 +36,7 @@ class Importer{
             self::$MANNSCHAFTEN_ZUORDNEN,
             self::$MEISTERSCHAFTEN_AKTUALISIEREN,
             self::$MELDUNGEN_AKTUALISIEREN,
+            self::$GEGNER_IMPORTIEREN,
             self::$SPIELE_IMPORTIEREN,
             self::$CACHE_LEEREN
         );
@@ -200,8 +202,11 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
         // TODO Transaktionsende
     }
 });
+Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(6, "Gegner importieren", function (){
+    // TODO
+});
 
-Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", function (){
+Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", function (){
     echo "=================================================\n";
     echo "Starte Spiel-Import\n";
     echo "=================================================\n";
@@ -321,7 +326,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
     $dienstAenderungsPlan->sendEmails();
 });
 
-Importer::$CACHE_LEEREN = new ImportSchritt(7, "Cache leeren", function (){
+Importer::$CACHE_LEEREN = new ImportSchritt(8, "Cache leeren", function (){
     global $wpdb;
     $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
