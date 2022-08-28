@@ -32,21 +32,23 @@ function disableOtherCheckboxes(dienstID, mannschaft, assign){
     document.getElementById(activeID).disabled = false;
 }
 function setDienstCounter(mannschaft){
-    setCounter(mannschaft, "Aufbau");
-    setCounter(mannschaft, "Zeitnehmer");
-    setCounter(mannschaft, "Sekretär");
-    setCounter(mannschaft, "Catering");
-    setCounter(mannschaft, "Abbau");
+
+    auf_abbau_counter = jQuery("span[counter='Auf- und Abbau'][mannschaft='"+mannschaft+"']")[0];
+    auf_abbau_counter.innerText = countForMannschaft(mannschaft, "Aufbau") + countForMannschaft(mannschaft, "Abbau");
+    
+    heim_counter = jQuery("span[counter='Heim'][mannschaft='"+mannschaft+"']")[0];
+    heim_counter.innerText = countForMannschaft(mannschaft, "Zeitnehmer") + countForMannschaft(mannschaft, "Sekretär");
+    
+    catering_counter = jQuery("span[counter='Catering'][mannschaft='"+mannschaft+"']")[0];
+    catering_counter.innerText = countForMannschaft(mannschaft, "Catering");
+
+    auswaerts_counter = jQuery("span[counter='Auswaerts'][mannschaft='"+mannschaft+"']")[0];
+    auswaerts_counter.innerText = countForMannschaft(mannschaft, "Zeitnehmer", true) + countForMannschaft(mannschaft, "Sekretär", true);
+
 }
 
-function setCounter(mannschaft, dienstart){
-    counter = jQuery("span[name='counter'][mannschaft='"+mannschaft+"'][dienstart='"+dienstart+"']")[0];
-    console.log(counter);
-    counter.innerText = countForMannschaft(mannschaft, dienstart);
-}
-
-function countForMannschaft(mannschaft, dienstart){
-    return jQuery("input:checked[mannschaft='"+mannschaft+"'][dienstart='"+dienstart+"']").length;
+function countForMannschaft(mannschaft, dienstart, auswaerts = false){
+    return jQuery("input:checked[mannschaft='"+mannschaft+"'][dienstart='"+dienstart+"'][auswaerts='"+auswaerts+"']").length;
 }
 
 function highlightGames(

@@ -76,16 +76,10 @@ foreach($mannschaftsListe->mannschaften as $mannschaft){
     $anzahlDienste = $spieleListe->zaehleDienste($mannschaft);
     echo "<td style=\"text-align:center\" mannschaft=\"".$mannschaft->id."\">".$mannschaft->getKurzname()."<br>";
     echo "<span style=\"font-size: 0.6em\">"; 
-    $dienstCounter = array();
-    foreach(Dienstart::values as $dienstart){
-        $dienstCounter[] = "<span "
-            ."title=\"$dienstart\" "
-            ."name=\"counter\" "
-            ."mannschaft=\"".$mannschaft->id."\" "
-            ."dienstart=\"$dienstart\">"
-            ."0</span>";
-    }
-    echo implode("/", $dienstCounter);
+        echo "<span title=\"Auf- und Abbau\" mannschaft=\"".$mannschaft->id."\" counter=\"Auf- und Abbau\">0</span>/";
+        echo "<span title=\"Zeitnehmer & Sekretär (HEIM)\" mannschaft=\"".$mannschaft->id."\" counter=\"Heim\">0</span>/";
+        echo "<span title=\"Catering\" mannschaft=\"".$mannschaft->id."\" counter=\"Catering\">0</span>/";
+        echo "<span title=\"Sekretär (AUSWÄRTS)\" mannschaft=\"".$mannschaft->id."\" counter=\"Auswaerts\">0</span>";
     echo "</span>"; 
     echo "</td>";
 }
