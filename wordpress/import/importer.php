@@ -9,13 +9,13 @@ require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
 
 require_once __DIR__."/../dao/MannschaftDAO.php";
 require_once __DIR__."/../dao/MannschaftsMeldungDAO.php";
-require_once __DIR__."/../dao/GegnerDAO.php";
 require_once __DIR__."/../dao/MeisterschaftDAO.php";
 require_once __DIR__."/../dao/SpielDAO.php";
 require_once __DIR__."/../dao/DienstDAO.php";
 
 
 require_once __DIR__."/../service/MannschaftService.php";
+require_once __DIR__."/../service/GegnerService.php";
 
 require_once __DIR__."/../PHPMailer/NippesMailer.php";
 
@@ -242,11 +242,12 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
     echo "Starte Spiel-Import\n";
     echo "=================================================\n";
     $mannschaftService = new MannschaftService();
-    $gegnerDAO = new GegnerDAO();
+    $gegnerService = new GegnerService();
     $spielDAO = new SpielDAO();
     $dienstDAO = new DienstDAO();
     $spielService = new SpielService();
     $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
+    $alleGegner = $gegnerService->loadAlleGegner();
 
     $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaftsListe->mannschaften);
 
@@ -271,18 +272,28 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
             foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
                 echo "\t\t".$nuLigaSpiel->getLogOutput().": ";
                 // TODO nur spiele in der Zukunft importieren
-                $spielNeu = $nuLigaSpiel->extractSpiel($mannschaftsMeldung, $teamName, 
-                    function (string $gegnerName, $mannschaftsMeldung) use ($gegnerDAO) {
-                        return $gegnerDAO->findOrInsertGegner( $gegnerName, $mannschaftsMeldung);
+                $spielNeu = $nuLigaSpiel->extractSpiel($mannschaftsMeldung, $teamName);
+                
+                $gegnerGefunden = false;
+                foreach($alleGegner as $gegner){
+                    if($gegner->isSimilarTo($spielNeu->gegner)){
+                        $spielNeu->gegner = $gegner;
+                        $gegnerGefunden = true;
+                        break;
                     }
-                );
+                }
+                if(!$gegnerGefunden){
+                    echo "Gegner wurde nicht gefunden. Spiel wird ignoriert.\n";
+                    continue;
+                }
+
                 $spielAlt = $spielService->findOriginalSpiel ($spielNeu);
                 
                 if(isset($spielAlt)){
                     // ein bereits vorhandenes Spiel
                     $hallenAenderung = ($spielAlt->halle != $spielNeu->halle);
-                    $AnwurfAenderung = ($spielAlt->anwurf != $spielNeu->anwurf);
-                    if($hallenAenderung || $AnwurfAenderung){
+                    $anwurfAenderung = ($spielAlt->anwurf != $spielNeu->anwurf);
+                    if($hallenAenderung || $anwurfAenderung){
                         echo "Spiel muss aktualisiert werden.";
                         $dienstAenderungsPlan->registerSpielAenderung($spielAlt, $spielNeu);
                         $spielDAO->update($spielAlt->id, $spielNeu);

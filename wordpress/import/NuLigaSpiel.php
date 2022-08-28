@@ -3,6 +3,7 @@
 require_once __DIR__."/../handball/Mannschaft.php";
 require_once __DIR__."/../handball/MannschaftsMeldung.php";
 require_once __DIR__."/../handball/Spiel.php";
+require_once __DIR__."/../handball/Gegner.php";
 
 class NuLigaSpiel {
     
@@ -96,7 +97,7 @@ class NuLigaSpiel {
         return sanitizeContent($zelle->textContent);
     }
 
-    public function extractSpiel(MannschaftsMeldung $meldung, string $teamName, callable $findGegner): Spiel{
+    public function extractSpiel(MannschaftsMeldung $meldung, string $teamName): Spiel{
         $spiel = new Spiel();
         $spiel->spielNr = $this->spielNr;
         $spiel->mannschaftsMeldung = $meldung;
@@ -109,11 +110,12 @@ class NuLigaSpiel {
             // In manchen Gruppen (z.B. Turnieren) wird die erste Mannschaft hinten mit "1" ergänzt, was hier abgefangen werden soll
             ($this->heimmannschaft === $teamName." 1") ){
             $spiel->heimspiel = true;
-            $spiel->gegner = $findGegner($this->gastmannschaft, $meldung);
+            $spiel->gegner = Gegner::fromName($this->gastmannschaft);
         } else {
             $spiel->heimspiel = false;
-            $spiel->gegner = $findGegner($this->heimmannschaft, $meldung);
+            $spiel->gegner = Gegner::fromName($this->heimmannschaft);
         }
+        $spiel->gegner->zugehoerigeMeldung = $meldung;
 
         return $spiel;
     }
