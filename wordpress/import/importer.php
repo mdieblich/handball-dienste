@@ -9,13 +9,13 @@ require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
 
 require_once __DIR__."/../dao/MannschaftDAO.php";
 require_once __DIR__."/../dao/MannschaftsMeldungDAO.php";
-require_once __DIR__."/../dao/GegnerDAO.php";
 require_once __DIR__."/../dao/MeisterschaftDAO.php";
 require_once __DIR__."/../dao/SpielDAO.php";
 require_once __DIR__."/../dao/DienstDAO.php";
 
 
 require_once __DIR__."/../service/MannschaftService.php";
+require_once __DIR__."/../service/GegnerService.php";
 
 require_once __DIR__."/../PHPMailer/NippesMailer.php";
 
@@ -25,6 +25,7 @@ class Importer{
     public static $MANNSCHAFTEN_ZUORDNEN;
     public static $MEISTERSCHAFTEN_AKTUALISIEREN;
     public static $MELDUNGEN_AKTUALISIEREN;
+    public static $GEGNER_IMPORTIEREN;
     public static $SPIELE_IMPORTIEREN;
     public static $CACHE_LEEREN;
 
@@ -35,6 +36,7 @@ class Importer{
             self::$MANNSCHAFTEN_ZUORDNEN,
             self::$MEISTERSCHAFTEN_AKTUALISIEREN,
             self::$MELDUNGEN_AKTUALISIEREN,
+            self::$GEGNER_IMPORTIEREN,
             self::$SPIELE_IMPORTIEREN,
             self::$CACHE_LEEREN
         );
@@ -200,17 +202,52 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
         // TODO Transaktionsende
     }
 });
+Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(6, "Gegner importieren", function (){
+    echo "=================================================\n";
+    echo "Starte Gegner-Import\n";
+    echo "=================================================\n";
+    $vereinsname = get_option('vereinsname');
 
-Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", function (){
+    $mannschaftService = new MannschaftService();
+    $gegnerDAO = new GegnerDAO();
+    
+    $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
+    foreach($mannschaftsListe->mannschaften as $mannschaft){
+        echo $mannschaft->getName()."\n";
+        foreach($mannschaft->meldungen as $mannschaftsMeldung) {
+            echo "\t".$mannschaftsMeldung->liga."\n";
+            $nuliga_tabelle = new NuLiga_Ligatabelle(
+                $mannschaftsMeldung->meisterschaft->kuerzel, 
+                $mannschaftsMeldung->nuligaLigaID);
+            $gegnerNamen = $nuliga_tabelle->extractGegnerNamen($vereinsname);
+            foreach($gegnerNamen as $gegnerName){
+                echo "\t\t$gegnerName: ";
+                $gegnerNeu = Gegner::fromName($gegnerName);
+                $gegnerNeu->zugehoerigeMeldung = $mannschaftsMeldung;
+                $gegnerAlt = $gegnerDAO->findSimilar( $gegnerNeu);
+                if(isset($gegnerAlt)){
+                    echo "Bereits vorhanden";
+                } else {
+                    $gegnerDAO->insert($gegnerNeu);
+                    echo "Neu importiert mit ID: ".$gegnerNeu->id;
+                }
+                echo "\n";
+            }
+        }
+    }
+});
+
+Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", function (){
     echo "=================================================\n";
     echo "Starte Spiel-Import\n";
     echo "=================================================\n";
     $mannschaftService = new MannschaftService();
-    $gegnerDAO = new GegnerDAO();
+    $gegnerService = new GegnerService();
     $spielDAO = new SpielDAO();
     $dienstDAO = new DienstDAO();
     $spielService = new SpielService();
     $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
+    $alleGegner = $gegnerService->loadAlleGegner();
 
     $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaftsListe->mannschaften);
 
@@ -235,18 +272,28 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
             foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
                 echo "\t\t".$nuLigaSpiel->getLogOutput().": ";
                 // TODO nur spiele in der Zukunft importieren
-                $spielNeu = $nuLigaSpiel->extractSpiel($mannschaftsMeldung, $teamName, 
-                    function (string $gegnerName, $mannschaftsMeldung) use ($gegnerDAO) {
-                        return $gegnerDAO->findOrInsertGegner( $gegnerName, $mannschaftsMeldung);
+                $spielNeu = $nuLigaSpiel->extractSpiel($mannschaftsMeldung, $teamName);
+                
+                $gegnerGefunden = false;
+                foreach($alleGegner as $gegner){
+                    if($gegner->isSimilarTo($spielNeu->gegner)){
+                        $spielNeu->gegner = $gegner;
+                        $gegnerGefunden = true;
+                        break;
                     }
-                );
+                }
+                if(!$gegnerGefunden){
+                    echo "Gegner wurde nicht gefunden. Spiel wird ignoriert.\n";
+                    continue;
+                }
+
                 $spielAlt = $spielService->findOriginalSpiel ($spielNeu);
                 
                 if(isset($spielAlt)){
                     // ein bereits vorhandenes Spiel
                     $hallenAenderung = ($spielAlt->halle != $spielNeu->halle);
-                    $AnwurfAenderung = ($spielAlt->anwurf != $spielNeu->anwurf);
-                    if($hallenAenderung || $AnwurfAenderung){
+                    $anwurfAenderung = ($spielAlt->anwurf != $spielNeu->anwurf);
+                    if($hallenAenderung || $anwurfAenderung){
                         echo "Spiel muss aktualisiert werden.";
                         $dienstAenderungsPlan->registerSpielAenderung($spielAlt, $spielNeu);
                         $spielDAO->update($spielAlt->id, $spielNeu);
@@ -321,7 +368,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(6, "Spiele importieren", funct
     $dienstAenderungsPlan->sendEmails();
 });
 
-Importer::$CACHE_LEEREN = new ImportSchritt(7, "Cache leeren", function (){
+Importer::$CACHE_LEEREN = new ImportSchritt(8, "Cache leeren", function (){
     global $wpdb;
     $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
