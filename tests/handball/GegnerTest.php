@@ -33,6 +33,22 @@ final class GegnerTest extends TestCase {
     }
 
     // ##########################################
+    // fromName()
+    // ##########################################
+    public function test_erstelle_Hornets(){
+        $this->assertEquals($this->hornets(1), Gegner::fromName("Pulheimer SC"));
+    }
+    public function test_erstelle_Hornets_1(){
+        $this->assertEquals($this->hornets(1), Gegner::fromName("Pulheimer SC I"));
+    }
+    public function test_erstelle_Hornets_2(){
+        $this->assertEquals($this->hornets(2), Gegner::fromName("Pulheimer SC II"));
+    }
+    public function test_erstelle_Hornets_4(){
+        $this->assertEquals($this->hornets(4), Gegner::fromName("Pulheimer SC IV"));
+    }
+
+    // ##########################################
     // verschiedene Methoden
     // ##########################################
     public function test_Geschlecht_über_Mannschaftsmeldung_ableiten(){
