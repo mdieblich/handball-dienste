@@ -37,10 +37,12 @@ class Gegner {
         if(empty($other)){
             return false;
         }
-        return 
-            $this->verein === $other->verein &&
-            $this->nummer === $other->nummer &&
-            $this->zugehoerigeMeldung->id === $other->zugehoerigeMeldung->id;
+        if( $this->verein !== $other->verein ||  $this->nummer !== $other->nummer ){
+            return false;
+        }
+        $meldung_id = isset($this->zugehoerigeMeldung) ? $this->zugehoerigeMeldung->id : $this->zugehoerigeMeldung_id;
+        $meldung_id_other = isset($other->zugehoerigeMeldung) ? $other->zugehoerigeMeldung->id : $other->zugehoerigeMeldung_id;
+        return ($meldung_id === $meldung_id_other);
     }
 
     public static function fromName(string $name): Gegner {
