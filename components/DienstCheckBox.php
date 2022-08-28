@@ -39,6 +39,7 @@ class DienstCheckBox implements Component{
             "dienstart=\"$dienstart\" ".
             "mannschaft=\"$mannschaft\" ".
             "onclick=\"assignDienst(".$this->dienst->id.",".$this->mannschaft->id.", this.checked)\"".
+            "style=\"opacity:1\"".      // Wordpress setzt opacity auf 0.7, was zu Darstellungsproblemen führt
             " $modifier>".
             "<label for=\"$checkBoxID\">$kurzform</label>";
     }
