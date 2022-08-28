@@ -90,8 +90,12 @@ function dienste_tabellen_ersetzen(array $matches){
         foreach(Dienstart::values as $dienstart){
             $dienst = $spiel->getDienst($dienstart);
             $textHighlight = "";
-            if(isset($vonMannschaft) && isset($dienst) && isset($dienst->mannschaft) && $dienst->mannschaft->id === $vonMannschaft->id){
-                $textHighlight = "color:red;";
+            if(isset($vonMannschaft) && isset($dienst) ) {
+                if(isset($dienst->mannschaft) && $dienst->mannschaft->id === $vonMannschaft->id){
+                    $textHighlight = "color:#00407d; font-weight:bold;";
+                } else {
+                    $textHighlight = "color:silver;";
+                }
             }
             $spielzeile .= "<td style=\"padding: 3px; $textHighlight\">";
             if(isset($dienst)){
