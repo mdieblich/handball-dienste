@@ -80,7 +80,7 @@ class DiensteZelle implements Component{
     }
     private function getTextColor(): string {
         if($this->isVerhindert()){
-            $textColor = "silver";
+            return "silver";
         }
         return "black";
     }
