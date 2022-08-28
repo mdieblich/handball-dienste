@@ -88,8 +88,12 @@ function dienste_tabellen_ersetzen(array $matches){
             ."<td style=\"padding: 3px;\">$heim</td>"
             ."<td style=\"padding: 3px; border-right:2px solid #00407d\">$gast</td>";
         foreach(Dienstart::values as $dienstart){
-            $spielzeile .= "<td style=\"padding: 3px;\">";
             $dienst = $spiel->getDienst($dienstart);
+            $textHighlight = "";
+            if(isset($vonMannschaft) && isset($dienst) && isset($dienst->mannschaft) && $dienst->mannschaft->id === $vonMannschaft->id){
+                $textHighlight = "color:red;";
+            }
+            $spielzeile .= "<td style=\"padding: 3px; $textHighlight\">";
             if(isset($dienst)){
                 if(isset($dienst->mannschaft)){
                     $spielzeile .= $dienst->mannschaft->getKurzname();
