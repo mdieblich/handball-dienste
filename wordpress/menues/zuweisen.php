@@ -50,6 +50,9 @@ function displayDiensteZuweisen(){
     $mannschaftsListe = $mannschaftDAO->loadMannschaften();
     $spieleListe = $spielService->loadSpieleMitDiensten();
  ?>
+<script>
+mannschaften = [<?= implode(",",$mannschaftsListe->getIDs()); ?>];
+</script>
 <div class="wrap">
     <div style="float:right; width: 200px; background-color:#ddd; padding: 5px">
     Filter
@@ -71,8 +74,19 @@ function displayDiensteZuweisen(){
         <?php
 foreach($mannschaftsListe->mannschaften as $mannschaft){
     $anzahlDienste = $spieleListe->zaehleDienste($mannschaft);
-    echo "<td mannschaft=\"".$mannschaft->id."\">".$mannschaft->getKurzname()."<br>";
-    echo "# <span id=\"counter-".$mannschaft->id."\">".$anzahlDienste."</span><br>"; 
+    echo "<td style=\"text-align:center\" mannschaft=\"".$mannschaft->id."\">".$mannschaft->getKurzname()."<br>";
+    echo "<span style=\"font-size: 0.6em\">"; 
+    $dienstCounter = array();
+    foreach(Dienstart::values as $dienstart){
+        $dienstCounter[] = "<span "
+            ."title=\"$dienstart\" "
+            ."name=\"counter\" "
+            ."mannschaft=\"".$mannschaft->id."\" "
+            ."dienstart=\"$dienstart\">"
+            ."0</span>";
+    }
+    echo implode("/", $dienstCounter);
+    echo "</span>"; 
     echo "</td>";
 }
 ?>
