@@ -31,6 +31,7 @@ class DienstCheckBox implements Component{
         $mannschaft = $this->mannschaft->id;
         $checkBoxName = "Dienst-".$this->dienst->id;
         $checkBoxID = $checkBoxName."-".$this->mannschaft->id;
+        $auswaerts = $this->dienst->spiel->heimspiel ? "false" : "true";
 
         return "<input ".
             "type=\"checkbox\" ".
@@ -38,6 +39,7 @@ class DienstCheckBox implements Component{
             "id=\"$checkBoxID\" ".
             "dienstart=\"$dienstart\" ".
             "mannschaft=\"$mannschaft\" ".
+            "auswaerts=\"$auswaerts\" ".
             "onclick=\"assignDienst(".$this->dienst->id.",".$this->mannschaft->id.", this.checked)\"".
             "style=\"opacity:1\"".      // Wordpress setzt opacity auf 0.7, was zu Darstellungsproblemen führt
             " $modifier>".
