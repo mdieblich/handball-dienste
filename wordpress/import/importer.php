@@ -21,8 +21,8 @@ require_once __DIR__."/../PHPMailer/NippesMailer.php";
 
 class Importer{
     public static $NULIGA_MEISTERSCHAFTEN_LESEN;
-    public static $NULIGA_TEAM_IDS_LESEN;
     public static $MANNSCHAFTEN_ZUORDNEN;
+    public static $NULIGA_TEAM_IDS_LESEN;
     public static $MEISTERSCHAFTEN_AKTUALISIEREN;
     public static $MELDUNGEN_AKTUALISIEREN;
     public static $GEGNER_IMPORTIEREN;
@@ -32,8 +32,8 @@ class Importer{
     public static function alleSchritte(): array{
         $unsortierteSchritte = array(
             self::$NULIGA_MEISTERSCHAFTEN_LESEN,
-            self::$NULIGA_TEAM_IDS_LESEN,
             self::$MANNSCHAFTEN_ZUORDNEN,
+            self::$NULIGA_TEAM_IDS_LESEN,
             self::$MEISTERSCHAFTEN_AKTUALISIEREN,
             self::$MELDUNGEN_AKTUALISIEREN,
             self::$GEGNER_IMPORTIEREN,
@@ -98,28 +98,8 @@ Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(1, "Meisterschaften 
     }
 });
 
-Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(2, "Team-IDs aus nuLiga auslesen", function (){
-    // TODO Team-IDs nur lesen, wenn zuvor eine Mannschaftzugeordnet wurde
-    global $wpdb;
-    
-    $vereinsname = get_option('vereinsname');
 
-    $table_name = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
-    $results = $wpdb->get_results("SELECT * FROM $table_name WHERE team_id IS NULL", ARRAY_A);
-    foreach ($results as $nuliga_mannschaftseinteilung) {
-        $ligaTabellenSeite = new NuLiga_Ligatabelle(
-            $nuliga_mannschaftseinteilung['meisterschaftsKuerzel'], 
-            $nuliga_mannschaftseinteilung['liga_id']
-        );
-        $team_id = $ligaTabellenSeite->extractTeamID($vereinsname);
-        $updated = $wpdb->update($table_name, 
-            array('team_id' => $team_id), 
-            array('id' => $nuliga_mannschaftseinteilung['id'])
-        );
-    }
-});
-
-Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen", function (){
+Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(2, "Mannschaften zuordnen", function (){
     global $wpdb;
 
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
@@ -139,6 +119,30 @@ Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen",
             $table_nuliga_mannschaftseinteilung, 
             array('mannschaft'=>$mannschaft->id), 
             array('id' => $nuliga_mannschaftsEinteilung['id'])
+        );
+    }
+});
+
+Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(3, "Team-IDs aus nuLiga auslesen", function (){
+    global $wpdb;
+    
+    $vereinsname = get_option('vereinsname');
+    $mannschaftDAO = new MannschaftDAO();
+    $mannschaftsListe = $mannschaftDAO->loadMannschaften();
+
+    $table_name = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
+    $results = $wpdb->get_results("SELECT * FROM $table_name WHERE mannschaft IS NOT NULL AND team_id IS NULL", ARRAY_A);
+    foreach ($results as $nuliga_mannschaftseinteilung) {
+        $mannschaft = $mannschaftsListe->mannschaften[$nuliga_mannschaftseinteilung['mannschaft']];
+        $ligaTabellenSeite = new NuLiga_Ligatabelle(
+            $nuliga_mannschaftseinteilung['meisterschaftsKuerzel'], 
+            $nuliga_mannschaftseinteilung['liga_id']
+        );
+        
+        $team_id = $ligaTabellenSeite->extractTeamID($vereinsname, $mannschaft->nummer);
+        $updated = $wpdb->update($table_name, 
+            array('team_id' => $team_id), 
+            array('id' => $nuliga_mannschaftseinteilung['id'])
         );
     }
 });
@@ -181,7 +185,7 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
             liga, 
             1 as aktiv,
             liga_id as nuligaLigaID, 
-            team_id as nuligaTeamID 
+            team_id as nuligaTeamID
         FROM $table_nuliga_mannschaftseinteilung
         LEFT JOIN $table_meisterschaft on $table_meisterschaft.kuerzel=$table_nuliga_mannschaftseinteilung.meisterschaftsKuerzel
         WHERE team_id IS NOT NULL
@@ -190,11 +194,14 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
     
     $meldungDAO = new MannschaftsMeldungDAO($wpdb);
     foreach($results as $newMeldung){
+        echo print_r($newMeldung, true)."\n";
         $oldMeldung = $meldungDAO->findMannschaftsMeldung($newMeldung->meisterschaft_id, $newMeldung->mannschaft_id, $newMeldung->liga);
         // TODO Transaktionsstart
         if(isset($oldMeldung)){
+            echo "\tAktualisiere alte Meldung: ".print_r($oldMeldung, true)."\n";
             $meldungDAO->updateMannschaftsMeldung($oldMeldung->id, $newMeldung->nuligaLigaID, $newMeldung->nuligaTeamID);
         } else{
+            echo "\Wird eingefügt\n";
             $meldungDAO->insert($newMeldung);
         }
         // Löschen der Einteilung in der nuliga-Import-Tabelle
@@ -203,9 +210,6 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
     }
 });
 Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(6, "Gegner importieren", function (){
-    echo "=================================================\n";
-    echo "Starte Gegner-Import\n";
-    echo "=================================================\n";
     $vereinsname = get_option('vereinsname');
 
     $mannschaftService = new MannschaftService();
@@ -238,9 +242,6 @@ Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(6, "Gegner importieren", funct
 });
 
 Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", function (){
-    echo "=================================================\n";
-    echo "Starte Spiel-Import\n";
-    echo "=================================================\n";
     $mannschaftService = new MannschaftService();
     $gegnerService = new GegnerService();
     $spielDAO = new SpielDAO();

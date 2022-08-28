@@ -92,32 +92,42 @@ class NuLigaSpiel {
         // leere Zelle: $zellen[10]
         return $spiel;
     }
-
+    
     private static function extractTrimmedContent(DOMElement $zelle): string {
         return sanitizeContent($zelle->textContent);
     }
-
+    
     public function extractSpiel(MannschaftsMeldung $meldung, string $teamName): Spiel{
         $spiel = new Spiel();
         $spiel->spielNr = $this->spielNr;
         $spiel->mannschaftsMeldung = $meldung;
-
+        
         $spiel->mannschaft = $meldung->mannschaft;
         $spiel->anwurf = $this->getAnwurf();
         $spiel->halle = $this->halle;
+        
+        $heim = $this->sanitizeTeamname($this->heimmannschaft);
+        $gast = $this->sanitizeTeamname($this->gastmannschaft);
 
-        if( ($this->heimmannschaft === $teamName) || 
-            // In manchen Gruppen (z.B. Turnieren) wird die erste Mannschaft hinten mit "1" ergänzt, was hier abgefangen werden soll
-            ($this->heimmannschaft === $teamName." 1") ){
+        if( ($heim === $teamName) || 
+        // In manchen Gruppen (z.B. Turnieren) wird die erste Mannschaft hinten mit "1" ergänzt, was hier abgefangen werden soll
+        ($heim === $teamName." 1") ){
             $spiel->heimspiel = true;
-            $spiel->gegner = Gegner::fromName($this->gastmannschaft);
+            $spiel->gegner = Gegner::fromName($gast);
         } else {
             $spiel->heimspiel = false;
-            $spiel->gegner = Gegner::fromName($this->heimmannschaft);
+            $spiel->gegner = Gegner::fromName($heim);
         }
         $spiel->gegner->zugehoerigeMeldung = $meldung;
-
+        
         return $spiel;
+    }
+    
+    private function sanitizeTeamname(string $teamName): string {
+        // entfernen von "(a.K.)", welches für "außer Konkurrenz" steht
+        $ohneAK = str_replace("(a.K.)", "", $teamName);
+        $getrimmt = trim($ohneAK);
+        return $getrimmt;
     }
 
 }

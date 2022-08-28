@@ -14,7 +14,13 @@ class ImportSchritt{
     // TODO dbHandle als parameter hereinreichen
     public function run(){
         $this->initImportStatus();
+        echo "=================================================\n";
+        echo "START ".$this->beschreibung."\n";
+        echo "=================================================\n";
         call_user_func($this->method);
+        echo "=================================================\n";
+        echo "ENDE ".$this->beschreibung."\n";
+        echo "=================================================\n";
         $this->finishImportStatus();
     }
 
