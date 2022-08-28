@@ -13,20 +13,32 @@ class NuLiga_Ligatabelle {
     }
 
     public function extractTeamID(string $vereinsname): ?int {
-        $contentDiv = $this->dom->getElementById("content-row2");
-        if(empty($contentDiv)){
-            return null;
-        }
-        $tabelle = $contentDiv->getElementsByTagName("table")[0];
-        $tabellenZeilen = extractTabellenZeilen($tabelle);
-        foreach($tabellenZeilen as $tabellenZeile){
-            $zellen = extractTabellenZellen($tabellenZeile);
-            $mannschaftsZelle = $zellen[2];
+        foreach($this->extractMannschaftsZellen() as $mannschaftsZelle){
             $mannschaftsName = sanitizeContent($mannschaftsZelle->textContent);
             if(strpos($mannschaftsName, $vereinsname) === 0){
                 return $this->extractTeamIDFromZelle($mannschaftsZelle);
             }
         }
+        return null;
+    }
+
+    private function extractMannschaftsZellen(): array {
+        $mannschaftsZellen = array();
+        foreach($this->extractMannschaftsZeilen() as $tabellenZeile){
+            $zellen = extractTabellenZellen($tabellenZeile);
+            $mannschaftsZellen[] = $zellen[2];
+        }
+        return $mannschaftsZellen;
+    }
+
+    private function extractMannschaftsZeilen(): array{
+        $contentDiv = $this->dom->getElementById("content-row2");
+        if(empty($contentDiv)){
+            echo "nix!";
+            return array();
+        }
+        $tabelle = $contentDiv->getElementsByTagName("table")[0];
+        return extractTabellenZeilen($tabelle);
     }
 
     private function extractTeamIDFromZelle($mannschaftsZelle): int{
@@ -35,6 +47,22 @@ class NuLiga_Ligatabelle {
         preg_match('/teamtable=(\d*)/', $url, $teamtableMatches);
         return $teamtableMatches[1];
     }
+
+    public function extractGegnerNamen(string $vereinsname): array {
+        $gegner = array();
+
+        foreach($this->extractMannschaftsZellen() as $mannschaftsZelle){
+            $mannschaftsName = sanitizeContent($mannschaftsZelle->textContent);
+            if(strpos($mannschaftsName, $vereinsname) === 0){
+                continue;
+            }
+            if(strpos($mannschaftsName, "Mannschaft") === 0){
+                continue;
+            }
+            $gegner[] = $mannschaftsName;
+        }
+        return $gegner;
+    } 
 
 }
 
