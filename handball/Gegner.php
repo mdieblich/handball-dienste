@@ -33,6 +33,16 @@ class Gegner {
         return $this->zugehoerigeMeldung->liga;
     }
 
+    public function isSimilarTo(Gegner $other): bool {
+        if(empty($other)){
+            return false;
+        }
+        return 
+            $this->verein === $other->verein &&
+            $this->nummer === $other->nummer &&
+            $this->zugehoerigeMeldung->id === $other->zugehoerigeMeldung->id;
+    }
+
     public static function fromName(string $name): Gegner {
 
         $gegner = new Gegner();
