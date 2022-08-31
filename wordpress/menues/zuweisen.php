@@ -74,13 +74,17 @@ mannschaften = [<?= implode(",",$mannschaftsListe->getIDs()); ?>];
         <?php
 foreach($mannschaftsListe->mannschaften as $mannschaft){
     $anzahlDienste = $spieleListe->zaehleDienste($mannschaft);
-    echo "<td style=\"text-align:center\" mannschaft=\"".$mannschaft->id."\">".$mannschaft->getKurzname()."<br>";
-    echo "<span style=\"font-size: 0.6em\">"; 
+    echo "<td style=\"text-align:center\" mannschaft=\"".$mannschaft->id."\">".$mannschaft->getKurzname();
+    echo "<div style=\"font-size: 0.6em\">"; 
+        echo "&sum; ";
+        echo "<span title=\"Summe\" mannschaft=\"".$mannschaft->id."\" counter=\"Summe\">0</span>/";
+        echo "<span title=\"gewichtete Summe\nBerücksichtigt unterschiedlichen Aufwand pro Dienst\nAufbau:50%\nZ/S Heim: 100%\nCatering:90%\nZ/N Auswärts:180%\nAbbau:100%\" mannschaft=\"".$mannschaft->id."\" counter=\"gewichtete Summe\">0</span>";
+        echo "<br>";
         echo "<span title=\"Auf- und Abbau\" mannschaft=\"".$mannschaft->id."\" counter=\"Auf- und Abbau\">0</span>/";
         echo "<span title=\"Zeitnehmer & Sekretär (HEIM)\" mannschaft=\"".$mannschaft->id."\" counter=\"Heim\">0</span>/";
         echo "<span title=\"Catering\" mannschaft=\"".$mannschaft->id."\" counter=\"Catering\">0</span>/";
         echo "<span title=\"Sekretär (AUSWÄRTS)\" mannschaft=\"".$mannschaft->id."\" counter=\"Auswaerts\">0</span>";
-    echo "</span>"; 
+    echo "</div>"; 
     echo "</td>";
 }
 ?>

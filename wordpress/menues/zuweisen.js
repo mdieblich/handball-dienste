@@ -33,17 +33,28 @@ function disableOtherCheckboxes(dienstID, mannschaft, assign){
 }
 function setDienstCounter(mannschaft){
 
+    count_aufbau = countForMannschaft(mannschaft, "Aufbau");
+    count_abbau = countForMannschaft(mannschaft, "Abbau");
     auf_abbau_counter = jQuery("span[counter='Auf- und Abbau'][mannschaft='"+mannschaft+"']")[0];
-    auf_abbau_counter.innerText = countForMannschaft(mannschaft, "Aufbau") + countForMannschaft(mannschaft, "Abbau");
+    auf_abbau_counter.innerText = count_aufbau + count_abbau;
     
+    count_dienst_heim = countForMannschaft(mannschaft, "Zeitnehmer") + countForMannschaft(mannschaft, "Sekretär");
     heim_counter = jQuery("span[counter='Heim'][mannschaft='"+mannschaft+"']")[0];
-    heim_counter.innerText = countForMannschaft(mannschaft, "Zeitnehmer") + countForMannschaft(mannschaft, "Sekretär");
+    heim_counter.innerText = count_dienst_heim;
     
+    count_catering = countForMannschaft(mannschaft, "Catering");
     catering_counter = jQuery("span[counter='Catering'][mannschaft='"+mannschaft+"']")[0];
-    catering_counter.innerText = countForMannschaft(mannschaft, "Catering");
+    catering_counter.innerText = count_catering;
 
+    count_dienst_auswaerts = countForMannschaft(mannschaft, "Zeitnehmer", true) + countForMannschaft(mannschaft, "Sekretär", true);
     auswaerts_counter = jQuery("span[counter='Auswaerts'][mannschaft='"+mannschaft+"']")[0];
-    auswaerts_counter.innerText = countForMannschaft(mannschaft, "Zeitnehmer", true) + countForMannschaft(mannschaft, "Sekretär", true);
+    auswaerts_counter.innerText = count_dienst_auswaerts;
+
+    summe_counter = jQuery("span[counter='Summe'][mannschaft='"+mannschaft+"']")[0];
+    summe_counter.innerText = count_aufbau + count_abbau + count_dienst_heim + count_catering + count_dienst_auswaerts;
+
+    gewichtete_summe_counter = jQuery("span[counter='gewichtete Summe'][mannschaft='"+mannschaft+"']")[0];
+    gewichtete_summe_counter.innerText = (count_aufbau*0.5 + count_abbau + count_dienst_heim + count_catering*0.9 + count_dienst_auswaerts*1.8).toFixed(1);
 
 }
 

@@ -12,6 +12,7 @@ class DiensteZelle implements Component{
     const FARBE_NEUTRAL = "#bbf";
     const FARBE_GLEICHER_TAG = "#ffd";
     const FARBE_GLEICHER_TAG_UND_HALLE = "#dfd";
+    const FARBE_VERHINDERT = "#fdd";
     
     private Spiel $spiel;
     private Mannschaft $mannschaft;
@@ -56,7 +57,7 @@ class DiensteZelle implements Component{
 
     private function getBackgroundColor(): string {
         if($this->isVerhindert()){
-            return "inherit";
+            return self::FARBE_VERHINDERT;
         }
         if($this->hatSpielAmGleichenTag()){
             if($this->hatSpielInGleicherHalle()){
