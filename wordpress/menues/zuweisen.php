@@ -78,7 +78,7 @@ foreach($mannschaftsListe->mannschaften as $mannschaft){
     echo "<div style=\"font-size: 0.6em\">"; 
         echo "&sum; ";
         echo "<span title=\"Summe\" mannschaft=\"".$mannschaft->id."\" counter=\"Summe\">0</span>/";
-        echo "<span title=\"gewichtete Summe\nBerücksichtigt unterschiedlichen Aufwand pro Dienst\nAufbau:50%\nZ/S Heim: 100%\nCatering:90%\nZ/N Auswärts:180%\nAbbau:100%\" mannschaft=\"".$mannschaft->id."\" counter=\"gewichtete Summe\">0</span>";
+        echo "<span title=\"gewichtete Summe\nBerücksichtigt unterschiedlichen Aufwand pro Dienst\nAufbau:50%\nZ/S Heim: 100%\nCatering:180%\nZ/N Auswärts:180%\nAbbau:100%\" mannschaft=\"".$mannschaft->id."\" counter=\"gewichtete Summe\">0</span>";
         echo "<br>";
         echo "<span title=\"Auf- und Abbau\" mannschaft=\"".$mannschaft->id."\" counter=\"Auf- und Abbau\">0</span>/";
         echo "<span title=\"Zeitnehmer & Sekretär (HEIM)\" mannschaft=\"".$mannschaft->id."\" counter=\"Heim\">0</span>/";

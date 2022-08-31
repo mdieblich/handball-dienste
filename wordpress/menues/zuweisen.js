@@ -54,7 +54,7 @@ function setDienstCounter(mannschaft){
     summe_counter.innerText = count_aufbau + count_abbau + count_dienst_heim + count_catering + count_dienst_auswaerts;
 
     gewichtete_summe_counter = jQuery("span[counter='gewichtete Summe'][mannschaft='"+mannschaft+"']")[0];
-    gewichtete_summe_counter.innerText = (count_aufbau*0.5 + count_abbau + count_dienst_heim + count_catering*0.9 + count_dienst_auswaerts*1.8).toFixed(1);
+    gewichtete_summe_counter.innerText = (count_aufbau*0.5 + count_abbau + count_dienst_heim + count_catering*1.8 + count_dienst_auswaerts*1.8).toFixed(1);
 
 }
 
