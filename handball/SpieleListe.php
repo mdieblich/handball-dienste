@@ -13,17 +13,20 @@ class SpieleListe{
         $this->spiele = $spiele;
     }
     
-    // TODO ersetzen durch getDiensteProMannschaft
-    public function zaehleDienste(Mannschaft $mannschaft): int{
-        $anzahl = 0;
+    // unbenutzt
+    public function getDiensteProMannschaft(): array {
+        $dienste = array();
         foreach($this->spiele as $spiel){
             foreach($spiel->dienste as $dienst){
-                if(isset($dienst->mannschaft) && $dienst->mannschaft->id == $mannschaft->id){
-                    $anzahl++;
+                if(isset($dienst->mannschaft)){
+                    if(empty($dienste[$dienst->mannschaft->id])){
+                        $dienste[$dienst->mannschaft->id] = array();
+                    }
+                    $dienste[$dienst->mannschaft->id][] = $dienst;
                 }
             }
         }
-        return $anzahl;
+        return $dienste;
     }
 
     function findNahgelegeneSpiele(Spiel $zuPruefendesSpiel): array {
