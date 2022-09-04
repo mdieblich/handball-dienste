@@ -73,7 +73,6 @@ mannschaften = [<?= implode(",",$mannschaftsListe->getIDs()); ?>];
         <th>Auswärts</th>
         <?php
 foreach($mannschaftsListe->mannschaften as $mannschaft){
-    $anzahlDienste = $spieleListe->zaehleDienste($mannschaft);
     echo "<td style=\"text-align:center\" mannschaft=\"".$mannschaft->id."\">".$mannschaft->getKurzname();
     echo "<div style=\"font-size: 0.6em\">"; 
         echo "&sum; ";
