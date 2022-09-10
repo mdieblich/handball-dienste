@@ -1,4 +1,7 @@
 <?php
+
+require_once __DIR__."/../log/Log.php";
+
 require_once __DIR__."/ImportSchritt.php";
 require_once __DIR__."/SpieleGrabber.php";
 require_once __DIR__."/../handball/dienst/DienstAenderungsPlan.php";
@@ -209,7 +212,7 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
         // TODO Transaktionsende
     }
 });
-Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(6, "Gegner importieren", function (){
+Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(6, "Gegner importieren", function (Log $logfile){
     $vereinsname = get_option('vereinsname');
 
     $mannschaftService = new MannschaftService();
@@ -217,25 +220,25 @@ Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(6, "Gegner importieren", funct
     
     $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
     foreach($mannschaftsListe->mannschaften as $mannschaft){
-        echo $mannschaft->getName()."\n";
+        $logfile->log($mannschaft->getName());
         foreach($mannschaft->meldungen as $mannschaftsMeldung) {
-            echo "\t".$mannschaftsMeldung->liga."\n";
+            $logfile->log("\t".$mannschaftsMeldung->liga);
             $nuliga_tabelle = new NuLiga_Ligatabelle(
                 $mannschaftsMeldung->meisterschaft->kuerzel, 
                 $mannschaftsMeldung->nuligaLigaID);
             $gegnerNamen = $nuliga_tabelle->extractGegnerNamen($vereinsname);
             foreach($gegnerNamen as $gegnerName){
-                echo "\t\t$gegnerName: ";
+                $logmessage = "\t\t$gegnerName: ";
                 $gegnerNeu = Gegner::fromName($gegnerName);
                 $gegnerNeu->zugehoerigeMeldung = $mannschaftsMeldung;
                 $gegnerAlt = $gegnerDAO->findSimilar( $gegnerNeu);
                 if(isset($gegnerAlt)){
-                    echo "Bereits vorhanden";
+                    $logmessage .= "Bereits vorhanden";
                 } else {
                     $gegnerDAO->insert($gegnerNeu);
-                    echo "Neu importiert mit ID: ".$gegnerNeu->id;
+                    $logmessage .= "Neu importiert mit ID: ".$gegnerNeu->id;
                 }
-                echo "\n";
+                $logfile->log($logmessage);
             }
         }
     }
