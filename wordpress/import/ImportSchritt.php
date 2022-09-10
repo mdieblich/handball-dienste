@@ -1,9 +1,11 @@
 <?php
+
+require_once __DIR__."/../log/Log.php";
+
 class ImportSchritt{
     public int $schritt;
     public string $beschreibung;
     private Closure $method;
-
     
     public function __construct(int $schritt, string $beschreibung, Closure $method){
         $this->schritt = $schritt;
@@ -14,13 +16,17 @@ class ImportSchritt{
     // TODO dbHandle als parameter hereinreichen
     public function run(){
         $this->initImportStatus();
-        echo "=================================================\n";
-        echo "START ".$this->beschreibung."\n";
-        echo "=================================================\n";
-        call_user_func($this->method);
-        echo "=================================================\n";
-        echo "ENDE ".$this->beschreibung."\n";
-        echo "=================================================\n";
+        
+        $logfile = new Log("Import_".$this->schritt);
+        $logfile->log("=================================================");
+        $logfile->log("START ".$this->beschreibung);
+        $logfile->log(date("d.m.y H:i:s"));
+        $logfile->log("=================================================");
+        call_user_func($this->method, $logfile);
+        $logfile->log("=================================================");
+        $logfile->log("ENDE ".$this->beschreibung);
+        $logfile->log(date("d.m.y H:i:s"));
+        $logfile->log("=================================================");
         $this->finishImportStatus();
     }
 
