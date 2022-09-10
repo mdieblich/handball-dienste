@@ -3,7 +3,6 @@ class ImportSchritt{
     public int $schritt;
     public string $beschreibung;
     private Closure $method;
-
     
     public function __construct(int $schritt, string $beschreibung, Closure $method){
         $this->schritt = $schritt;

@@ -320,6 +320,8 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
     $heimSpieleProHalle = $spielService->fetchSpieleProHalle("heimspiel = 1");
     foreach($heimSpieleProHalle as $halle => $spieleInDerHalle){
         $spieleProTag = $spieleInDerHalle->groupBySpielTag();
+        $vortag = null;
+        $letztesSpielVomVortag = null;
         foreach($spieleProTag as $spieltag => $spieleAmSpielTag){
 
             // TODO in Klasse "Spieltag" auslagern
