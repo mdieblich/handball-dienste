@@ -34,6 +34,7 @@ class SpielService{
         $this->appendDienste($spieleListe, $mannschaftsListe);
         return $spieleListe;
     }
+
     public function loadSpieleFuerMannschaft(int $nummer, string $geschlecht, ?string $jugendklasse
     ): SpieleListe{
         $table_mannschaft = MannschaftDAO::tableName();
@@ -43,7 +44,7 @@ class SpielService{
         } else {
             $whereClause .= "='$jugendklasse'";
         }
-        $whereClause .= ")";
+        $whereClause .= ") AND anwurf > subdate(current_date, 1)";
         return $this->loadSpieleMitDiensten($whereClause);
     }
 
