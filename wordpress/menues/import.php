@@ -130,7 +130,20 @@ setInterval(function(){
                 <?php foreach(Importer::alleSchritte() as $importSchritt){ ?>
                     <tr>
                         <td>
-                            <?php echo $importSchritt->beschreibung;?>
+                            <a  data-bs-toggle="collapse" 
+                                href="#dateiliste_importschritt_<?= $importSchritt->schritt; ?>" 
+                                role="button" 
+                                aria-expanded="false" 
+                                aria-controls="dateiliste_importschritt_<?= $importSchritt->schritt; ?>">
+                                <?php echo $importSchritt->beschreibung;?>
+                            </a>
+                            <div class="collapse" id="dateiliste_importschritt_<?= $importSchritt->schritt; ?>">
+                            <?php foreach($importSchritt->logFiles() as $timestamp => $logFile){ ?>
+                                <span title="<?= $logFile?>"><?= date("d.m.Y H:i:s", $timestamp) ?></span>
+                                <span class="dashicons dashicons-download"></span>
+                                <span class="dashicons dashicons-trash"></span><br>
+                            <?php } ?>
+                            </div>
                         </td>
                         <td id="letzter-start-schritt-<?php echo $importSchritt->schritt;?>" style="width:200px">
                             Noch nicht
