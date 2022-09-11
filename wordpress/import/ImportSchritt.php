@@ -72,5 +72,11 @@ class ImportSchritt{
         $table_name = $wpdb->prefix . 'import_status';
         $wpdb->query("UPDATE $table_name set start=null, ende=null");
     }
+
+    public function logFiles(): array {
+        $files = Log::findFiles("Import_".$this->schritt);
+        krsort($files);
+        return $files;
+    }
 }
 ?>
