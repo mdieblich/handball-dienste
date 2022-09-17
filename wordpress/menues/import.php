@@ -134,8 +134,10 @@ setInterval(function(){
                                 href="#dateiliste_importschritt_<?= $importSchritt->schritt; ?>" 
                                 role="button" 
                                 aria-expanded="false" 
-                                aria-controls="dateiliste_importschritt_<?= $importSchritt->schritt; ?>">
+                                aria-controls="dateiliste_importschritt_<?= $importSchritt->schritt; ?>"
+                                class="text-decoration-none">
                                 <?php echo $importSchritt->beschreibung;?>
+                                <span class="dashicons dashicons-arrow-down"></span>
                             </a>
                             <div class="collapse" id="dateiliste_importschritt_<?= $importSchritt->schritt; ?>">
                             <?php foreach($importSchritt->logFiles() as $timestamp => $logFile){ ?>
