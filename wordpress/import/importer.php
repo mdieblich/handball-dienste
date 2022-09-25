@@ -17,7 +17,7 @@ require_once __DIR__."/../dao/DienstDAO.php";
 require_once __DIR__."/../service/MannschaftService.php";
 require_once __DIR__."/../service/GegnerService.php";
 
-require_once __DIR__."/../PHPMailer/NippesMailer.php";
+require_once __DIR__."/../NippesMailer.php";
 
 class Importer{
     public static $NULIGA_MEISTERSCHAFTEN_LESEN;
