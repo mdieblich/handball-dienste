@@ -12,8 +12,8 @@ function addDiensteSpieleImportKonfiguration(){
 add_action( 'wp_ajax_alles_importieren', 'alles_importieren' );
 add_action( 'wp_ajax_start_import_schritt', 'start_import_schritt' );
 add_action( 'wp_ajax_status_lesen', 'status_lesen' );
-
 add_action( 'wp_ajax_meldung_aktivieren', 'meldung_aktivieren' );
+add_action( 'wp_ajax_protokoll_runterladen', 'protokoll_runterladen' );
 
 function meldung_aktivieren(){
 
@@ -22,6 +22,24 @@ function meldung_aktivieren(){
 
     $meldungDAO = new MannschaftsMeldungDAO();
     $meldungDAO->meldungAktivieren($meldung_id, $aktiv);
+
+    http_response_code(200);
+    wp_die();
+}
+
+function protokoll_runterladen(){
+
+    $logfile = $_POST['logfile'];
+
+    header('Content-Description: File Transfer');
+    header('Content-Disposition: attachment; filename='.$logfile);
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize($logfile));
+    header("Content-Type: text/plain");
+    readfile($logfile);
+
     http_response_code(200);
     wp_die();
 }
@@ -73,6 +91,15 @@ setInterval(function(){
         });
     });
 }, 500);
+
+function download_log(logfile){
+    
+    var data = {
+        'action': 'protokoll_runterladen', 
+        'logfile': logfile
+    };
+    jQuery.post(ajaxurl, data);
+}
 
 </script>
 
@@ -142,7 +169,7 @@ setInterval(function(){
                             <div class="collapse" id="dateiliste_importschritt_<?= $importSchritt->schritt; ?>">
                             <?php foreach($importSchritt->logFiles() as $timestamp => $logFile){ ?>
                                 <span title="<?= $logFile?>"><?= date("d.m.Y H:i:s", $timestamp) ?></span>
-                                <span class="dashicons dashicons-download"></span>
+                                <span class="dashicons dashicons-download" onclick="download_log('<?= basename($logFile); ?>')"></span>
                                 <span class="dashicons dashicons-trash"></span><br>
                             <?php } ?>
                             </div>
