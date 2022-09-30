@@ -271,6 +271,9 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
                 $mannschaftsMeldung->nuligaTeamID
             );
             foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
+                if($nuLigaSpiel->isUngueltig()){
+                    continue;
+                }
                 echo "\t\t".$nuLigaSpiel->getLogOutput().": ";
                 // TODO nur spiele in der Zukunft importieren
                 $spielNeu = $nuLigaSpiel->extractSpiel($mannschaftsMeldung, $teamName);

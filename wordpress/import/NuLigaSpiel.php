@@ -42,6 +42,14 @@ class NuLigaSpiel {
         return $this->terminOffen;
     }
 
+    public function isUngueltig(): bool {
+        return 
+            empty($this->spielNr) 
+            || empty($this->halle)
+            || $this->gastmannschaft === "spielfrei"
+            || $this->heimmannschaft === "spielfrei";
+    }
+
     public function getAnwurf(): ?DateTime {
         if($this->terminOffen){
             return null;
