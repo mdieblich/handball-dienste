@@ -9,11 +9,11 @@ source config.sh
 cd ./build
 
 # 1. AUFRÄUMEN!!!
-mkdir -p ./dienstedienst
 rm -rf dienstedienst
 rm dienstedienst.zip
 
 # 2. Alles rüberkopieren
+mkdir -p ./dienstedienst
 cp -r ../handball dienstedienst
 cp -r ../zeit dienstedienst
 cp -r ../dao dienstedienst
