@@ -55,7 +55,11 @@ class NuLigaSpiel {
             return null;
         }
         $datum_und_zeit = $this->datum." ".$this->uhrzeit;
-        return DateTime::createFromFormat('d.m.Y H:i', $datum_und_zeit);
+        $anwurf = DateTime::createFromFormat('d.m.Y H:i', $datum_und_zeit);
+        if($anwurf){
+            return $anwurf;
+        }
+        return null;
     }
     public function getLogOutput(): string {
         $termin = "Termin offen";
@@ -92,10 +96,6 @@ class NuLigaSpiel {
             $spiel->ergebnisOderSchiris = self::extractTrimmedContent($zellen[7]);
             $spiel->spielbericht = self::extractTrimmedContent($zellen[8]);
             $spiel->spielberichtsGenehmigung = self::extractTrimmedContent($zellen[9]);
-        }
-        if(empty($spiel->spielNr) || empty($spiel->halle)){
-            // ungültiges Spiel, vermutlich spielfrei
-            return null;
         }
         // leere Zelle: $zellen[10]
         return $spiel;
