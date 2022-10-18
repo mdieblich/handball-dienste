@@ -32,6 +32,12 @@ add_action( 'rest_api_init', function () {
         'callback' => 'downloadSpielerPlusExport',    
         'permission_callback' => '__return_true'
     ));
+    // erreichbar unter /wp-json/dienste/testEmail
+    register_rest_route( 'dienste', '/testEmail', array(
+        'methods' => 'GET',
+        'callback' => 'sendTestEmail',    
+        'permission_callback' => '__return_true'
+    ));
 });
 
 function enqueue_scripts() {
@@ -47,5 +53,17 @@ function updateFromNuliga(){
 function downloadSpielerPlusExport(){
     require_once __DIR__."/export/exporter.php";
     exportSpielerPlus( $_GET['mannschaft'] );
+}
+
+function sendTestEmail(){
+    require_once __DIR__."/NippesMailer.php";
+    
+    $mail = init_nippes_mailer();
+    $mail->addAddress("martin.dieblich@gmx.de");
+    $mail->Subject = "Test-Email";
+    $mail->Body = "Scheint doch alles zu klappen.";
+    $mail->isHTML(true);
+    $mail->send();
+    return "gesendet.";
 }
 ?>
