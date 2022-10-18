@@ -42,12 +42,16 @@ class NuLigaSpiel implements \JsonSerializable {
         return $this->terminOffen;
     }
 
+    public function isSpielFrei(): bool {
+        return 
+            $this->gastmannschaft === "spielfrei"
+         || $this->heimmannschaft === "spielfrei";
+    }
+
     public function isUngueltig(): bool {
         return 
             empty($this->spielNr) 
-            || empty($this->halle)
-            || $this->gastmannschaft === "spielfrei"
-            || $this->heimmannschaft === "spielfrei";
+         || empty($this->halle);
     }
 
     public function getAnwurf(): ?DateTime {
@@ -137,7 +141,7 @@ class NuLigaSpiel implements \JsonSerializable {
         $getrimmt = trim($ohneAK);
         return $getrimmt;
     }
-    
+
     public function jsonSerialize()
     {
         $vars = get_object_vars($this);
