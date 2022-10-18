@@ -59,6 +59,9 @@ class DienstAenderungsPlan{
 
     public function sendEmails(){
         foreach($this->mannschaften as $mannschaft){
+            if($this->willKeineNachricht($mannschaft)){
+                continue;
+            }
             if($this->brauchtKeineNachricht($mannschaft)){
                 continue;
             }
@@ -70,6 +73,10 @@ class DienstAenderungsPlan{
             $mail->isHTML(true);
             $mail->send();
         }
+    }
+
+    private function willKeineNachricht($mannschaft): bool {
+        return empty($mannschaft->email);
     }
 
     private function brauchtKeineNachricht($mannschaft): bool{
