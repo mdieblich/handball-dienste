@@ -5,7 +5,7 @@ require_once __DIR__."/../handball/MannschaftsMeldung.php";
 require_once __DIR__."/../handball/Spiel.php";
 require_once __DIR__."/../handball/Gegner.php";
 
-class NuLigaSpiel {
+class NuLigaSpiel implements \JsonSerializable {
     
     private $wochentag;
     private $terminOffen;
@@ -137,6 +137,12 @@ class NuLigaSpiel {
         $getrimmt = trim($ohneAK);
         return $getrimmt;
     }
+    
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
 
+        return $vars;
+    }
 }
 ?>
