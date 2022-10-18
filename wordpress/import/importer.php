@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__."/../log/Log.php";
+require_once __DIR__."/../log/Problem.php";
 
 require_once __DIR__."/ImportSchritt.php";
 require_once __DIR__."/SpieleGrabber.php";
@@ -245,6 +246,7 @@ Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(6, "Gegner importieren", funct
 });
 
 Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", function (Log $logfile){
+    $problems = array();
     $mannschaftService = new MannschaftService();
     $gegnerService = new GegnerService();
     $spielDAO = new SpielDAO();
@@ -256,7 +258,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
     $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaftsListe->mannschaften);
 
     foreach($mannschaftsListe->mannschaften as $mannschaft){
-        echo $mannschaft->getName().": Starte Import\n";
+        $logfile->log($mannschaft->getName().": Starte Import\n");
         
         $teamName = get_option('vereinsname');
         if($mannschaft->nummer >= 2){
@@ -274,7 +276,17 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
                 $mannschaftsMeldung->nuligaTeamID
             );
             foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
+                if($nuLigaSpiel->isSpielfrei()){
+                    $logfile->log("Spiel wird übersprungen: spielfrei ".$nuLigaSpiel->getLogOutput());
+                    continue;
+                }
                 if($nuLigaSpiel->isUngueltig()){
+                    $problems[] = new Problem(
+                        $mannschaft->getName()." - ".$mannschaftsMeldung->liga." - ".$nuLigaSpiel->getLogOutput(),
+                        "Ungültiges Spiel",
+                        $nuLigaSpiel//->getLogOutput()
+                    );
+                    $logfile->log("Ungültiges Spiel: ".$nuLigaSpiel->getLogOutput());
                     continue;
                 }
                 $logmessage = "\t\t".$nuLigaSpiel->getLogOutput().": ";
@@ -290,6 +302,11 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
                     }
                 }
                 if(!$gegnerGefunden){
+                    $problems[] = new Problem(
+                        $mannschaft->getName()." - ".$mannschaftsMeldung->liga." - ".$nuLigaSpiel->getLogOutput(),
+                        "Der Gegner wurde nicht gefunden. Spiel wird ignoriert",
+                        $nuLigaSpiel
+                    );
                     $logfile->log("Gegner wurde nicht gefunden. Spiel wird ignoriert.");
                     continue;
                 }
@@ -373,6 +390,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
     }
 
     $dienstAenderungsPlan->sendEmails();
+    return $problems;
 });
 
 Importer::$CACHE_LEEREN = new ImportSchritt(8, "Cache leeren", function (){
