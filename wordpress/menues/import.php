@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__."/../log/Log.php";
 require_once __DIR__."/../import/importer.php";
 require_once __DIR__."/../dao/MeisterschaftDAO.php";
 require_once __DIR__."/../dao/MannschaftsMeldungDAO.php";
@@ -28,17 +29,19 @@ function meldung_aktivieren(){
 }
 
 function protokoll_runterladen(){
+    $logfile = $_GET['logfile'];
+    $logfile_path = Log::LOG_DIRECTORY().$logfile;
 
-    $logfile = $_POST['logfile'];
+    error_log("Lade $logfile");
 
     header('Content-Description: File Transfer');
+    header("Content-Type: text/plain");
     header('Content-Disposition: attachment; filename='.$logfile);
     header('Expires: 0');
     header('Cache-Control: must-revalidate');
     header('Pragma: public');
-    header('Content-Length: ' . filesize($logfile));
-    header("Content-Type: text/plain");
-    readfile($logfile);
+    header('Content-Length: ' . filesize($logfile_path));
+    readfile($logfile_path);
 
     http_response_code(200);
     wp_die();
@@ -93,12 +96,7 @@ setInterval(function(){
 }, 500);
 
 function download_log(logfile){
-    
-    var data = {
-        'action': 'protokoll_runterladen', 
-        'logfile': logfile
-    };
-    jQuery.post(ajaxurl, data);
+    window.location.href = ajaxurl + "?action=protokoll_runterladen&logfile="+encodeURI(logfile);
 }
 
 </script>
