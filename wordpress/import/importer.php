@@ -271,7 +271,11 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
         }
         
         foreach($mannschaft->meldungen as $mannschaftsMeldung) {
-            $logfile->log("\t".$mannschaftsMeldung->liga."");
+            $logfile->log("\t".$mannschaftsMeldung->liga);
+            if(!$mannschaftsMeldung->aktiv){
+                $logfile->log("\t.\tDiese Meldung ist inaktiv und wird übersprungen.");
+                continue;
+            }
             $spielGrabber = new SpieleGrabber(
                 $mannschaftsMeldung->meisterschaft->kuerzel, 
                 $mannschaftsMeldung->nuligaLigaID, 
