@@ -21,7 +21,6 @@ cp -r ../dao dienstedienst
 cp -r ../service dienstedienst
 cp -r ../components dienstedienst
 cp -r ../export dienstedienst
-cp -r ../vendor dienstedienst
 cp -r ../wordpress/* dienstedienst
 
 # 3. Zippen
