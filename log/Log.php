@@ -4,7 +4,7 @@ class Log {
 
     private $fileHandle;
     public function __construct(string $purpose) {
-        $filename = plugin_dir_path(__FILE__).date("Y.m.d_H.i.s")."-".$purpose.".txt";
+        $filename = self::LOG_DIRECTORY().date("Y.m.d_H.i.s")."-".$purpose.".txt";
         $this->fileHandle = fopen($filename, "a");
     }
 
@@ -25,6 +25,10 @@ class Log {
             $fileNames[$date->getTimestamp()] =  $fileName;
         }
         return $fileNames;
+    }
+
+    public static function LOG_DIRECTORY(): string{
+        return plugin_dir_path(__FILE__);
     }
 }
 
