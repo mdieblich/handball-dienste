@@ -32,8 +32,6 @@ function protokoll_runterladen(){
     $logfile = $_GET['logfile'];
     $logfile_path = Log::LOG_DIRECTORY().$logfile;
 
-    error_log("Lade $logfile");
-
     header('Content-Description: File Transfer');
     header("Content-Type: text/plain");
     header('Content-Disposition: attachment; filename='.$logfile);
