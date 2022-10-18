@@ -15,12 +15,12 @@ rm dienstedienst.zip
 # 2. Alles rüberkopieren
 mkdir -p ./dienstedienst
 cp -r ../handball dienstedienst
+cp -r ../log dienstedienst
 cp -r ../zeit dienstedienst
 cp -r ../dao dienstedienst
 cp -r ../service dienstedienst
 cp -r ../components dienstedienst
 cp -r ../export dienstedienst
-cp -r ../vendor dienstedienst
 cp -r ../wordpress/* dienstedienst
 
 # 3. Zippen

@@ -5,7 +5,7 @@ require_once __DIR__."/../handball/MannschaftsMeldung.php";
 require_once __DIR__."/../handball/Spiel.php";
 require_once __DIR__."/../handball/Gegner.php";
 
-class NuLigaSpiel {
+class NuLigaSpiel implements \JsonSerializable {
     
     private $wochentag;
     private $terminOffen;
@@ -42,12 +42,16 @@ class NuLigaSpiel {
         return $this->terminOffen;
     }
 
+    public function isSpielFrei(): bool {
+        return 
+            $this->gastmannschaft === "spielfrei"
+         || $this->heimmannschaft === "spielfrei";
+    }
+
     public function isUngueltig(): bool {
         return 
             empty($this->spielNr) 
-            || empty($this->halle)
-            || $this->gastmannschaft === "spielfrei"
-            || $this->heimmannschaft === "spielfrei";
+         || empty($this->halle);
     }
 
     public function getAnwurf(): ?DateTime {
@@ -138,5 +142,11 @@ class NuLigaSpiel {
         return $getrimmt;
     }
 
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
+
+        return $vars;
+    }
 }
 ?>

@@ -1,9 +1,11 @@
 <?php
+
+require_once __DIR__."/../log/Log.php";
+
 class ImportSchritt{
     public int $schritt;
     public string $beschreibung;
     private Closure $method;
-
     
     public function __construct(int $schritt, string $beschreibung, Closure $method){
         $this->schritt = $schritt;
@@ -12,16 +14,21 @@ class ImportSchritt{
     }
     
     // TODO dbHandle als parameter hereinreichen
-    public function run(){
+    public function run(): array{
         $this->initImportStatus();
-        echo "=================================================\n";
-        echo "START ".$this->beschreibung."\n";
-        echo "=================================================\n";
-        call_user_func($this->method);
-        echo "=================================================\n";
-        echo "ENDE ".$this->beschreibung."\n";
-        echo "=================================================\n";
+        
+        $logfile = new Log("Import_".$this->schritt);
+        $logfile->log("=================================================");
+        $logfile->log("START ".$this->beschreibung);
+        $logfile->log(date("d.m.y H:i:s"));
+        $logfile->log("=================================================");
+        $problems = call_user_func($this->method, $logfile);
+        $logfile->log("=================================================");
+        $logfile->log("ENDE ".$this->beschreibung);
+        $logfile->log(date("d.m.y H:i:s"));
+        $logfile->log("=================================================");
         $this->finishImportStatus();
+        return $problems;
     }
 
     private function initImportStatus(){
@@ -65,6 +72,12 @@ class ImportSchritt{
         global $wpdb;
         $table_name = $wpdb->prefix . 'import_status';
         $wpdb->query("UPDATE $table_name set start=null, ende=null");
+    }
+
+    public function logFiles(): array {
+        $files = Log::findFiles("Import_".$this->schritt);
+        krsort($files);
+        return $files;
     }
 }
 ?>

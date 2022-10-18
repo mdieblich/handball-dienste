@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__."/../log/Log.php";
 require_once __DIR__."/../import/importer.php";
 require_once __DIR__."/../dao/MeisterschaftDAO.php";
 require_once __DIR__."/../dao/MannschaftsMeldungDAO.php";
@@ -12,8 +13,8 @@ function addDiensteSpieleImportKonfiguration(){
 add_action( 'wp_ajax_alles_importieren', 'alles_importieren' );
 add_action( 'wp_ajax_start_import_schritt', 'start_import_schritt' );
 add_action( 'wp_ajax_status_lesen', 'status_lesen' );
-
 add_action( 'wp_ajax_meldung_aktivieren', 'meldung_aktivieren' );
+add_action( 'wp_ajax_protokoll_runterladen', 'protokoll_runterladen' );
 
 function meldung_aktivieren(){
 
@@ -22,6 +23,24 @@ function meldung_aktivieren(){
 
     $meldungDAO = new MannschaftsMeldungDAO();
     $meldungDAO->meldungAktivieren($meldung_id, $aktiv);
+
+    http_response_code(200);
+    wp_die();
+}
+
+function protokoll_runterladen(){
+    $logfile = $_GET['logfile'];
+    $logfile_path = Log::LOG_DIRECTORY().$logfile;
+
+    header('Content-Description: File Transfer');
+    header("Content-Type: text/plain");
+    header('Content-Disposition: attachment; filename='.$logfile);
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize($logfile_path));
+    readfile($logfile_path);
+
     http_response_code(200);
     wp_die();
 }
@@ -74,6 +93,10 @@ setInterval(function(){
     });
 }, 500);
 
+function download_log(logfile){
+    window.location.href = ajaxurl + "?action=protokoll_runterladen&logfile="+encodeURI(logfile);
+}
+
 </script>
 
 <div class="wrap">
@@ -118,7 +141,8 @@ setInterval(function(){
         <h5 class="card-header">Manueller Import</h5>
         <div class="card-body">
             <p class="card-text">
-                Sollte es Schwierigkeiten beim Import geben kann dieser hier überwacht und Schritte können einzeln gestartet werden.
+                Sollte es Schwierigkeiten beim Import geben kann dieser hier überwacht und Schritte können einzeln gestartet werden.<br>
+                Durch einen Klick auf den Titel des Importschrittes werden vergangene Logs dargestellt. Die Logdateien können durch Doppelklick runtergeladen werden.
             </p>
             <table class="table">
                 <tr>
@@ -130,7 +154,26 @@ setInterval(function(){
                 <?php foreach(Importer::alleSchritte() as $importSchritt){ ?>
                     <tr>
                         <td>
-                            <?php echo $importSchritt->beschreibung;?>
+                            <div  data-bs-toggle="collapse" 
+                                href="#dateiliste_importschritt_<?= $importSchritt->schritt; ?>" 
+                                role="button" 
+                                aria-expanded="false" 
+                                aria-controls="dateiliste_importschritt_<?= $importSchritt->schritt; ?>"
+                                class="text-decoration-none">
+                                <?php echo $importSchritt->beschreibung;?>
+                            </div>
+                            <div class="collapse" id="dateiliste_importschritt_<?= $importSchritt->schritt; ?>">
+                            <?php foreach($importSchritt->logFiles() as $timestamp => $logFile){ ?>
+                                <div 
+                                    title="<?= $logFile?>" 
+                                    ondblclick="download_log('<?= basename($logFile); ?>')"
+                                    style="cursor: pointer"
+                                >
+                                    <?= date("d.m.Y H:i:s", $timestamp) ?>, 
+                                    <i>(<?= filesize($logFile) ?> Bytes)</i>
+                                </div>
+                            <?php } ?>
+                            </div>
                         </td>
                         <td id="letzter-start-schritt-<?php echo $importSchritt->schritt;?>" style="width:200px">
                             Noch nicht

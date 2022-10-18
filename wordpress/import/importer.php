@@ -1,4 +1,8 @@
 <?php
+
+require_once __DIR__."/../log/Log.php";
+require_once __DIR__."/../log/Problem.php";
+
 require_once __DIR__."/ImportSchritt.php";
 require_once __DIR__."/SpieleGrabber.php";
 require_once __DIR__."/../handball/dienst/DienstAenderungsPlan.php";
@@ -172,7 +176,7 @@ Importer::$MEISTERSCHAFTEN_AKTUALISIEREN = new ImportSchritt(4, "Meisterschaften
     }
 });
 
-Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannschaft aktualisieren", function (){
+Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannschaft aktualisieren", function (Log $logfile){
     global $wpdb;
 
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
@@ -198,10 +202,10 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
         $oldMeldung = $meldungDAO->findMannschaftsMeldung($newMeldung->meisterschaft_id, $newMeldung->mannschaft_id, $newMeldung->liga);
         // TODO Transaktionsstart
         if(isset($oldMeldung)){
-            echo "\tAktualisiere alte Meldung: ".print_r($oldMeldung, true)."\n";
+            $logfile->log("\tAktualisiere alte Meldung: ".print_r($oldMeldung, true)."");
             $meldungDAO->updateMannschaftsMeldung($oldMeldung->id, $newMeldung->nuligaLigaID, $newMeldung->nuligaTeamID);
         } else{
-            echo "\Wird eingefügt\n";
+            $logfile->log("\Wird eingefügt");
             $meldungDAO->insert($newMeldung);
         }
         // Löschen der Einteilung in der nuliga-Import-Tabelle
@@ -209,7 +213,7 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
         // TODO Transaktionsende
     }
 });
-Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(6, "Gegner importieren", function (){
+Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(6, "Gegner importieren", function (Log $logfile){
     $vereinsname = get_option('vereinsname');
 
     $mannschaftService = new MannschaftService();
@@ -217,31 +221,32 @@ Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(6, "Gegner importieren", funct
     
     $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
     foreach($mannschaftsListe->mannschaften as $mannschaft){
-        echo $mannschaft->getName()."\n";
+        $logfile->log($mannschaft->getName());
         foreach($mannschaft->meldungen as $mannschaftsMeldung) {
-            echo "\t".$mannschaftsMeldung->liga."\n";
+            $logfile->log("\t".$mannschaftsMeldung->liga);
             $nuliga_tabelle = new NuLiga_Ligatabelle(
                 $mannschaftsMeldung->meisterschaft->kuerzel, 
                 $mannschaftsMeldung->nuligaLigaID);
             $gegnerNamen = $nuliga_tabelle->extractGegnerNamen($vereinsname);
             foreach($gegnerNamen as $gegnerName){
-                echo "\t\t$gegnerName: ";
+                $logmessage = "\t\t$gegnerName: ";
                 $gegnerNeu = Gegner::fromName($gegnerName);
                 $gegnerNeu->zugehoerigeMeldung = $mannschaftsMeldung;
                 $gegnerAlt = $gegnerDAO->findSimilar( $gegnerNeu);
                 if(isset($gegnerAlt)){
-                    echo "Bereits vorhanden";
+                    $logmessage .= "Bereits vorhanden";
                 } else {
                     $gegnerDAO->insert($gegnerNeu);
-                    echo "Neu importiert mit ID: ".$gegnerNeu->id;
+                    $logmessage .= "Neu importiert mit ID: ".$gegnerNeu->id;
                 }
-                echo "\n";
+                $logfile->log($logmessage);
             }
         }
     }
 });
 
-Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", function (){
+Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", function (Log $logfile){
+    $problems = array();
     $mannschaftService = new MannschaftService();
     $gegnerService = new GegnerService();
     $spielDAO = new SpielDAO();
@@ -253,7 +258,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
     $dienstAenderungsPlan = new DienstAenderungsPlan($mannschaftsListe->mannschaften);
 
     foreach($mannschaftsListe->mannschaften as $mannschaft){
-        echo $mannschaft->getName().": Starte Import\n";
+        $logfile->log($mannschaft->getName().": Starte Import\n");
         
         $teamName = get_option('vereinsname');
         if($mannschaft->nummer >= 2){
@@ -264,17 +269,27 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
         }
         
         foreach($mannschaft->meldungen as $mannschaftsMeldung) {
-            echo "\t".$mannschaftsMeldung->liga."\n";
+            $logfile->log("\t".$mannschaftsMeldung->liga."");
             $spielGrabber = new SpieleGrabber(
                 $mannschaftsMeldung->meisterschaft->kuerzel, 
                 $mannschaftsMeldung->nuligaLigaID, 
                 $mannschaftsMeldung->nuligaTeamID
             );
             foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
-                if($nuLigaSpiel->isUngueltig()){
+                if($nuLigaSpiel->isSpielfrei()){
+                    $logfile->log("Spiel wird übersprungen: spielfrei ".$nuLigaSpiel->getLogOutput());
                     continue;
                 }
-                echo "\t\t".$nuLigaSpiel->getLogOutput().": ";
+                if($nuLigaSpiel->isUngueltig()){
+                    $problems[] = new Problem(
+                        $mannschaft->getName()." - ".$mannschaftsMeldung->liga." - ".$nuLigaSpiel->getLogOutput(),
+                        "Ungültiges Spiel",
+                        $nuLigaSpiel//->getLogOutput()
+                    );
+                    $logfile->log("Ungültiges Spiel: ".$nuLigaSpiel->getLogOutput());
+                    continue;
+                }
+                $logmessage = "\t\t".$nuLigaSpiel->getLogOutput().": ";
                 // TODO nur spiele in der Zukunft importieren
                 $spielNeu = $nuLigaSpiel->extractSpiel($mannschaftsMeldung, $teamName);
                 
@@ -287,7 +302,12 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
                     }
                 }
                 if(!$gegnerGefunden){
-                    echo "Gegner wurde nicht gefunden. Spiel wird ignoriert.\n";
+                    $problems[] = new Problem(
+                        $mannschaft->getName()." - ".$mannschaftsMeldung->liga." - ".$nuLigaSpiel->getLogOutput(),
+                        "Der Gegner wurde nicht gefunden. Spiel wird ignoriert",
+                        $nuLigaSpiel
+                    );
+                    $logfile->log("Gegner wurde nicht gefunden. Spiel wird ignoriert.");
                     continue;
                 }
 
@@ -298,23 +318,23 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
                     $hallenAenderung = ($spielAlt->halle != $spielNeu->halle);
                     $anwurfAenderung = ($spielAlt->anwurf != $spielNeu->anwurf);
                     if($hallenAenderung || $anwurfAenderung){
-                        echo "Spiel muss aktualisiert werden.";
+                        $logmessage .= "Spiel muss aktualisiert werden.";
                         $dienstAenderungsPlan->registerSpielAenderung($spielAlt, $spielNeu);
                         $spielDAO->update($spielAlt->id, $spielNeu);
                     } else {
-                        echo "Spiel bereits vorhanden.";
+                        $logmessage .= "Spiel bereits vorhanden.";
                     }
                     // TODO Spiel in eine Liste aufnehmen um zu prüfen, ob Hallenaufbau oder -abbau neu vergeben werden muss
                 } else {
                     // ein neues Spiel
-                    echo "Spiel ist neu und wird importiert.";
+                    $logmessage .= "Spiel ist neu und wird importiert.";
                     $spielDAO->insert($spielNeu);
                     $spielNeu->createDienste();
                     // TODO das Insert sollte über den SpielService laufen. Dabei wird auch der Gegner eingefügt, falls nicht vorhanden
                     // In der Folge wird oben bei extractSpiel ein neuer Gegner erstellt und der dann nur eingefügt, wenn er noch nicht existiert
                     $dienstDAO->insertAll($spielNeu->dienste);
                 }
-                echo "\n";
+                $logfile->log($logmessage);
             }
         }
     }
@@ -370,6 +390,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
     }
 
     $dienstAenderungsPlan->sendEmails();
+    return $problems;
 });
 
 Importer::$CACHE_LEEREN = new ImportSchritt(8, "Cache leeren", function (){
