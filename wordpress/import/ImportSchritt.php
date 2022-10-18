@@ -14,7 +14,7 @@ class ImportSchritt{
     }
     
     // TODO dbHandle als parameter hereinreichen
-    public function run(): array{
+    public function run(): ?array{
         $this->initImportStatus();
         
         $logfile = new Log("Import_".$this->schritt);
