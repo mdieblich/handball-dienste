@@ -155,7 +155,7 @@ function download_log(logfile){
                 <?php foreach(Importer::alleSchritte() as $importSchritt){ ?>
                     <tr>
                         <td>
-                            <a  data-bs-toggle="collapse" 
+                            <div  data-bs-toggle="collapse" 
                                 href="#dateiliste_importschritt_<?= $importSchritt->schritt; ?>" 
                                 role="button" 
                                 aria-expanded="false" 
@@ -163,10 +163,10 @@ function download_log(logfile){
                                 class="text-decoration-none">
                                 <?php echo $importSchritt->beschreibung;?>
                                 <span class="dashicons dashicons-arrow-down"></span>
-                            </a>
+                            </div>
                             <div class="collapse" id="dateiliste_importschritt_<?= $importSchritt->schritt; ?>">
                             <?php foreach($importSchritt->logFiles() as $timestamp => $logFile){ ?>
-                                <span title="<?= $logFile?>"><?= date("d.m.Y H:i:s", $timestamp) ?></span>
+                                <span title="<?= $logFile?>"><?= date("d.m.Y H:i:s", $timestamp) ?>, <i>(<?= filesize($logFile) ?> Bytes)</i></span>
                                 <span class="dashicons dashicons-download" onclick="download_log('<?= basename($logFile); ?>')"></span>
                                 <span class="dashicons dashicons-trash"></span><br>
                             <?php } ?>
