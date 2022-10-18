@@ -143,7 +143,8 @@ function download_log(logfile){
         <h5 class="card-header">Manueller Import</h5>
         <div class="card-body">
             <p class="card-text">
-                Sollte es Schwierigkeiten beim Import geben kann dieser hier überwacht und Schritte können einzeln gestartet werden.
+                Sollte es Schwierigkeiten beim Import geben kann dieser hier überwacht und Schritte können einzeln gestartet werden.<br>
+                Durch einen Klick auf den Titel des Importschrittes werden vergangene Logs dargestellt. Die Logdateien können durch Doppelklick runtergeladen werden.
             </p>
             <table class="table">
                 <tr>
@@ -162,13 +163,17 @@ function download_log(logfile){
                                 aria-controls="dateiliste_importschritt_<?= $importSchritt->schritt; ?>"
                                 class="text-decoration-none">
                                 <?php echo $importSchritt->beschreibung;?>
-                                <span class="dashicons dashicons-arrow-down"></span>
                             </div>
                             <div class="collapse" id="dateiliste_importschritt_<?= $importSchritt->schritt; ?>">
                             <?php foreach($importSchritt->logFiles() as $timestamp => $logFile){ ?>
-                                <span title="<?= $logFile?>"><?= date("d.m.Y H:i:s", $timestamp) ?>, <i>(<?= filesize($logFile) ?> Bytes)</i></span>
-                                <span class="dashicons dashicons-download" onclick="download_log('<?= basename($logFile); ?>')"></span>
-                                <span class="dashicons dashicons-trash"></span><br>
+                                <div 
+                                    title="<?= $logFile?>" 
+                                    ondblclick="download_log('<?= basename($logFile); ?>')"
+                                    style="cursor: pointer"
+                                >
+                                    <?= date("d.m.Y H:i:s", $timestamp) ?>, 
+                                    <i>(<?= filesize($logFile) ?> Bytes)</i>
+                                </div>
                             <?php } ?>
                             </div>
                         </td>
