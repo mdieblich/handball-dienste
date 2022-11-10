@@ -49,6 +49,13 @@ class GegnerDAO extends DAO{
         return $nummer;
     }
 
+    public function insert(object $gegner): int{
+        if(!isset($gegner->stelltSekretaerBeiHeimspiel)){
+            $gegner->stelltSekretaerBeiHeimspiel = false;
+        }
+        return parent::insert($gegner);
+    }
+
     function findOrInsertGegner(string $name, MannschaftsMeldung $meldung): Gegner{
 
         $newGegner = new Gegner();

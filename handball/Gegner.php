@@ -8,7 +8,7 @@ class Gegner {
     public int $nummer;
 
     public MannschaftsMeldung $zugehoerigeMeldung;
-    public bool $stelltSekretaerBeiHeimspiel = false;
+    public bool $stelltSekretaerBeiHeimspiel;
 
     public function getName(): string {
         if($this->nummer === 1){
