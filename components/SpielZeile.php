@@ -93,7 +93,7 @@ class SpielZeile implements Component{
         
         $id = "spiel-".$this->spiel->id."-gegner";
         $title = $gegner->stelltSekretaerBeiHeimspiel ? "Stellt Sekretär in deren Halle" : "";
-        $cellContent = $gegner->getName();
+        $cellContent = $gegner->getDisplayName();
         return "<td "
             ."id=\"$id\" "
             ."title='$title'"

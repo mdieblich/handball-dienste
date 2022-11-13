@@ -25,6 +25,13 @@ class Gegner {
         }
     }
 
+    public function getDisplayName(): string {
+        if($this->stelltSekretaerBeiHeimspiel){
+            return $this->getName(). "<sup>*</sup>";
+        }
+        return $this->getName();
+    }
+
     public function getGeschlecht(): string{
         return $this->zugehoerigeMeldung->mannschaft->geschlecht;
     }

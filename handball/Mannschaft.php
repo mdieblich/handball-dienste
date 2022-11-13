@@ -33,6 +33,9 @@ class Mannschaft {
         
         return "Andersgeschlechtlich ".$this->nummer;
     }
+    public function getDisplayName(): string {
+        return $this->getName();
+    }
 
     public function getKurzname(): string {
         if(!empty($this->jugendklasse)){

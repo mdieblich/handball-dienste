@@ -73,8 +73,8 @@ function dienste_tabellen_ersetzen(array $matches){
             $anwurfZeit = "<span style='color:red'>$anwurfZeit</span>";
         }
         $halle = $spiel->halle;
-        $mannschaftsName = $spiel->mannschaft->getName();
-        $gegnerName = $spiel->gegner->getName();
+        $mannschaftsName = $spiel->mannschaft->getDisplayName();
+        $gegnerName = $spiel->gegner->getDisplayName();
         $heim = $mannschaftsName;
         $gast = $gegnerName;
         if(!$spiel->heimspiel){
@@ -111,7 +111,8 @@ function dienste_tabellen_ersetzen(array $matches){
         $tabellenkoerper .= $spielzeile;
     }
     $tabelle = "<table cellpadding=\"3\" style=\"border-collapse:separate; border-spacing:0px\">$kopfzeile $tabellenkoerper</table>";
-    return $tabelle;
+    $fussZeile = "<small>* stellt Sekretär bei Heimspielen</small>";
+    return $tabelle.$fussZeile;
 }
 
 function getDateFromString(string $string): ?DateTime{

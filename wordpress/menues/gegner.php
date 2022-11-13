@@ -56,7 +56,7 @@ function displayDiensteGegner(){
             </tr>
         <?php foreach($alleGegner as $gegner){ ?>
             <tr>
-                <td> <?php echo $gegner->getName(); ?> </td>
+                <td> <?php echo $gegner->getDisplayName(); ?> </td>
                 <td style="text-align:center"> 
                     <select name="gegner-geschlecht" disabled> 
                         <option value="w" <?php if($gegner->getGeschlecht()==GESCHLECHT_W) echo "selected"; ?>>Damen</option>
@@ -68,6 +68,7 @@ function displayDiensteGegner(){
             </tr> 
         <?php } ?>
         </table>
+        <small>* stellt Sekretär bei Heimspielen</small><br>
         <?php submit_button( 'Speichern', 'primary' , 'submit-change', false); ?>    
         </form>
     </div>

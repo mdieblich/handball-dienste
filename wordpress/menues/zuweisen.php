@@ -63,7 +63,8 @@ mannschaften = [<?= implode(",",$mannschaftsListe->getIDs()); ?>];
     <?php } ?>
     </div>
     <h1>Dienste zuweisen</h1>
-    Die Eingaben der Checkboxen werden direkt gespeichert.
+    Die Eingaben der Checkboxen werden direkt gespeichert.<br>
+    <small>* stellt Sekretär bei Heimspielen.</small>
     <table cellpadding="3" cellspacing="3" id="tabelle-dienste-zuweisen">
     <tr style="background-color:#ddd; position: sticky; top: 32px">
         <th>Spiel-Nr.</th>
@@ -107,6 +108,7 @@ foreach($spieleListe->spiele as $spiel){
 }
 ?>
     </table>
+    <small>* stellt Sekretär bei Heimspielen</small>
 </div>
  <?php
 }
