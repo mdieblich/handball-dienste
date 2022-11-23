@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__."/Verein.php";
 require_once __DIR__."/MannschaftsMeldung.php";
 
 const GESCHLECHT_M = "m";
@@ -6,6 +7,7 @@ const GESCHLECHT_W = "w";
 
 class Mannschaft {
     public int $id;
+    public Verein $verein;
     public int $nummer;
     public string $geschlecht;
     public ?string $jugendklasse;
