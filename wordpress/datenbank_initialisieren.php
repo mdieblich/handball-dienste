@@ -1,6 +1,7 @@
 <?php
 
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+require_once __DIR__.'/dao/VereinDAO.php';
 require_once __DIR__.'/dao/MannschaftDAO.php';
 require_once __DIR__.'/dao/GegnerDAO.php';
 require_once __DIR__.'/dao/MeisterschaftDAO.php';
@@ -9,15 +10,20 @@ require_once __DIR__.'/dao/SpielDAO.php';
 require_once __DIR__.'/dao/DienstDAO.php';
 
 global $dienste_db_version;
-$dienste_db_version = '1.7';
+$dienste_db_version = '1.8';
 
 function dienste_datenbank_initialisieren() {
     global $dienste_db_version;
     global $wpdb;
 
-    $previous_version = get_option('dienste_db_version');
+    $previous_version = get_option('dienste_db_version', '0.0');
     if($previous_version && $previous_version < '1.6'){
         dienste_mannschaft_aktualisiern($wpdb);
+    }
+    
+    dienste_vereine_initialisieren($wpdb);
+    if($previous_version && $previous_version < '1.7'){
+        dienste_vereine_anlegen($wpdb);
     }
     
     dienste_mannschaft_initialisieren($wpdb);
@@ -32,6 +38,10 @@ function dienste_datenbank_initialisieren() {
     update_option( 'dienste_db_version', $dienste_db_version );
 }
 
+function dienste_vereine_initialisieren($dbhandle){
+    $sql = VereinDAO::tableCreation($dbhandle);
+    dbDelta( $sql );
+}
 function dienste_mannschaft_initialisieren($dbhandle){
     $sql = MannschaftDAO::tableCreation($dbhandle);
     dbDelta( $sql );
@@ -125,5 +135,33 @@ function dienste_nuliga_import_status_initialisieren($dbhandle){
     ) $charset_collate, ENGINE = InnoDB;";
 
     dbDelta( $sql );
+}
+
+function dienste_vereine_anlegen($dbhandle){
+    dienste_heimverein_anlegen($dbhandle);
+    dienste_verein_der_heimmannschaften_setzen($dbhandle);
+    // Gegner umziehen
+}
+
+function dienste_heimverein_anlegen($dbhandle){
+    $vereinDAO = new VereinDAO($dbhandle);
+    
+    $heimVerein = new Verein();
+    $heimVerein->id=0;
+    $heimVerein->name=get_option('vereinsname');
+    $heimVerein->nuligaClubId=get_option('nuliga-clubid', null);
+    
+    $vereinDAO->insert($heimVerein);
+}
+function dienste_mannschaftstabelle_um_verein_erweitern($dbhandle){
+
+    $sql = MannschaftDAO::tableCreation($dbhandle);
+    dbDelta( $sql );
+    
+    $table_name = MannschaftDAO::tableName($dbhandle);
+    $sql = "UPDATE $table_name SET verein=0";
+
+    $dbhandle->query($sql);
+    // ungetestet! 
 }
 ?>
