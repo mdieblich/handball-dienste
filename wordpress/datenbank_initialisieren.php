@@ -8,6 +8,7 @@ require_once __DIR__.'/dao/MeisterschaftDAO.php';
 require_once __DIR__.'/dao/MannschaftsMeldungDAO.php';
 require_once __DIR__.'/dao/SpielDAO.php';
 require_once __DIR__.'/dao/DienstDAO.php';
+require_once __DIR__.'/dao/GegnerService.php';
 
 global $dienste_db_version;
 $dienste_db_version = '1.8';
@@ -126,7 +127,8 @@ function dienste_nuliga_import_status_initialisieren($dbhandle){
 function dienste_vereine_anlegen($dbhandle){
     dienste_heimverein_anlegen($dbhandle);
     dienste_verein_der_heimmannschaften_setzen($dbhandle);
-    // Gegner umziehen
+    dienste_gegner_in_mannschaften_importieren($dbhandle);
+    // Gegner löschen
 }
 
 function dienste_heimverein_anlegen($dbhandle){
@@ -148,5 +150,25 @@ function dienste_mannschaftstabelle_um_verein_erweitern($dbhandle){
     $sql = "UPDATE $table_name SET verein=0";
 
     $dbhandle->query($sql);
+}
+
+function dienste_gegner_in_mannschaften_importieren($dbhandle){
+    $gegnerService = new GegnerService($dbhandle);
+    $mannschaftDAO = new MannschaftDAO($dbhandle);
+    $vereinDAO = new VereinDAO($dbhandle);
+
+    $alleGegner = $gegnerService->loadAlleGegner();
+
+    foreach($alleGegner as $gegner){
+        $verein = $vereinDAO->findOrInsertName($gegner->verein);
+
+        $mannschaft = new Mannschaft();
+        $mannschaft->verein = $verein;
+        $mannschaft->nummer = $gegner->nummer;
+        $mannschaft->geschlecht = $gegner->getGeschlecht();
+        $mannschaft->jugendklasse = $gegner->getJugendklasse();
+        $mannschaftDAO->insert($mannschaft);
+        // TODO Mannschaftsmeldungen fehlen noch!
+    }
 }
 ?>
