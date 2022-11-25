@@ -36,6 +36,10 @@ class Gegner {
         return $this->zugehoerigeMeldung->mannschaft->geschlecht;
     }
     
+    public function getJugendklasse(): ?string{
+        return $this->zugehoerigeMeldung->mannschaft->jugendklasse;
+    }
+    
     public function getLiga(): string{
         return $this->zugehoerigeMeldung->liga;
     }
