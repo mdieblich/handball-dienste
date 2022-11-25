@@ -8,7 +8,7 @@ require_once __DIR__.'/dao/MeisterschaftDAO.php';
 require_once __DIR__.'/dao/MannschaftsMeldungDAO.php';
 require_once __DIR__.'/dao/SpielDAO.php';
 require_once __DIR__.'/dao/DienstDAO.php';
-require_once __DIR__.'/dao/GegnerService.php';
+require_once __DIR__.'/service/GegnerService.php';
 
 global $dienste_db_version;
 $dienste_db_version = '1.8';
