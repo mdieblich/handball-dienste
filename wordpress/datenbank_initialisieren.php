@@ -148,6 +148,5 @@ function dienste_mannschaftstabelle_um_verein_erweitern($dbhandle){
     $sql = "UPDATE $table_name SET verein=0";
 
     $dbhandle->query($sql);
-    // ungetestet! 
 }
 ?>
