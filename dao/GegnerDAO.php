@@ -63,7 +63,8 @@ class GegnerDAO extends DAO{
         $newGegner->verein = $this->getVereinFromName($name);
         $newGegner->nummer = $this->getNummerFromName($name);
         $newGegner->zugehoerigeMeldung = $meldung;
-
+        
+        // TODO Methode DAO::findOrInsert(...) wiederverwenden
         $oldGegner = $this->findSimilar($newGegner);
         if(isset($oldGegner)){
             return $oldGegner;
