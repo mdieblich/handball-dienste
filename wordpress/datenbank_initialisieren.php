@@ -17,9 +17,6 @@ function dienste_datenbank_initialisieren() {
     global $wpdb;
 
     $previous_version = get_option('dienste_db_version', '0.0');
-    if($previous_version && $previous_version < '1.6'){
-        dienste_mannschaft_aktualisiern($wpdb);
-    }
     
     dienste_vereine_initialisieren($wpdb);
     if($previous_version && $previous_version < '1.7'){
@@ -55,17 +52,6 @@ function dienste_meisterschaft_initialisieren($dbhandle){
 function dienste_mannschaftsMeldung_initialisieren($dbhandle){
     $sql = MannschaftsMeldungDAO::tableCreation($dbhandle);
     dbDelta( $sql );
-}
-
-function dienste_mannschaft_aktualisiern($dbhandle){
-    $table_name = MannschaftDAO::tableName($dbhandle);
-    $sql = "ALTER TABLE $table_name 
-        DROP meisterschaft, 
-        DROP liga, 
-        DROP nuliga_liga_id, 
-        DROP nuliga_team_id";
-
-    $dbhandle->query($sql);
 }
 
 function dienste_gegner_initialisieren($dbhandle){
