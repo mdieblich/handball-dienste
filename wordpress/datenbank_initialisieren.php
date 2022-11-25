@@ -18,13 +18,14 @@ function dienste_datenbank_initialisieren() {
     global $wpdb;
 
     $previous_version = get_option('dienste_db_version', '0.0');
+    error_log("Datenbankversion $previous_version");
     
     dienste_vereine_initialisieren($wpdb);
-    if($previous_version && $previous_version < '1.7'){
-        dienste_vereine_anlegen($wpdb);
+    if($previous_version && $previous_version < '1.8'){
+        dienste_mannschaft_verein_ergaenzen($wpdb);
+    }else{
+        dienste_mannschaft_initialisieren($wpdb);
     }
-    
-    dienste_mannschaft_initialisieren($wpdb);
     dienste_meisterschaft_initialisieren($wpdb);
     dienste_mannschaftsMeldung_initialisieren($wpdb);
     dienste_gegner_initialisieren($wpdb);
@@ -32,6 +33,10 @@ function dienste_datenbank_initialisieren() {
     dienste_dienste_initialisieren($wpdb);
 
     dienste_nuliga_import_initialisieren($wpdb);
+
+    if($previous_version && $previous_version < '1.7'){
+        dienste_vereine_anlegen($wpdb);
+    }
 
     update_option( 'dienste_db_version', $dienste_db_version );
 }
@@ -42,7 +47,21 @@ function dienste_vereine_initialisieren($dbhandle){
 }
 function dienste_mannschaft_initialisieren($dbhandle){
     $sql = MannschaftDAO::tableCreation($dbhandle);
+    error_log($sql);
     dbDelta( $sql );
+}
+
+function dienste_mannschaft_verein_ergaenzen($dbhandle){
+    $sql = "ALTER TABLE ".MannschaftDAO::tableName($dbhandle)
+    ." ADD COLUMN verein_id INT NOT NULL";
+    error_log($sql);
+    $dbhandle->query($sql);
+}
+function dienste_mannschaft_verein_foreign_key_ergaenzen($dbhandle){
+    $sql = "ALTER TABLE ".MannschaftDAO::tableName($dbhandle)
+    ." ADD FOREIGN KEY (verein_id) REFERENCES wp_verein(id) ON DELETE CASCADE ON UPDATE CASCADE";
+    error_log($sql);
+    $dbhandle->query($sql);
 }
 
 function dienste_meisterschaft_initialisieren($dbhandle){
@@ -127,6 +146,7 @@ function dienste_nuliga_import_status_initialisieren($dbhandle){
 function dienste_vereine_anlegen($dbhandle){
     dienste_heimverein_anlegen($dbhandle);
     dienste_verein_der_heimmannschaften_setzen($dbhandle);
+    dienste_mannschaft_verein_foreign_key_ergaenzen();
     dienste_gegner_in_mannschaften_importieren($dbhandle);
     // Gegner löschen
 }
@@ -135,7 +155,7 @@ function dienste_heimverein_anlegen($dbhandle){
     $vereinDAO = new VereinDAO($dbhandle);
     
     $heimVerein = new Verein();
-    $heimVerein->id=0;
+    $heimVerein->id=1;
     $heimVerein->name=get_option('vereinsname');
     $heimVerein->nuligaClubId=get_option('nuliga-clubid', null);
     
@@ -147,7 +167,7 @@ function dienste_mannschaftstabelle_um_verein_erweitern($dbhandle){
     dbDelta( $sql );
     
     $table_name = MannschaftDAO::tableName($dbhandle);
-    $sql = "UPDATE $table_name SET verein=0";
+    $sql = "UPDATE $table_name SET verein=1";
 
     $dbhandle->query($sql);
 }
