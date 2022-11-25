@@ -130,6 +130,16 @@ abstract class DAO{
         return $this->fetch($where);
     }
 
+    function findOrInsert(object $newEntity): object{
+        $oldEntity = $this->findSimilar($newEntity);
+        if(isset($oldEntity)){
+            return $oldEntity;
+        }
+        // Nix gefunden - einfügen!
+        $this->insert($newEntity);
+        return $newEntity;
+    }
+
     private function createEntity($array): object{
         $entityClassName = static::entityClassName();
         $entity = new $entityClassName();
