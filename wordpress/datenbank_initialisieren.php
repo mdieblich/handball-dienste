@@ -1,10 +1,11 @@
 <?php
 
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+require_once __DIR__.'/dao/MeisterschaftDAO.php';
+require_once __DIR__.'/dao/LigaDAO.php';
 require_once __DIR__.'/dao/VereinDAO.php';
 require_once __DIR__.'/dao/MannschaftDAO.php';
 require_once __DIR__.'/dao/GegnerDAO.php';
-require_once __DIR__.'/dao/MeisterschaftDAO.php';
 require_once __DIR__.'/dao/MannschaftsMeldungDAO.php';
 require_once __DIR__.'/dao/SpielDAO.php';
 require_once __DIR__.'/dao/DienstDAO.php';
@@ -31,6 +32,7 @@ function dienste_datenbank_neu($dbhandle){
     dienste_vereine_initialisieren($dbhandle);
     dienste_mannschaft_initialisieren($dbhandle);
     dienste_meisterschaft_initialisieren($dbhandle);
+    dienste_liga_initialisieren($dbhandle);
     dienste_mannschaftsMeldung_initialisieren($dbhandle);
     dienste_gegner_initialisieren($dbhandle);
     dienste_spiele_initialisieren($dbhandle);
@@ -52,6 +54,11 @@ function dienste_mannschaft_initialisieren($dbhandle){
 
 function dienste_meisterschaft_initialisieren($dbhandle){
     $sql = MeisterschaftDAO::tableCreation($dbhandle);
+    $dbhandle->query( $sql );
+}
+
+function dienste_liga_initialisieren($dbhandle){
+    $sql = LigaDAO::tableCreation($dbhandle);
     $dbhandle->query( $sql );
 }
 
