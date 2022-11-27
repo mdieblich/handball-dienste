@@ -37,6 +37,8 @@ function dienste_datenbank_neu($dbhandle){
     dienste_dienste_initialisieren($dbhandle);
 
     dienste_nuliga_import_initialisieren($dbhandle);
+
+    dienste_heimverein_anlegen($dbhandle);
 }
 
 function dienste_vereine_initialisieren($dbhandle){
