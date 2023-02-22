@@ -139,6 +139,9 @@ abstract class DAO{
         return $entity;
     }
     private function assignValue($entity, $key, $value){
+        if(null === $value){
+            return;
+        }
         $rc = new ReflectionClass(static::entityClassName());
         if(!$rc->hasProperty($key)){
             // Relationen werden in der DB- als "XXX_id" abgebildet und sind somit nicht Teil der Klasse
@@ -202,6 +205,9 @@ abstract class DAO{
         $array = (array) $entity;    
         foreach($array as $key => $value){
             if($this->isIdFromOtherClass($key)){
+                continue;
+            }
+            if(null === $value){
                 continue;
             }
             $propertyType = $rc->getProperty($key)->getType();
