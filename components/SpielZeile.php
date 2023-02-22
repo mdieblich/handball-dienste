@@ -102,8 +102,8 @@ class SpielZeile implements Component{
 
     private function getDienstZellen(): string {
         $dienstZellen = "";
-        foreach($this->mannschaftsListe->mannschaften as $mannschaft){
-            $nahgelegeneSpiele = $this->nahgelegeneSpieleProMannschaft[$mannschaft->id];
+        foreach($this->nahgelegeneSpieleProMannschaft as $mannschafts_id => $nahgelegeneSpiele){
+            $mannschaft = $this->mannschaftsListe->mannschaften[$mannschafts_id];
             $diensteZelle = new DiensteZelle($this->spiel, $mannschaft, $nahgelegeneSpiele);
             $dienstZellen .= $diensteZelle->toHTML();
         }
