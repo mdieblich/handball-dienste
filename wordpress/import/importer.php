@@ -355,6 +355,10 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
     foreach($heimSpieleProHalle as $halle => $spieleInDerHalle){
         $spieleProTag = $spieleInDerHalle->groupBySpielTag();
         foreach($spieleProTag as $spieltag => $spieleAmSpielTag){
+            if($spieltag === ""){
+                continue; // Spieltag nicht gesetzt
+                // TODO eigentlich muss dann Auf- und Abbau gelöscht werden, aber das dürfte auch passieren, sobald der Spieltag wieder zugewiesen wird
+            }
 
             // TODO in Klasse "Spieltag" auslagern
             $erstesSpiel = $spieleAmSpielTag->getErstesSpiel();
