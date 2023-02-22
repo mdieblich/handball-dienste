@@ -38,6 +38,15 @@ class Spiel{
         return null;
     }
 
+    public function anwurfDiffers(Spiel $other): bool{
+        if(null === $this->anwurf){
+            return null === $other->anwurf;
+        } else if (null === $other->anwurf){
+            return false;
+        }
+        return ($this->anwurf != $other->anwurf);
+    }
+
     // Zeitfunktionen 
     public function getSpielEnde(): ?DateTime {
         if(empty($this->anwurf)){

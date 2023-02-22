@@ -325,7 +325,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
                 if(isset($spielAlt)){
                     // ein bereits vorhandenes Spiel
                     $hallenAenderung = ($spielAlt->halle != $spielNeu->halle);
-                    $anwurfAenderung = ($spielAlt->anwurf != $spielNeu->anwurf);
+                    $anwurfAenderung = $spielAlt->anwurfDiffers($spielNeu);
                     if($hallenAenderung || $anwurfAenderung){
                         $logmessage .= "Spiel muss aktualisiert werden.";
                         $logSymbol = "*";

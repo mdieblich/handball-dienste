@@ -85,7 +85,11 @@ class SpieleListe{
     public function groupBySpielTag(): array{
         $spieleProTag = array();
         foreach($this->spiele as $spiel){
-            $spieltag = $spiel->anwurf->format("d.m.Y");
+            if(empty($spiel->anwurf)){
+                $spieltag = "";
+            } else {
+                $spieltag = $spiel->anwurf->format("d.m.Y");
+            }
             if(!array_key_exists($spieltag, $spieleProTag)){
                 $spieleProTag[$spieltag] = new SpieleListe();
             }
