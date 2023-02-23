@@ -102,7 +102,7 @@ function updateGeschlecht(jugendklasse, id){
                                         <label for="mannschafts-geschlecht-<?= $mannschaft->id; ?>">Geschlecht</label>
                                     </div></div>
                                     <div class="col-2"><div class="form-floating">
-                                        <input type="text" class="form-control" title='Sollte mit "A", "B"  usw. befüllt werden, wenn es sich um eine Jugend-Mannschaft handelt. Auch "Minis" ist möglich. Für Senioren-Mannschaften dies leer lassen.' placeholder="Mädels" name="mannschafts-jugendklasse" value="<?= $mannschaft->jugendklasse; ?>" onchange="updateGeschlecht(this.value, '<?= $mannschaft->id; ?>')" id="mannschafts-jugendklasse-<?= $mannschaft->id; ?>">
+                                        <input type="text" class="form-control" title='Sollte mit "A", "B"  usw. befüllt werden, wenn es sich um eine Jugend-Mannschaft handelt. Auch "Minis" ist möglich. Für Senioren-Mannschaften dies leer lassen.' placeholder="Mädels" name="mannschafts-jugendklasse" value="<?= isset($mannschaft->jugendklasse)?$mannschaft->jugendklasse:null; ?>" onchange="updateGeschlecht(this.value, '<?= $mannschaft->id; ?>')" id="mannschafts-jugendklasse-<?= $mannschaft->id; ?>">
                                         <label for="mannschafts-jugendklasse-<?= $mannschaft->id; ?>">Jugendklasse (optional)</label>
                                     </div></div>
                                     <div class="col-2"><div class="form-floating">
