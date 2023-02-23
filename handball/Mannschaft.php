@@ -47,6 +47,10 @@ class Mannschaft {
         return "H".$this->nummer;
     }
 
+    public function isJugend(): bool {
+        return isset($this->jugendklasse);
+    }
+
     public static function getGeschlechtFormKurzname(string $kurzname): string{
         $erstesZeichen = substr($kurzname, 0, 1);
         switch($erstesZeichen){
