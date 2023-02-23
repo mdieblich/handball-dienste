@@ -41,7 +41,13 @@ function dienste_tabellen_ersetzen(array $matches){
         ."<th style=\"padding: 3px\">Heim</th>"
         ."<th style=\"padding: 3px; border-right:2px solid #00407d\">Gast</th>";
     foreach(Dienstart::values as $dienstart){
-        $kurzfrom = substr($dienstart, 0, 1);
+        if($dienstart === Dienstart::AUFBAU) {
+            $kurzfrom = "Auf";
+        } else if($dienstart === Dienstart::ABBAU){
+            $kurzfrom = "Ab";
+        } else {
+            $kurzfrom = substr($dienstart, 0, 1);
+        }
         $kopfzeile .= "<th style=\"padding: 3px; text-align:center\" title=\"$dienstart\">$kurzfrom</td>";
     }
     $kopfzeile .= "</tr>";
