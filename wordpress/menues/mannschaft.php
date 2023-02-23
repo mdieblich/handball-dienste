@@ -76,8 +76,8 @@ function updateGeschlecht(jugendklasse, id){
         <h1>Mannschaften einrichten</h1>
         <div class="accordion" id="accordionMannschaften">
             <?php foreach ($mannschaftsListe->mannschaften as $mannschaft) { 
-            $bezeichnungW = ($mannschaft->jugendklasse !== null) ? "Mädchen" : "Damen";
-            $bezeichnungM = ($mannschaft->jugendklasse !== null) ? "Jungen"  : "Herren";
+            $bezeichnungW = $mannschaft->isJugend() ? "Mädchen" : "Damen";
+            $bezeichnungM = $mannschaft->isJugend() ? "Jungen"  : "Herren";
             ?>
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="heading<?= $mannschaft->id; ?>">
