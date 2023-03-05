@@ -40,9 +40,10 @@ class Spiel{
 
     public function anwurfDiffers(Spiel $other): bool{
         if(null === $this->anwurf){
-            return null === $other->anwurf;
-        } else if (null === $other->anwurf){
-            return false;
+            return null !== $other->anwurf;
+        }
+        if (null === $other->anwurf){
+            return true;
         }
         return ($this->anwurf != $other->anwurf);
     }

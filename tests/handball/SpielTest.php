@@ -239,6 +239,65 @@ final class SpielTest extends TestCase {
         
         $this->assertFalse($spiel_a->isInGleicherHalle($spiel_b));
     }
+
+    // ##########################################
+    // hat sich der Anwurf geändert?
+    // ##########################################
+    public function test_anwurfDiffers_FALSE_bei_gleicher_Zeit(){
+        $spiel_a = $this->auswaertsspiel("05.03.2023 14:00", 4711);
+        $spiel_b = $this->auswaertsspiel("05.03.2023 14:00", 4711);
+
+        $this->assertFalse($spiel_a->anwurfDiffers($spiel_b));
+    }
+    public function test_anwurfDiffers_FALSE_bei_unterschiedlicher_Halle(){
+        $spiel_a = $this->auswaertsspiel("05.03.2023 14:00", 4711);
+        $spiel_b = $this->auswaertsspiel("05.03.2023 14:00", 4712);
+
+        $this->assertFalse($spiel_a->anwurfDiffers($spiel_b));
+    }
+    public function test_anwurfDiffers_FALSE_wenn_Anwurf_in_beiden_Faellen_fehlt(){
+        $spiel_a = new Spiel();
+        $spiel_a->heimspiel = false;
+        $spiel_a->halle = 4711;
+        $spiel_a->anwurf = null;
+        
+        $spiel_b = new Spiel();
+        $spiel_b->heimspiel = false;
+        $spiel_b->halle = 4711;
+        $spiel_b->anwurf = null;
+
+        $this->assertFalse($spiel_a->anwurfDiffers($spiel_b));
+    }
+    public function test_anwurfDiffers_TRUE_bei_unterschiedlicher_Zeit(){
+        $spiel_a = $this->auswaertsspiel("05.03.2023 14:00", 4711);
+        $spiel_b = $this->auswaertsspiel("05.03.2023 15:00", 4711);
+
+        $this->assertTrue($spiel_a->anwurfDiffers($spiel_b));
+    }
+    public function test_anwurfDiffers_TRUE_bei_unterschiedlichem_Datum(){
+        $spiel_a = $this->auswaertsspiel("05.03.2023 14:00", 4711);
+        $spiel_b = $this->auswaertsspiel("06.03.2023 14:00", 4711);
+
+        $this->assertTrue($spiel_a->anwurfDiffers($spiel_b));
+    }
+    public function test_anwurfDiffers_TRUE_wenn_eigener_Anwurf_fehlt(){
+        $spiel_a = new Spiel();
+        $spiel_a->heimspiel = false;
+        $spiel_a->halle = 4711;
+        $spiel_a->anwurf = null;
+        $spiel_b = $this->auswaertsspiel("05.03.2023 14:00", 4711);
+
+        $this->assertTrue($spiel_a->anwurfDiffers($spiel_b));
+    }
+    public function test_anwurfDiffers_TRUE_wenn_anderer_Anwurf_fehlt(){
+        $spiel_a = $this->auswaertsspiel("05.03.2023 14:00", 4711);
+        $spiel_b = new Spiel();
+        $spiel_b->heimspiel = false;
+        $spiel_b->halle = 4711;
+        $spiel_b->anwurf = null;
+
+        $this->assertTrue($spiel_a->anwurfDiffers($spiel_b));
+    }
     
     // ##########################################
     // Dienste erstellen 
