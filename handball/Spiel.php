@@ -23,7 +23,7 @@ class Spiel{
     public Mannschaft $mannschaft;
     public Gegner $gegner;
 
-    public ?DateTime $anwurf;
+    public ?DateTime $anwurf = null;
     public int $halle;
     public bool $heimspiel;
     
