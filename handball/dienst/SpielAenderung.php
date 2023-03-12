@@ -16,9 +16,16 @@ class SpielAenderung{
         $halleDiffers = $this->alt->halleDiffers($this->neu);
 
         if($anwurfDiffers){
-            $message .= "Anwurf "
-                ."von [".$this->alt->anwurf->format("d.m.Y H:i")."]"
-                ." zu [".$this->neu->anwurf->format("d.m.Y H:i")."]";
+            if(empty($this->alt->anwurf)){
+                $message .= "Anwurf [fehlte] und ist jetzt [".$this->neu->anwurf->format("d.m.Y H:i")."]";
+
+            } else if(empty($this->neu->anwurf)){
+                $message .= "Anwurf war [".$this->alt->anwurf->format("d.m.Y H:i")."] und ist jetzt [noch nicht festgelegt]";
+            } else {
+                $message .= "Anwurf "
+                    ."von [".$this->alt->anwurf->format("d.m.Y H:i")."]"
+                    ." zu [".$this->neu->anwurf->format("d.m.Y H:i")."]";
+            }
         }
         if($anwurfDiffers && $halleDiffers){
             $message .= " und ";
