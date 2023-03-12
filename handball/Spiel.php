@@ -48,6 +48,10 @@ class Spiel{
         return ($this->anwurf != $other->anwurf);
     }
 
+    public function halleDiffers(Spiel $other): bool{
+        return !$this->isInGleicherHalle($other);
+    }
+
     // Zeitfunktionen 
     public function getSpielEnde(): ?DateTime {
         if(empty($this->anwurf)){

@@ -219,7 +219,7 @@ final class SpielTest extends TestCase {
     }
 
     // ##########################################
-    // isAmGleichenTag 
+    // isInGleicherHalle 
     // ##########################################
     public function test_gleiche_Halle(){
         $spiel_a = $this->auswaertsspiel("12.08.2022 20:00", 4711);
