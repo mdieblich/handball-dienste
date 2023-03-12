@@ -49,7 +49,7 @@ class Spiel{
     }
 
     public function halleDiffers(Spiel $other): bool{
-        return $this->isInGleicherHalle($other->halle);
+        return $this->isInGleicherHalle($other);
     }
 
     // Zeitfunktionen 
