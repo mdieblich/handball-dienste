@@ -47,10 +47,11 @@ function displayDiensteGegner(){
             wp_nonce_field('dienste-gegner-aendern_alle');
             submit_button( 'Speichern', 'primary' , 'submit-change', false);
         ?>
-        <table cellspacing="1">
+        <table cellpadding="5">
             <tr>
                 <th> Name </th>
                 <th> w/m </th>
+                <th> Meisterschaft </th>
                 <th> Liga </th>
                 <th> Stellt Sekretär </th>
             </tr>
@@ -63,6 +64,7 @@ function displayDiensteGegner(){
                         <option value="m" <?php if($gegner->getGeschlecht()==GESCHLECHT_M) echo "selected"; ?>>Herren</option>
                     </select> 
                 </td>
+                <td style="text-align:center"> <?php echo $gegner->getMeisterschaft(); ?> </td>
                 <td style="text-align:center"> <?php echo $gegner->getLiga(); ?> </td>
                 <td style="text-align:center"> <input type="checkbox" name="gegner-id[]" value="<?php echo $gegner->id; ?>" <?php if($gegner->stelltSekretaerBeiHeimspiel){echo "checked";} ?>></td>
             </tr> 

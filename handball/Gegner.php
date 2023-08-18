@@ -36,6 +36,9 @@ class Gegner {
         return $this->zugehoerigeMeldung->mannschaft->geschlecht;
     }
     
+    public function getMeisterschaft(): string{
+        return $this->zugehoerigeMeldung->meisterschaft->name;
+    }
     public function getLiga(): string{
         return $this->zugehoerigeMeldung->liga;
     }
