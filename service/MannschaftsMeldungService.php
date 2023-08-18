@@ -11,7 +11,7 @@ class MannschaftsMeldungService {
         $this->meisterschaftDAO = new MeisterschaftDAO($dbhandle);
     }
 
-    public function loadMannschaftsMeldungenMitMeisterschaften(strign $where=null): array{
+    public function loadMannschaftsMeldungenMitMeisterschaften(string $where=null): array{
         $meldungen = $this->meldungDAO->fetchAll($where);
         if(empty($meldungen)){
             return $meldungen;
