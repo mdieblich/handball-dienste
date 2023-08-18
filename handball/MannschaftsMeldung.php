@@ -11,6 +11,7 @@ class MannschaftsMeldung{
     public Meisterschaft $meisterschaft;
     public bool $aktiv = true;
     public Liga $liga;
+    // TODO entfernen
     public int $nuligaLigaID;
     public int $nuligaTeamID;
 }
