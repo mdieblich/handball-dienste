@@ -3,7 +3,7 @@
  Plugin Name: Dienstedienst
  Description: Plugin zum Verwalten zusätzlicher Dienste (Zeitnehmer, Catering...) beim Handball
  Version: 1.18.5
- Author: Martin Dieblich
+ Author: Martin Fritz
  Author URI: https://www.turnerkreisnippes.de
  */
 require_once plugin_dir_path( __FILE__ ) . 'datenbank_initialisieren.php';
