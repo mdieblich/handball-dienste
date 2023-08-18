@@ -32,7 +32,7 @@ function addDiensteGegnerKonfiguration(){
 function displayDiensteGegner(){
     
     $gegnerService = new GegnerService();
-    $alleGegner = $gegnerService->loadAlleGegner();
+    $alleGegner = $gegnerService->loadAktiveGegner();
 
     ?>
     <div class="wrap">

@@ -56,5 +56,23 @@ class GegnerService {
         }
         return array_keys($ids);
     }
+
+    public function loadAktiveGegner(): array{
+        $alleGegner = $this->loadAlleGegner();
+
+        foreach($alleGegner as $id => $gegner){
+            if(empty($gegner->zugehoerigeMeldung)){
+                unset($alleGegner[$id]);
+                continue;
+            }
+
+            if(!$gegner->zugehoerigeMeldung->aktiv){
+                unset($alleGegner[$id]);
+                continue;
+            }
+        }
+
+        return $alleGegner;
+    }
 }
 ?>
