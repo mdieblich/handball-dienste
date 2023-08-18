@@ -8,7 +8,7 @@ class SpieleGrabber {
     private DOMXPath $xpath;
 
     public function __construct(string $meisterschaft, int $gruppe, int $team_id){
-        $this->url = "https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?"
+        $this->url = "https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?"
             ."teamtable=".$team_id
             ."&pageState=vorrunde"
             ."&championship=".urlencode($meisterschaft)

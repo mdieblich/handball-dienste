@@ -7,7 +7,7 @@ class NuLiga_Ligatabelle {
     private DOMXPath $xpath;
 
     public function __construct(string $meisterschaft, int $nuliga_liga_id){
-        $this->url = "https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/groupPage?championship=".urlencode($meisterschaft)."&group=".$nuliga_liga_id;
+        $this->url = "https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/groupPage?championship=".urlencode($meisterschaft)."&group=".$nuliga_liga_id;
         $this->dom = getDOMFromSite($this->url);
         $this->xpath = new DOMXPath($this->dom);
     }

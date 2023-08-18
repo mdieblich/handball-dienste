@@ -8,7 +8,7 @@ class NuLiga_MannschaftsUndLigenEinteilung {
     private DOMXPath $xpath;
 
     public function __construct(int $club_id){
-        $this->url = "https://hvmittelrhein-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/clubTeams?"
+        $this->url = "https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/clubTeams?"
             ."club=".$club_id;
         $this->dom = getDOMFromSite($this->url);
         $this->xpath = new DOMXPath($this->dom);
