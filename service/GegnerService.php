@@ -1,16 +1,16 @@
 <?php
 require_once __dir__."/../dao/GegnerDAO.php";
-require_once __dir__."/../dao/MannschaftsMeldungDAO.php";
+require_once __dir__."/MannschaftsMeldungService.php";
 require_once __dir__."/../dao/MannschaftDAO.php";
 
 class GegnerService {
     private GegnerDAO $gegnerDAO;
-    private MannschaftsMeldungDAO $meldungDAO;
+    private MannschaftsMeldungService $meldungService;
     private MannschaftDAO $mannschaftDAO;
 
     public function __construct($dbhandle=null){
         $this->gegnerDAO = new GegnerDAO($dbhandle);
-        $this->meldungDAO = new MannschaftsMeldungDAO($dbhandle);
+        $this->meldungService = new MannschaftsMeldungService($dbhandle);
         $this->mannschaftDAO = new MannschaftDAO($dbhandle);
     }
 
@@ -30,7 +30,8 @@ class GegnerService {
     }
 
     private function loadMeldungen(array $alleGegner): array{
-        $meldungen = $this->meldungDAO->fetchAllByIds($this->meldungIDs($alleGegner));
+        $where = "id IN (".implode(",", $this->meldungIDs($alleGegner)).")";
+        $meldungen = $this->meldungService->loadMannschaftsMeldungenMitMeisterschaften($where);
 
         $mannschaften = $this->mannschaftDAO->fetchAllByIds($this->mannschaftIDs($meldungen));
         foreach($meldungen as $meldung){
