@@ -62,7 +62,7 @@ class Importer{
 Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(1, "Meisterschaften von nuLiga lesen", function (Log $logfile){
     global $wpdb;
 
-    $ligeneinteilung = new NuLiga_MannschaftsUndLigenEinteilung(get_option('nuliga-clubid'));
+    $ligeneinteilung = new NuLiga_MannschaftsUndLigenEinteilung(get_option('nuliga-clubid'), $logfile);
     $nuliga_meisterschaften = $ligeneinteilung->getMeisterschaften();
 
     $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';

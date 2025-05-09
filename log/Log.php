@@ -32,4 +32,10 @@ class Log {
     }
 }
 
+class NoLog extends Log {
+    public function __construct() {}
+    public function __destruct() {}
+    public function log(string $message){}
+}
+
 ?>

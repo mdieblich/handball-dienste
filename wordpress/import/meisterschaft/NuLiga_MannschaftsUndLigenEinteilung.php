@@ -1,4 +1,7 @@
 <?php
+
+require_once __DIR__."/../../log/Log.php";
+
 require_once __DIR__."/../PageGrabber.php";
 require_once __DIR__."/NuLiga_Meisterschaft.php";
 
@@ -7,9 +10,10 @@ class NuLiga_MannschaftsUndLigenEinteilung {
     public DomDocument $dom;
     private DOMXPath $xpath;
 
-    public function __construct(int $club_id){
+    public function __construct(int $club_id, Log $logfile){
         $this->url = "https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/clubTeams?"
             ."club=".$club_id;
+        $logfile->log("Lade Daten von ")
         $this->dom = getDOMFromSite($this->url);
         $this->xpath = new DOMXPath($this->dom);
     }

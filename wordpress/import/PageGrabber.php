@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__."/../log/Log.php";
 // you can add anoother curl options too
 // see here - http://php.net/manual/en/function.curl-setopt.php
 function get_dataa($url) {
@@ -31,7 +32,7 @@ function DOMinnerHTML(DOMNode $element)
     return $innerHTML; 
 } 
 
-function getDOMFromSite(string $url): DomDocument{
+function getDOMFromSite(string $url, Log $log = new NoLog()): DomDocument{
     $html = get_dataa($url);
     
     $dom = new DomDocument();
