@@ -13,7 +13,7 @@ class NuLiga_MannschaftsUndLigenEinteilung {
     public function __construct(int $club_id, Log $logfile){
         $this->url = "https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/clubTeams?"
             ."club=".$club_id;
-        $logfile->log("Lade Daten von ")
+        $logfile->log("Lade Daten von ".$this->url);
         $this->dom = getDOMFromSite($this->url);
         $this->xpath = new DOMXPath($this->dom);
     }
