@@ -22,7 +22,12 @@ class ImportSchritt{
         $logfile->log("START ".$this->beschreibung);
         $logfile->log(date("d.m.y H:i:s"));
         $logfile->log("=================================================");
-        $problems = call_user_func($this->method, $logfile);
+        try{
+            $problems = call_user_func($this->method, $logfile);
+        } catch (Exception $e){
+            $logfile->log("FEHLER - Unvorhergesehener Fehler (".get_class($e).") ist aufgetreten:");
+            $logfile->log($e->getMessage());
+        }
         $logfile->log("=================================================");
         $logfile->log("ENDE ".$this->beschreibung);
         $logfile->log(date("d.m.y H:i:s"));
