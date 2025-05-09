@@ -142,7 +142,7 @@ class NuLigaSpiel implements \JsonSerializable {
         return $getrimmt;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $vars = get_object_vars($this);
 
