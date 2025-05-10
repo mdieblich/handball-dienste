@@ -14,6 +14,9 @@ function get_dataa($url) {
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
     $data = curl_exec($ch);
+    if($data === false){
+        throw new Exception("Fehler beim Laden von \"$url\": ".curl_error($ch));
+    }
     curl_close($ch);
     return $data;
 }
