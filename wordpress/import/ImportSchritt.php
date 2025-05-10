@@ -27,6 +27,7 @@ class ImportSchritt{
         } catch (Exception $e){
             $logfile->log("FEHLER - Unvorhergesehener Fehler (".get_class($e).") ist aufgetreten:");
             $logfile->log($e->getMessage());
+            $problems = array();
         }
         $logfile->log("=================================================");
         $logfile->log("ENDE ".$this->beschreibung);
