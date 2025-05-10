@@ -14,7 +14,7 @@ class NuLiga_MannschaftsUndLigenEinteilung {
         $this->url = "https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/clubTeams?"
             ."club=".$club_id;
         $logfile->log("Lade Daten von ".$this->url);
-        $this->dom = getDOMFromSite($this->url);
+        $this->dom = getDOMFromSite($this->url, $logfile);
         $this->xpath = new DOMXPath($this->dom);
     }
 

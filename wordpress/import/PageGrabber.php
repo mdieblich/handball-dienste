@@ -32,11 +32,33 @@ function DOMinnerHTML(DOMNode $element)
     return $innerHTML; 
 } 
 
-function getDOMFromSite(string $url, Log $log = new NoLog()): DomDocument{
+function getDOMFromSite(string $url, Log $logfile = new NoLog()): DomDocument{
     $html = get_dataa($url);
+    $logfile->log("HTML Inhalt:\n$html");
     
     $dom = new DomDocument();
-    @ $dom->loadHTML($html);
+
+    // Interne Fehlerbehandlung aktivieren und vorherige Fehler leeren
+    libxml_use_internal_errors(true);
+
+    // HTML laden
+    $dom->loadHTML($html);
+
+    // Fehler abrufen
+    $errors = libxml_get_errors();
+
+    // Fehlerbereinigung
+    libxml_clear_errors();
+    libxml_use_internal_errors(false);
+
+    // Fehler anzeigen (optional)
+    if(!empty($errors)){
+        $logfile->log("Beim Parsen der NuLiga-Seite traten Fehler auf:");
+        foreach ($errors as $error) {
+            $logfile->log("\t".$error->message);
+        }
+    }
+
     return $dom;
 }
 
