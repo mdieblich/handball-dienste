@@ -1,8 +1,8 @@
 <?php
 
 require_once __DIR__."/handball/Dienst.php";
-require_once __DIR__."/dao/MannschaftDAO.php";
-require_once __DIR__."/service/SpielService.php";
+require_once __DIR__."/db/dao/MannschaftDAO.php";
+require_once __DIR__."/db/service/SpielService.php";
 
 function dienst_tabelle_einblenden($content){
     return preg_replace_callback(

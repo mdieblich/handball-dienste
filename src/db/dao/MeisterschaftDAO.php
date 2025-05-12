@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."/../handball/Meisterschaft.php";
+require_once __DIR__."/../../handball/Meisterschaft.php";
 require_once __DIR__."/DAO.php";
 
 class MeisterschaftDAO extends DAO {

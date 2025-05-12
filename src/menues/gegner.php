@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__."/../handball/Mannschaft.php";   // Für GESCHLECHT_W und GESCHLECHT_M
 require_once __DIR__."/../handball/dienst/DienstAenderungsPlan.php";
-require_once __DIR__."/../service/GegnerService.php";
-require_once __DIR__."/../dao/SpielDAO.php";
-require_once __DIR__."/../dao/DienstDAO.php";
+require_once __DIR__."/../db/service/GegnerService.php";
+require_once __DIR__."/../db/dao/SpielDAO.php";
+require_once __DIR__."/../db/dao/DienstDAO.php";
 
 function addDiensteGegnerKonfiguration(){
     //add_submenu_page( '$parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );

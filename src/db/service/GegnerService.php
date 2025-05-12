@@ -1,7 +1,7 @@
 <?php
 require_once __dir__."/../dao/GegnerDAO.php";
-require_once __dir__."/MannschaftsMeldungService.php";
 require_once __dir__."/../dao/MannschaftDAO.php";
+require_once __dir__."/MannschaftsMeldungService.php";
 
 class GegnerService {
     private GegnerDAO $gegnerDAO;

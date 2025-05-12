@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__."/../service/SpielService.php";
+require_once __DIR__."/../db/service/SpielService.php";
 require_once __DIR__."/SpielerPlusFile.php";
 
 function exportSpielerPlus(string $mannschaft_kurzbezeichnung){

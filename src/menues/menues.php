@@ -17,7 +17,7 @@ function addDiensteMenueeintraege() {
 }
 
 function displayDiensteDashboard(){
-    include __DIR__."/menues/anleitung.php";
+    include __DIR__."/anleitung.php";
 }
 
 ?>

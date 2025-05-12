@@ -11,15 +11,15 @@ require_once __DIR__."/NuLigaSpiel.php";
 require_once __DIR__."/meisterschaft/NuLiga_Ligatabelle.php";
 require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
 
-require_once __DIR__."/../dao/MannschaftDAO.php";
-require_once __DIR__."/../dao/MannschaftsMeldungDAO.php";
-require_once __DIR__."/../dao/MeisterschaftDAO.php";
-require_once __DIR__."/../dao/SpielDAO.php";
-require_once __DIR__."/../dao/DienstDAO.php";
+require_once __DIR__."/../db/dao/MannschaftDAO.php";
+require_once __DIR__."/../db/dao/MannschaftsMeldungDAO.php";
+require_once __DIR__."/../db/dao/MeisterschaftDAO.php";
+require_once __DIR__."/../db/dao/SpielDAO.php";
+require_once __DIR__."/../db/dao/DienstDAO.php";
 
 
-require_once __DIR__."/../service/MannschaftService.php";
-require_once __DIR__."/../service/GegnerService.php";
+require_once __DIR__."/../db/service/MannschaftService.php";
+require_once __DIR__."/../db/service/GegnerService.php";
 
 require_once __DIR__."/../NippesMailer.php";
 

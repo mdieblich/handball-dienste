@@ -1,11 +1,11 @@
 <?php
 require_once __DIR__."/../log/Log.php";
 require_once __DIR__."/../import/importer.php";
-require_once __DIR__."/../dao/MeisterschaftDAO.php";
-require_once __DIR__."/../dao/MannschaftsMeldungDAO.php";
-require_once __DIR__."/../dao/SpielDAO.php";
+require_once __DIR__."/../db/dao/MeisterschaftDAO.php";
+require_once __DIR__."/../db/dao/MannschaftsMeldungDAO.php";
+require_once __DIR__."/../db/dao/SpielDAO.php";
 
-require_once __DIR__."/../service/MannschaftService.php";
+require_once __DIR__."/../db/service/MannschaftService.php";
 
 function addDiensteSpieleImportKonfiguration(){
     $hook_import = add_submenu_page( 'dienste', 'Dienste - Spiele importieren', 'Import', 'administrator', 'dienste-import', 'displaySpieleImport');
