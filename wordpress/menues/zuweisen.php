@@ -48,10 +48,23 @@ function displayDiensteZuweisen(){
     $spielService = new SpielService();
 
     $mannschaftsListe = $mannschaftDAO->loadMannschaften();
-    $spieleListe = $spielService->loadSpieleMitDiensten();
+    $from = new DateTime('yesterday');
+    if(isset($_GET['seit'])){
+        $enteredDate = DateTime::createFromFormat('d.m.Y', $_GET['seit']);
+        if($enteredDate){
+            $from = $enteredDate;
+        }
+    }
+    $fromFormatted = $from->format('Y-m-d');
+    $spieleListe = $spielService->loadSpieleMitDiensten(" anwurf > '$fromFormatted'");
  ?>
 <script>
 mannschaften = [<?= implode(",",$mannschaftsListe->getIDs()); ?>];
+
+// URL anpassen
+const url = new URL(window.location.href);
+url.searchParams.set('seit', '<?=$from->format('d.m.Y')?>');
+window.history.replaceState({}, '', url);
 </script>
 <div class="wrap">
     <div style="float:right; width: 200px; background-color:#ddd; padding: 5px">
@@ -63,7 +76,8 @@ mannschaften = [<?= implode(",",$mannschaftsListe->getIDs()); ?>];
     <?php } ?>
     </div>
     <h1>Dienste zuweisen</h1>
-    Die Eingaben der Checkboxen werden direkt gespeichert.<br>
+    Die Eingaben der Checkboxen werden direkt gespeichert. Es werden Dienste seit <?php echo $from->format('d.m.Y'); ?> angezeigt (<a href="<?php global $wp;
+echo add_query_arg( 'seit', "01.01.2000" );?>">alles</a> anzeigen) <br>
     <small>* stellt Sekretär bei Heimspielen.</small>
     <table cellpadding="3" cellspacing="3" id="tabelle-dienste-zuweisen">
     <tr style="background-color:#ddd; position: sticky; top: 32px">
