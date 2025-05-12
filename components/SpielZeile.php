@@ -106,7 +106,8 @@ class SpielZeile implements Component{
             if(array_key_exists($mannschafts_id, $this->nahgelegeneSpieleProMannschaft)){
                 $nahgelegeneSpiele = $this->nahgelegeneSpieleProMannschaft[$mannschafts_id];
             } else {
-                $nahgelegeneSpiele = array();
+                // Keine nahgelegenen Spiele? Dann leeres Objekt verwenden.
+                $nahgelegeneSpiele = new NahgelegeneSpiele($this->spiel);
             }
             $diensteZelle = new DiensteZelle($this->spiel, $mannschaft, $nahgelegeneSpiele);
             $dienstZellen .= $diensteZelle->toHTML();
