@@ -8,15 +8,7 @@ Konfiguration:
 * RegEx zur Spielerkennung
 * Extraktion der Parameter aus der Team-URL
 
-Import regelmäßig
-* Rest-Endpunkt anlegen:
-    https://developer.wordpress.org/reference/functions/register_rest_route/
-    https://wp-plugin-erstellen.de/ebook/rest-api/erweitern/eigene-endpunkte/
-* Eine Email bei Updates senden 
-    https://developer.wordpress.org/reference/functions/wp_mail/
-
 Design:
-* DAOs statt arrays nutzen für Mannschaften, Spiele und Dienste
 * Objekt Saison
     * enthält Mannschaftsmeldung (pro Mannschaft kann es in einer Saison mehrere Meldungen geben)
     * jede Mannschaft hat ihre Spiele
