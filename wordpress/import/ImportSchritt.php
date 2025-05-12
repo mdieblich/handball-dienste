@@ -40,7 +40,7 @@ class ImportSchritt{
     private function initImportStatus(){
         global $wpdb;
     
-        $table_name = $wpdb->prefix . 'import_status';
+        $table_name = static::tableName($wpdb);
         $eintrag_vorhanden = $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE schritt = ".$this->schritt);
         if($eintrag_vorhanden > 0){
             $wpdb->update(
@@ -66,7 +66,7 @@ class ImportSchritt{
     private function finishImportStatus(){
         global $wpdb;
     
-        $table_name = $wpdb->prefix . 'import_status';
+        $table_name = static::tableName($wpdb);
         $wpdb->update($table_name, 
             array('ende' => current_time('mysql')), 
             array('schritt' => $this->schritt)
@@ -76,7 +76,7 @@ class ImportSchritt{
 
     public static function initAlleSchritte(){
         global $wpdb;
-        $table_name = $wpdb->prefix . 'import_status';
+        $table_name = static::tableName($wpdb);
         $wpdb->query("UPDATE $table_name set start=null, ende=null");
     }
 
@@ -84,6 +84,15 @@ class ImportSchritt{
         $files = Log::findFiles("Import_".$this->schritt);
         krsort($files);
         return $files;
+    }
+
+
+    public static function tableName($dbhandle = null): string{
+        if(empty($dbhandle)){
+            global $wpdb;
+            $dbhandle = $wpdb;
+        }
+        return $dbhandle->prefix.'import_status';
     }
 }
 ?>

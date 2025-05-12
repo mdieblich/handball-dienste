@@ -57,6 +57,37 @@ class Importer{
             $schritt->run();
         }
     }
+
+    public static function alleDatenBereinigen(){
+        global $wpdb;
+
+        // NuLiga-Tabellen leeren
+        $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
+        $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
+        $wpdb->query("DELETE FROM $table_nuliga_mannschaftseinteilung");
+        $wpdb->query("DELETE FROM $table_nuliga_meisterschaft");
+
+        // Entitäten löschen
+        $table_dienst = DienstDAO::tableName($wpdb);
+        $wpdb->query("DELETE FROM $table_dienst");
+
+        $table_spiel = SpielDAO::tableName($wpdb);
+        $wpdb->query("DELETE FROM $table_spiel");
+
+        $table_gegner = GegnerDAO::tableName($wpdb);
+        $wpdb->query("DELETE FROM $table_gegner");
+        
+        $table_mannschaftsMeldung = MannschaftsMeldungDAO::tableName($wpdb);
+        $wpdb->query("DELETE FROM $table_mannschaftsMeldung");
+
+        $table_meisterschaften = MeisterschaftDAO::tableName($wpdb);
+        $wpdb->query("DELETE FROM $table_meisterschaften");
+
+        // Import-Schritt-Daten
+        $table_importSchritte = ImportSchritt::tableName($wpdb);
+        $wpdb->query("DELETE FROM $table_importSchritte");
+
+    }
 }
 
 Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(1, "Meisterschaften von nuLiga lesen", function (Log $logfile){

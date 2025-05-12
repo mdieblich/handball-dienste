@@ -12,6 +12,7 @@ function addDiensteSpieleImportKonfiguration(){
 }
 add_action( 'wp_ajax_alles_importieren', 'alles_importieren' );
 add_action( 'wp_ajax_start_import_schritt', 'start_import_schritt' );
+add_action( 'wp_ajax_clear_imported_data', 'clear_imported_data' );
 add_action( 'wp_ajax_status_lesen', 'status_lesen' );
 add_action( 'wp_ajax_meldung_aktivieren', 'meldung_aktivieren' );
 add_action( 'wp_ajax_protokoll_runterladen', 'protokoll_runterladen' );
@@ -56,6 +57,13 @@ function startImportSchritt(schritt){
     var data = {
         'action': 'start_import_schritt', 
         'schritt': schritt
+    };
+    jQuery.post(ajaxurl, data);
+}
+
+function clearImportedData(){
+    var data = {
+        'action': 'clear_imported_data'
     };
     jQuery.post(ajaxurl, data);
 }
@@ -134,6 +142,10 @@ function download_log(logfile){
             </li>
             <li class="list-group-item">
                 <i>(nur)</i> <a class="card-link" href="javascript:startImportSchritt(<?php echo Importer::$SPIELE_IMPORTIEREN->schritt;?>)">Spiele importieren</a>
+            </li>
+            <li class="list-group-item">
+                Falls irgendwas nicht funktioniert besteht hier die Möglichkeit alle <a class="card-link" href="javascript:clearImportedData()">Importieren Daten zu löschen</a><br>
+                <span class="dashicons dashicons-warning"></span><i>Achtung:</i> Dies löscht alle Daten außer den Mannschaften.
             </li>
         </ul>
     </div> <!-- bootstrap-card Import -->
@@ -265,6 +277,10 @@ function alles_importieren(){
 function start_import_schritt(){
     Importer::alleSchritte()[$_POST['schritt']]->run();
     exit;
+}
+
+function clear_imported_data(){
+    Importer::alleDatenBereinigen();
 }
 
 function status_lesen(){
