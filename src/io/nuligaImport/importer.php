@@ -131,7 +131,7 @@ Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(1, "Meisterschaften 
 });
 
 
-Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(2, "Mannschaften zuordnen", function (){
+Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(2, "Mannschaften zuordnen", function (Log $logfile){
     global $wpdb;
 
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
@@ -139,14 +139,17 @@ Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(2, "Mannschaften zuordnen",
     $mannschaftDAO = new MannschaftDAO();
     $mannschaftsListe = $mannschaftDAO->loadMannschaften();
     $nuligaBezeichnungen = $mannschaftsListe->createNuLigaMannschaftsBezeichnungen();
-    var_dump($nuligaBezeichnungen);
+    $logfile->log(print_r($nuligaBezeichnungen), true);
 
     $results = $wpdb->get_results("SELECT id, mannschaftsBezeichnung FROM $table_nuliga_mannschaftseinteilung WHERE mannschaft IS NULL", ARRAY_A);
     foreach($results as $nuliga_mannschaftsEinteilung){
         if(!array_key_exists($nuliga_mannschaftsEinteilung['mannschaftsBezeichnung'], $nuligaBezeichnungen)){
+            $logfile->log("Für die in nuLiga gelistete mannschaft '".$nuliga_mannschaftsEinteilung['mannschaftsBezeichnung']."' "
+                ."wurde keine in diesem Plugin hinterlegte Mannschaft gefunden. Sie wird übersprungen.");
             continue;
         }
         $mannschaft = $nuligaBezeichnungen[$nuliga_mannschaftsEinteilung['mannschaftsBezeichnung']];
+        $logfile->log("'".$nuliga_mannschaftsEinteilung['mannschaftsBezeichnung']."' gehört zur Mannschaft mit der ID ".$mannschaft->id);
         $wpdb->update(
             $table_nuliga_mannschaftseinteilung, 
             array('mannschaft'=>$mannschaft->id), 
