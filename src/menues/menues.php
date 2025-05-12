@@ -1,8 +1,8 @@
 <?php
-require_once WP_PLUGIN_DIR."/dienstedienst/menues/mannschaft.php";
-require_once WP_PLUGIN_DIR."/dienstedienst/menues/import.php";
-require_once WP_PLUGIN_DIR."/dienstedienst/menues/gegner.php";
-require_once WP_PLUGIN_DIR."/dienstedienst/menues/zuweisen.php";
+require_once __DIR__."/mannschaft.php";
+require_once __DIR__."/import.php";
+require_once __DIR__."/gegner.php";
+require_once __DIR__."/zuweisen.php";
 
 function addDiensteMenueeintraege() {
     //add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position );
