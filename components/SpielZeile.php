@@ -103,7 +103,11 @@ class SpielZeile implements Component{
     private function getDienstZellen(): string {
         $dienstZellen = "";
         foreach($this->mannschaftsListe->mannschaften as $mannschafts_id => $mannschaft){
-            $nahgelegeneSpiele = $this->nahgelegeneSpieleProMannschaft[$mannschafts_id];
+            if(array_key_exists($mannschafts_id, $this->nahgelegeneSpieleProMannschaft)){
+                $nahgelegeneSpiele = $this->nahgelegeneSpieleProMannschaft[$mannschafts_id];
+            } else {
+                $nahgelegeneSpiele = array();
+            }
             $diensteZelle = new DiensteZelle($this->spiel, $mannschaft, $nahgelegeneSpiele);
             $dienstZellen .= $diensteZelle->toHTML();
         }
