@@ -15,6 +15,7 @@ rm dienstedienst.zip
 # 2. Alles rüberkopieren
 mkdir -p ./dienstedienst
 cp -r ../src/* dienstedienst
+cp -r ../vendor dienstedienst
 
 # 3. Zippen
 ./7za.exe a -r dienstedienst.zip dienstedienst
