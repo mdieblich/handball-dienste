@@ -168,12 +168,12 @@ Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(3, "Team-IDs aus nuLiga aus
     $table_name = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
     $results = $wpdb->get_results("SELECT * FROM $table_name WHERE mannschaft IS NOT NULL AND team_id IS NULL", ARRAY_A);
     foreach ($results as $nuliga_mannschaftseinteilung) {
-        $mannschaft = $mannschaftsListe->mannschaften[$nuliga_mannschaftseinteilung['mannschaft']];
         $ligaTabellenSeite = new NuLiga_Ligatabelle(
             $nuliga_mannschaftseinteilung['meisterschaftsKuerzel'], 
             $nuliga_mannschaftseinteilung['liga_id']
         );
         
+        $mannschaft = $mannschaftsListe->mannschaften[$nuliga_mannschaftseinteilung['mannschaft']];
         $team_id = $ligaTabellenSeite->extractTeamID($vereinsname, $mannschaft->nummer);
         $updated = $wpdb->update($table_name, 
             array('team_id' => $team_id), 
