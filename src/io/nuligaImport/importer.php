@@ -20,9 +20,6 @@ require_once __DIR__."/../../db/dao/DienstDAO.php";
 require_once __DIR__."/../../db/service/MannschaftService.php";
 require_once __DIR__."/../../db/service/GegnerService.php";
 
-// TODO kann weg?
-require_once __DIR__."/../../NippesMailer.php";
-
 class Importer{
     public static $NULIGA_MEISTERSCHAFTEN_LESEN;
     public static $MANNSCHAFTEN_ZUORDNEN;
