@@ -3,8 +3,8 @@
 require_once __DIR__."/Component.php";
 require_once __DIR__."/DiensteZelle.php";
 
-require_once __DIR__."/../handball/Spiel.php";
-require_once __DIR__."/../handball/SpieleListe.php";
+require_once __DIR__."/../../handball/Spiel.php";
+require_once __DIR__."/../../handball/SpieleListe.php";
 
 class SpielZeile implements Component{
     

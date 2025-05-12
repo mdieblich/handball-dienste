@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__."/../db/dao/MannschaftDAO.php";
+require_once __DIR__."/../../db/dao/MannschaftDAO.php";
 
 function addDiensteMannschaftsKonfiguration(){
     //add_submenu_page( '$parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );

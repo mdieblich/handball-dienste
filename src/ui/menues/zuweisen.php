@@ -1,11 +1,11 @@
 <?php
-require_once __DIR__."/../handball/Dienst.php";
-require_once __DIR__."/../handball/SpieleListe.php";
-require_once __DIR__."/../db/dao/MannschaftDAO.php";
-require_once __DIR__."/../db/dao/DienstDAO.php";
+require_once __DIR__."/../../handball/Dienst.php";
+require_once __DIR__."/../../handball/SpieleListe.php";
+require_once __DIR__."/../../db/dao/MannschaftDAO.php";
+require_once __DIR__."/../../db/dao/DienstDAO.php";
 
-require_once __DIR__."/../db/service/SpielService.php";
-require_once __DIR__."/../components/SpielZeile.php";
+require_once __DIR__."/../../db/service/SpielService.php";
+require_once __DIR__."/../../ui/components/SpielZeile.php";
 
 $hook_zuweisen;
 function addDiensteZuweisenKonfiguration(){

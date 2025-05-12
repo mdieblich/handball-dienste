@@ -2,14 +2,14 @@
  /*
  Plugin Name: Dienstedienst
  Description: Plugin zum Verwalten zusätzlicher Dienste (Zeitnehmer, Catering...) beim Handball
- Version: 1.19.9
+ Version: 1.19.10
  Author: Martin Fritz
  Author URI: https://www.turnerkreisnippes.de
  */
 require_once plugin_dir_path( __FILE__ ) . 'db/datenbank_initialisieren.php';
 require_once plugin_dir_path( __FILE__ ) . 'einstellungen.php';
 require_once plugin_dir_path( __FILE__ ) . 'dienste_anzeigen.php';
-require_once plugin_dir_path( __FILE__ ) . '/menues/menues.php';
+require_once plugin_dir_path( __FILE__ ) . '/ui/menues/menues.php';
 
 register_activation_hook( __FILE__, 'dienste_datenbank_initialisieren' );
 add_action('admin_init', 'dienste_einstellungen_initialisieren');
@@ -35,8 +35,8 @@ add_action( 'rest_api_init', function () {
 });
 
 function enqueue_scripts() {
-    wp_enqueue_style( 'bootstrap', plugin_dir_url(__FILE__).'bootstrap/bootstrap.min.css', array(), '5.2.0beta');
-    wp_enqueue_script('bootstrap', plugin_dir_url(__FILE__).'bootstrap/bootstrap.min.js' , array( 'jquery' ), '5.2.0beta', true);
+    wp_enqueue_style( 'bootstrap', plugin_dir_url(__FILE__).'ui/bootstrap/bootstrap.min.css', array(), '5.2.0beta');
+    wp_enqueue_script('bootstrap', plugin_dir_url(__FILE__).'ui/bootstrap/bootstrap.min.js' , array( 'jquery' ), '5.2.0beta', true);
 }
 
 function updateFromNuliga(): WP_REST_Response{

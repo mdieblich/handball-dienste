@@ -1,8 +1,8 @@
 <?php
 
 require_once __DIR__."/Component.php";
-require_once __DIR__."/../handball/Mannschaft.php";
-require_once __DIR__."/../handball/Dienst.php";
+require_once __DIR__."/../../handball/Mannschaft.php";
+require_once __DIR__."/../../handball/Dienst.php";
 
 class DienstCheckBox implements Component{
 
