@@ -48,7 +48,10 @@ function DOMinnerHTML(DOMNode $element)
     return $innerHTML; 
 } 
 
-function getDOMFromSite(string $url, Log $logfile = new NoLog()): DomDocument{
+function getDOMFromSite(string $url, Log $logfile = null): DomDocument{
+    if ($logfile === null) {
+        $logfile = new NoLog();
+    }
     $html = get_dataa($url);
     $logfile->log("HTML Inhalt:\n$html");
     
