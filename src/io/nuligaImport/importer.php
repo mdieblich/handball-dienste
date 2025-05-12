@@ -1,27 +1,27 @@
 <?php
 
-require_once __DIR__."/../log/Log.php";
-require_once __DIR__."/../log/Problem.php";
+require_once __DIR__."/../../log/Log.php";
+require_once __DIR__."/../../log/Problem.php";
 
 require_once __DIR__."/ImportSchritt.php";
 require_once __DIR__."/SpieleGrabber.php";
-require_once __DIR__."/../handball/dienst/DienstAenderungsPlan.php";
+require_once __DIR__."/../../handball/dienst/DienstAenderungsPlan.php";
 require_once __DIR__."/NuLigaSpiel.php";
 
 require_once __DIR__."/meisterschaft/NuLiga_Ligatabelle.php";
 require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
 
-require_once __DIR__."/../db/dao/MannschaftDAO.php";
-require_once __DIR__."/../db/dao/MannschaftsMeldungDAO.php";
-require_once __DIR__."/../db/dao/MeisterschaftDAO.php";
-require_once __DIR__."/../db/dao/SpielDAO.php";
-require_once __DIR__."/../db/dao/DienstDAO.php";
+require_once __DIR__."/../../db/dao/MannschaftDAO.php";
+require_once __DIR__."/../../db/dao/MannschaftsMeldungDAO.php";
+require_once __DIR__."/../../db/dao/MeisterschaftDAO.php";
+require_once __DIR__."/../../db/dao/SpielDAO.php";
+require_once __DIR__."/../../db/dao/DienstDAO.php";
 
+require_once __DIR__."/../../db/service/MannschaftService.php";
+require_once __DIR__."/../../db/service/GegnerService.php";
 
-require_once __DIR__."/../db/service/MannschaftService.php";
-require_once __DIR__."/../db/service/GegnerService.php";
-
-require_once __DIR__."/../NippesMailer.php";
+// TODO kann weg?
+require_once __DIR__."/../../NippesMailer.php";
 
 class Importer{
     public static $NULIGA_MEISTERSCHAFTEN_LESEN;

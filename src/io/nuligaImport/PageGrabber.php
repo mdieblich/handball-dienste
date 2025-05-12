@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."/../log/Log.php";
+require_once __DIR__."/../../log/Log.php";
 // you can add anoother curl options too
 // see here - http://php.net/manual/en/function.curl-setopt.php
 function get_dataa($url) {

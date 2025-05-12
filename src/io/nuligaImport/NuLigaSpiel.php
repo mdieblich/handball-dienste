@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__."/../handball/Mannschaft.php";
-require_once __DIR__."/../handball/MannschaftsMeldung.php";
-require_once __DIR__."/../handball/Spiel.php";
-require_once __DIR__."/../handball/Gegner.php";
+require_once __DIR__."/../../handball/Mannschaft.php";
+require_once __DIR__."/../../handball/MannschaftsMeldung.php";
+require_once __DIR__."/../../handball/Spiel.php";
+require_once __DIR__."/../../handball/Gegner.php";
 
 class NuLigaSpiel implements \JsonSerializable {
     

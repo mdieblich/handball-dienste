@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
-require_once __DIR__.'/../handball/Spiel.php';
+require_once __DIR__.'/../../vendor/autoload.php';
+require_once __DIR__.'/../../handball/Spiel.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
