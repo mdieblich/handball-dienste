@@ -145,7 +145,7 @@ function download_log(logfile){
             </li>
             <li class="list-group-item">
                 Falls irgendwas nicht funktioniert besteht hier die Möglichkeit alle <a class="card-link" href="javascript:clearImportedData()">Importieren Daten zu löschen</a><br>
-                <span class="dashicons dashicons-warning"></span><i>Achtung:</i> Dies löscht alle Daten außer den Mannschaften.
+                <span class="dashicons dashicons-warning"></span><i>Achtung:</i> Dies löscht alle Daten außer den Mannschaften, also auch die Spiele und zugeteilten Dienste.
             </li>
         </ul>
     </div> <!-- bootstrap-card Import -->
