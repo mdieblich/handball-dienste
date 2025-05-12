@@ -14,14 +14,7 @@ rm dienstedienst.zip
 
 # 2. Alles rüberkopieren
 mkdir -p ./dienstedienst
-cp -r ../handball dienstedienst
-cp -r ../log dienstedienst
-cp -r ../zeit dienstedienst
-cp -r ../dao dienstedienst
-cp -r ../service dienstedienst
-cp -r ../components dienstedienst
-cp -r ../export dienstedienst
-cp -r ../wordpress/* dienstedienst
+cp -r ../src/* dienstedienst
 
 # 3. Zippen
 ./7za.exe a -r dienstedienst.zip dienstedienst
