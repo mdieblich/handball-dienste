@@ -229,14 +229,14 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(5, "Meldungen pro Mannsch
     
     $meldungDAO = new MannschaftsMeldungDAO($wpdb);
     foreach($results as $newMeldung){
-        echo print_r($newMeldung, true)."\n";
+        $logfile->log("Eintrag '".print_r($newMeldung, true)."' wird verarbeitet");
         $oldMeldung = $meldungDAO->findMannschaftsMeldung($newMeldung->meisterschaft_id, $newMeldung->mannschaft_id, $newMeldung->liga);
         // TODO Transaktionsstart
         if(isset($oldMeldung)){
-            $logfile->log("\tAktualisiere alte Meldung: ".print_r($oldMeldung, true)."");
+            $logfile->log("Aktualisiere alte Meldung: ".print_r($oldMeldung, true));
             $meldungDAO->updateMannschaftsMeldung($oldMeldung->id, $newMeldung->nuligaLigaID, $newMeldung->nuligaTeamID);
         } else{
-            $logfile->log("\Wird eingefügt");
+            $logfile->log("Wird eingefügt");
             $meldungDAO->insert($newMeldung);
         }
         // Löschen der Einteilung in der nuliga-Import-Tabelle
