@@ -48,13 +48,10 @@ function DOMinnerHTML(DOMNode $element)
     return $innerHTML; 
 } 
 
-function getDOMFromSite(string $url, Log $logfile = null): DomDocument{
+function getDOMFromData(string $html, Log $logfile = null): DomDocument{
     if ($logfile === null) {
         $logfile = new NoLog();
     }
-    $html = get_dataa($url);
-    $logfile->log("HTML Inhalt:\n$html");
-    
     $dom = new DomDocument();
 
     // Interne Fehlerbehandlung aktivieren und vorherige Fehler leeren
@@ -79,6 +76,14 @@ function getDOMFromSite(string $url, Log $logfile = null): DomDocument{
     }
 
     return $dom;
+}
+function getDOMFromSite(string $url, Log $logfile = null): DomDocument{
+    if ($logfile === null) {
+        $logfile = new NoLog();
+    }
+    $html = get_dataa($url);
+    $logfile->log("HTML Inhalt:\n$html");
+    return getDOMFromData($html, $logfile);
 }
 
 function sanitizeContent(string $content): string{
