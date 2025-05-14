@@ -1,6 +1,5 @@
 <?php
 
-require_once __DIR__."/../../../log/Log.php";
 require_once __DIR__."/NuLiga_Webpage.php";
 require_once __DIR__."/NuLiga_Meisterschaft.php";
 

@@ -1,18 +1,10 @@
 <?php
-require_once __DIR__."/../PageGrabber.php";
+require_once __DIR__."/NuLiga_Webpage.php";
 
-class NuLiga_Ligatabelle {
-    public string $url;
-    private string $html;
-    private DomDocument $dom;
-    private DOMXPath $xpath;
+class NuLiga_Ligatabelle extends NuLiga_Webpage{
 
     public function __construct(string $meisterschaft, int $nuliga_liga_id, Log $logfile){
-        $this->url = "https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/groupPage?championship=".urlencode($meisterschaft)."&group=".$nuliga_liga_id;        
-        $logfile->log("Lade Daten von ".$this->url);
-        $this->html = getHTMLFromURL($this->url, $logfile);
-        $this->dom = getDOMFromHTML($this->html, $logfile);
-        $this->xpath = new DOMXPath($this->dom);
+        parent::__construct("https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/groupPage?championship=".urlencode($meisterschaft)."&group=".$nuliga_liga_id, $logfile);        
     }
 
     public function extractTeamID(string $vereinsname, int $mannschaftsNummer): ?int {
