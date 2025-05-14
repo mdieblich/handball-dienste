@@ -158,7 +158,7 @@ Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(2, "Mannschaften zuordnen",
     }
 });
 
-Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(3, "Team-IDs aus nuLiga auslesen", function (){
+Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(3, "Team-IDs aus nuLiga auslesen", function (Log $logfile){
     global $wpdb;
     
     $vereinsname = get_option('vereinsname');
@@ -170,7 +170,8 @@ Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(3, "Team-IDs aus nuLiga aus
     foreach ($results as $nuliga_mannschaftseinteilung) {
         $ligaTabellenSeite = new NuLiga_Ligatabelle(
             $nuliga_mannschaftseinteilung['meisterschaftsKuerzel'], 
-            $nuliga_mannschaftseinteilung['liga_id']
+            $nuliga_mannschaftseinteilung['liga_id'],
+            $logfile
         );
         
         $mannschaft = $mannschaftsListe->mannschaften[$nuliga_mannschaftseinteilung['mannschaft']];
@@ -257,7 +258,8 @@ Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(6, "Gegner importieren", funct
             $logfile->log("\t".$mannschaftsMeldung->liga);
             $nuliga_tabelle = new NuLiga_Ligatabelle(
                 $mannschaftsMeldung->meisterschaft->kuerzel, 
-                $mannschaftsMeldung->nuligaLigaID);
+                $mannschaftsMeldung->nuligaLigaID,
+                $logfile);
             $gegnerNamen = $nuliga_tabelle->extractGegnerNamen($vereinsname);
             foreach($gegnerNamen as $gegnerName){
                 $logmessage = "$gegnerName: ";
@@ -310,7 +312,8 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
             $spielGrabber = new SpieleGrabber(
                 $mannschaftsMeldung->meisterschaft->kuerzel, 
                 $mannschaftsMeldung->nuligaLigaID, 
-                $mannschaftsMeldung->nuligaTeamID
+                $mannschaftsMeldung->nuligaTeamID,
+                $logfile
             );
             foreach($spielGrabber->getNuLigaSpiele() as $nuLigaSpiel){
                 if($nuLigaSpiel->isSpielfrei()){

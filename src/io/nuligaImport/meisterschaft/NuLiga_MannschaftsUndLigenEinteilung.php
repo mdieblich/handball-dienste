@@ -7,14 +7,16 @@ require_once __DIR__."/NuLiga_Meisterschaft.php";
 
 class NuLiga_MannschaftsUndLigenEinteilung {
     public string $url;
-    public DomDocument $dom;
+    private string $html;
+    private DomDocument $dom;
     private DOMXPath $xpath;
 
     public function __construct(int $club_id, Log $logfile){
         $this->url = "https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/clubTeams?"
             ."club=".$club_id;
         $logfile->log("Lade Daten von ".$this->url);
-        $this->dom = getDOMFromSite($this->url, $logfile);
+        $this->html = getHTMLFromURL($this->url, $logfile);
+        $this->dom = getDOMFromHTML($this->html, $logfile);
         $this->xpath = new DOMXPath($this->dom);
     }
 

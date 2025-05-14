@@ -2,7 +2,7 @@
 require_once __DIR__."/../../log/Log.php";
 // you can add anoother curl options too
 // see here - http://php.net/manual/en/function.curl-setopt.php
-function get_dataa($url) {
+function getHTMLFromURL($url) {
     $ch = curl_init();
     $timeout = 15;
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -48,7 +48,7 @@ function DOMinnerHTML(DOMNode $element)
     return $innerHTML; 
 } 
 
-function getDOMFromData(string $html, Log $logfile = null): DomDocument{
+function getDOMFromHTML(string $html, Log $logfile = null): DomDocument{
     if ($logfile === null) {
         $logfile = new NoLog();
     }
@@ -81,9 +81,9 @@ function getDOMFromSite(string $url, Log $logfile = null): DomDocument{
     if ($logfile === null) {
         $logfile = new NoLog();
     }
-    $html = get_dataa($url);
+    $html = getHTMLFromURL($url);
     $logfile->log("HTML Inhalt:\n$html");
-    return getDOMFromData($html, $logfile);
+    return getDOMFromHTML($html, $logfile);
 }
 
 function sanitizeContent(string $content): string{
