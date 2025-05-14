@@ -7,7 +7,7 @@ class Gegner {
     public string $verein;
     public int $nummer;
 
-    public MannschaftsMeldung $zugehoerigeMeldung;
+    public MannschaftsMeldung $zugehoerigeMeldung;  public int $zugehoerigeMeldung_id;
     public bool $stelltSekretaerBeiHeimspiel;
 
     public function getName(): string {

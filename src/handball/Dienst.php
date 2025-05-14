@@ -6,8 +6,8 @@ require_once __DIR__."/Mannschaft.php";
 
 class Dienst {
     public int $id;
-    public Spiel $spiel;
+    public Spiel $spiel;            public int $spiel_id;
     public string $dienstart;
-    public ?Mannschaft $mannschaft;
+    public ?Mannschaft $mannschaft; public int $mannschaft_id;
 }
 ?>

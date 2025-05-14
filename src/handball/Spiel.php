@@ -17,11 +17,11 @@ class Spiel{
     public int $id;
     
     public int $spielNr;
-    public MannschaftsMeldung $mannschaftsMeldung;
+    public MannschaftsMeldung $mannschaftsMeldung;  public int $mannschaftsMeldung_id;
     
     // TODO Referenz auf Mannschaft enfternen: Redundant über die Meldung
-    public Mannschaft $mannschaft;
-    public Gegner $gegner;
+    public Mannschaft $mannschaft;                  public int $mannschaft_id;
+    public Gegner $gegner;                          public int $gegner_id;
 
     public ?DateTime $anwurf = null;
     public int $halle;
