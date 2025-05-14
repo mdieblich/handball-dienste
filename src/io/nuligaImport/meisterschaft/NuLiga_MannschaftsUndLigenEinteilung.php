@@ -55,6 +55,21 @@ class NuLiga_MannschaftsUndLigenEinteilung {
     private function isKopfZeile($zellen): bool{
         return count($zellen) == 1;
     }
+
+    // public function saveLocally(): string {
+    //     $filename = self::CACHEFILE_DIRECTORY().date("Y.m.d_H.i.s").".html";
+    //     $fileHandle = fopen($filename, "w");
+    //     try{
+    //         fwrite($this->fileHandle, $message);
+    //         return $filename;
+    //     } finally {
+    //         fclose($this->fileHandle);
+    //     }
+    // }
+
+    // public static function CACHEFILE_DIRECTORY(): string{
+    //     return plugin_dir_path(__FILE__)."MannschaftenUndLigeneinteilungen/";
+    // }
 }
 
 ?>
