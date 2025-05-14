@@ -1,14 +1,23 @@
 <?php
 
 require_once __DIR__."/../../../log/Log.php";
-require_once __DIR__."/NuLiga_Webpage.php";
+
+require_once __DIR__."/../PageGrabber.php";
 require_once __DIR__."/NuLiga_Meisterschaft.php";
 
-class NuLiga_MannschaftsUndLigenEinteilung extends NuLiga_Webpage{
+class NuLiga_MannschaftsUndLigenEinteilung {
+    public string $url;
+    private string $html;
+    private DomDocument $dom;
+    private DOMXPath $xpath;
 
     public function __construct(int $club_id, Log $logfile){
-        parent::__construct("https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/clubTeams?"
-            ."club=".$club_id, $logfile);
+        $this->url = "https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/clubTeams?"
+            ."club=".$club_id;
+        $logfile->log("Lade Daten von ".$this->url);
+        $this->html = getHTMLFromURL($this->url, $logfile);
+        $this->dom = getDOMFromHTML($this->html, $logfile);
+        $this->xpath = new DOMXPath($this->dom);
     }
 
     public function getMeisterschaften(): array{
@@ -24,10 +33,10 @@ class NuLiga_MannschaftsUndLigenEinteilung extends NuLiga_Webpage{
                 $skipZeile = false;
                 continue;
             }
-            $zellen = $this->extractTabellenZellen($tabellenZeile);
+            $zellen = extractTabellenZellen($tabellenZeile);
             if($this->isMeisterschaftsZeile($zellen)){
                 $currentMeisterschaft = new NuLiga_Meisterschaft();
-                $currentMeisterschaft->name = $this->sanitizeContent($zellen[0]->textContent);
+                $currentMeisterschaft->name = sanitizeContent($zellen[0]->textContent);
                 $meisterschaften[] = $currentMeisterschaft;
 
                 // die nächste Zeile ist eine Kopfzeile
