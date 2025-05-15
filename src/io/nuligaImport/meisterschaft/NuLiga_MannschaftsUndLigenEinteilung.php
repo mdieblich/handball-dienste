@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__."/NuLiga_Webpage.php";
+require_once __DIR__."/../Webpage.php";
 require_once __DIR__."/NuLiga_Meisterschaft.php";
 
-class NuLiga_MannschaftsUndLigenEinteilung extends NuLiga_Webpage{
+class NuLiga_MannschaftsUndLigenEinteilung extends Webpage{
 
     public function __construct(int $club_id, Log $logfile){
         parent::__construct("https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/clubTeams?"

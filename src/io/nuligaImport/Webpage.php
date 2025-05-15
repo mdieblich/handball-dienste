@@ -2,7 +2,7 @@
 
 require_once __DIR__."/../../../log/Log.php";
 
-class NuLiga_Webpage {
+class Webpage {
     protected Log $logfile;
 
     public string $url;

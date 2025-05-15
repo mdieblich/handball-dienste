@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__."/NuLiga_Webpage.php";
+require_once __DIR__."/../Webpage.php";
 
-class NuLiga_Ligatabelle extends NuLiga_Webpage{
+class NuLiga_Ligatabelle extends Webpage{
 
     public function __construct(string $meisterschaft, int $nuliga_liga_id, Log $logfile){
         parent::__construct("https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/groupPage?championship=".urlencode($meisterschaft)."&group=".$nuliga_liga_id, $logfile);        

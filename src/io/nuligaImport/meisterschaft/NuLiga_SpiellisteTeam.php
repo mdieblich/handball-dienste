@@ -1,8 +1,8 @@
 <?php
-require_once __DIR__."/NuLiga_Webpage.php";
+require_once __DIR__."/../Webpage.php";
 require_once __DIR__."/NuLigaSpiel.php";
 
-class NuLiga_SpiellisteTeam extends NuLiga_Webpage{
+class NuLiga_SpiellisteTeam extends Webpage{
 
     public function __construct(string $meisterschaft, int $gruppe, int $team_id, Log $logfile){
         parent::__construct("https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?"
