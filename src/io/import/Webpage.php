@@ -18,10 +18,12 @@ class Webpage {
         }
 
         $this->url = $url;
-        $this->getHTMLFromURL();
     }
 
-    private function getHTMLFromURL() {
+    private function getHTMLFromURL(): string {
+        if(isset($this->html)){
+            return $this->html;
+        }
         $this->logfile->log("Lade Daten von ".$this->url);
         $ch = curl_init();
         $timeout = 15;
@@ -55,6 +57,7 @@ class Webpage {
         }
         curl_close($ch);
         $this->html = $data;
+        return $this->html;
     }
     
     private function getDOMFromHTML(): DomDocument{
@@ -67,7 +70,7 @@ class Webpage {
         libxml_use_internal_errors(true);
 
         // HTML laden
-        $this->dom->loadHTML($this->html);
+        $this->dom->loadHTML($this->getHTMLFromURL());
 
         // Fehler abrufen
         $errors = libxml_get_errors();
