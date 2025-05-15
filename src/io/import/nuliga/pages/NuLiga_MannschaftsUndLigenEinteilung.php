@@ -15,7 +15,7 @@ class NuLiga_MannschaftsUndLigenEinteilung extends Webpage{
 
         $contentDiv = $this->dom->getElementById("content-row1");
         $tabelle = $contentDiv->getElementsByTagName("table")[0];
-        $tabellenZeilen = extractTabellenZeilen($tabelle);
+        $tabellenZeilen = $this->extractTabellenZeilen($tabelle);
         $currentMeisterschaft = null;
         $skipZeile = false;
         foreach($tabellenZeilen as $tabellenZeile){

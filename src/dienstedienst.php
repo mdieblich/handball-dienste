@@ -2,7 +2,7 @@
  /*
  Plugin Name: Dienstedienst
  Description: Plugin zum Verwalten zusätzlicher Dienste (Zeitnehmer, Catering...) beim Handball
- Version: 1.19.22
+ Version: 1.19.23
  Author: Martin Fritz
  Author URI: https://www.turnerkreisnippes.de
  */
@@ -40,7 +40,7 @@ function enqueue_scripts() {
 }
 
 function updateFromNuliga(): WP_REST_Response{
-    require_once __DIR__."/io/nuligaImport/importer.php";
+    require_once __DIR__."/io/import/importer.php";
 
     $problems = Importer::$SPIELE_IMPORTIEREN->run();
     $response = new WP_REST_Response( $problems );

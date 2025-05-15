@@ -7,40 +7,18 @@ require_once __DIR__."/../../../../handball/Gegner.php";
 
 class NuLigaSpiel implements \JsonSerializable {
     
-    private $wochentag;
-    private $terminOffen;
-    private $datum;
-    private $uhrzeit;
-    private $halle;
-    private $spielNr;
-    private $heimmannschaft;
-    private $gastmannschaft;
-    private $ergebnisOderSchiris;
-    private $spielbericht;
-    private $spielberichtsGenehmigung;
+    public $wochentag;
+    public $terminOffen;
+    public $datum;
+    public $uhrzeit;
+    public $halle;
+    public $spielNr;
+    public $heimmannschaft;
+    public $gastmannschaft;
+    public $ergebnisOderSchiris;
+    public $spielbericht;
+    public $spielberichtsGenehmigung;
 
-    // privat, damit man die Fabrik-Methode nutzt
-    private function __construct(){}
-
-    public function getSpielNr(): int{
-        return $this->spielNr;
-    }
-
-    public function getHeimmannschaft(): string {
-        return $this->heimmannschaft;
-    }
-
-    public function getGastmannschaft(): string {
-        return $this->gastmannschaft;
-    }
-
-    public function getHalle(): int {
-        return $this->halle;
-    }
-
-    public function isTerminOffen(): bool{
-        return $this->terminOffen;
-    }
 
     public function isSpielFrei(): bool {
         return 

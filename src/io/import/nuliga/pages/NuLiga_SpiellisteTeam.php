@@ -55,16 +55,6 @@ class NuLiga_SpiellisteTeam extends Webpage{
         return null;
     }
 
-    // private function extractTabellenZeilen($tabelle): array {
-    //     $tabellenZeile = array();
-    //     foreach ($tabelle->childNodes as $childNode){
-    //         if($childNode->nodeName === "tr"){
-    //             $tabellenZeile[] = $childNode;
-    //         }
-    //     }
-    //     return $tabellenZeile;
-    // }
-
     private function extractSpiel(DOMElement $tabellenZeile, ?NuLigaSpiel $vorherigesSpiel): ?NuLigaSpiel {
         $zellen = $this->extractTabellenZellen($tabellenZeile);
         $spiel = new NuLigaSpiel();
@@ -97,19 +87,9 @@ class NuLiga_SpiellisteTeam extends Webpage{
         // leere Zelle: $zellen[10]
         return $spiel;
     }
-
-    // private function extractTabellenZellen(DOMElement $zeile): array {
-    //     $zellen = array();
-    //     foreach ($zeile->childNodes as $childNode) {
-    //         if($childNode->nodeName === "td"){
-    //             $zellen[] = $childNode;
-    //         }
-    //     }
-    //     return $zellen;
-    // }
     
     private function extractTrimmedContent(DOMElement $zelle): string {
-        return sanitizeContent($zelle->textContent);
+        return $this->sanitizeContent($zelle->textContent);
     }
 }
 

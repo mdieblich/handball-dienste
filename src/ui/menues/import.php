@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__."/../../log/Log.php";
-require_once __DIR__."/../../io/nuligaImport/importer.php";
+require_once __DIR__."/../../io/import/importer.php";
 require_once __DIR__."/../../db/dao/MeisterschaftDAO.php";
 require_once __DIR__."/../../db/dao/MannschaftsMeldungDAO.php";
 require_once __DIR__."/../../db/dao/SpielDAO.php";
