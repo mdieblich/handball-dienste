@@ -39,7 +39,7 @@ class NuLiga_SpiellisteTeam extends Webpage{
         if(!isset($spielTerminUeberschrift)){
             return null;
         }
-        $nextelement = $this->xpath->query("following-sibling::*[1]", $spielTerminUeberschrift)->item(0);
+        $nextelement = $this->query("following-sibling::*[1]", $spielTerminUeberschrift)->item(0);
         if($nextelement->nodeName !== "table"){
             return null;
         }

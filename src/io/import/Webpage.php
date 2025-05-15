@@ -8,7 +8,7 @@ class Webpage {
     public string $url;
     protected string $html;
     private DomDocument $dom;
-    protected DOMXPath $xpath;
+    private DOMXPath $xpath;
 
     public function __construct(string $url, Log $logfile = null){
         if ($logfile === null) {
@@ -19,8 +19,6 @@ class Webpage {
 
         $this->url = $url;
         $this->getHTMLFromURL();
-        $this->getDOMFromHTML();
-        $this->xpath = new DOMXPath($this->dom);
     }
 
     private function getHTMLFromURL() {
@@ -93,6 +91,17 @@ class Webpage {
     }
     protected function getElementsByTagName(string $id): DOMNodeList {
         return $this->getDOMFromHTML()->getElementsByTagName($id);
+    }
+    protected function query(string $expression, ?DOMNode $contextNode = null): DOMNodeList {
+        return $this->getXPath()->query($expression, $contextNode);
+    }
+    private function getXPath(): DOMXPath{
+        if(isset($this->xpath)){
+            return $this->xpath;
+        }
+        
+        $this->xpath = new DOMXPath($this->getDOMFromHTML());
+        return $this->xpath;
     }
 
     protected function extractTabellenZeilen(DOMElement $tabelle): array {
