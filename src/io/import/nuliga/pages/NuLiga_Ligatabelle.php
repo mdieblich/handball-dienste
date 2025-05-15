@@ -36,7 +36,7 @@ class NuLiga_Ligatabelle extends Webpage{
     }
 
     private function extractMannschaftsZeilen(): array{
-        $contentDiv = $this->dom->getElementById("content-row2");
+        $contentDiv = $this->getElementById("content-row2");
         if(empty($contentDiv)){
             return array();
         }

@@ -47,7 +47,7 @@ class NuLiga_SpiellisteTeam extends Webpage{
     }
 
     private function findSpielTerminUeberschrift(): ?DOMElement {
-        foreach($this->dom->getElementsByTagName("h2") as $h2){
+        foreach($this->getElementsByTagName("h2") as $h2){
             if(strtolower(trim($h2->textContent)) == "spieltermine"){
                 return $h2;
             }

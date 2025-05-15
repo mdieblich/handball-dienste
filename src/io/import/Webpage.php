@@ -7,7 +7,7 @@ class Webpage {
 
     public string $url;
     protected string $html;
-    protected DomDocument $dom;
+    private DomDocument $dom;
     protected DOMXPath $xpath;
 
     public function __construct(string $url, Log $logfile = null){
@@ -59,7 +59,10 @@ class Webpage {
         $this->html = $data;
     }
     
-    private function getDOMFromHTML(){
+    private function getDOMFromHTML(): DomDocument{
+        if(isset($this->dom)){
+            return $this->dom;
+        }
         $this->dom = new DomDocument();
 
         // Interne Fehlerbehandlung aktivieren und vorherige Fehler leeren
@@ -82,6 +85,14 @@ class Webpage {
                 $this->logfile->log("\t".$error->message);
             }
         }
+        return $this->dom;
+    }
+
+    protected function getElementById(string $id): DOMElement {
+        return $this->getDOMFromHTML()->getElementById($id);
+    }
+    protected function getElementsByTagName(string $id): DOMNodeList {
+        return $this->getDOMFromHTML()->getElementsByTagName($id);
     }
 
     protected function extractTabellenZeilen(DOMElement $tabelle): array {
