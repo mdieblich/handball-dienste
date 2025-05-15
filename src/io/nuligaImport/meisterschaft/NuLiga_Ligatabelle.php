@@ -18,7 +18,7 @@ class NuLiga_Ligatabelle extends NuLiga_Webpage{
             default: $gesuchteMannschaft .= " ".$mannschaftsNummer; break;
         }
         foreach($this->extractMannschaftsZellen() as $mannschaftsZelle){
-            $mannschaftsName = sanitizeContent($mannschaftsZelle->textContent);
+            $mannschaftsName = $this->sanitizeContent($mannschaftsZelle->textContent);
             if($mannschaftsName === $gesuchteMannschaft){
                 return $this->extractTeamIDFromZelle($mannschaftsZelle);
             }
@@ -29,7 +29,7 @@ class NuLiga_Ligatabelle extends NuLiga_Webpage{
     private function extractMannschaftsZellen(): array {
         $mannschaftsZellen = array();
         foreach($this->extractMannschaftsZeilen() as $tabellenZeile){
-            $zellen = extractTabellenZellen($tabellenZeile);
+            $zellen = $this->extractTabellenZellen($tabellenZeile);
             $mannschaftsZellen[] = $zellen[2];
         }
         return $mannschaftsZellen;
@@ -41,11 +41,11 @@ class NuLiga_Ligatabelle extends NuLiga_Webpage{
             return array();
         }
         $tabelle = $contentDiv->getElementsByTagName("table")[0];
-        return extractTabellenZeilen($tabelle);
+        return $this->extractTabellenZeilen($tabelle);
     }
 
     private function extractTeamIDFromZelle($mannschaftsZelle): int{
-        $linkElement = extractChildrenByTags($mannschaftsZelle, "a")[0];
+        $linkElement = $this->extractChildrenByTags($mannschaftsZelle, "a")[0];
         $url = $linkElement->attributes->getNamedItem("href")->value;
         preg_match('/teamtable=(\d*)/', $url, $teamtableMatches);
         return $teamtableMatches[1];
@@ -55,7 +55,7 @@ class NuLiga_Ligatabelle extends NuLiga_Webpage{
         $gegner = array();
 
         foreach($this->extractMannschaftsZellen() as $mannschaftsZelle){
-            $mannschaftsName = sanitizeContent($mannschaftsZelle->textContent);
+            $mannschaftsName = $this->sanitizeContent($mannschaftsZelle->textContent);
             if(strpos($mannschaftsName, $vereinsname) === 0){
                 continue;
             }
@@ -65,8 +65,6 @@ class NuLiga_Ligatabelle extends NuLiga_Webpage{
             $gegner[] = $mannschaftsName;
         }
         return $gegner;
-    } 
-
+    }
 }
-
 ?>
