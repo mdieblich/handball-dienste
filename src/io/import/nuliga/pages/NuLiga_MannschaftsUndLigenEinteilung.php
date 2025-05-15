@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__."/../Webpage.php";
-require_once __DIR__."/NuLiga_Meisterschaft.php";
+require_once __DIR__."/../../Webpage.php";
+require_once __DIR__."/../entities/NuLiga_Meisterschaft.php";
 
 class NuLiga_MannschaftsUndLigenEinteilung extends Webpage{
 
@@ -32,11 +32,27 @@ class NuLiga_MannschaftsUndLigenEinteilung extends Webpage{
                 // die nächste Zeile ist eine Kopfzeile
                 $skipZeile = true;
             } else {
-                $currentMeisterschaft->mannschaftsEinteilungen[] = NuLiga_MannschaftsEinteilung::fromTabellenzeile($zellen);
+                $currentMeisterschaft->mannschaftsEinteilungen[] = $this->MannschaftsEinteilungfromTabellenzeile($zellen);
             }
         }
 
         return $meisterschaften;
+    }
+
+    private function MannschaftsEinteilungfromTabellenzeile(array $zellen): NuLiga_MannschaftsEinteilung {
+        $einteilung = new NuLiga_MannschaftsEinteilung();
+        $einteilung->mannschaftsBezeichnung = $this->sanitizeContent($zellen[0]->textContent);
+        $einteilung->liga = $this->sanitizeContent($zellen[1]->textContent);
+
+
+        $linkElement = $this->extractChildrenByTags($zellen[1], "a")[0];
+        $url = $linkElement->attributes->getNamedItem("href")->value;
+        preg_match('/championship=(.*)&/', $url, $championShipMatches);
+        preg_match('/group=(.*)/', $url, $groupMatches);
+        $einteilung->meisterschaftsKuerzel = urldecode($championShipMatches[1]);
+        $einteilung->liga_id = $groupMatches[1];
+
+        return $einteilung;
     }
 
     private function isMeisterschaftsZeile($zellen): bool{
@@ -45,21 +61,6 @@ class NuLiga_MannschaftsUndLigenEinteilung extends Webpage{
     private function isKopfZeile($zellen): bool{
         return count($zellen) == 1;
     }
-
-    // public function saveLocally(): string {
-    //     $filename = self::CACHEFILE_DIRECTORY().date("Y.m.d_H.i.s").".html";
-    //     $fileHandle = fopen($filename, "w");
-    //     try{
-    //         fwrite($this->fileHandle, $message);
-    //         return $filename;
-    //     } finally {
-    //         fclose($this->fileHandle);
-    //     }
-    // }
-
-    // public static function CACHEFILE_DIRECTORY(): string{
-    //     return plugin_dir_path(__FILE__)."MannschaftenUndLigeneinteilungen/";
-    // }
 }
 
 ?>

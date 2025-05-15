@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."/../Webpage.php";
+require_once __DIR__."/../../Webpage.php";
 
 class NuLiga_Ligatabelle extends Webpage{
 

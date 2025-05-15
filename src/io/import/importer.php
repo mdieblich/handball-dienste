@@ -4,12 +4,12 @@ require_once __DIR__."/../../log/Log.php";
 require_once __DIR__."/../../log/Problem.php";
 
 require_once __DIR__."/ImportSchritt.php";
-require_once __DIR__."/SpieleGrabber.php";
 require_once __DIR__."/../../handball/dienst/DienstAenderungsPlan.php";
-require_once __DIR__."/NuLigaSpiel.php";
+require_once __DIR__."/nuliga/entities/NuLigaSpiel.php";
 
-require_once __DIR__."/meisterschaft/NuLiga_Ligatabelle.php";
-require_once __DIR__."/meisterschaft/NuLiga_MannschaftsUndLigenEinteilung.php";
+require_once __DIR__."/nuliga/pages/NuLiga_SpiellisteTeam.php";
+require_once __DIR__."/nuliga/pages//NuLiga_Ligatabelle.php";
+require_once __DIR__."/nuliga/pages/NuLiga_MannschaftsUndLigenEinteilung.php";
 
 require_once __DIR__."/../../db/dao/MannschaftDAO.php";
 require_once __DIR__."/../../db/dao/MannschaftsMeldungDAO.php";
@@ -309,7 +309,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
                 $logfile->log("\t.\tDiese Meldung ist inaktiv und wird übersprungen.");
                 continue;
             }
-            $spielGrabber = new SpieleGrabber(
+            $spielGrabber = new NuLiga_SpiellisteTeam(
                 $mannschaftsMeldung->meisterschaft->kuerzel, 
                 $mannschaftsMeldung->nuligaLigaID, 
                 $mannschaftsMeldung->nuligaTeamID,
