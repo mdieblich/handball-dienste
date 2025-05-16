@@ -63,8 +63,10 @@ abstract class DAO{
             $foreignKey = static::getForeignKey($property, $dbhandle);
 
             if(isset($foreignKey)){
-                $columnName .= "_id";
+                // $columnName .= "_id";
                 $foreignKeyList[] = $foreignKey;
+                // a foreign key is already covered with the "_id"-property
+                continue;
             }else{
             }
             $sqlPropertyList[] = "$columnName $sqlType $nullable";
