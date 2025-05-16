@@ -96,4 +96,14 @@ function dienste_settings_email_botemail_anzeigen($args) {
 function dienste_settings_email_botpasswort_anzeigen($args) {
     echo '<input type="text" id="bot-passwort" name="bot-passwort" value="'.get_option('bot-passwort').'" />';
 }
+
+function deleteAllOptions(){
+
+    $settingOptions = array( 'vereinsname', 'nuliga-clubid', 'bot-smtp', 'bot-email', 'bot-passwort', 'dienste_db_version' );
+    
+    // Clear up our settings
+    foreach ( $settingOptions as $settingName ) {
+        delete_option( $settingName );
+    }
+}
 ?>
