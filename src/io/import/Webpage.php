@@ -141,7 +141,7 @@ abstract class Webpage {
     }
 
     public function saveLocally(): string {
-        $directory = self::CACHEFILE_BASE_DIRECTORY().$this->getCacheFileIdentifier()."/";
+        $directory = self::CACHEFILE_BASE_DIRECTORY()."/".static::class."/".$this->getCacheFileIdentifier()."/";
         if(!is_dir($directory)){
             mkdir($directory, 0777, true);
         }
@@ -153,7 +153,7 @@ abstract class Webpage {
     protected abstract function getCacheFileIdentifier(): string;
 
     public static function CACHEFILE_BASE_DIRECTORY(): string{
-        return plugin_dir_path(__FILE__)."cache/".static::class."/";
+        return plugin_dir_path(__FILE__)."cache";
     }
 }
 

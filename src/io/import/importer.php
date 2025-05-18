@@ -442,12 +442,56 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
     return $problems;
 });
 
-Importer::$CACHE_LEEREN = new ImportSchritt(8, "Cache leeren", function (){
+Importer::$CACHE_LEEREN = new ImportSchritt(8, "Cache leeren", function (Log $logfile){
     global $wpdb;
+    $logfile->log("Datenbank-cache leeren");
     $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
     $wpdb->query("DELETE FROM $table_nuliga_mannschaftseinteilung");
     $wpdb->query("DELETE FROM $table_nuliga_meisterschaft");
+    
+    $logfile->log("========================================================");
+    $logfile->log("Cache-Dateien löschen");
+    deleteAll(Webpage::CACHEFILE_BASE_DIRECTORY(), $logfile);
 });
+
+// Function to delete all files
+// and directories
+function deleteAll($filename_or_dir, Log $logfile = null) {
+    If (is_null($logfile)){
+        $logfile = new NoLog();
+    }
+    $logfile->log_withoutNewline("$filename_or_dir: ");
+    
+    // Check for files
+    if (is_file($filename_or_dir)) {
+
+        // If it is file then remove by
+        // using unlink function
+        unlink($filename_or_dir);
+        $logfile->log("gelöscht");
+        return;
+    }
+    
+    // If it is a directory.
+    elseif (is_dir($filename_or_dir)) {
+        $logfile->log(" ist ein Verzeichnis");
+        // Get the list of the files in this
+        // directory
+        $scan = glob(rtrim($filename_or_dir, '/').'/*');
+
+        // Loop through the list of files
+        foreach($scan as $index=>$path) {
+            
+            // Call recursive function
+            deleteAll($path, $logfile);
+        }
+        
+        // Remove the directory itself
+        @rmdir($filename_or_dir);
+        $logfile->log("$filename_or_dir gelöscht");
+        return;
+    }
+}
 
 ?>
