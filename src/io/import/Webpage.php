@@ -46,7 +46,7 @@ class Webpage {
         curl_setopt($ch, CURLOPT_COOKIEFILE, __DIR__ . "/cookies.txt");
     
         // Debug
-        curl_setopt($ch, CURLOPT_VERBOSE, true);
+        //curl_setopt($ch, CURLOPT_VERBOSE, true);
         
         $data = curl_exec($ch);
         if($data === false){
@@ -57,6 +57,8 @@ class Webpage {
         }
         curl_close($ch);
         $this->html = $data;
+        $cacheFile = $this->saveLocally();
+        $this->logfile->log("Daten von ".$this->url." gespeichert in ".$cacheFile);
         return $this->html;
     }
     
@@ -138,20 +140,18 @@ class Webpage {
         return $content;
     }
 
-    // public function saveLocally(): string {
-    //     $filename = self::CACHEFILE_DIRECTORY().date("Y.m.d_H.i.s").".html";
-    //     $fileHandle = fopen($filename, "w");
-    //     try{
-    //         fwrite($this->fileHandle, $message);
-    //         return $filename;
-    //     } finally {
-    //         fclose($this->fileHandle);
-    //     }
-    // }
+    public function saveLocally(): string {
+        $filename = self::CACHEFILE_DIRECTORY().date("Y.m.d - H.i.s").".html";
+        if(!is_dir(self::CACHEFILE_DIRECTORY())){
+            mkdir(self::CACHEFILE_DIRECTORY(), 0777, true);
+        }
+        file_put_contents($filename, $this->getHTMLFromURL());
+        return $filename;
+    }
 
-    // public static function CACHEFILE_DIRECTORY(): string{
-    //     return plugin_dir_path(__FILE__)."MannschaftenUndLigeneinteilungen/";
-    // }
+    public static function CACHEFILE_DIRECTORY(): string{
+        return plugin_dir_path(__FILE__)."MannschaftenUndLigeneinteilungen/";
+    }
 }
 
 ?>
