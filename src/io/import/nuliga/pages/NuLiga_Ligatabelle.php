@@ -3,8 +3,13 @@ require_once __DIR__."/../../Webpage.php";
 
 class NuLiga_Ligatabelle extends Webpage{
 
+    private string $meisterschaft;
+    private int $nuliga_liga_id;
+
     public function __construct(string $meisterschaft, int $nuliga_liga_id, Log $logfile){
-        parent::__construct("https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/groupPage?championship=".urlencode($meisterschaft)."&group=".$nuliga_liga_id, $logfile);        
+        parent::__construct("https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/groupPage?championship=".urlencode($meisterschaft)."&group=".$nuliga_liga_id, $logfile);
+        $this->meisterschaft = $meisterschaft;
+        $this->nuliga_liga_id = $nuliga_liga_id;
     }
 
     public function extractTeamID(string $vereinsname, int $mannschaftsNummer): ?int {
@@ -65,6 +70,9 @@ class NuLiga_Ligatabelle extends Webpage{
             $gegner[] = $mannschaftsName;
         }
         return $gegner;
+    }
+    protected function getCacheFileIdentifier(): string {
+        return "championship=".urlencode($this->meisterschaft)."&group=".$this->nuliga_liga_id;
     }
 }
 ?>

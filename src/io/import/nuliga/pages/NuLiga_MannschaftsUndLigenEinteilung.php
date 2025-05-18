@@ -5,9 +5,12 @@ require_once __DIR__."/../entities/NuLiga_Meisterschaft.php";
 
 class NuLiga_MannschaftsUndLigenEinteilung extends Webpage{
 
+    private int $club_id;
+
     public function __construct(int $club_id, Log $logfile){
         parent::__construct("https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/clubTeams?"
             ."club=".$club_id, $logfile);
+        $this->club_id = $club_id;
     }
 
     public function getMeisterschaften(): array{
@@ -60,6 +63,10 @@ class NuLiga_MannschaftsUndLigenEinteilung extends Webpage{
     }
     private function isKopfZeile($zellen): bool{
         return count($zellen) == 1;
+    }
+
+    protected function getCacheFileIdentifier(): string {
+        return "club=".$this->club_id;
     }
 }
 

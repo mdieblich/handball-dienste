@@ -4,6 +4,10 @@ require_once __DIR__."/../entities/NuLigaSpiel.php";
 
 class NuLiga_SpiellisteTeam extends Webpage{
 
+    private string $meisterschaft;
+    private int $gruppe;
+    private int $team_id;
+
     public function __construct(string $meisterschaft, int $gruppe, int $team_id, Log $logfile){
         parent::__construct("https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?"
             ."teamtable=".$team_id
@@ -11,6 +15,9 @@ class NuLiga_SpiellisteTeam extends Webpage{
             ."&championship=".urlencode($meisterschaft)
             ."&group=".$gruppe,
             $logfile);
+        $this->meisterschaft = $meisterschaft;
+        $this->gruppe = $gruppe;
+        $this->team_id = $team_id;
     }
 
     public function getNuLigaSpiele() : array {
@@ -90,6 +97,12 @@ class NuLiga_SpiellisteTeam extends Webpage{
     
     private function extractTrimmedContent(DOMElement $zelle): string {
         return $this->sanitizeContent($zelle->textContent);
+    }
+
+    protected function getCacheFileIdentifier(): string {
+        return "teamtable=".$this->team_id
+            ."&championship=".urlencode($this->meisterschaft)
+            ."&group=".$this->gruppe;
     }
 }
 

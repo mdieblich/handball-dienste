@@ -2,7 +2,7 @@
 
 require_once __DIR__."/../../log/Log.php";
 
-class Webpage {
+abstract class Webpage {
     protected Log $logfile;
 
     public string $url;
@@ -141,16 +141,19 @@ class Webpage {
     }
 
     public function saveLocally(): string {
-        $filename = self::CACHEFILE_DIRECTORY().date("Y.m.d - H.i.s").".html";
-        if(!is_dir(self::CACHEFILE_DIRECTORY())){
-            mkdir(self::CACHEFILE_DIRECTORY(), 0777, true);
+        $directory = self::CACHEFILE_BASE_DIRECTORY().$this->getCacheFileIdentifier()."/";
+        if(!is_dir($directory)){
+            mkdir($directory, 0777, true);
         }
+        $filename = $directory.date("Y.m.d - H.i.s").".html";
         file_put_contents($filename, $this->getHTMLFromURL());
         return $filename;
     }
 
-    public static function CACHEFILE_DIRECTORY(): string{
-        return plugin_dir_path(__FILE__)."MannschaftenUndLigeneinteilungen/";
+    protected abstract function getCacheFileIdentifier(): string;
+
+    public static function CACHEFILE_BASE_DIRECTORY(): string{
+        return plugin_dir_path(__FILE__)."cache/".static::class."/";
     }
 }
 
