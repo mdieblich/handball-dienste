@@ -17,8 +17,14 @@ mkdir -p ./dienstedienst
 cp -r ../src/* dienstedienst
 cp -r ../vendor dienstedienst
 
-# 3. Zippen
+#3. Versionsnummer setzen
+LAST_VERSION=$(cat ../version.txt)
+NEXT_VERSION=$(echo $LAST_VERSION | awk -F. -v OFS=. '{$NF++;print}')
+echo $NEXT_VERSION > ../version.txt
+sed -i -e  's/VERSIONSTRING/'$NEXT_VERSION'/' dienstedienst/dienstedienst.php
+
+# 4. Zippen
 ./7za.exe a -r dienstedienst.zip dienstedienst
 
-# 4. Zusätzlich in's Wordpress-Verzeichnis kopieren, damit nicht manuell installiert werden muss.
+# 5. Zusätzlich in's Wordpress-Verzeichnis kopieren, damit nicht manuell installiert werden muss.
 cp -r dienstedienst $WORDPRESS
