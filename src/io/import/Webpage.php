@@ -20,10 +20,65 @@ abstract class Webpage {
         $this->url = $url;
     }
 
-    private function getHTMLFromURL(): string {
+    protected function getElementById(string $id): DOMElement {
+        return $this->getDOM()->getElementById($id);
+    }
+    protected function getElementsByTagName(string $id): DOMNodeList {
+        return $this->getDOM()->getElementsByTagName($id);
+    }
+    
+    
+    private function getDOM(): DomDocument{
+        if(isset($this->dom)){
+            return $this->dom;
+        }
+        $this->dom = new DomDocument();
+
+        // Interne Fehlerbehandlung aktivieren und vorherige Fehler leeren
+        libxml_use_internal_errors(true);
+
+        // HTML laden
+        $this->dom->loadHTML($this->getHTML());
+
+        // Fehler abrufen
+        $errors = libxml_get_errors();
+
+        // Fehlerbereinigung
+        libxml_clear_errors();
+        libxml_use_internal_errors(false);
+
+        // Fehler anzeigen (optional)
+        if(!empty($errors)){
+            $this->logfile->log("Beim Parsen der NuLiga-Seite traten Fehler auf:");
+            foreach ($errors as $error) {
+                $this->logfile->log("\t".$error->message);
+            }
+        }
+        return $this->dom;
+    }
+
+    private function getHTML(): string {
         if(isset($this->html)){
             return $this->html;
         }
+        $htmlFromCache = $this->getHTMLFromCache();
+        if($htmlFromCache !== null){
+            $this->logfile->log("Lade Daten von ".$this->url." (aus Cache)");
+            $this->html = $htmlFromCache;
+            return $this->html;
+        }
+        // Lade die HTML-Seite von der URL
+        $this->logfile->log("Lade Daten von ".$this->url." (aus Internet)");
+        $htmlFromURL = $this->getHTMLFromURL();
+        $this->html = $htmlFromURL;
+        
+        // und speichere die HTML-Seite lokal
+        $cacheFile = $this->saveLocally();
+        $this->logfile->log("Daten von ".$this->url." gespeichert in ".$cacheFile);
+        return $this->html;
+    }
+
+    private function getHTMLFromURL(): string {
         $this->logfile->log("Lade Daten von ".$this->url);
         $ch = curl_init();
         $timeout = 15;
@@ -56,47 +111,9 @@ abstract class Webpage {
             throw new Exception($errorMessage);
         }
         curl_close($ch);
-        $this->html = $data;
-        $cacheFile = $this->saveLocally();
-        $this->logfile->log("Daten von ".$this->url." gespeichert in ".$cacheFile);
-        return $this->html;
-    }
-    
-    private function getDOMFromHTML(): DomDocument{
-        if(isset($this->dom)){
-            return $this->dom;
-        }
-        $this->dom = new DomDocument();
-
-        // Interne Fehlerbehandlung aktivieren und vorherige Fehler leeren
-        libxml_use_internal_errors(true);
-
-        // HTML laden
-        $this->dom->loadHTML($this->getHTMLFromURL());
-
-        // Fehler abrufen
-        $errors = libxml_get_errors();
-
-        // Fehlerbereinigung
-        libxml_clear_errors();
-        libxml_use_internal_errors(false);
-
-        // Fehler anzeigen (optional)
-        if(!empty($errors)){
-            $this->logfile->log("Beim Parsen der NuLiga-Seite traten Fehler auf:");
-            foreach ($errors as $error) {
-                $this->logfile->log("\t".$error->message);
-            }
-        }
-        return $this->dom;
+        return $data;
     }
 
-    protected function getElementById(string $id): DOMElement {
-        return $this->getDOMFromHTML()->getElementById($id);
-    }
-    protected function getElementsByTagName(string $id): DOMNodeList {
-        return $this->getDOMFromHTML()->getElementsByTagName($id);
-    }
     protected function query(string $expression, ?DOMNode $contextNode = null): DOMNodeList {
         return $this->getXPath()->query($expression, $contextNode);
     }
@@ -105,7 +122,7 @@ abstract class Webpage {
             return $this->xpath;
         }
         
-        $this->xpath = new DOMXPath($this->getDOMFromHTML());
+        $this->xpath = new DOMXPath($this->getDOM());
         return $this->xpath;
     }
 
@@ -140,20 +157,34 @@ abstract class Webpage {
         return $content;
     }
 
-    public function saveLocally(): string {
+    private function saveLocally(): string {
+        $directory = $this->getCacheDirectory();
+        $filename = $directory.date("Y.m.d - H.i.s").".html";
+        file_put_contents($filename, $this->getHTML());
+        return $filename;
+    }
+
+    private function getCacheDirectory(): string {
         $directory = self::CACHEFILE_BASE_DIRECTORY()."/".static::class."/".$this->getCacheFileIdentifier()."/";
         if(!is_dir($directory)){
             mkdir($directory, 0777, true);
         }
-        $filename = $directory.date("Y.m.d - H.i.s").".html";
-        file_put_contents($filename, $this->getHTMLFromURL());
-        return $filename;
+        return $directory;
+    }
+    public static function CACHEFILE_BASE_DIRECTORY(): string{
+        return plugin_dir_path(__FILE__)."cache";
     }
 
     protected abstract function getCacheFileIdentifier(): string;
 
-    public static function CACHEFILE_BASE_DIRECTORY(): string{
-        return plugin_dir_path(__FILE__)."cache";
+    private function getHTMLFromCache(): ?string {
+        $directory = $this->getCacheDirectory();
+        $files = glob($directory."*.html");
+        if(empty($files)){
+            return null;
+        }
+        // die letzte Datei ist die aktuellste
+        return file_get_contents($files[count($files)-1]);
     }
 }
 
