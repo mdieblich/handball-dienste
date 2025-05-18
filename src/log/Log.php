@@ -16,6 +16,10 @@ class Log {
         fwrite($this->fileHandle, $message."\n");
     }
 
+    public function log_withoutNewline(string $message){
+        fwrite($this->fileHandle, $message);
+    }
+
     public static function findFiles(string $purpose) : array {
         $fileNames = array();
         $path = plugin_dir_path(__FILE__);
@@ -36,6 +40,7 @@ class NoLog extends Log {
     public function __construct() {}
     public function __destruct() {}
     public function log(string $message){}
+    public function log_withoutNewline(string $message){}
 }
 
 ?>
