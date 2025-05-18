@@ -457,12 +457,20 @@ Importer::$CACHE_LEEREN = new ImportSchritt(8, "Cache leeren", function (Log $lo
 
 // Function to delete all files
 // and directories
-function deleteAll($filename_or_dir, Log $logfile = null) {
+function deleteAll($filename_or_dir, Log $logfile = null, $baseFolder = null) {
     If (is_null($logfile)){
         $logfile = new NoLog();
     }
-    $logfile->log_withoutNewline("$filename_or_dir: ");
-    
+    if($baseFolder != null){
+        $whitespaces_for_foldername = preg_replace("/./", " ", $baseFolder);
+        $whitespaces_with_3dots = substr($whitespaces_for_foldername, 0, -3)."...";
+        $filename_only = substr($filename_or_dir, strlen($baseFolder));
+        $filename_for_logging = $whitespaces_with_3dots.$filename_only;
+    } else {
+        $filename_for_logging = $filename_or_dir;
+    }
+    $logfile->log_withoutNewline("$filename_for_logging ");
+
     // Check for files
     if (is_file($filename_or_dir)) {
 
@@ -475,7 +483,7 @@ function deleteAll($filename_or_dir, Log $logfile = null) {
     
     // If it is a directory.
     elseif (is_dir($filename_or_dir)) {
-        $logfile->log(" ist ein Verzeichnis");
+        $logfile->log("");
         // Get the list of the files in this
         // directory
         $scan = glob(rtrim($filename_or_dir, '/').'/*');
@@ -484,12 +492,12 @@ function deleteAll($filename_or_dir, Log $logfile = null) {
         foreach($scan as $index=>$path) {
             
             // Call recursive function
-            deleteAll($path, $logfile);
+            deleteAll($path, $logfile, $filename_or_dir);
         }
         
         // Remove the directory itself
         @rmdir($filename_or_dir);
-        $logfile->log("$filename_or_dir gelöscht");
+        $logfile->log("$filename_for_logging gelöscht");
         return;
     }
 }
