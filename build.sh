@@ -19,9 +19,9 @@ cp -r ../vendor dienstedienst
 
 #3. Versionsnummer setzen
 LAST_VERSION=$(cat ../version.txt)
-NEXT_VERSION=$(echo $LAST_VERSION | awk -F. -v OFS=. '{$NF++;print}')
+NEXT_VERSION=$(echo $LAST_VERSION | awk -F' ' -v OFS=' ' '{$NF++;print}')
 echo $NEXT_VERSION > ../version.txt
-sed -i -e  's/VERSIONSTRING/'$NEXT_VERSION'/' dienstedienst/dienstedienst.php
+sed -i -e  "s/VERSIONSTRING/$NEXT_VERSION/" dienstedienst/dienstedienst.php
 
 # 4. Zippen
 ./7za.exe a -r dienstedienst.zip dienstedienst
