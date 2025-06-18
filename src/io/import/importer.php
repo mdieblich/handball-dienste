@@ -139,7 +139,7 @@ Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(2, "Mannschaften und
 Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen", function ($dbhandle, Log $logfile){
     $table_nuliga_mannschaftseinteilung = $dbhandle->prefix . 'nuliga_mannschaftseinteilung';
 
-    $mannschaftDAO = new MannschaftDAO();
+    $mannschaftDAO = new MannschaftDAO($dbhandle);
     $mannschaftsListe = $mannschaftDAO->loadMannschaften();
     $nuligaBezeichnungen = $mannschaftsListe->createNuLigaMannschaftsBezeichnungen();
     $logfile->log(print_r($nuligaBezeichnungen), true);
@@ -163,7 +163,7 @@ Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen",
 
 Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(4, "Team-IDs aus nuLiga auslesen", function ($dbhandle, Log $logfile){
     $vereinsname = get_option('vereinsname');
-    $mannschaftDAO = new MannschaftDAO();
+    $mannschaftDAO = new MannschaftDAO($dbhandle);
     $mannschaftsListe = $mannschaftDAO->loadMannschaften();
 
     $table_name = $dbhandle->prefix . 'nuliga_mannschaftseinteilung';
@@ -245,8 +245,8 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(6, "Meldungen pro Mannsch
 Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(7, "Gegner importieren", function ($dbhandle, Log $logfile){
     $vereinsname = get_option('vereinsname');
 
-    $mannschaftService = new MannschaftService();
-    $gegnerDAO = new GegnerDAO();
+    $mannschaftService = new MannschaftService($dbhandle);
+    $gegnerDAO = new GegnerDAO($dbhandle);
     
     $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
     foreach($mannschaftsListe->mannschaften as $mannschaft){
@@ -279,11 +279,11 @@ Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(7, "Gegner importieren", funct
 
 Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(8, "Spiele importieren", function ($dbhandle, Log $logfile){
     $problems = array();
-    $mannschaftService = new MannschaftService();
-    $gegnerService = new GegnerService();
-    $spielDAO = new SpielDAO();
-    $dienstDAO = new DienstDAO();
-    $spielService = new SpielService();
+    $mannschaftService = new MannschaftService($dbhandle);
+    $gegnerService = new GegnerService($dbhandle);
+    $spielDAO = new SpielDAO($dbhandle);
+    $dienstDAO = new DienstDAO($dbhandle);
+    $spielService = new SpielService($dbhandle);
     $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
     $alleGegner = $gegnerService->loadAlleGegner();
 
