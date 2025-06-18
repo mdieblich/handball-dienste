@@ -3,6 +3,7 @@
 class Log {
 
     private $fileHandle;
+    private $indentation = "";
     public function __construct(string $purpose) {
         $filename = self::LOG_DIRECTORY().date("Y.m.d_H.i.s")."-".$purpose.".txt";
         $this->fileHandle = fopen($filename, "a");
@@ -13,7 +14,13 @@ class Log {
     }
 
     public function log(string $message){
-        fwrite($this->fileHandle, $message."\n");
+        fwrite($this->fileHandle, $this->indentation.$message."\n");
+    }
+    public function setIndentation(string $indentation){
+        $this->indentation = $indentation;
+    }
+    public function resetIndentation(){
+        $this->indentation = "";
     }
 
     public function log_withoutNewline(string $message){
