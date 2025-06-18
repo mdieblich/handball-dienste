@@ -8,6 +8,6 @@ class Dienst {
     public int $id;
     public Spiel $spiel;            public int $spiel_id;
     public string $dienstart;
-    public ?Mannschaft $mannschaft; public int $mannschaft_id;
+    public ?Mannschaft $mannschaft; public ?int $mannschaft_id;
 }
 ?>

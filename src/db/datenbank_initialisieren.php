@@ -9,25 +9,34 @@ require_once __DIR__.'/dao/SpielDAO.php';
 require_once __DIR__.'/dao/DienstDAO.php';
 
 global $dienste_db_version;
-$dienste_db_version = '1.7';
+$dienste_db_version = '1.8';
 
 function dienste_datenbank_initialisieren() {
     global $dienste_db_version;
     global $wpdb;
 
     $previous_version = get_option('dienste_db_version');
+    error_log("Datenbank ist in Version $previous_version. Dieses Plugin benötigt $dienste_db_version");
+    
     if($previous_version && $previous_version < '1.6'){
         dienste_mannschaft_aktualisiern($wpdb);
     }
     
-    dienste_mannschaft_initialisieren($wpdb);
-    dienste_meisterschaft_initialisieren($wpdb);
-    dienste_mannschaftsMeldung_initialisieren($wpdb);
-    dienste_gegner_initialisieren($wpdb);
-    dienste_spiele_initialisieren($wpdb);
-    dienste_dienste_initialisieren($wpdb);
+    if($previous_version && $previous_version < '1.8'){
+        dienste_dienst_nullable_mannschaft($wpdb);
+    }
 
-    dienste_nuliga_import_initialisieren($wpdb);
+    if(empty($previous_version)){
+        error_log("Komplette Datenbankinitialisierung");
+        dienste_mannschaft_initialisieren($wpdb);
+        dienste_meisterschaft_initialisieren($wpdb);
+        dienste_mannschaftsMeldung_initialisieren($wpdb);
+        dienste_gegner_initialisieren($wpdb);
+        dienste_spiele_initialisieren($wpdb);
+        dienste_dienste_initialisieren($wpdb);
+    
+        dienste_nuliga_import_initialisieren($wpdb);
+    }
 
     update_option( 'dienste_db_version', $dienste_db_version );
 }
@@ -54,9 +63,18 @@ function dienste_mannschaft_aktualisiern($dbhandle){
         DROP liga, 
         DROP nuliga_liga_id, 
         DROP nuliga_team_id";
+    error_log($sql);
 
     $dbhandle->query($sql);
 }
+function dienste_dienst_nullable_mannschaft($dbhandle){
+    $table_name = DienstDAO::tableName($dbhandle);
+    $sql = "ALTER TABLE $table_name 
+        MODIFY mannschaft_id INT NULL";
+    error_log($sql);
+    $dbhandle->query($sql);
+}
+
 
 function dienste_gegner_initialisieren($dbhandle){
     $sql = GegnerDAO::tableCreation($dbhandle);
