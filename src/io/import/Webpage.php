@@ -63,7 +63,7 @@ abstract class Webpage {
         }
         $htmlFromCache = $this->getHTMLFromCache();
         if($htmlFromCache !== null){
-            $this->logfile->log("Lade Daten von ".$this->url." (aus Cache)");
+            $this->logfile->log("Lade Daten von ".$this->url." (aus gespeicherter HTML-Datei)");
             $this->html = $htmlFromCache;
             return $this->html;
         }
@@ -157,7 +157,7 @@ abstract class Webpage {
         return $content;
     }
 
-    private function saveLocally(): string {
+    public function saveLocally(): string {
         $directory = $this->getCacheDirectory();
         $filename = $directory.date("Y.m.d - H.i.s").".html";
         file_put_contents($filename, $this->getHTML());
