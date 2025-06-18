@@ -275,7 +275,8 @@ function alles_importieren(){
 }
 
 function start_import_schritt(){
-    Importer::alleSchritte()[$_POST['schritt']]->run();
+    global $wpdb;
+    Importer::alleSchritte()[$_POST['schritt']]->run($wpdb);
     exit;
 }
 

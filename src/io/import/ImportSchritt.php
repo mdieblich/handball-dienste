@@ -14,7 +14,7 @@ class ImportSchritt{
     }
     
     // TODO dbHandle als parameter hereinreichen
-    public function run(): ?array{
+    public function run($dbhandle): ?array{
         $this->initImportStatus();
         
         $logfile = new Log("Import_".$this->schritt);
@@ -23,7 +23,7 @@ class ImportSchritt{
         $logfile->log(date("d.m.y H:i:s"));
         $logfile->log("=================================================");
         try{
-            $problems = call_user_func($this->method, $logfile);
+            $problems = call_user_func($this->method, $dbhandle, $logfile);
         } catch (Exception $e){
             $logfile->log("FEHLER - Unvorhergesehener Fehler (".get_class($e).") ist aufgetreten:");
             $logfile->log($e->getMessage());

@@ -51,9 +51,10 @@ class Importer{
     }
 
     public static function starteAlles(){
+        global $wpdb;
         ImportSchritt::initAlleSchritte();
         foreach(self::alleSchritte() as $schritt){
-            $schritt->run();
+            $schritt->run($wpdb);
         }
     }
 
@@ -89,12 +90,12 @@ class Importer{
     }
 }
 
-Importer::$NULIGA_VEREINSSEITE_LADEN = new ImportSchritt(1, "Vereinsseite von nuLiga laden", function (Log $logfile){
+Importer::$NULIGA_VEREINSSEITE_LADEN = new ImportSchritt(1, "Vereinsseite von nuLiga laden", function ($dbhandle, Log $logfile){
     $ligeneinteilung = new NuLiga_MannschaftsUndLigenEinteilung(get_option('nuliga-clubid'), $logfile);
     $ligeneinteilung->saveLocally();
 });
 
-Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(2, "Mannschaften und Ligazuordnungen von nuLiga-Vereinsseite lesen", function (Log $logfile){
+Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(2, "Mannschaften und Ligazuordnungen von nuLiga-Vereinsseite lesen", function ($dbhandle, Log $logfile){
     global $wpdb;
 
     $ligeneinteilung = new NuLiga_MannschaftsUndLigenEinteilung(get_option('nuliga-clubid'), $logfile);
@@ -137,7 +138,7 @@ Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(2, "Mannschaften und
     }
 });
 
-Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen", function (Log $logfile){
+Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen", function ($dbhandle, Log $logfile){
     global $wpdb;
 
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
@@ -164,7 +165,7 @@ Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen",
     }
 });
 
-Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(4, "Team-IDs aus nuLiga auslesen", function (Log $logfile){
+Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(4, "Team-IDs aus nuLiga auslesen", function ($dbhandle, Log $logfile){
     global $wpdb;
     
     $vereinsname = get_option('vereinsname');
@@ -189,7 +190,7 @@ Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(4, "Team-IDs aus nuLiga aus
     }
 });
 
-Importer::$MEISTERSCHAFTEN_AKTUALISIEREN = new ImportSchritt(5, "Meisterschaften aktualisieren", function (){
+Importer::$MEISTERSCHAFTEN_AKTUALISIEREN = new ImportSchritt(5, "Meisterschaften aktualisieren", function ($dbhandle){
     global $wpdb;
 
     $table_meisterschaft = MeisterschaftDAO::tableName($wpdb);
@@ -214,7 +215,7 @@ Importer::$MEISTERSCHAFTEN_AKTUALISIEREN = new ImportSchritt(5, "Meisterschaften
     }
 });
 
-Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(6, "Meldungen pro Mannschaft aktualisieren", function (Log $logfile){
+Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(6, "Meldungen pro Mannschaft aktualisieren", function ($dbhandle, Log $logfile){
     global $wpdb;
 
     $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
@@ -251,7 +252,7 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(6, "Meldungen pro Mannsch
         // TODO Transaktionsende
     }
 });
-Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(7, "Gegner importieren", function (Log $logfile){
+Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(7, "Gegner importieren", function ($dbhandle, Log $logfile){
     $vereinsname = get_option('vereinsname');
 
     $mannschaftService = new MannschaftService();
@@ -286,7 +287,7 @@ Importer::$GEGNER_IMPORTIEREN = new ImportSchritt(7, "Gegner importieren", funct
     }
 });
 
-Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(8, "Spiele importieren", function (Log $logfile){
+Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(8, "Spiele importieren", function ($dbhandle, Log $logfile){
     $problems = array();
     $mannschaftService = new MannschaftService();
     $gegnerService = new GegnerService();
@@ -444,7 +445,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(8, "Spiele importieren", funct
     return $problems;
 });
 
-Importer::$CACHE_LEEREN = new ImportSchritt(9, "Cache leeren", function (Log $logfile){
+Importer::$CACHE_LEEREN = new ImportSchritt(9, "Cache leeren", function ($dbhandle, Log $logfile){
     global $wpdb;
     $logfile->log("Datenbank-cache leeren");
     $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';

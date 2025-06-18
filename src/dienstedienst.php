@@ -40,9 +40,10 @@ function enqueue_scripts() {
 }
 
 function updateFromNuliga(): WP_REST_Response{
+    global $wpdb;
     require_once __DIR__."/io/import/importer.php";
 
-    $problems = Importer::$SPIELE_IMPORTIEREN->run();
+    $problems = Importer::$SPIELE_IMPORTIEREN->run($wpdb);
     $response = new WP_REST_Response( $problems );
     $response->set_status( 200 );
     if(!empty($problems)){
