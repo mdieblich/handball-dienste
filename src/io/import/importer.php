@@ -96,26 +96,24 @@ Importer::$NULIGA_VEREINSSEITE_LADEN = new ImportSchritt(1, "Vereinsseite von nu
 });
 
 Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(2, "Mannschaften und Ligazuordnungen von nuLiga-Vereinsseite lesen", function ($dbhandle, Log $logfile){
-    global $wpdb;
-
     $ligeneinteilung = new NuLiga_MannschaftsUndLigenEinteilung(get_option('nuliga-clubid'), $logfile);
     $nuliga_meisterschaften = $ligeneinteilung->getMeisterschaften();
 
-    $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
-    $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
+    $table_nuliga_meisterschaft = $dbhandle->prefix . 'nuliga_meisterschaft';
+    $table_nuliga_mannschaftseinteilung = $dbhandle->prefix . 'nuliga_mannschaftseinteilung';
 
     foreach($nuliga_meisterschaften as $nuliga_meisterschaft){
-        $meisterschaft_id = $wpdb->get_var("SELECT id FROM $table_nuliga_meisterschaft WHERE name=\"".$nuliga_meisterschaft->name."\"");
+        $meisterschaft_id = $dbhandle->get_var("SELECT id FROM $table_nuliga_meisterschaft WHERE name=\"".$nuliga_meisterschaft->name."\"");
         if(empty($meisterschaft_id)){
             $values_meisterschaft = array(
                 'name' => $nuliga_meisterschaft->name
             );
-            $wpdb->insert($table_nuliga_meisterschaft, $values_meisterschaft);
-            $meisterschaft_id = $wpdb->insert_id;
+            $dbhandle->insert($table_nuliga_meisterschaft, $values_meisterschaft);
+            $meisterschaft_id = $dbhandle->insert_id;
         }
 
         foreach($nuliga_meisterschaft->mannschaftsEinteilungen as $mannschaftsEinteilung){
-            $mannschaftsEinteilung_id = $wpdb->get_var(
+            $mannschaftsEinteilung_id = $dbhandle->get_var(
                 "SELECT id FROM $table_nuliga_mannschaftseinteilung "
                 ."WHERE mannschaftsBezeichnung=\"".$mannschaftsEinteilung->mannschaftsBezeichnung."\" "
                 ."AND liga_id=".$mannschaftsEinteilung->liga_id
@@ -130,25 +128,23 @@ Importer::$NULIGA_MEISTERSCHAFTEN_LESEN = new ImportSchritt(2, "Mannschaften und
             );
 
             if(isset($mannschaftsEinteilung_id)){
-                $wpdb->update($table_nuliga_mannschaftseinteilung, $values_einteilung, array('id' => $mannschaftsEinteilung_id));
+                $dbhandle->update($table_nuliga_mannschaftseinteilung, $values_einteilung, array('id' => $mannschaftsEinteilung_id));
             } else{
-                $wpdb->insert($table_nuliga_mannschaftseinteilung, $values_einteilung);
+                $dbhandle->insert($table_nuliga_mannschaftseinteilung, $values_einteilung);
             }
         }
     }
 });
 
 Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen", function ($dbhandle, Log $logfile){
-    global $wpdb;
-
-    $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
+    $table_nuliga_mannschaftseinteilung = $dbhandle->prefix . 'nuliga_mannschaftseinteilung';
 
     $mannschaftDAO = new MannschaftDAO();
     $mannschaftsListe = $mannschaftDAO->loadMannschaften();
     $nuligaBezeichnungen = $mannschaftsListe->createNuLigaMannschaftsBezeichnungen();
     $logfile->log(print_r($nuligaBezeichnungen), true);
 
-    $results = $wpdb->get_results("SELECT id, mannschaftsBezeichnung FROM $table_nuliga_mannschaftseinteilung WHERE mannschaft IS NULL", ARRAY_A);
+    $results = $dbhandle->get_results("SELECT id, mannschaftsBezeichnung FROM $table_nuliga_mannschaftseinteilung WHERE mannschaft IS NULL", ARRAY_A);
     foreach($results as $nuliga_mannschaftsEinteilung){
         if(!array_key_exists($nuliga_mannschaftsEinteilung['mannschaftsBezeichnung'], $nuligaBezeichnungen)){
             $logfile->log("Für die in nuLiga gelistete mannschaft '".$nuliga_mannschaftsEinteilung['mannschaftsBezeichnung']."' "
@@ -157,7 +153,7 @@ Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen",
         }
         $mannschaft = $nuligaBezeichnungen[$nuliga_mannschaftsEinteilung['mannschaftsBezeichnung']];
         $logfile->log("'".$nuliga_mannschaftsEinteilung['mannschaftsBezeichnung']."' gehört zur Mannschaft mit der ID ".$mannschaft->id);
-        $wpdb->update(
+        $dbhandle->update(
             $table_nuliga_mannschaftseinteilung, 
             array('mannschaft'=>$mannschaft->id), 
             array('id' => $nuliga_mannschaftsEinteilung['id'])
@@ -166,14 +162,12 @@ Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen",
 });
 
 Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(4, "Team-IDs aus nuLiga auslesen", function ($dbhandle, Log $logfile){
-    global $wpdb;
-    
     $vereinsname = get_option('vereinsname');
     $mannschaftDAO = new MannschaftDAO();
     $mannschaftsListe = $mannschaftDAO->loadMannschaften();
 
-    $table_name = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
-    $results = $wpdb->get_results("SELECT * FROM $table_name WHERE mannschaft IS NOT NULL AND team_id IS NULL", ARRAY_A);
+    $table_name = $dbhandle->prefix . 'nuliga_mannschaftseinteilung';
+    $results = $dbhandle->get_results("SELECT * FROM $table_name WHERE mannschaft IS NOT NULL AND team_id IS NULL", ARRAY_A);
     foreach ($results as $nuliga_mannschaftseinteilung) {
         $ligaTabellenSeite = new NuLiga_Ligatabelle(
             $nuliga_mannschaftseinteilung['meisterschaftsKuerzel'], 
@@ -183,7 +177,7 @@ Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(4, "Team-IDs aus nuLiga aus
         
         $mannschaft = $mannschaftsListe->mannschaften[$nuliga_mannschaftseinteilung['mannschaft']];
         $team_id = $ligaTabellenSeite->extractTeamID($vereinsname, $mannschaft->nummer);
-        $updated = $wpdb->update($table_name, 
+        $updated = $dbhandle->update($table_name, 
             array('team_id' => $team_id), 
             array('id' => $nuliga_mannschaftseinteilung['id'])
         );
@@ -191,13 +185,11 @@ Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(4, "Team-IDs aus nuLiga aus
 });
 
 Importer::$MEISTERSCHAFTEN_AKTUALISIEREN = new ImportSchritt(5, "Meisterschaften aktualisieren", function ($dbhandle){
-    global $wpdb;
+    $table_meisterschaft = MeisterschaftDAO::tableName($dbhandle);
+    $table_nuliga_meisterschaft = $dbhandle->prefix . 'nuliga_meisterschaft';
+    $table_nuliga_mannschaftseinteilung = $dbhandle->prefix . 'nuliga_mannschaftseinteilung';
 
-    $table_meisterschaft = MeisterschaftDAO::tableName($wpdb);
-    $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
-    $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
-
-    $results = $wpdb->get_results(
+    $results = $dbhandle->get_results(
         "SELECT name , (
             SELECT meisterschaftsKuerzel 
             FROM $table_nuliga_mannschaftseinteilung 
@@ -206,20 +198,18 @@ Importer::$MEISTERSCHAFTEN_AKTUALISIEREN = new ImportSchritt(5, "Meisterschaften
         ) as kuerzel FROM $table_nuliga_meisterschaft", ARRAY_A);
     foreach($results as $nuliga_meisterschaft){
         $sql = "SELECT id FROM $table_meisterschaft WHERE kuerzel=\"".$nuliga_meisterschaft['kuerzel']."\"";
-        $meisterschaft_id = $wpdb->get_var($sql);
+        $meisterschaft_id = $dbhandle->get_var($sql);
         if(isset($meisterschaft_id)){
-            $wpdb->update($table_meisterschaft, $nuliga_meisterschaft, array('id' => $meisterschaft_id));
+            $dbhandle->update($table_meisterschaft, $nuliga_meisterschaft, array('id' => $meisterschaft_id));
         }else{
-            $wpdb->insert($table_meisterschaft, $nuliga_meisterschaft);
+            $dbhandle->insert($table_meisterschaft, $nuliga_meisterschaft);
         }
     }
 });
 
 Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(6, "Meldungen pro Mannschaft aktualisieren", function ($dbhandle, Log $logfile){
-    global $wpdb;
-
-    $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
-    $table_meisterschaft = MeisterschaftDAO::tableName($wpdb);
+    $table_nuliga_mannschaftseinteilung = $dbhandle->prefix . 'nuliga_mannschaftseinteilung';
+    $table_meisterschaft = MeisterschaftDAO::tableName($dbhandle);
 
     $sql = "SELECT 
             $table_nuliga_mannschaftseinteilung.id,
@@ -233,9 +223,9 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(6, "Meldungen pro Mannsch
         LEFT JOIN $table_meisterschaft on $table_meisterschaft.kuerzel=$table_nuliga_mannschaftseinteilung.meisterschaftsKuerzel
         WHERE team_id IS NOT NULL
         AND mannschaft IS NOT NULL";
-    $results = $wpdb->get_results($sql);
+    $results = $dbhandle->get_results($sql);
     
-    $meldungDAO = new MannschaftsMeldungDAO($wpdb);
+    $meldungDAO = new MannschaftsMeldungDAO($dbhandle);
     foreach($results as $newMeldung){
         $logfile->log("Eintrag '".print_r($newMeldung, true)."' wird verarbeitet");
         $oldMeldung = $meldungDAO->findMannschaftsMeldung($newMeldung->meisterschaft_id, $newMeldung->mannschaft_id, $newMeldung->liga);
@@ -248,7 +238,7 @@ Importer::$MELDUNGEN_AKTUALISIEREN = new ImportSchritt(6, "Meldungen pro Mannsch
             $meldungDAO->insert($newMeldung);
         }
         // Löschen der Einteilung in der nuliga-Import-Tabelle
-        $wpdb->delete($table_nuliga_mannschaftseinteilung, array('id' => $newMeldung->id));
+        $dbhandle->delete($table_nuliga_mannschaftseinteilung, array('id' => $newMeldung->id));
         // TODO Transaktionsende
     }
 });
@@ -446,12 +436,11 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(8, "Spiele importieren", funct
 });
 
 Importer::$CACHE_LEEREN = new ImportSchritt(9, "Cache leeren", function ($dbhandle, Log $logfile){
-    global $wpdb;
     $logfile->log("Datenbank-cache leeren");
-    $table_nuliga_meisterschaft = $wpdb->prefix . 'nuliga_meisterschaft';
-    $table_nuliga_mannschaftseinteilung = $wpdb->prefix . 'nuliga_mannschaftseinteilung';
-    $wpdb->query("DELETE FROM $table_nuliga_mannschaftseinteilung");
-    $wpdb->query("DELETE FROM $table_nuliga_meisterschaft");
+    $table_nuliga_meisterschaft = $dbhandle->prefix . 'nuliga_meisterschaft';
+    $table_nuliga_mannschaftseinteilung = $dbhandle->prefix . 'nuliga_mannschaftseinteilung';
+    $dbhandle->query("DELETE FROM $table_nuliga_mannschaftseinteilung");
+    $dbhandle->query("DELETE FROM $table_nuliga_meisterschaft");
     
     $logfile->log("========================================================");
     $logfile->log("Cache-Dateien löschen");
