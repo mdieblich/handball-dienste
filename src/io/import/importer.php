@@ -329,8 +329,8 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
                     $logfile->log("\t!\tUngültiges Spiel: ".$nuLigaSpiel->getLogOutput());
                     continue;
                 }
-                $logmessage = $nuLigaSpiel->getLogOutput().": ";
-                $logSymbol = "";
+                $logfile->log($nuLigaSpiel->getLogOutput());
+                $logfile->setIndentation("\t");
                 // TODO nur spiele in der Zukunft importieren
                 $spielNeu = $nuLigaSpiel->extractSpiel($mannschaftsMeldung, $teamName);
                 
@@ -348,9 +348,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
                         "Der Gegner wurde nicht gefunden. Spiel wird ignoriert",
                         $nuLigaSpiel
                     );
-                    $logmessage .= "Gegner wurde nicht gefunden. Spiel wird ignoriert";
-                    $logSymbol = "!";
-                    $logfile->log("\t$logSymbol\t$logmessage");
+                    $logfile->log("Gegner wurde nicht gefunden. Spiel wird ignoriert");
                     continue;
                 }
 
@@ -361,25 +359,23 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(7, "Spiele importieren", funct
                     $hallenAenderung = ($spielAlt->halle != $spielNeu->halle);
                     $anwurfAenderung = $spielAlt->anwurfDiffers($spielNeu);
                     if($hallenAenderung || $anwurfAenderung){
-                        $logmessage .= "Spiel muss aktualisiert werden.";
-                        $logSymbol = "*";
+                        $logfile->log("Spiel muss aktualisiert werden.");
                         $dienstAenderungsPlan->registerSpielAenderung($spielAlt, $spielNeu);
                         $spielDAO->update($spielAlt->id, $spielNeu);
                     } else {
-                        $logmessage .= "Spiel bereits vorhanden.";
+                        $logfile->log("Spiel bereits vorhanden.");
                     }
                     // TODO Spiel in eine Liste aufnehmen um zu prüfen, ob Hallenaufbau oder -abbau neu vergeben werden muss
                 } else {
                     // ein neues Spiel
-                    $logmessage .= "Spiel ist neu und wird importiert.";
-                    $logSymbol = "+";
+                    $logfile->log("Spiel ist neu und wird importiert.");
                     $spielDAO->insert($spielNeu);
                     $spielNeu->createDienste();
                     // TODO das Insert sollte über den SpielService laufen. Dabei wird auch der Gegner eingefügt, falls nicht vorhanden
                     // In der Folge wird oben bei extractSpiel ein neuer Gegner erstellt und der dann nur eingefügt, wenn er noch nicht existiert
                     $dienstDAO->insertAll($spielNeu->dienste);
                 }
-                $logfile->log("\t$logSymbol\t$logmessage");
+                $logfile->resetIndentation();
             }
         }
     }
