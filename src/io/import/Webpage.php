@@ -14,19 +14,9 @@ abstract class Webpage {
     private DOMXPath $xpath;
 
     public function __construct(string $url, Log $logfile = null, HttpClient $httpClient = null) {
-        if ($logfile === null) {
-            $this->logfile = new NoLog();
-        } else {
-            $this->logfile = $logfile;
-        }
-        if(is_null($httpClient)) {
-            $this->httpClient = new CurlHttpClient($this->logfile);
-        } else {
-            $this->httpClient = $httpClient;
-        }
-    
-
         $this->url = $url;
+        $this->logfile = $logfile ?? new NoLog();
+        $this->httpClient = $httpClient ?? new CurlHttpClient($this->logfile);
     }
 
     protected function getElementById(string $id): DOMElement {
