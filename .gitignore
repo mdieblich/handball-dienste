@@ -4,3 +4,4 @@ config.sh
 build/dienstedienst.zip.tmp
 vendor/**
 sandbox/**
+.phpunit.result.cache
