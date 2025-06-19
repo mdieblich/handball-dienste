@@ -1,6 +1,8 @@
 <?php
 
 require_once __DIR__."/../../log/Log.php";
+require_once __DIR__."/HttpClient.php";
+require_once __DIR__."/CurlHttpClient.php";
 
 abstract class Webpage {
     protected Log $logfile;
