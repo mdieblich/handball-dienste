@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__."/../../../handball/dienst/SpielAenderung.php";
+require_once __DIR__."/../../../src/handball/dienst/SpielAenderung.php";
 
 final class SpielAenderungTest extends TestCase {
 

@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__."/../../handball/Mannschaft.php";
-require_once __DIR__."/../../handball/Meisterschaft.php";
+require_once __DIR__."/../../src/handball/Mannschaft.php";
+require_once __DIR__."/../../src/handball/Meisterschaft.php";
 
 final class MannschaftTest extends TestCase {
 

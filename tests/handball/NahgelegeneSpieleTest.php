@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__."/../../handball/NahgelegeneSpiele.php";
-require_once __DIR__."/../../handball/Spiel.php";
+require_once __DIR__."/../../src/handball/NahgelegeneSpiele.php";
+require_once __DIR__."/../../src/handball/Spiel.php";
 
 final class NahgelegeneSpieleTest extends TestCase {
 
