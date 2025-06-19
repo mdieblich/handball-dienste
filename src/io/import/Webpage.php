@@ -26,7 +26,6 @@ abstract class Webpage {
         return $this->getDOM()->getElementsByTagName($id);
     }
     
-    
     private function getDOM(): DomDocument{
         if(isset($this->dom)){
             return $this->dom;
@@ -150,5 +149,3 @@ abstract class Webpage {
         return file_get_contents($files[count($files)-1]);
     }
 }
-
-?>
