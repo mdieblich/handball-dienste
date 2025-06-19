@@ -4,18 +4,25 @@ require_once __DIR__."/../../log/Log.php";
 
 abstract class Webpage {
     protected Log $logfile;
+    private HttpClient $httpClient;
 
     public string $url;
     protected string $html;
     private DomDocument $dom;
     private DOMXPath $xpath;
 
-    public function __construct(string $url, Log $logfile = null){
+    public function __construct(string $url, Log $logfile = null, HttpClient $httpClient = null) {
         if ($logfile === null) {
             $this->logfile = new NoLog();
         } else {
             $this->logfile = $logfile;
         }
+        if(is_null($httpClient)) {
+            $this->httpClient = new CurlHttpClient($this->logfile);
+        } else {
+            $this->httpClient = $httpClient;
+        }
+    
 
         $this->url = $url;
     }
@@ -68,50 +75,14 @@ abstract class Webpage {
             return $this->html;
         }
         // Lade die HTML-Seite von der URL
-        $this->logfile->log("Lade Daten von ".$this->url." (aus Internet)");
-        $htmlFromURL = $this->getHTMLFromURL();
+        $this->logfile->log(message: "Lade Daten von ".$this->url." (aus Internet)");
+        $htmlFromURL = $this->httpClient->fetch($this->url);
         $this->html = $htmlFromURL;
         
         // und speichere die HTML-Seite lokal
         $cacheFile = $this->saveLocally();
         $this->logfile->log("Daten von ".$this->url." gespeichert in ".$cacheFile);
         return $this->html;
-    }
-
-    private function getHTMLFromURL(): string {
-        $this->logfile->log("Lade Daten von ".$this->url);
-        $ch = curl_init();
-        $timeout = 15;
-        curl_setopt($ch, CURLOPT_URL, $this->url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-    
-        // Chrome simulieren
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36');
-    
-        // SSL bei Bedarf aktivieren
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,false);
-        
-        // Cookies speichern/verwalten
-        curl_setopt($ch, CURLOPT_COOKIEJAR, __DIR__ . "/cookies.txt");
-        curl_setopt($ch, CURLOPT_COOKIEFILE, __DIR__ . "/cookies.txt");
-    
-        // Debug
-        //curl_setopt($ch, CURLOPT_VERBOSE, true);
-        
-        $data = curl_exec($ch);
-        if($data === false){
-            $errorMessage = "Fehler beim Laden von \"$this->url\": ".curl_error($ch);
-            $this->logfile->log($errorMessage);
-            curl_close($ch);
-            throw new Exception($errorMessage);
-        }
-        curl_close($ch);
-        return $data;
     }
 
     protected function query(string $expression, ?DOMNode $contextNode = null): DOMNodeList {
