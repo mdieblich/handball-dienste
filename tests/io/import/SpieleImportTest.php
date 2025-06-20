@@ -32,4 +32,7 @@ final class SpieleImportTest extends TestCase {
         //
         $this->assertCount(1, $files);
     }
+
+    // TODO: Test für mehrere Meldungen einer Mannschaft
+    // TODO: Test für mehrere Mannschaften
 }
