@@ -30,7 +30,21 @@ class SpieleImport {
         $this->httpClient = $httpClient ?? new CurlHttpClient($this->logfile);
     }
     function fetchAllNuligaSpielelisten(): array{
-        // TODO implement
-        return array();
+        $mannschaftService = new MannschaftService($this->dbhandle);
+        $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
+        $nuligaPages = array();
+        foreach ($mannschaftsListe as $mannschaft) {
+            foreach($mannschaft->meldungen as $mannschaftsMeldung) {
+                $$nuligaPage = new NuLiga_SpiellisteTeam(
+                $mannschaftsMeldung->meisterschaft->kuerzel, 
+                $mannschaftsMeldung->nuligaLigaID, 
+                $mannschaftsMeldung->nuligaTeamID,
+                $this->logfile,
+                $this->httpClient
+                );
+                $nuligaPages[] = $nuligaPage->saveLocally();
+            }
+        }
+        return $nuligaPages;
     }
 }
