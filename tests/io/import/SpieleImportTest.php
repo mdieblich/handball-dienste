@@ -2,6 +2,7 @@
 use PHPUnit\Framework\TestCase;
 
 require_once __DIR__."/../../../src/io/import/SpieleImport.php";
+require_once __DIR__."/../../../src/io/import/importer.php"; // for the function deleteAll()
 
 require_once __DIR__."/../../db/MemoryDB.php";
 require_once __DIR__."/FakeHttpClient.php";
@@ -14,6 +15,9 @@ final class SpieleImportTest extends TestCase {
     private SpieleImport $import;
 
     public function setUp(): void {
+
+        deleteAll(Webpage::CACHEFILE_BASE_DIRECTORY());
+
         $this->db = new MemoryDB();
         $this->httpClient = new FakeHttpClient();
         $this->logfile = new NoLog();
@@ -41,15 +45,25 @@ final class SpieleImportTest extends TestCase {
             "mannschaft_id" => 1,
             "meisterschaft_id" => 1,
             "aktiv" => 1,
-            "nuligaLigaId" => $gruppe,
-            "nuligaTeamId" => $team_id
+            "nuligaLigaID" => $gruppe,
+            "nuligaTeamID" => $team_id
         ]);
+
+        $this->httpClient->set(
+            "https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?"
+                ."teamtable=$team_id&"
+                ."pageState=vorrunde&"
+                ."championship=".urlencode($meisterschaft)."&"
+                ."group=$gruppe",
+            "<html>Example-HTML</html>"
+        );
 
         // act
         $files = $this->import->fetchAllNuligaSpielelisten();
 
         //
         $this->assertCount(1, $files);
+        $this->assertEquals("<html>Example-HTML</html>", file_get_contents($files[0]), "Die gespeicherte HTML-Datei stimmt nicht mit der erwarteten überein.");
     }
 
     // TODO: Test für mehrere Meldungen einer Mannschaft
