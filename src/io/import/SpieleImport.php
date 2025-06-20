@@ -33,9 +33,9 @@ class SpieleImport {
         $mannschaftService = new MannschaftService($this->dbhandle);
         $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
         $nuligaPages = array();
-        foreach ($mannschaftsListe as $mannschaft) {
+        foreach ($mannschaftsListe->mannschaften as $mannschaft) {
             foreach($mannschaft->meldungen as $mannschaftsMeldung) {
-                $$nuligaPage = new NuLiga_SpiellisteTeam(
+                $nuligaPage = new NuLiga_SpiellisteTeam(
                     $mannschaftsMeldung->meisterschaft->kuerzel, 
                     $mannschaftsMeldung->nuligaLigaID, 
                     $mannschaftsMeldung->nuligaTeamID,
