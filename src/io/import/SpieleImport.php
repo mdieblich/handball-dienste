@@ -36,11 +36,11 @@ class SpieleImport {
         foreach ($mannschaftsListe as $mannschaft) {
             foreach($mannschaft->meldungen as $mannschaftsMeldung) {
                 $$nuligaPage = new NuLiga_SpiellisteTeam(
-                $mannschaftsMeldung->meisterschaft->kuerzel, 
-                $mannschaftsMeldung->nuligaLigaID, 
-                $mannschaftsMeldung->nuligaTeamID,
-                $this->logfile,
-                $this->httpClient
+                    $mannschaftsMeldung->meisterschaft->kuerzel, 
+                    $mannschaftsMeldung->nuligaLigaID, 
+                    $mannschaftsMeldung->nuligaTeamID,
+                    $this->logfile,
+                    $this->httpClient
                 );
                 $nuligaPages[] = $nuligaPage->saveLocally();
             }
