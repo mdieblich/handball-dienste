@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../../../../src/io/import/HttpClient.php';
+require_once __DIR__ . '/../../../src/io/import/HttpClient.php';
 
 class FakeHttpClient implements HttpClient {
 
