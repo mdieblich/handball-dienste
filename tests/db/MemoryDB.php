@@ -1,5 +1,7 @@
 <?php
-// MemoryDB.php
+
+define('ARRAY_A', 'ARRAY_A');
+
 class MemoryDB {
     public $prefix = 'wp_';
     private $tables = [];
