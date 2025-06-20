@@ -78,7 +78,10 @@ class MemoryDB {
             }
         }
         $results = [];
-        if (!isset($this->tables[$table])) return [];
+        if (!isset($this->tables[$table])) {
+            echo "WARNING: Table '$table' does not exist in MemoryDB.\n";
+            return [];
+        }
         foreach ($this->tables[$table] as $row) {
             $match = true;
             foreach ($where as $k => $v) {
