@@ -134,7 +134,7 @@ abstract class Webpage {
         return $directory;
     }
     public static function CACHEFILE_BASE_DIRECTORY(): string{
-        return plugin_dir_path(__FILE__)."cache";
+        return __DIR__."/cache";
     }
 
     protected abstract function getCacheFileIdentifier(): string;
