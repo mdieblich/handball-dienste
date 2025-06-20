@@ -26,6 +26,25 @@ final class SpieleImportTest extends TestCase {
         $gruppe = 363515;   // Regionsliga Männer
         $team_id = 1986866; // Turnerkreis Nippes 2 (Herren)
 
+        $this->db->insert("wp_meisterschaft", [
+            "id" => 1,
+            "kuerzel" => $meisterschaft
+        ]);
+        $this->db->insert("wp_mannschaft", [
+            "id" => 1,
+            "nummer" => 2,
+            "geschlecht" => "m"
+        ]);
+
+        $this->db->insert("wp_mannschaftsmeldung", [
+            "id" => 1,
+            "mannschaft_id" => 1,
+            "meisterschaft_id" => 1,
+            "aktiv" => 1,
+            "nuligaLigaId" => $gruppe,
+            "nuligaTeamId" => $team_id
+        ]);
+
         // act
         $files = $this->import->fetchAllNuligaSpielelisten();
 
