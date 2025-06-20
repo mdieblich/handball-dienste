@@ -11,6 +11,9 @@ class FakeHttpClient implements HttpClient {
     }
     
     public function fetch(string $url): string {
+        if(!isset($this->data[$url])) {
+            echo "WARNING: URL '$url' not found in FakeHttpClient data.\n";
+        }
         return $this->data[$url] ??'';
     }
 
