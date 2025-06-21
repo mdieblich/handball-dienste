@@ -5,11 +5,13 @@ require_once __DIR__."/../../../src/io/import/SpieleImport.php";
 require_once __DIR__."/../../../src/io/import/importer.php"; // for the function deleteAll()
 
 require_once __DIR__."/../../db/MemoryDB.php";
+require_once __DIR__."/../../db/DBBuilder.php";
 require_once __DIR__."/FakeHttpClient.php";
 
 final class SpieleImportTest extends TestCase {
 
     private MemoryDB $db;
+    private DBBuilder $builder;
     private FakeHttpClient $httpClient;
     private Log $logfile;
     private SpieleImport $import;
@@ -19,6 +21,7 @@ final class SpieleImportTest extends TestCase {
         deleteAll(Webpage::CACHEFILE_BASE_DIRECTORY());
 
         $this->db = new MemoryDB();
+        $this->builder = new DBBuilder($this->db);
         $this->httpClient = new FakeHttpClient();
         $this->logfile = new NoLog();
         $this->import = new SpieleImport($this->db, $this->logfile, $this->httpClient);
@@ -30,20 +33,13 @@ final class SpieleImportTest extends TestCase {
         $gruppe = 363515;   // Regionsliga Männer
         $team_id = 1986866; // Turnerkreis Nippes 2 (Herren)
 
-        $this->db->insert("wp_meisterschaft", [
-            "id" => 1,
-            "kuerzel" => $meisterschaft
-        ]);
-        $this->db->insert("wp_mannschaft", [
-            "id" => 1,
-            "nummer" => 2,
-            "geschlecht" => "m"
-        ]);
+        $meisterschaft_id = $this->builder->createMeisterschaft($meisterschaft);
+        $mannschaft_id = $this->builder->createMannschaft(2);
 
         $this->db->insert("wp_mannschaftsmeldung", [
             "id" => 1,
-            "mannschaft_id" => 1,
-            "meisterschaft_id" => 1,
+            "mannschaft_id" => $mannschaft_id,
+            "meisterschaft_id" => $meisterschaft_id,
             "aktiv" => 1,
             "nuligaLigaID" => $gruppe,
             "nuligaTeamID" => $team_id
