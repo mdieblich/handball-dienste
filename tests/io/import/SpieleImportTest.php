@@ -112,7 +112,6 @@ final class SpieleImportTest extends TestCase {
         $this->assertEquals("<html>Example-HTML 1</html>", file_get_contents($files[0]), "Die gespeicherte HTML-Datei stimmt nicht mit der erwarteten überein.");
         $this->assertEquals("<html>Example-HTML 2</html>", file_get_contents($files[1]), "Die gespeicherte HTML-Datei stimmt nicht mit der erwarteten überein.");
     }
-    
 
     public function test_fetchAllNuligaSpielelisten_laedtMehrereMannschaften() {
         // arrange
@@ -203,6 +202,32 @@ final class SpieleImportTest extends TestCase {
         // restliche Felder wie "ErgebnisOderSchiris" sind egal
     }
     // TODO Tests für die Extraktion mehrerer Spiele aus einer Seite
+    public function test_extractNuligaSpiele_speichertAlleSpiele() {
+        // arrange
+        $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
+        $gruppe = 363515;   // Regionsliga Männer
+        $team_id = 1986866; // Turnerkreis Nippes 2 (Herren)
+        $pageGrabber = new NuLiga_SpiellisteTeam(
+            $meisterschaft, 
+            $gruppe, 
+            $team_id,
+            $this->logfile,
+            $this->httpClient
+        );
+        $cachedFile = $pageGrabber->getCacheDirectory()."/spiel_1.html";
+        copy(
+            __DIR__."/fixtures/teamtable=$team_id&pageState=vorrunde&championship=".urlencode($meisterschaft)."&group=$gruppe.html",
+            $cachedFile
+        );
+        
+        // act
+        $this->import->extractNuligaSpiele();
+
+        // assert
+        // Es sind 26 Spiele auf der Seite, davon zwei "Spielfrei"
+        $rows = $this->db->get_results("SELECT * FROM wp_import_nuliga_spiele WHERE team_id = $team_id", ARRAY_A);
+        $this->assertCount( 26, $rows, "Es wurden nicht genug Spiele extrahiert.");
+    }
     // TODO Test der checkt, dass die gecachte Seite gelöscht wird
     // TODO Test für mehrere Seiten
 }
