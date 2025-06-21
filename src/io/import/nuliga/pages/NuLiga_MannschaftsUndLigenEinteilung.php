@@ -65,7 +65,7 @@ class NuLiga_MannschaftsUndLigenEinteilung extends Webpage{
         return count($zellen) == 1;
     }
 
-    protected function getCacheFileIdentifier(): string {
+    public function getCacheFileIdentifier(): string {
         return "club=".$this->club_id;
     }
 }

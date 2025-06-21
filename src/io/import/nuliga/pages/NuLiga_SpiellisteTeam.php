@@ -101,7 +101,7 @@ class NuLiga_SpiellisteTeam extends Webpage{
         return $this->sanitizeContent($zelle->textContent);
     }
 
-    protected function getCacheFileIdentifier(): string {
+    public function getCacheFileIdentifier(): string {
         return "teamtable=".$this->team_id
             ."&championship=".urlencode($this->meisterschaft)
             ."&group=".$this->gruppe;

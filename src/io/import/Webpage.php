@@ -137,7 +137,7 @@ abstract class Webpage {
         return __DIR__."/cache";
     }
 
-    protected abstract function getCacheFileIdentifier(): string;
+    public abstract function getCacheFileIdentifier(): string;
 
     private function getHTMLFromCache(): ?string {
         $directory = $this->getCacheDirectory();
