@@ -58,7 +58,59 @@ final class SpieleImportTest extends TestCase {
         $this->assertCount(1, $files);
         $this->assertEquals("<html>Example-HTML</html>", file_get_contents($files[0]), "Die gespeicherte HTML-Datei stimmt nicht mit der erwarteten überein.");
     }
-
-    // TODO: Test für mehrere Meldungen einer Mannschaft
+    
+    public function test_fetchAllNuligaSpielelisten_laedtMehrereMeldungen() {
+        // arrange
+        $meisterschaft1 = "KR 24/25"; // Köln/Rheinberg 2024/25
+        $gruppe1 = 363515;   // Regionsliga Männer
+        $team_id1 = 1986866; // Turnerkreis Nippes 2 (Herren)
+        
+        $meisterschaft2 = "KR 25/26"; // Köln/Rheinberg 2025/26
+        $gruppe2 = 424075;   // Regionsliga Männer
+        $team_id2 = 2095123; // Turnerkreis Nippes 2 (Herren)
+        
+        $meisterschaft_id1 = $this->builder->createMeisterschaft($meisterschaft1);
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id1,
+            $gruppe1,
+            $team_id1
+        );
+        
+        $this->httpClient->set(
+            NuLiga_SpiellisteTeam::$BASE_URL
+            ."teamtable=$team_id1&"
+            ."pageState=vorrunde&"
+            ."championship=".urlencode($meisterschaft1)."&"
+            ."group=$gruppe1",
+            "<html>Example-HTML 1</html>"
+        );
+        
+        $meisterschaft_id2 = $this->builder->createMeisterschaft($meisterschaft2);
+        $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id2,
+            $gruppe2,
+            $team_id2
+        );
+        
+        $this->httpClient->set(
+            NuLiga_SpiellisteTeam::$BASE_URL
+            ."teamtable=$team_id2&"
+            ."pageState=vorrunde&"
+            ."championship=".urlencode($meisterschaft2)."&"
+            ."group=$gruppe2",
+            "<html>Example-HTML 2</html>"
+        );
+        
+        // act
+        $files = $this->import->fetchAllNuligaSpielelisten();
+        
+        //
+        $this->assertCount(2, $files);
+        $this->assertEquals("<html>Example-HTML 1</html>", file_get_contents($files[0]), "Die gespeicherte HTML-Datei stimmt nicht mit der erwarteten überein.");
+        $this->assertEquals("<html>Example-HTML 2</html>", file_get_contents($files[1]), "Die gespeicherte HTML-Datei stimmt nicht mit der erwarteten überein.");
+    }
     // TODO: Test für mehrere Mannschaften
 }
