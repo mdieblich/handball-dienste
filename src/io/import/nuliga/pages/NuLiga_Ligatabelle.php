@@ -71,7 +71,7 @@ class NuLiga_Ligatabelle extends Webpage{
         }
         return $gegner;
     }
-    public function getCacheFileIdentifier(): string {
+    protected function getCacheFileIdentifier(): string {
         return "championship=".urlencode($this->meisterschaft)."&group=".$this->nuliga_liga_id;
     }
 }

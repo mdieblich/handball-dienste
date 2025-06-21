@@ -126,7 +126,7 @@ abstract class Webpage {
         return $filename;
     }
 
-    private function getCacheDirectory(): string {
+    public function getCacheDirectory(): string {
         $directory = self::CACHEFILE_BASE_DIRECTORY()."/".static::class."/".$this->getCacheFileIdentifier()."/";
         if(!is_dir($directory)){
             mkdir($directory, 0777, true);
@@ -137,7 +137,7 @@ abstract class Webpage {
         return __DIR__."/cache";
     }
 
-    public abstract function getCacheFileIdentifier(): string;
+    protected abstract function getCacheFileIdentifier(): string;
 
     private function getHTMLFromCache(): ?string {
         $directory = $this->getCacheDirectory();
