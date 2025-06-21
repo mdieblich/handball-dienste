@@ -29,7 +29,7 @@ class SpieleImport {
         $this->logfile = $logfile ?? new NoLog();
         $this->httpClient = $httpClient ?? new CurlHttpClient($this->logfile);
     }
-    function fetchAllNuligaSpielelisten(): array{
+    public function fetchAllNuligaSpielelisten(): array{
         $mannschaftService = new MannschaftService($this->dbhandle);
         $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
         $nuligaPages = array();
@@ -46,5 +46,9 @@ class SpieleImport {
             }
         }
         return $nuligaPages;
+    }
+
+    public function extractNuligaSpiele(): void{
+        
     }
 }

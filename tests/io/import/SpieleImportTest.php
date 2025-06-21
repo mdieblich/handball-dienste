@@ -167,4 +167,42 @@ final class SpieleImportTest extends TestCase {
         $this->assertEquals("<html>Example-HTML 1</html>", file_get_contents($files[0]), "Die gespeicherte HTML-Datei stimmt nicht mit der erwarteten überein.");
         $this->assertEquals("<html>Example-HTML 2</html>", file_get_contents($files[1]), "Die gespeicherte HTML-Datei stimmt nicht mit der erwarteten überein.");
     }
+    public function test_extractNuligaSpiele_speichertEinSpielKorrektInDB() {
+        // arrange
+        $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
+        $gruppe = 363515;   // Regionsliga Männer
+        $team_id = 1986866; // Turnerkreis Nippes 2 (Herren)
+        $pageGrabber = new NuLiga_SpiellisteTeam(
+            $meisterschaft, 
+            $gruppe, 
+            $team_id,
+            $this->logfile,
+            $this->httpClient
+        );
+        $cachedFile = $pageGrabber->getCacheDirectory()."/spiel_1.html";
+        copy(
+            __DIR__."/fixtures/teamtable=$team_id&pageState=vorrunde&championship=".urlencode($meisterschaft)."&group=$gruppe.html",
+            $cachedFile
+        );
+        
+        // act
+        $this->import->extractNuligaSpiele();
+
+        // assert
+        // Checken, ob das Spiel in der DB gespeichert wurde
+        $rows = $this->db->get_results("SELECT * FROM wp_import_nuliga_spiele WHERE team_id = $team_id", ARRAY_A);
+        $this->assertCount(1, $rows, "Es wurde kein Spiel in der DB gespeichert.");
+        $spiel = $rows[0];
+        $this->assertEquals("Sa", $spiel['wochentag'], "Der Wochentag stimmt nicht überein.");
+        $this->assertEquals("07.09.2024", $spiel['datum'], "Das Datum stimmt nicht überein.");
+        $this->assertEquals("17:00", $spiel['uhrzeit'], "Die Uhrzeit stimmt nicht überein.");
+        $this->assertEquals("06057", $spiel['halle'], "Die Halle stimmt nicht überein.");
+        $this->assertEquals("703", $spiel['spielNr'], "Die SpielNr stimmt nicht überein.");
+        $this->assertEquals("TuS 82 Opladen III", $spiel['heimmannschaft'], "Die Heimmannschaft stimmt nicht überein.");
+        $this->assertEquals("Turnerkreis Nippes II", $spiel['gastmannschaft'], "Die Gastmannschaft stimmt nicht überein.");
+        // restliche Felder wie "ErgebnisOderSchiris" sind egal
+    }
+    // TODO Tests für die Extraktion mehrerer Spiele aus einer Seite
+    // TODO Test der checkt, dass die gecachte Seite gelöscht wird
+    // TODO Test für mehrere Seiten
 }
