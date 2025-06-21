@@ -19,5 +19,15 @@ class DBBuilder{
             "geschlecht" => $geschlecht
         ]);
         return $this->db->insert_id;
+    }
+    public function createMannschaftsMeldung(int $mannschaft_id, int $meisterschaft_id, int $nuligaLigaID, int $nuligaTeamID): int {
+        $this->db->insert("wp_mannschaftsmeldung", [
+            "aktiv" => 1,
+            "mannschaft_id" => $mannschaft_id,
+            "meisterschaft_id" => $meisterschaft_id,
+            "nuligaLigaID" => $nuligaLigaID,
+            "nuligaTeamID" => $nuligaTeamID
+        ]);
+        return $this->db->insert_id;
     }   
 }

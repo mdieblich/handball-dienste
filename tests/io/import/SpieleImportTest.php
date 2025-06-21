@@ -35,18 +35,15 @@ final class SpieleImportTest extends TestCase {
 
         $meisterschaft_id = $this->builder->createMeisterschaft($meisterschaft);
         $mannschaft_id = $this->builder->createMannschaft(2);
-
-        $this->db->insert("wp_mannschaftsmeldung", [
-            "id" => 1,
-            "mannschaft_id" => $mannschaft_id,
-            "meisterschaft_id" => $meisterschaft_id,
-            "aktiv" => 1,
-            "nuligaLigaID" => $gruppe,
-            "nuligaTeamID" => $team_id
-        ]);
+        $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            $gruppe,
+            $team_id
+        );
 
         $this->httpClient->set(
-            "https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?"
+            NuLiga_SpiellisteTeam::$BASE_URL
                 ."teamtable=$team_id&"
                 ."pageState=vorrunde&"
                 ."championship=".urlencode($meisterschaft)."&"

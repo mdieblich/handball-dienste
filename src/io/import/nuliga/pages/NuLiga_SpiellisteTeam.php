@@ -8,8 +8,10 @@ class NuLiga_SpiellisteTeam extends Webpage{
     private int $gruppe;
     private int $team_id;
 
+    public static string $BASE_URL = "https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?";
+
     public function __construct(string $meisterschaft, int $gruppe, int $team_id, Log $logfile=null, HttpClient $httpClient=null) {
-        parent::__construct("https://hnr-handball.liga.nu/cgi-bin/WebObjects/nuLigaHBDE.woa/wa/teamPortrait?"
+        parent::__construct(self::$BASE_URL
             ."teamtable=".$team_id
             ."&pageState=vorrunde"
             ."&championship=".urlencode($meisterschaft)
