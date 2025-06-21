@@ -178,17 +178,15 @@ final class SpieleImportTest extends TestCase {
             $this->logfile,
             $this->httpClient
         );
+        $exampleFile = __DIR__."/fixtures/teamtable=$team_id&pageState=vorrunde&championship=".urlencode($meisterschaft)."&group=$gruppe.html";
         $cachedFile = $pageGrabber->getCacheDirectory()."/spiel_1.html";
-        copy(
-            __DIR__."/fixtures/teamtable=$team_id&pageState=vorrunde&championship=".urlencode($meisterschaft)."&group=$gruppe.html",
-            $cachedFile
-        );
+        copy($exampleFile, $cachedFile);
+        $this->assertFileExists( $cachedFile);
         
         // act
         $this->import->extractNuligaSpiele();
 
         // assert
-        // Checken, ob das Spiel in der DB gespeichert wurde
         $rows = $this->db->get_results("SELECT * FROM wp_import_nuliga_spiele WHERE team_id = $team_id", ARRAY_A);
         $this->assertCount(1, $rows, "Es wurde kein Spiel in der DB gespeichert.");
         $spiel = $rows[0];
@@ -201,7 +199,7 @@ final class SpieleImportTest extends TestCase {
         $this->assertEquals("Turnerkreis Nippes II", $spiel['gastmannschaft'], "Die Gastmannschaft stimmt nicht überein.");
         // restliche Felder wie "ErgebnisOderSchiris" sind egal
     }
-    // TODO Tests für die Extraktion mehrerer Spiele aus einer Seite
+
     public function test_extractNuligaSpiele_speichertAlleSpiele() {
         // arrange
         $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
@@ -214,11 +212,10 @@ final class SpieleImportTest extends TestCase {
             $this->logfile,
             $this->httpClient
         );
+        $exampleFile = __DIR__."/fixtures/teamtable=$team_id&pageState=vorrunde&championship=".urlencode($meisterschaft)."&group=$gruppe.html";
         $cachedFile = $pageGrabber->getCacheDirectory()."/spiel_1.html";
-        copy(
-            __DIR__."/fixtures/teamtable=$team_id&pageState=vorrunde&championship=".urlencode($meisterschaft)."&group=$gruppe.html",
-            $cachedFile
-        );
+        copy($exampleFile, $cachedFile);
+        $this->assertFileExists( $cachedFile);
         
         // act
         $this->import->extractNuligaSpiele();
@@ -228,6 +225,29 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_import_nuliga_spiele WHERE team_id = $team_id", ARRAY_A);
         $this->assertCount( 26, $rows, "Es wurden nicht genug Spiele extrahiert.");
     }
-    // TODO Test der checkt, dass die gecachte Seite gelöscht wird
+    
+    public function test_extractNuligaSpiele_loeschtDateiAusCache() {
+        // arrange
+        $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
+        $gruppe = 363515;   // Regionsliga Männer
+        $team_id = 1986866; // Turnerkreis Nippes 2 (Herren)
+        $pageGrabber = new NuLiga_SpiellisteTeam(
+            $meisterschaft, 
+            $gruppe, 
+            $team_id,
+            $this->logfile,
+            $this->httpClient
+        );
+        $exampleFile = __DIR__."/fixtures/teamtable=$team_id&pageState=vorrunde&championship=".urlencode($meisterschaft)."&group=$gruppe.html";
+        $cachedFile = $pageGrabber->getCacheDirectory()."/spiel_1.html";
+        copy($exampleFile, $cachedFile);
+        $this->assertFileExists( $cachedFile);
+        
+        // act
+        $this->import->extractNuligaSpiele();
+
+        // 
+        $this->assertFileDoesNotExist( $cachedFile);
+    }
     // TODO Test für mehrere Seiten
 }
