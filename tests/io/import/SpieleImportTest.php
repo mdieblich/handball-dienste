@@ -249,5 +249,48 @@ final class SpieleImportTest extends TestCase {
         // 
         $this->assertFileDoesNotExist( $cachedFile);
     }
-    // TODO Test für mehrere Seiten
+    
+    public function test_extractNuligaSpiele_speichertSpieleAllerMannschaften() {
+        // arrange
+        $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
+        $gruppe1 = 363515;   // Regionsliga Männer
+        $team_id1 = 1986866; // Turnerkreis Nippes 2 (Herren)
+        $pageGrabber = new NuLiga_SpiellisteTeam(
+            $meisterschaft, 
+            $gruppe1, 
+            $team_id1,
+            $this->logfile,
+            $this->httpClient
+        );
+        $exampleFile1 = __DIR__."/fixtures/teamtable=$team_id1&pageState=vorrunde&championship=".urlencode($meisterschaft)."&group=$gruppe1.html";
+        $cachedFile1 = $pageGrabber->getCacheDirectory()."/spiel_1.html";
+        copy($exampleFile1, $cachedFile1);
+        $this->assertFileExists( $cachedFile1);
+        
+        $gruppe2 = 363729;   // Regionsklasse Männer
+        $team_id2 = 1986887; // Turnerkreis Nippes 3 (Herren)
+        $pageGrabber = new NuLiga_SpiellisteTeam(
+            $meisterschaft, 
+            $gruppe2, 
+            $team_id2,
+            $this->logfile,
+            $this->httpClient
+        );
+        $exampleFile2 = __DIR__."/fixtures/teamtable=$team_id2&pageState=vorrunde&championship=".urlencode($meisterschaft)."&group=$gruppe2.html";
+        $cachedFile2 = $pageGrabber->getCacheDirectory()."/spiel_1.html";
+        copy($exampleFile2, $cachedFile2);
+        $this->assertFileExists( $cachedFile2);
+        
+        // act
+        $this->import->extractNuligaSpiele();
+
+        // assert
+        // Es sind 26 Spiele auf der Seite, davon zwei "Spielfrei"
+        $rows = $this->db->get_results("SELECT * FROM wp_import_nuliga_spiele WHERE team_id = $team_id1", ARRAY_A);
+        $this->assertCount( 26, $rows, "Es wurden nicht genug Spiele für Team 1 extrahiert.");
+
+        // Auch hier: Es sind 26 Spiele auf der Seite, davon zwei "Spielfrei"
+        $rows = $this->db->get_results("SELECT * FROM wp_import_nuliga_spiele WHERE team_id = $team_id2", ARRAY_A);
+        $this->assertCount( 26, $rows, "Es wurden nicht genug Spiele für Team 2 extrahiert.");
+    }
 }
