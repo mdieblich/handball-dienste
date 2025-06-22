@@ -49,6 +49,13 @@ class SpieleImport {
     }
 
     public function extractNuligaSpiele(): void{
-        
+        // TODO DAO für NuLigaSpiel erstellen
+        $cachedPages = NuLiga_SpiellisteTeam::getAllCachedPages($this->logfile, $this->httpClient);
+        foreach ($cachedPages as $nuligaPage) {
+            $nuligaSpiele = $nuligaPage->getSpiele();
+            foreach ($nuligaSpiele as $nuligaSpiel) {
+                // TODO Spiel speichern mit NuLigaSpielDAO
+            }
+        }
     }
 }
