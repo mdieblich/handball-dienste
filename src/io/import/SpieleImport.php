@@ -15,6 +15,7 @@ require_once __DIR__."/../../db/dao/MannschaftsMeldungDAO.php";
 require_once __DIR__."/../../db/dao/MeisterschaftDAO.php";
 require_once __DIR__."/../../db/dao/SpielDAO.php";
 require_once __DIR__."/../../db/dao/nuliga/NuLigaSpielDAO.php";
+require_once __DIR__."/../../db/dao/Spiel_toBeImportedDAO.php";
 require_once __DIR__."/../../db/dao/DienstDAO.php";
 
 require_once __DIR__."/../../db/service/MannschaftService.php";
@@ -63,7 +64,44 @@ class SpieleImport {
         }
     }
 
-    public function convertSpiele(): void {
-        
+    public function convertSpiele(string $vereinsname=null): void {
+        if($vereinsname === null){
+            // Aus Wordpress-Optionen lesen
+            $vereinsname = get_option('vereinsname');
+        }
+
+        $nuligaSpielDAO = new NuligaSpielDAO($this->dbhandle);
+        $importedSpieleDAO = new Spiel_toBeImportedDAO($this->dbhandle);
+        $mannschaftService = new MannschaftService($this->dbhandle);
+        $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
+
+        $nuligaSpiele = $nuligaSpielDAO->fetchAll();
+        foreach ($nuligaSpiele as $nuligaSpiel) {
+            $this->logfile->log("Konvertiere NuLiga-Spiel {$nuligaSpiel->getLogOutput()}");
+            if($nuligaSpiel->isSpielfrei()){
+                $this->logfile->log("Spiel {$nuligaSpiel->getLogOutput()} ist spielfrei, überspringe Konvertierung.");
+                continue;
+            }
+            if($nuligaSpiel->isUngueltig()){
+                $this->logfile->log("Spiel {$nuligaSpiel->getLogOutput()} ist ungültig, überspringe Konvertierung.");
+                continue;
+            }
+
+            $meldung = $mannschaftsListe->findMeldungByNuligaIDs($nuligaSpiel->nuligaLigaID, $nuligaSpiel->nuligaTeamID);
+            if(empty($meldung)){
+                $this->logfile->log("Keine Mannschafts-Meldung für NuLiga-Spiel {$nuligaSpiel->getLogOutput()} gefunden, überspringe Konvertierung.");
+                continue;
+            }
+
+            $spiel = $nuligaSpiel->extractSpielForImport($meldung, $vereinsname);
+            
+            if($spiel !== null) {
+                $this->logfile->log("Speichere Spiel in DB: {$spiel->id}");
+                $importedSpieleDAO->insert($spiel);
+            } else {
+                $this->logfile->log("Konvertierung von NuLiga-Spiel {$nuligaSpiel->getLogOutput()} fehlgeschlagen.");
+            }
+            $nuligaSpielDAO->delete(array('id' => $nuligaSpiel->id));
+        }
     }
 }

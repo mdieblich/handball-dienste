@@ -322,7 +322,7 @@ final class SpieleImportTest extends TestCase {
         $nuligaSpielDao->insert($nuligaSpiel);
 
         // act
-        $this->import->convertSpiele();
+        $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE spielNr = 703", ARRAY_A);
@@ -367,7 +367,7 @@ final class SpieleImportTest extends TestCase {
         $nuligaSpielDao->insert($nuligaSpiel);
 
         // act
-        $this->import->convertSpiele();
+        $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE nuligaTeamID = 1986866", ARRAY_A);
@@ -399,7 +399,7 @@ final class SpieleImportTest extends TestCase {
         $nuligaSpielDao->insert($nuligaSpiel);
 
         // act
-        $this->import->convertSpiele();
+        $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported", ARRAY_A);
@@ -430,7 +430,7 @@ final class SpieleImportTest extends TestCase {
         $nuligaSpielDao->insert($nuligaSpiel);
 
         // act
-        $this->import->convertSpiele();
+        $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported", ARRAY_A);
@@ -461,7 +461,7 @@ final class SpieleImportTest extends TestCase {
         $nuligaSpielDao->insert($nuligaSpiel);
 
         // act
-        $this->import->convertSpiele();
+        $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported", ARRAY_A);
@@ -493,7 +493,7 @@ final class SpieleImportTest extends TestCase {
         $nuligaSpielDao->insert($nuligaSpiel);
 
         // act
-        $this->import->convertSpiele();
+        $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported", ARRAY_A);
@@ -526,7 +526,7 @@ final class SpieleImportTest extends TestCase {
         $nuligaSpielDao->insert($nuligaSpiel);
 
         // act
-        $this->import->convertSpiele();
+        $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
         $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel", ARRAY_A);
