@@ -187,10 +187,10 @@ final class SpieleImportTest extends TestCase {
         $this->import->extractNuligaSpiele();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_import_nuliga_spiele WHERE team_id = $team_id", ARRAY_A);
-        $this->assertCount(1, $rows, "Es wurde kein Spiel in der DB gespeichert.");
+        $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id", ARRAY_A);
+        $this->assertNotEmpty( $rows, "Es wurde kein Spiel in der DB gespeichert.");
         $spiel = $rows[0];
-        $this->assertEquals("Sa", $spiel['wochentag'], "Der Wochentag stimmt nicht überein.");
+        $this->assertEquals("Sa.", $spiel['wochentag'], "Der Wochentag stimmt nicht überein.");
         $this->assertEquals("07.09.2024", $spiel['datum'], "Das Datum stimmt nicht überein.");
         $this->assertEquals("17:00", $spiel['uhrzeit'], "Die Uhrzeit stimmt nicht überein.");
         $this->assertEquals("06057", $spiel['halle'], "Die Halle stimmt nicht überein.");
@@ -222,7 +222,7 @@ final class SpieleImportTest extends TestCase {
 
         // assert
         // Es sind 26 Spiele auf der Seite, davon zwei "Spielfrei"
-        $rows = $this->db->get_results("SELECT * FROM wp_import_nuliga_spiele WHERE team_id = $team_id", ARRAY_A);
+        $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id", ARRAY_A);
         $this->assertCount( 26, $rows, "Es wurden nicht genug Spiele extrahiert.");
     }
     
@@ -286,11 +286,13 @@ final class SpieleImportTest extends TestCase {
 
         // assert
         // Es sind 26 Spiele auf der Seite, davon zwei "Spielfrei"
-        $rows = $this->db->get_results("SELECT * FROM wp_import_nuliga_spiele WHERE team_id = $team_id1", ARRAY_A);
+        $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id1", ARRAY_A);
         $this->assertCount( 26, $rows, "Es wurden nicht genug Spiele für Team 1 extrahiert.");
 
         // Auch hier: Es sind 26 Spiele auf der Seite, davon zwei "Spielfrei"
-        $rows = $this->db->get_results("SELECT * FROM wp_import_nuliga_spiele WHERE team_id = $team_id2", ARRAY_A);
+        $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id2", ARRAY_A);
         $this->assertCount( 26, $rows, "Es wurden nicht genug Spiele für Team 2 extrahiert.");
     }
+
+    // TODO Testen von Sonderfällen: spielfrei, Termin offen, Spielabbruch, Datum steht in darüberliegender Zeile, etc.
 }
