@@ -55,7 +55,7 @@ abstract class Webpage {
         return $this->dom;
     }
 
-    private function getHTML(): string {
+    public function getHTML(): string {
         if(isset($this->html)){
             return $this->html;
         }
@@ -137,7 +137,7 @@ abstract class Webpage {
         return __DIR__."/cache";
     }
 
-    protected abstract function getCacheFileIdentifier(): string;
+    abstract protected function getCacheFileIdentifier(): string;
 
     private function getHTMLFromCache(): ?string {
         $directory = $this->getCacheDirectory();
