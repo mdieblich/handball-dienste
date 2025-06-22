@@ -133,7 +133,7 @@ class Spiel{
         return $this->halle === $other->halle;
     }
 
-    public function createDienste(Log $logfile=null){
+    public function createDienste(Log $logfile=null): void{
         if(empty($logfile)){
             $logfile = new NoLog();
         }
