@@ -72,8 +72,11 @@ class MemoryDB {
         if (isset($matches[3])) {
             $conds = explode('AND', $matches[3]);
             foreach ($conds as $cond) {
-                if (preg_match('/(\w+)\s*=\s*("?)(.*?)\2/', trim($cond), $cm)) {
-                    $where[$cm[1]] = $cm[3];
+                if (preg_match('/(\w+)\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|(\S+))/', trim($cond), $cm)) {
+                    // Wert kann in $cm[2] (doppelte Anführungszeichen), $cm[3] (einfache Anführungszeichen) oder $cm[4] (ohne Anführungszeichen) stehen
+                    $value = isset($cm[2]) && $cm[2] !== '' ? $cm[2]
+                        : (isset($cm[3]) && $cm[3] !== '' ? $cm[3] : $cm[4]);
+                    $where[$cm[1]] = $value;
                 }
             }
         }
