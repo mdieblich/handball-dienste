@@ -3,7 +3,8 @@
 require_once __DIR__."/../../../../handball/Mannschaft.php";
 require_once __DIR__."/../../../../handball/MannschaftsMeldung.php";
 require_once __DIR__."/../../../../handball/Spiel.php";
-require_once __DIR__."/../../../../handball/Gegner.php";
+require_once __DIR__."/../../../../handball/Spiel.php";
+require_once __DIR__."/../../Spiel_toBeImported.php";
 
 class NuLigaSpiel implements \JsonSerializable {
 
@@ -53,7 +54,7 @@ class NuLigaSpiel implements \JsonSerializable {
         }
         return $termin.": ".$this->heimmannschaft." vs. ".$this->gastmannschaft.": Halle ".$this->halle;
     } 
-    
+
     public function extractSpiel(MannschaftsMeldung $meldung, string $teamName): Spiel{
         $spiel = new Spiel();
         $spiel->spielNr = (int) $this->spielNr;
@@ -76,6 +77,37 @@ class NuLigaSpiel implements \JsonSerializable {
             $spiel->gegner = Gegner::fromName($heim);
         }
         $spiel->gegner->zugehoerigeMeldung = $meldung;
+        
+        return $spiel;
+    }
+    public function extractSpielForImport(MannschaftsMeldung $meldung, string $vereinsname): Spiel_toBeImported{
+        $teamName = $vereinsname;
+        if($meldung->mannschaft->nummer >= 2){
+            $teamName .= " ";
+            for($i=0; $i<$meldung->mannschaft->nummer; $i++){
+                $teamName .= "I";
+            }
+        }
+        
+        $spiel = new Spiel_toBeImported();
+        $spiel->spielNr = (int) $this->spielNr;
+        $spiel->meldung_id = $meldung->id;
+        
+        $spiel->anwurf = $this->getAnwurf();
+        $spiel->halle = (int) $this->halle;
+        
+        $heim = $this->sanitizeTeamname($this->heimmannschaft);
+        $gast = $this->sanitizeTeamname($this->gastmannschaft);
+
+        if( ($heim === $teamName) || 
+        // In manchen Gruppen (z.B. Turnieren) wird die erste Mannschaft hinten mit "1" ergänzt, was hier abgefangen werden soll
+        ($heim === $teamName." 1") ){
+            $spiel->heimspiel = true;
+            $spiel->gegnerName = $gast;
+        } else {
+            $spiel->heimspiel = false;
+            $spiel->gegnerName = $heim;
+        }
         
         return $spiel;
     }
