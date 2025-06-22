@@ -126,6 +126,14 @@ abstract class Webpage {
         return $filename;
     }
 
+    public function deleteLocally(): void {
+        $directory = $this->getCacheDirectory();
+        $files = glob($directory."*.html");
+        foreach ($files as $file) {
+            unlink($file);
+        }
+    }
+
     public function getCacheDirectory(): string {
         $directory = self::CACHEFILE_BASE_DIRECTORY()."/".static::class."/".$this->getCacheFileIdentifier()."/";
         if(!is_dir($directory)){

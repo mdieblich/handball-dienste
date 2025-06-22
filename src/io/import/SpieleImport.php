@@ -57,6 +57,7 @@ class SpieleImport {
             foreach ($nuligaSpiele as $nuligaSpiel) {
                 $nuligaSpielDAO->insert($nuligaSpiel);
             }
+            $nuligaPage->deleteLocally();
         }
     }
 }
