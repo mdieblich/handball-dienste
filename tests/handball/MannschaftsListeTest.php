@@ -28,9 +28,9 @@ final class MannschaftsListeTest extends TestCase {
         $liste = new MannschaftsListe([$herren1, $herren2]);
 
         // act
-        $foundMannschaft = $liste->findMeldungByNuligaIDs(123, 456);
+        $foundMeldung = $liste->findMeldungByNuligaIDs(123, 456);
 
         // assert
-        $this->assertEquals($herren1->id,  $foundMannschaft->id);
+        $this->assertEquals($herren1->id,  $foundMeldung->mannschaft->id);
     }
 }

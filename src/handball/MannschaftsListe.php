@@ -46,11 +46,11 @@ class MannschaftsListe{
         return $nuligaBezeichnungen;
     }
 
-    public function findMeldungByNuligaIDs(int $nuligaLigaID, int $nuligaTeamID): ?Mannschaft {
+    public function findMeldungByNuligaIDs(int $nuligaLigaID, int $nuligaTeamID): ?MannschaftsMeldung {
         foreach($this->mannschaften as $mannschaft){
             foreach($mannschaft->meldungen as $meldung){
                 if($meldung->nuligaLigaID === $nuligaLigaID && $meldung->nuligaTeamID === $nuligaTeamID){
-                    return $meldung->mannschaft;
+                    return $meldung;
                 }
             }
         }
