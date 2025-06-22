@@ -53,8 +53,10 @@ class SpieleImport {
         $nuligaSpielDAO = new NuligaSpielDAO($this->dbhandle);
         $cachedPages = NuLiga_SpiellisteTeam::getAllCachedPages($this->logfile, $this->httpClient);
         foreach ($cachedPages as $nuligaPage) {
+            $this->logfile->log("Lese NuLiga-Spiele von $nuligaPage->url");
             $nuligaSpiele = $nuligaPage->getNuLigaSpiele();
             foreach ($nuligaSpiele as $nuligaSpiel) {
+                $this->logfile->log("Speichere extrahiertes Spiel in DB: {$nuligaSpiel->getLogOutput()}");
                 $nuligaSpielDAO->insert($nuligaSpiel);
             }
             $nuligaPage->deleteLocally();
