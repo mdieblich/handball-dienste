@@ -12,7 +12,7 @@ class NuLigaSpiel implements \JsonSerializable {
     public int $nuligaLigaID;   // Zur Nachverfolgung, in welcher Liga das Spiel ist
     public int $nuligaTeamID;   // Zur Nachverfolgung, für welches Team das Spiel ist
     public string $wochentag;
-    public string $terminOffen = false;
+    public bool $terminOffen = false;
     public string $datum;
     public string $uhrzeit;
     public string $halle;
