@@ -67,6 +67,8 @@ class NuLiga_SpiellisteTeam extends Webpage{
     private function extractSpiel(DOMElement $tabellenZeile, ?NuLigaSpiel $vorherigesSpiel): ?NuLigaSpiel {
         $zellen = $this->extractTabellenZellen($tabellenZeile);
         $spiel = new NuLigaSpiel();
+        $spiel->nuligaTeamID = $this->team_id;
+        $spiel->nuligaLigaID = $this->gruppe;
         $spiel->wochentag = $this->extractTrimmedContent($zellen[0]);
         $spiel->terminOffen = ($spiel->wochentag == "Termin offen");
         if($spiel->terminOffen){
