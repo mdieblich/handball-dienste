@@ -96,7 +96,7 @@ class SpieleImport {
             $spiel = $nuligaSpiel->extractSpielForImport($meldung, $vereinsname);
             
             if($spiel !== null) {
-                $this->logfile->log("Speichere Spiel in DB: {$spiel->id}");
+                $this->logfile->log("Speichere Spiel in DB");
                 $importedSpieleDAO->insert($spiel);
             } else {
                 $this->logfile->log("Konvertierung von NuLiga-Spiel {$nuligaSpiel->getLogOutput()} fehlgeschlagen.");
