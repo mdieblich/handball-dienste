@@ -71,7 +71,7 @@ class Mannschaft {
         return substr($kurzname, 1, strlen($kurzname)-2);
     }
     public static function getNummerFromKurzname(string $kurzname): int {
-        return substr($kurzname, strlen($kurzname)-1, 1);
+        return (int) substr($kurzname, strlen($kurzname)-1, 1);
     }
     
     function createNuLigaMannschaftsBezeichnung(): string{
