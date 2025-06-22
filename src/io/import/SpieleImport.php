@@ -14,6 +14,7 @@ require_once __DIR__."/../../db/dao/MannschaftDAO.php";
 require_once __DIR__."/../../db/dao/MannschaftsMeldungDAO.php";
 require_once __DIR__."/../../db/dao/MeisterschaftDAO.php";
 require_once __DIR__."/../../db/dao/SpielDAO.php";
+require_once __DIR__."/../../db/dao/nuliga/NuLigaSpielDAO.php";
 require_once __DIR__."/../../db/dao/DienstDAO.php";
 
 require_once __DIR__."/../../db/service/MannschaftService.php";
@@ -49,12 +50,12 @@ class SpieleImport {
     }
 
     public function extractNuligaSpiele(): void{
-        // TODO DAO für NuLigaSpiel erstellen
+        $nuligaSpielDAO = new NuligaSpielDAO($this->dbhandle);
         $cachedPages = NuLiga_SpiellisteTeam::getAllCachedPages($this->logfile, $this->httpClient);
         foreach ($cachedPages as $nuligaPage) {
-            $nuligaSpiele = $nuligaPage->getSpiele();
+            $nuligaSpiele = $nuligaPage->getNuLigaSpiele();
             foreach ($nuligaSpiele as $nuligaSpiel) {
-                // TODO Spiel speichern mit NuLigaSpielDAO
+                $nuligaSpielDAO->insert($nuligaSpiel);
             }
         }
     }
