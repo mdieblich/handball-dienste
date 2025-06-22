@@ -62,4 +62,8 @@ class SpieleImport {
             $nuligaPage->deleteLocally();
         }
     }
+
+    public function convertSpiele(): void {
+        
+    }
 }

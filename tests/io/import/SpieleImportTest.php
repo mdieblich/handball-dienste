@@ -190,6 +190,9 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id", ARRAY_A);
         $this->assertNotEmpty( $rows, "Es wurde kein Spiel in der DB gespeichert.");
         $spiel = $rows[0];
+        $this->assertEquals($team_id, $spiel['nuligaTeamID'], "Die nuliga TeamID stimmt nicht überein.");
+        $this->assertEquals($gruppe, $spiel['nuligaLigaID'], "Die nuliga LigaID stimmt nicht überein.");
+        $this->assertEquals("Sa.", $spiel['wochentag'], "Der Wochentag stimmt nicht überein.");
         $this->assertEquals("Sa.", $spiel['wochentag'], "Der Wochentag stimmt nicht überein.");
         $this->assertEquals("07.09.2024", $spiel['datum'], "Das Datum stimmt nicht überein.");
         $this->assertEquals("17:00", $spiel['uhrzeit'], "Die Uhrzeit stimmt nicht überein.");
@@ -294,5 +297,42 @@ final class SpieleImportTest extends TestCase {
         $this->assertCount( 26, $rows, "Es wurden nicht genug Spiele für Team 2 extrahiert.");
     }
 
-    // TODO Testen von Sonderfällen: spielfrei, Termin offen, Spielabbruch, Datum steht in darüberliegender Zeile, etc.
+    public function test_convertSpiele_konvertiertEinSpiel(){
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+
+        $nuligaSpiel = new NuLigaSpiel();
+        $nuligaSpiel->nuligaTeamID = 1986866;
+        $nuligaSpiel->nuligaLigaID = 363515;
+        $nuligaSpiel->wochentag = "Sa.";
+        $nuligaSpiel->datum = "07.09.2024";
+        $nuligaSpiel->uhrzeit = "17:00";
+        $nuligaSpiel->halle = "06057";  
+        $nuligaSpiel->spielNr = "703";
+        $nuligaSpiel->heimmannschaft = "TuS 82 Opladen III";
+        $nuligaSpiel->gastmannschaft = "Turnerkreis Nippes II";
+        $nuligaSpielDao = new NuligaSpielDAO($this->db);
+        $nuligaSpielDao->insert($nuligaSpiel);
+
+        // act
+        $this->import->convertSpiele();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel WHERE spielNr = 703", ARRAY_A);
+        $this->assertNotEmpty($rows, "Es wurde kein Spiel in der DB gespeichert.");
+        $this->assertEquals()
+    }
+
+    // TODO Testen: konvertiert alle Spiele
+    // TODO Umgang mit "Spielfrei"
+    // TODO Umgang mit "Termin offen"
+    // TODO Testen "ungültig" (z.B. kein Anwurf, keine Halle)
+    // TODO TEsten: Löscht "verbrauchte" Nuliga-Spiele aus der DB
 }
