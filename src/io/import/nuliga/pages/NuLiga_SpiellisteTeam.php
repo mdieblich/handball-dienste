@@ -106,6 +106,29 @@ class NuLiga_SpiellisteTeam extends Webpage{
             ."&championship=".urlencode($this->meisterschaft)
             ."&group=".$this->gruppe;
     }
-}
 
-?>
+    protected function setFromCacheFileIdentifier(string $identifier): void {
+
+    }
+    
+    public static function getAllCachedPages(Log $logfile, HttpClient $httpClient): array {
+
+        $webpages = array();
+        $directory = self::CACHEFILE_BASE_DIRECTORY()."/NuLiga_SpiellisteTeam/";
+        $subdirectories = glob($directory."*");
+        foreach ($subdirectories as $subdir) {
+            if (!is_dir($subdir)) continue; // nur Verzeichnisse
+            $logfile->log(message: "Lade gespeicherte Seiten aus: ".$subdir);
+            if(preg_match('/teamtable=(\d+)&championship=(.*)&group=(\d+)/', $subdir, $matches)){
+                $team_id = (int)$matches[1];
+                $meisterschaft = urldecode($matches[2]);
+                $gruppe = (int)$matches[3];
+                $page = new NuLiga_SpiellisteTeam($meisterschaft, $gruppe, $team_id, $logfile, $httpClient);
+                $webpages[] = $page;
+            } else {
+                throw new InvalidArgumentException("Invalid cache file identifier format: ".$subdir);
+            }
+        }
+        return $webpages;
+    }
+}
