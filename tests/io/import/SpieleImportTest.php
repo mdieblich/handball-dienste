@@ -325,9 +325,16 @@ final class SpieleImportTest extends TestCase {
         $this->import->convertSpiele();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel WHERE spielNr = 703", ARRAY_A);
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE spielNr = 703", ARRAY_A);
         $this->assertNotEmpty($rows, "Es wurde kein Spiel in der DB gespeichert.");
-        $this->assertEquals()
+        
+        $this->assertNotNull($rows[0]['importDatum'], "Das Importdatum ist nicht gesetzt.");
+        $this->assertEquals(703, $rows[0]['spielNr'], "Die SpielNr stimmt nicht überein.");
+        $this->assertEquals($meldung_id, $rows[0]['meldung_id'], "Die Meldung-ID stimmt nicht überein.");
+        $this->assertEquals("TuS 82 Opladen III", $rows[0]['gegnerName'], "Der Gegner stimmt nicht überein.");
+        $this->assertEquals(new DateTime('2024-09-07 17:00'), $rows[0]['anwurf'], "Der Wochentag stimmt nicht überein.");
+        $this->assertEquals("06057", $rows[0]['halle'], "Die Halle stimmt nicht überein.");
+        $this->assertFalse($rows[0]['heimspiel'], "Das Spiel ist kein Heimspiel, aber es wurde als solches markiert.");
     }
 
     // TODO Testen: konvertiert alle Spiele
