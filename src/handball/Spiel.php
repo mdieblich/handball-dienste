@@ -133,7 +133,10 @@ class Spiel{
         return $this->halle === $other->halle;
     }
 
-    public function createDienste(Log $logfile){
+    public function createDienste(Log $logfile=null){
+        if(empty($logfile)){
+            $logfile = new NoLog();
+        }
         if($this->heimspiel){
             $logfile->log("Heimspiel: Lege Zeitnehmer und Cateringienst an.");
             $this->createDienst(Dienstart::ZEITNEHMER);
