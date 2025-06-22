@@ -56,12 +56,12 @@ class NuLigaSpiel implements \JsonSerializable {
     
     public function extractSpiel(MannschaftsMeldung $meldung, string $teamName): Spiel{
         $spiel = new Spiel();
-        $spiel->spielNr = $this->spielNr;
+        $spiel->spielNr = (int) $this->spielNr;
         $spiel->mannschaftsMeldung = $meldung;
         
         $spiel->mannschaft = $meldung->mannschaft;
         $spiel->anwurf = $this->getAnwurf();
-        $spiel->halle = $this->halle;
+        $spiel->halle = (int) $this->halle;
         
         $heim = $this->sanitizeTeamname($this->heimmannschaft);
         $gast = $this->sanitizeTeamname($this->gastmannschaft);
