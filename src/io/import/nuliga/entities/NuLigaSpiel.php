@@ -6,18 +6,21 @@ require_once __DIR__."/../../../../handball/Spiel.php";
 require_once __DIR__."/../../../../handball/Gegner.php";
 
 class NuLigaSpiel implements \JsonSerializable {
-    
-    public $wochentag;
-    public $terminOffen;
-    public $datum;
-    public $uhrzeit;
-    public $halle;
-    public $spielNr;
-    public $heimmannschaft;
-    public $gastmannschaft;
-    public $ergebnisOderSchiris;
-    public $spielbericht;
-    public $spielberichtsGenehmigung;
+
+    public int $id; // Datenbank-ID
+    public int $nuligaLigaID;   // Zur Nachverfolgung, in welcher Liga das Spiel ist
+    public int $nuligaTeamID;   // Zur Nachverfolgung, für welches Team das Spiel ist
+    public string $wochentag;
+    public string $terminOffen;
+    public string $datum;
+    public string $uhrzeit;
+    public string $halle;
+    public string $spielNr;
+    public string $heimmannschaft;
+    public string $gastmannschaft;
+    public string $ergebnisOderSchiris;
+    public string $spielbericht;
+    public string $spielberichtsGenehmigung;
 
 
     public function isSpielFrei(): bool {
