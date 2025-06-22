@@ -7,9 +7,10 @@ require_once __DIR__.'/dao/MeisterschaftDAO.php';
 require_once __DIR__.'/dao/MannschaftsMeldungDAO.php';
 require_once __DIR__.'/dao/SpielDAO.php';
 require_once __DIR__.'/dao/DienstDAO.php';
+require_once __DIR__.'/dao/nuliga/NuLigaSpielDAO.php';
 
 global $dienste_db_version;
-$dienste_db_version = '1.8';
+$dienste_db_version = '1.9';
 
 function dienste_datenbank_initialisieren() {
     global $dienste_db_version;
@@ -26,6 +27,10 @@ function dienste_datenbank_initialisieren() {
         dienste_dienst_nullable_mannschaft($wpdb);
     }
 
+    if($previous_version && $previous_version < '1.9'){
+        dienste_importklassen_anlegen($wpdb);
+    }
+
     if(empty($previous_version)){
         error_log("Komplette Datenbankinitialisierung");
         dienste_mannschaft_initialisieren($wpdb);
@@ -34,6 +39,7 @@ function dienste_datenbank_initialisieren() {
         dienste_gegner_initialisieren($wpdb);
         dienste_spiele_initialisieren($wpdb);
         dienste_dienste_initialisieren($wpdb);
+        dienste_importklassen_anlegen($wpdb);
     
         dienste_nuliga_import_initialisieren($wpdb);
     }
@@ -91,6 +97,11 @@ function dienste_dienste_initialisieren($dbhandle){
     dbDelta( $sql );
 }
 
+function dienste_importklassen_anlegen($dbhandle){
+    $sql = NuLigaSpielDAO::tableCreation($dbhandle);
+    dbDelta( $sql );
+}
+
 function dienste_nuliga_import_initialisieren($dbhandle){
     dienste_nuliga_import_meisterschaft_initialisieren($dbhandle);
     dienste_nuliga_import_mannschaftseinteilung_initialisieren($dbhandle);
@@ -144,4 +155,3 @@ function dienste_nuliga_import_status_initialisieren($dbhandle){
 
     dbDelta( $sql );
 }
-?>
