@@ -370,7 +370,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE nuligaTeamID = 1986866", ARRAY_A);
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE meldung_id = $meldung_id", ARRAY_A);
         $this->assertCount(2, $rows);
     }
 
