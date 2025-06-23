@@ -9,7 +9,7 @@ class Spiel_toBeImported{
     public int $meldung_id;
     public string $gegnerName;
     public ?DateTime $anwurf = null;
-    public int $halle;
+    public string $halle;
     public bool $heimspiel;
     public DateTime $importDatum;
 
