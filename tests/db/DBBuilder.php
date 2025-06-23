@@ -29,5 +29,14 @@ class DBBuilder{
             "nuligaTeamID" => $nuligaTeamID
         ]);
         return $this->db->insert_id;
-    }   
+    }
+    public function createGegner(string $verein, int $nummer, int $meldung_id): int {
+        $this->db->insert("wp_gegner", [
+            "verein" => $verein,
+            "nummer" => $nummer,
+            "zugehoerigeMeldung_id" => $meldung_id,
+            "stelltSekretaerBeiHeimspiel" => 0 // Defaultwert, kann später angepasst werden
+        ]);
+        return $this->db->insert_id;
+    }
 }
