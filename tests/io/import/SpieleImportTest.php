@@ -562,6 +562,50 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id", ARRAY_A);
         $this->assertEquals($gegner_id, $rows[0]['gegner_id'], "Der Gegner wurde nicht korrekt gefunden.");
     }
+    
+    public function test_sucheGegner_findetGegnerFuerMehrereSpiele(){
+        // arrange
+        $spielDAO = new Spiel_toBeImportedDAO($this->db);
+
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+
+        $gegner_id1 = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id      );
+        $spiel1 = new Spiel_toBeImported();
+        $spiel1-> spielNr = 703;
+        $spiel1->meldung_id = $meldung_id;
+        $spiel1->gegnerName = "TuS 82 Opladen III";
+        $spiel1->anwurf = new DateTime("2024-09-07 17:00:00");
+        $spiel1->halle = "06057";
+        $spiel1->heimspiel = false; // Es ist kein Heimspiel
+        $spiel_id1 = $spielDAO->insert($spiel1);
+
+        $gegner_id2 = $this->builder->createGegner("1. FSV Köln 1899",1,$meldung_id      );
+        $spiel2 = new Spiel_toBeImported();
+        $spiel2->spielNr = 710;
+        $spiel2->meldung_id = $meldung_id;
+        $spiel2->gegnerName = "1. FSV Köln 1899";
+        $spiel2->anwurf = new DateTime("2024-09-14 15:30:00");
+        $spiel2->halle = "06078";
+        $spiel2->heimspiel = true;
+        $spiel_id2 = $spielDAO->insert($spiel2);
+
+        // act
+        $this->import->sucheGegner();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id1", ARRAY_A);
+        $this->assertEquals($gegner_id1, $rows[0]['gegner_id'], "Der 1. Gegner wurde nicht korrekt gefunden.");
+
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id2", ARRAY_A);
+        $this->assertEquals($gegner_id2, $rows[0]['gegner_id'], "Der 2. Gegner wurde nicht korrekt gefunden.");
+    }
     // TODO testen für gegner, die aus anderer Liga sind (z.B. Herren oder Damen)
     // TODO Testen, wenn Gegner nicht gefunden wird
     // TODO Testen für mehrere Spiele
