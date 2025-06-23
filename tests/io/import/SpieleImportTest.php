@@ -422,7 +422,7 @@ final class SpieleImportTest extends TestCase {
         $nuligaSpiel->wochentag = "Sa.";
         $nuligaSpiel->datum = "07.09.2024";
         $nuligaSpiel->uhrzeit = "17:00";
-        // $nuligaSpiel->halle = "06057";   // bewusst keine Halle gesetzt  
+        $nuligaSpiel->halle = "";   // bewusst keine Halle gesetzt  
         $nuligaSpiel->spielNr = "703";
         $nuligaSpiel->heimmannschaft = "TuS 82 Opladen III";
         $nuligaSpiel->gastmannschaft = "Turnerkreis Nippes II";
@@ -454,7 +454,7 @@ final class SpieleImportTest extends TestCase {
         $nuligaSpiel->datum = "07.09.2024";
         $nuligaSpiel->uhrzeit = "17:00";
         $nuligaSpiel->halle = "06057";  
-        // $nuligaSpiel->spielNr = "703"; // bewusst keine SpielNr gesetzt
+        $nuligaSpiel->spielNr = ""; // bewusst keine SpielNr gesetzt
         $nuligaSpiel->heimmannschaft = "TuS 82 Opladen III";
         $nuligaSpiel->gastmannschaft = "Turnerkreis Nippes II";
         $nuligaSpielDao = new NuligaSpielDAO($this->db);
@@ -483,8 +483,8 @@ final class SpieleImportTest extends TestCase {
         $nuligaSpiel->nuligaTeamID = 1986866;
         $nuligaSpiel->nuligaLigaID = 363515;
         $nuligaSpiel->wochentag = "Termin offen";
-        // $nuligaSpiel->datum = "07.09.2024";
-        // $nuligaSpiel->uhrzeit = "17:00";
+        $nuligaSpiel->datum = "";
+        $nuligaSpiel->uhrzeit = "";
         $nuligaSpiel->halle = "06057";  
         $nuligaSpiel->spielNr = "703";
         $nuligaSpiel->heimmannschaft = "TuS 82 Opladen III";
