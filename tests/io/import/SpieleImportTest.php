@@ -501,7 +501,7 @@ final class SpieleImportTest extends TestCase {
         $this->assertEmpty($rows[0]['anwurf'],  "Der Anwurf sollte leer sein, da es sich um einen Termin offen handelt.");
     }
 
-        public function test_convertSpiele_loeschtNuligaSpiele(){
+    public function test_convertSpiele_loeschtNuligaSpiele(){
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
@@ -532,4 +532,38 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel", ARRAY_A);
         $this->assertEmpty($rows);
     }
+    
+    public function test_sucheGegner_findetEinenGegner(){
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id      );
+
+        $spiel = new Spiel_toBeImported();
+        $spiel-> spielNr = 703;
+        $spiel->meldung_id = $meldung_id;
+        $spiel->gegnerName = "TuS 82 Opladen III";
+        $spiel->anwurf = new DateTime("2024-09-07 17:00:00");
+        $spiel->halle = "06057";
+        $spiel->heimspiel = false; // Es ist kein Heimspiel
+        $spielDAO = new Spiel_toBeImportedDAO($this->db);
+        $spiel_id = $spielDAO->insert($spiel);
+
+        // act
+        $this->import->sucheGegner();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id", ARRAY_A);
+        $this->assertEquals($gegner_id, $rows[0]['gegner_id'], "Der Gegner wurde nicht korrekt gefunden.");
+    }
+    // TODO testen für gegner, die aus anderer Liga sind (z.B. Herren oder Damen)
+    // TODO Testen, wenn Gegner nicht gefunden wird
+    // TODO Testen für mehrere Spiele
+    // TODO Testen, dass Spiele ohne Gegner gelöscht werden
 }

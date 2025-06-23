@@ -104,4 +104,7 @@ class SpieleImport {
             $nuligaSpielDAO->delete(array('id' => $nuligaSpiel->id));
         }
     }
+    public function sucheGegner(): void{
+
+    }
 }
