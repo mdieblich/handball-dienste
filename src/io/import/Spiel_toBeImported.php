@@ -8,6 +8,7 @@ class Spiel_toBeImported{
     public int $spielNr;
     public int $meldung_id;
     public string $gegnerName;
+    public ?int $gegner_id; // ID des Gegners in der Datenbank, nachdem er gefunden wurde
     public ?DateTime $anwurf = null;
     public string $halle;
     public bool $heimspiel;
