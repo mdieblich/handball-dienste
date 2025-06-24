@@ -111,15 +111,19 @@ class SpieleImport {
 
         $alleSpiele = $importedSpieleDAO->fetchAll();
         foreach ($alleSpiele as $spiel) {
+            $this->logfile->log("Suche Gegner für Spiel {$spiel->spielNr} gegen {$spiel->gegnerName}.");
+            $gegnerAusSpiel = Gegner::fromName($spiel->gegnerName);
+            $gegnerAusSpiel->zugehoerigeMeldung_id = $spiel->meldung_id;
+            $gegnerGefunden = false;
             foreach($alleGegner as $gegner){
-                $this->logfile->log("Suche Gegner für Spiel {$spiel->spielNr} gegen {$spiel->gegnerName}.");
-                $gegnerAusSpiel = Gegner::fromName($spiel->gegnerName);
-                $gegnerAusSpiel->zugehoerigeMeldung_id = $spiel->meldung_id;
                 if($gegner->isSimilarTo($gegnerAusSpiel)){
                     $spiel->gegner_id = $gegner->id;
                     $importedSpieleDAO->update($spiel->id, $spiel);
+                    $gegnerGefunden = true;
                     break;
                 }
+            }
+            if(!$gegnerGefunden){
                 $this->logfile->log(message: "WARNUNG: Kein passender Gegner für Spiel {$spiel->spielNr} gegen {$spiel->gegnerName} gefunden. Spiel wird aus Import-Warteschlange entfernt.");
                 $importedSpieleDAO->delete(array('id' => $spiel->id));
             }
