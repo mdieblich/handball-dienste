@@ -641,7 +641,7 @@ final class SpieleImportTest extends TestCase {
         $spiel2 = new Spiel_toBeImported();
         $spiel2->spielNr = 710;
         $spiel2->meldung_id = $meldung_id2;
-        $spiel1->gegnerName = "TuS 82 Opladen III";
+        $spiel2->gegnerName = "TuS 82 Opladen III";
         $spiel2->anwurf = new DateTime("2024-09-14 15:30:00");
         $spiel2->halle = "06078";
         $spiel2->heimspiel = true;
