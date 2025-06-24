@@ -691,4 +691,14 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id", ARRAY_A);
         $this->assertEmpty($rows);
     }
+
+    public function test_findExistingSpiel_findetSpiel() {
+        $this->fail("Not implemented yet");
+    }
+    public function test_findExistingSpiel_findetSpielUnterMehreren() {
+        $this->fail("Not implemented yet");
+    }
+    public function test_findExistingSpiel_markiertNeueSpiele() {
+        $this->fail("Not implemented yet");
+    }
 }
