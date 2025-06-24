@@ -583,7 +583,7 @@ final class SpieleImportTest extends TestCase {
         $spiel1->gegnerName = "TuS 82 Opladen III";
         $spiel1->anwurf = new DateTime("2024-09-07 17:00:00");
         $spiel1->halle = "06057";
-        $spiel1->heimspiel = false; // Es ist kein Heimspiel
+        $spiel1->heimspiel = false;
         $spiel_id1 = $spielDAO->insert($spiel1);
 
         $gegner_id2 = $this->builder->createGegner("1. FSV Köln 1899",1,$meldung_id      );
@@ -606,8 +606,89 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id2", ARRAY_A);
         $this->assertEquals($gegner_id2, $rows[0]['gegner_id'], "Der 2. Gegner wurde nicht korrekt gefunden.");
     }
-    // TODO testen für gegner, die aus anderer Liga sind (z.B. Herren oder Damen)
-    // TODO Testen, wenn Gegner nicht gefunden wird
-    // TODO Testen für mehrere Spiele
-    // TODO Testen, dass Spiele ohne Gegner gelöscht werden
+
+    
+    public function test_sucheGegner_gleicherGegnernameUnterschiedlicheLigen(){
+        // arrange
+        $spielDAO = new Spiel_toBeImportedDAO($this->db);
+
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id1 = $this->builder->createMannschaft(2);
+        $meldung_id1 = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id1,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+
+        $spiel1 = new Spiel_toBeImported();
+        $spiel1-> spielNr = 703;
+        $spiel1->meldung_id = $meldung_id1;
+        $spiel1->gegnerName = "TuS 82 Opladen III";
+        $spiel1->anwurf = new DateTime("2024-09-07 17:00:00");
+        $spiel1->halle = "06057";
+        $spiel1->heimspiel = false;
+        $spiel_id1 = $spielDAO->insert($spiel1);
+        
+        $mannschaft_id2 = $this->builder->createMannschaft(2, 'w');
+        $meldung_id2 = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id2,
+            $meisterschaft_id,
+            333333, // irgendwas anderes
+            1919191 // irgendwas anderes
+        );
+        
+        $spiel2 = new Spiel_toBeImported();
+        $spiel2->spielNr = 710;
+        $spiel2->meldung_id = $meldung_id2;
+        $spiel1->gegnerName = "TuS 82 Opladen III";
+        $spiel2->anwurf = new DateTime("2024-09-14 15:30:00");
+        $spiel2->halle = "06078";
+        $spiel2->heimspiel = true;
+        $spiel_id2 = $spielDAO->insert($spiel2);
+        
+        // Die Gegner werden in "falsch" Reihenfolge erstellt, damit im Test nicht zufällig der richtige Geggner gewählt wird.
+        $gegner_id2 = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id2);
+        $gegner_id1 = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id1);
+        // act
+        $this->import->sucheGegner();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id1", ARRAY_A);
+        $this->assertEquals($gegner_id1, $rows[0]['gegner_id'], "Der 1. Gegner wurde nicht korrekt gefunden.");
+
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id2", ARRAY_A);
+        $this->assertEquals($gegner_id2, $rows[0]['gegner_id'], "Der 2. Gegner wurde nicht korrekt gefunden.");
+    }
+    
+    public function test_sucheGegner_loeschtSpieleOhneGegner(){
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        // Es wird kein Gegner erstellt, damit das Spiel keinen Gegner findet
+        //$gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id      );
+
+        $spiel = new Spiel_toBeImported();
+        $spiel-> spielNr = 703;
+        $spiel->meldung_id = $meldung_id;
+        $spiel->gegnerName = "TuS 82 Opladen III";
+        $spiel->anwurf = new DateTime("2024-09-07 17:00:00");
+        $spiel->halle = "06057";
+        $spiel->heimspiel = false; // Es ist kein Heimspiel
+        $spielDAO = new Spiel_toBeImportedDAO($this->db);
+        $spiel_id = $spielDAO->insert($spiel);
+
+        // act
+        $this->import->sucheGegner();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id", ARRAY_A);
+        $this->assertEmpty($rows);
+    }
 }
