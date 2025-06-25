@@ -49,7 +49,6 @@ class SpieleImport {
         }
         return $nuligaPages;
     }
-
     public function extractNuligaSpiele(): void{
         $nuligaSpielDAO = new NuligaSpielDAO($this->dbhandle);
         $cachedPages = NuLiga_SpiellisteTeam::getAllCachedPages($this->logfile, $this->httpClient);
@@ -63,7 +62,6 @@ class SpieleImport {
             $nuligaPage->deleteLocally();
         }
     }
-
     public function convertSpiele(string $vereinsname=null): void {
         if($vereinsname === null){
             // Aus Wordpress-Optionen lesen
@@ -129,7 +127,6 @@ class SpieleImport {
             }
         }
     }
-
     public function findExistingSpiele(): void {
         $importedSpieleDAO = new Spiel_toBeImportedDAO($this->dbhandle);
         $spielDAO = new SpielDAO($this->dbhandle);
