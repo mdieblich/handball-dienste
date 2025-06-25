@@ -129,4 +129,6 @@ class SpieleImport {
             }
         }
     }
+
+    public function findExistingSpiele(): void {}
 }
