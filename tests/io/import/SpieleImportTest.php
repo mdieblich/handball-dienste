@@ -985,7 +985,47 @@ final class SpieleImportTest extends TestCase {
     }
 
     public function test_updateSpiele_aktualisiertSpiele(){
-        $this->fail("Diese Funktion ist noch nicht implementiert.");
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id);
+        $spiel_id = $this->builder->createSpiel(
+            703, 
+            $meldung_id, 
+            $gegner_id, 
+            new DateTime("2024-09-07 17:00:00"), 
+            "06057",
+            false,
+        );
+
+        $spiel_toBeImported = new Spiel_toBeImported();
+        $spiel_toBeImported->spielNr = 703;
+        $spiel_toBeImported->meldung_id = $meldung_id;
+        $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
+        $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->anwurf = new DateTime("2024-09-08 20:00:00"); // anderes Datum+Uhrzeit
+        $spiel_toBeImported->halle = "06058";   // andere Halle
+        $spiel_toBeImported->heimspiel = true;  // ab jetzt Heimspiel
+        $spiel_toBeImported->istNeuesSpiel = false;
+        $spiel_toBeImported->spielID_alt = $spiel_id;
+        $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
+        $spiel_toBeImported_DAO->insert($spiel_toBeImported);
+
+        // act
+        $this->import->updateSpiele();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel WHERE id = $spiel_id", ARRAY_A);
+        $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
+        $this->assertEquals("2024-09-08 20:00:00", $rows[0]['anwurf'], "Der Anwurf sollte aktualisiert worden sein.");
+        $this->assertEquals("06058", $rows[0]['halle'], "Die Halle sollte aktualisiert worden sein.");
+        $this->assertEquals(true, $rows[0]['heimspiel'], "Das Heimrecht sollte aktualisiert worden sein.");
     }
     public function test_updateSpiele_setztDienstaenderungsplan(){
         $this->fail("Diese Funktion ist noch nicht implementiert.");
