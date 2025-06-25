@@ -983,4 +983,14 @@ final class SpieleImportTest extends TestCase {
         $this->assertNull($rows[0]['spielID_alt'], "Es sollte keine alte Spiel-ID geben, da das Spiel noch nicht existiert.");
         $this->assertTrue($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
+
+    public function test_updateSpiele_aktualisiertSpiele(){
+        $this->fail("Diese Funktion ist noch nicht implementiert.");
+    }
+    public function test_updateSpiele_setztDienstaenderungsplan(){
+        $this->fail("Diese Funktion ist noch nicht implementiert.");
+    }
+    public function test_updateSpiele_raeumtAuf(){
+        $this->fail("Diese Funktion ist noch nicht implementiert.");
+    }
 }
