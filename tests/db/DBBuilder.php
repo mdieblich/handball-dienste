@@ -51,4 +51,13 @@ class DBBuilder{
         ]);
         return $this->db->insert_id;
     }
+
+    public function createDienst(int $spiel_id, string $dienstart, ?int $mannschaft_id = null): int {
+        $this->db->insert("wp_dienst", [
+            "spiel_id" => $spiel_id,
+            "dienstart" => $dienstart,
+            "mannschaft_id" => $mannschaft_id
+        ]);
+        return $this->db->insert_id;
+    }
 }
