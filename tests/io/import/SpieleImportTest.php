@@ -680,7 +680,7 @@ final class SpieleImportTest extends TestCase {
         $spiel->gegnerName = "TuS 82 Opladen III";
         $spiel->anwurf = new DateTime("2024-09-07 17:00:00");
         $spiel->halle = "06057";
-        $spiel->heimspiel = false; // Es ist kein Heimspiel
+        $spiel->heimspiel = false;
         $spielDAO = new Spiel_toBeImportedDAO($this->db);
         $spiel_id = $spielDAO->insert($spiel);
 
@@ -709,7 +709,7 @@ final class SpieleImportTest extends TestCase {
             $gegner_id, 
             new DateTime("2024-09-07 17:00:00"), 
             "06057",
-            false, // Es ist kein Heimspiel
+            false,
         );
 
         $spiel_toBeImported = new Spiel_toBeImported();
@@ -719,7 +719,7 @@ final class SpieleImportTest extends TestCase {
         $spiel_toBeImported->gegner_id = $gegner_id;
         $spiel_toBeImported->anwurf = new DateTime("2024-09-07 17:00:00");
         $spiel_toBeImported->halle = "06057";
-        $spiel_toBeImported->heimspiel = false; // Es ist kein Heimspiel
+        $spiel_toBeImported->heimspiel = false;
         $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
         $spiel_toBeImported_id = $spiel_toBeImported_DAO->insert($spiel_toBeImported);
 
@@ -731,18 +731,256 @@ final class SpieleImportTest extends TestCase {
         $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
         $this->assertEquals($spiel_id, $rows[0]['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
         $this->assertFalse($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
+    }
+    public function test_findExistingSpiele_findetSpielmitAnderemDatum() {
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id);
+        $spiel_id = $this->builder->createSpiel(
+            703, 
+            $meldung_id, 
+            $gegner_id, 
+            new DateTime("2024-09-07 17:00:00"), 
+            "06057",
+            false,
+        );
 
+        $spiel_toBeImported = new Spiel_toBeImported();
+        $spiel_toBeImported->spielNr = 703;
+        $spiel_toBeImported->meldung_id = $meldung_id;
+        $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
+        $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->anwurf = new DateTime("2024-09-08 20:00:00"); // anderes Datum+Uhrzeit
+        $spiel_toBeImported->halle = "06057";
+        $spiel_toBeImported->heimspiel = false;
+        $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
+        $spiel_toBeImported_id = $spiel_toBeImported_DAO->insert($spiel_toBeImported);
+
+        // act
+        $this->import->findExistingSpiele();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id", ARRAY_A);
+        $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
+        $this->assertEquals($spiel_id, $rows[0]['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
+        $this->assertFalse($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
-    public function test_findExistingSpiele_findetSpielmitAnderemDatum() {       
-        $this->fail("Not implemented yet");
+    public function test_findExistingSpiele_findetSpielmitAndererHalle() {
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id);
+        $spiel_id = $this->builder->createSpiel(
+            703, 
+            $meldung_id, 
+            $gegner_id, 
+            new DateTime("2024-09-07 17:00:00"), 
+            "06057",
+            false,
+        );
+
+        $spiel_toBeImported = new Spiel_toBeImported();
+        $spiel_toBeImported->spielNr = 703;
+        $spiel_toBeImported->meldung_id = $meldung_id;
+        $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
+        $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->anwurf = new DateTime("2024-09-07 17:00:00");
+        $spiel_toBeImported->halle = "12345"; // andere Halle
+        $spiel_toBeImported->heimspiel = false;
+        $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
+        $spiel_toBeImported_id = $spiel_toBeImported_DAO->insert($spiel_toBeImported);
+
+        // act
+        $this->import->findExistingSpiele();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id", ARRAY_A);
+        $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
+        $this->assertEquals($spiel_id, $rows[0]['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
+        $this->assertFalse($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
-    public function test_findExistingSpiele_findetSpielmitAndererHalle() {       
-        $this->fail("Not implemented yet");
+
+    public function test_findExistingSpiele_findetSpielmitAndererHalleUndTauschHeimrecht() {
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id);
+        $spiel_id = $this->builder->createSpiel(
+            703, 
+            $meldung_id, 
+            $gegner_id, 
+            new DateTime("2024-09-07 17:00:00"), 
+            "06057",
+            false,
+        );
+
+        $spiel_toBeImported = new Spiel_toBeImported();
+        $spiel_toBeImported->spielNr = 703;
+        $spiel_toBeImported->meldung_id = $meldung_id;
+        $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
+        $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->anwurf = new DateTime("2024-09-07 17:00:00");
+        $spiel_toBeImported->halle = "12345"; // andere Halle
+        $spiel_toBeImported->heimspiel = true;  // die andere Halle ist auch noch eine Heimhalle
+        $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
+        $spiel_toBeImported_id = $spiel_toBeImported_DAO->insert($spiel_toBeImported);
+
+        // act
+        $this->import->findExistingSpiele();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id", ARRAY_A);
+        $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
+        $this->assertEquals($spiel_id, $rows[0]['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
+        $this->assertFalse($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
     public function test_findExistingSpiele_findetSpielUnterMehreren() {
-        $this->fail("Not implemented yet");
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id);
+        $spiel_id = $this->builder->createSpiel(
+            703, 
+            $meldung_id, 
+            $gegner_id, 
+            new DateTime("2024-09-07 17:00:00"), 
+            "06057",
+            false,
+        );
+
+        {
+            // die folgenden Spiele sollten nicht gefunden werden
+            $this->builder->createSpiel(
+                705, // andere SpielNr
+                $meldung_id, 
+                $gegner_id, 
+                new DateTime("2024-09-07 17:00:00"), 
+                "06057",
+                false,
+            );
+            $this->builder->createSpiel(
+                705, 
+                $meldung_id, 
+                $gegner_id+3, // anderer Gegner
+                new DateTime("2024-09-07 17:00:00"), 
+                "06057",
+                false,
+            );
+            $this->builder->createSpiel(
+                703, 
+                $meldung_id+1, // andere Liga
+                $gegner_id, 
+                new DateTime("2024-09-07 17:00:00"), 
+                "06057",
+                false,
+            );
+        }
+
+        $spiel_toBeImported = new Spiel_toBeImported();
+        $spiel_toBeImported->spielNr = 703;
+        $spiel_toBeImported->meldung_id = $meldung_id;
+        $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
+        $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->anwurf = new DateTime("2024-09-07 17:00:00");
+        $spiel_toBeImported->halle = "06057";
+        $spiel_toBeImported->heimspiel = false;
+        $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
+        $spiel_toBeImported_id = $spiel_toBeImported_DAO->insert($spiel_toBeImported);
+
+        // act
+        $this->import->findExistingSpiele();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id", ARRAY_A);
+        $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
+        $this->assertEquals($spiel_id, $rows[0]['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
+        $this->assertFalse($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
     public function test_findExistingSpiele_markiertNeueSpiele() {
-        $this->fail("Not implemented yet");
+        
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id);
+        // Das eigentliche Spiel gibt es noch nicht in der DB
+
+        {
+            // die folgenden Spiele sollten nicht gefunden werden
+            $this->builder->createSpiel(
+                705, // andere SpielNr
+                $meldung_id, 
+                $gegner_id, 
+                new DateTime("2024-09-07 17:00:00"), 
+                "06057",
+                false,
+            );
+            $this->builder->createSpiel(
+                705, 
+                $meldung_id, 
+                $gegner_id+3, // anderer Gegner
+                new DateTime("2024-09-07 17:00:00"), 
+                "06057",
+                false,
+            );
+            $this->builder->createSpiel(
+                703, 
+                $meldung_id+1, // andere Liga
+                $gegner_id, 
+                new DateTime("2024-09-07 17:00:00"), 
+                "06057",
+                false,
+            );
+        }
+
+        $spiel_toBeImported = new Spiel_toBeImported();
+        $spiel_toBeImported->spielNr = 703;
+        $spiel_toBeImported->meldung_id = $meldung_id;
+        $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
+        $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->anwurf = new DateTime("2024-09-07 17:00:00");
+        $spiel_toBeImported->halle = "06057";
+        $spiel_toBeImported->heimspiel = false;
+        $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
+        $spiel_toBeImported_id = $spiel_toBeImported_DAO->insert($spiel_toBeImported);
+
+        // act
+        $this->import->findExistingSpiele();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id", ARRAY_A);
+        $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
+        $this->assertNull($rows[0]['spielID_alt'], "Es sollte keine alte Spiel-ID geben, da das Spiel noch nicht existiert.");
+        $this->assertTrue($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
 }
