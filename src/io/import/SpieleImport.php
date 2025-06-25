@@ -130,5 +130,35 @@ class SpieleImport {
         }
     }
 
-    public function findExistingSpiele(): void {}
+    public function findExistingSpiele(): void {
+        $importedSpieleDAO = new Spiel_toBeImportedDAO($this->dbhandle);
+        $spielDAO = new SpielDAO($this->dbhandle);
+
+        $allezuImportierendenSpiele = $importedSpieleDAO->fetchAll();
+        $alleSpiele = $spielDAO->fetchAll();
+
+        foreach ($allezuImportierendenSpiele as $spiel_toBeImported) {
+            $this->logfile->log("Suche nach bestehendem Spiel für {$spiel_toBeImported->spielNr} gegen {$spiel_toBeImported->gegnerName}.");
+            
+            $oldSpiel = null;
+            foreach ($alleSpiele as $existingSpiel) {
+                if( $existingSpiel->spielNr === $spiel_toBeImported->spielNr && 
+                $existingSpiel->mannschaftsMeldung_id === $spiel_toBeImported->meldung_id &&
+                $existingSpiel->gegner_id === $spiel_toBeImported->gegner_id){
+                    $this->logfile->log("Gefunden: Spiel mit id {$existingSpiel->id}.");
+                    $oldSpiel = $existingSpiel;
+                    break;
+                }
+            }
+
+            if( $oldSpiel !== null ){
+                $spiel_toBeImported->istNeuesSpiel = false;
+                $spiel_toBeImported->spielID_alt = $oldSpiel->id;
+            } else {
+                $spiel_toBeImported->istNeuesSpiel = true;
+            }
+
+            $importedSpieleDAO->update($spiel_toBeImported->id, $spiel_toBeImported);
+        }
+    }
 }
