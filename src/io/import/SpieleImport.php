@@ -158,4 +158,9 @@ class SpieleImport {
             $importedSpieleDAO->update($spiel_toBeImported->id, $spiel_toBeImported);
         }
     }
+
+    // TODO Importschritt bestehendes Spiel aktualisieren, dabei im Dienständerungsplan hinterlegen
+    // TODO Importschritt neues Spiel anlegen, dabei neue Dienste anlegen und im Dienständerungsplan hinterlegen
+    // TODO Auf- und Abbau neu prüfen und im Dienständerungsplan hinterlegen
+    // TODO  Dienständerungsplan als Emails versenden & aufräumen
 }
