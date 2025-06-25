@@ -39,4 +39,16 @@ class DBBuilder{
         ]);
         return $this->db->insert_id;
     }
+
+    public function createSpiel(int $spielNr, int $meldung_id, int $gegner_id, DateTime $anwurf, int $halle, bool $heimspiel): int {
+        $this->db->insert("wp_spiel", [
+            "spielNr" => $spielNr,
+            "mannschaftsMeldung_id" => $meldung_id,
+            "gegner_id" => $gegner_id,
+            "anwurf" => $anwurf->format('Y-m-d H:i:s'),
+            "halle" => $halle,
+            "heimspiel" => $heimspiel
+        ]);
+        return $this->db->insert_id;
+    }
 }
