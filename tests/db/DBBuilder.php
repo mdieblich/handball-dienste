@@ -40,7 +40,7 @@ class DBBuilder{
         return $this->db->insert_id;
     }
 
-    public function createSpiel(int $spielNr, int $meldung_id, int $gegner_id, DateTime $anwurf, int $halle, bool $heimspiel): int {
+    public function createSpiel(int $spielNr, int $meldung_id, int $gegner_id, DateTime $anwurf, string $halle, bool $heimspiel): int {
         $this->db->insert("wp_spiel", [
             "spielNr" => $spielNr,
             "mannschaftsMeldung_id" => $meldung_id,
