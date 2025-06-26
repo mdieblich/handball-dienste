@@ -16,8 +16,8 @@ require_once __DIR__."/../../db/dao/MannschaftDAO.php";
 require_once __DIR__."/../../db/dao/MannschaftsMeldungDAO.php";
 require_once __DIR__."/../../db/dao/SpielDAO.php";
 require_once __DIR__."/../../db/dao/DienstDAO.php";
-require_once __DIR__."/../../db/dao/nuliga/NuLigaSpielDAO.php";
 require_once __DIR__."/../../db/dao/import/Spiel_toBeImportedDAO.php";
+require_once __DIR__."/../../db/dao/import/nuliga/NuLigaSpielDAO.php";
 
 require_once __DIR__."/../../db/service/MannschaftService.php";
 require_once __DIR__."/../../db/service/GegnerService.php";
