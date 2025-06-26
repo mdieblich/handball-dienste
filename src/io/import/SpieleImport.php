@@ -27,15 +27,28 @@ class SpieleImport {
     private Log $logfile;
     private HttpClient $httpClient;
 
+    private MannschaftService $mannschaftService;
+    private NuligaSpielDAO $nuligaSpielDAO;
+    private Spiel_toBeImportedDAO $spiel_toBeImportedDAO;
+    private GegnerDAO $gegnerDAO;
+    private SpielDAO $spielDAO;
+    private DienstDAO $dienstDAO;
+
     public function __construct($dbhandle, Log $logfile=null, HttpClient $httpClient=null) {
         $this->dbhandle = $dbhandle;
         $this->logfile = $logfile ?? new NoLog();
         $this->httpClient = $httpClient ?? new CurlHttpClient($this->logfile);
+
+        $this->mannschaftService = new MannschaftService($this->dbhandle);
+        $this->nuligaSpielDAO = new NuligaSpielDAO($this->dbhandle);
+        $this->spiel_toBeImportedDAO = new Spiel_toBeImportedDAO($this->dbhandle);
+        $this->gegnerDAO = new GegnerDAO($this->dbhandle);
+        $this->spielDAO = new SpielDAO($this->dbhandle);
+        $this->dienstDAO = new DienstDAO($this->dbhandle);
     }
     public function fetchAllNuligaSpielelisten(): array{
-        $mannschaftService = new MannschaftService($this->dbhandle);
-        $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
-        $nuligaPages = array();
+        $mannschaftsListe = $this->mannschaftService->loadMannschaftenMitMeldungen();
+        $nuligaPages = [];
         foreach ($mannschaftsListe->mannschaften as $mannschaft) {
             foreach($mannschaft->meldungen as $mannschaftsMeldung) {
                 $nuligaPage = new NuLiga_SpiellisteTeam(
@@ -51,14 +64,13 @@ class SpieleImport {
         return $nuligaPages;
     }
     public function extractNuligaSpiele(): void{
-        $nuligaSpielDAO = new NuligaSpielDAO($this->dbhandle);
         $cachedPages = NuLiga_SpiellisteTeam::getAllCachedPages($this->logfile, $this->httpClient);
         foreach ($cachedPages as $nuligaPage) {
             $this->logfile->log("Lese NuLiga-Spiele von $nuligaPage->url");
             $nuligaSpiele = $nuligaPage->getNuLigaSpiele();
             foreach ($nuligaSpiele as $nuligaSpiel) {
                 $this->logfile->log("Speichere extrahiertes Spiel in DB: {$nuligaSpiel->getLogOutput()}");
-                $nuligaSpielDAO->insert($nuligaSpiel);
+                $this->nuligaSpielDAO->insert($nuligaSpiel);
             }
             $nuligaPage->deleteLocally();
         }
@@ -69,12 +81,9 @@ class SpieleImport {
             $vereinsname = get_option('vereinsname');
         }
 
-        $nuligaSpielDAO = new NuligaSpielDAO($this->dbhandle);
-        $importedSpieleDAO = new Spiel_toBeImportedDAO($this->dbhandle);
-        $mannschaftService = new MannschaftService($this->dbhandle);
-        $mannschaftsListe = $mannschaftService->loadMannschaftenMitMeldungen();
+        $mannschaftsListe = $this->mannschaftService->loadMannschaftenMitMeldungen();
 
-        $nuligaSpiele = $nuligaSpielDAO->fetchAll();
+        $nuligaSpiele = $this->nuligaSpielDAO->fetchAll();
         foreach ($nuligaSpiele as $nuligaSpiel) {
             $this->logfile->log("Konvertiere NuLiga-Spiel {$nuligaSpiel->getLogOutput()}");
             if($nuligaSpiel->isSpielfrei()){
@@ -96,19 +105,17 @@ class SpieleImport {
             
             if($spiel !== null) {
                 $this->logfile->log("Speichere Spiel in DB");
-                $importedSpieleDAO->insert($spiel);
+                $this->spiel_toBeImportedDAO->insert($spiel);
             } else {
                 $this->logfile->log("Konvertierung von NuLiga-Spiel {$nuligaSpiel->getLogOutput()} fehlgeschlagen.");
             }
-            $nuligaSpielDAO->delete(array('id' => $nuligaSpiel->id));
+            $this->nuligaSpielDAO->delete(array('id' => $nuligaSpiel->id));
         }
     }
     public function sucheGegner(): void{
-        $importedSpieleDAO = new Spiel_toBeImportedDAO($this->dbhandle);
-        $gegnerService = new GegnerService($this->dbhandle);
-        $alleGegner = $gegnerService->loadAlleGegner();
+        $alleGegner = $this->gegnerDAO->fetchAll();
 
-        $alleSpiele = $importedSpieleDAO->fetchAll();
+        $alleSpiele = $this->spiel_toBeImportedDAO->fetchAll();
         foreach ($alleSpiele as $spiel) {
             $this->logfile->log("Suche Gegner für Spiel {$spiel->spielNr} gegen {$spiel->gegnerName}.");
             $gegnerAusSpiel = Gegner::fromName($spiel->gegnerName);
@@ -117,23 +124,20 @@ class SpieleImport {
             foreach($alleGegner as $gegner){
                 if($gegner->isSimilarTo($gegnerAusSpiel)){
                     $spiel->gegner_id = $gegner->id;
-                    $importedSpieleDAO->update($spiel->id, $spiel);
+                    $this->spiel_toBeImportedDAO->update($spiel->id, $spiel);
                     $gegnerGefunden = true;
                     break;
                 }
             }
             if(!$gegnerGefunden){
                 $this->logfile->log(message: "WARNUNG: Kein passender Gegner für Spiel {$spiel->spielNr} gegen {$spiel->gegnerName} gefunden. Spiel wird aus Import-Warteschlange entfernt.");
-                $importedSpieleDAO->delete(array('id' => $spiel->id));
+                $this->spiel_toBeImportedDAO->delete(array('id' => $spiel->id));
             }
         }
     }
     public function findExistingSpiele(): void {
-        $importedSpieleDAO = new Spiel_toBeImportedDAO($this->dbhandle);
-        $spielDAO = new SpielDAO($this->dbhandle);
-
-        $allezuImportierendenSpiele = $importedSpieleDAO->fetchAll();
-        $alleSpiele = $spielDAO->fetchAll();
+        $allezuImportierendenSpiele = $this->spiel_toBeImportedDAO->fetchAll();
+        $alleSpiele = $this->spielDAO->fetchAll();
 
         foreach ($allezuImportierendenSpiele as $spiel_toBeImported) {
             $this->logfile->log("Suche nach bestehendem Spiel für {$spiel_toBeImported->spielNr} gegen {$spiel_toBeImported->gegnerName}.");
@@ -156,25 +160,22 @@ class SpieleImport {
                 $spiel_toBeImported->istNeuesSpiel = true;
             }
 
-            $importedSpieleDAO->update($spiel_toBeImported->id, $spiel_toBeImported);
+            $this->spiel_toBeImportedDAO->update($spiel_toBeImported->id, $spiel_toBeImported);
         }
     }
 
     // TODO Diese funktion aufsplitten: Erst DienstÄnderungen, dann das Update
     public function updateSpiele(): void {
-        $importedSpieleDAO = new Spiel_toBeImportedDAO($this->dbhandle);
-        $spielDAO = new SpielDAO($this->dbhandle);
-        $dienstDAO = new DienstDAO($this->dbhandle);
-
-        $spieleToBeImported = $importedSpieleDAO->fetchAllForUpdate();
+        $spieleToBeImported = $this->spiel_toBeImportedDAO->fetchAllForUpdate();
         foreach($spieleToBeImported as $spielToBeImported){
-            $spiel_vorher = $spielDAO->fetch("id=$spielToBeImported->spielID_alt");
+            $spiel_vorher = $this->spielDAO->fetch("id=$spielToBeImported->spielID_alt");
             $spiel_nachher = $spielToBeImported->updateSpiel($spiel_vorher);
-            $spielDAO->update($spiel_nachher->id, $spiel_nachher);
+            $this->spielDAO->update($spiel_nachher->id, $spiel_nachher);
 
-            $dienste = $dienstDAO->fetchAll("spiel_id=$spiel_nachher->id");
+            $dienste = $this->dienstDAO->fetchAll("spiel_id=$spiel_nachher->id");
             foreach($dienste as $dienst){
                 $aenderung = DienstAenderung::create($dienst->id, $spiel_vorher);
+
                 // TODO Hier weiter
             }
         }
