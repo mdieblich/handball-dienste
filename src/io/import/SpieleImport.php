@@ -164,7 +164,9 @@ class SpieleImport {
 
         $spieleToBeImported = $importedSpieleDAO->fetchAllForUpdate();
         foreach($spieleToBeImported as $spielToBeImported){
-            $spielDAO->updateValues($spielToBeImported->spielID_alt,$spielToBeImported->toUpdateArray() );
+            $spiel = $spielDAO->fetch("id=$spielToBeImported->spielID_alt");
+            $spielToBeImported->updateSpiel($spiel);
+            $spielDAO->update($spiel->id, $spiel);
         }
     }
     

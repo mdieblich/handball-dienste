@@ -22,12 +22,10 @@ class Spiel_toBeImported{
         $this->importDatum = new DateTime();
     }
 
-    public function toUpdateArray(): array{
-        $values = array();
-        $values['anwurf'] = $this->anwurf->format('Y-m-d H:i:s');
-        $values['halle'] = $this->halle;
-        $values['heimspiel'] = $this->heimspiel;
-        return $values;
+    public function updateSpiel(Spiel $spiel): void{
+        $spiel->anwurf = $this->anwurf;
+        $spiel->halle = (int) $this->halle;
+        $spiel->heimspiel = $this->heimspiel;
     }
 
     // TODO Umwandlung in ein Spiel-Objekt
