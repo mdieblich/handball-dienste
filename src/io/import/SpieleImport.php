@@ -4,6 +4,7 @@
 require_once __DIR__."/../../log/Log.php";
 
 require_once __DIR__."/ImportSchritt.php";
+require_once __DIR__."/DienstAenderung.php";
 require_once __DIR__."/../../handball/dienst/DienstAenderungsPlan.php";
 require_once __DIR__."/nuliga/entities/NuLigaSpiel.php";
 
@@ -158,15 +159,24 @@ class SpieleImport {
             $importedSpieleDAO->update($spiel_toBeImported->id, $spiel_toBeImported);
         }
     }
+
+    // TODO Diese funktion aufsplitten: Erst DienstÄnderungen, dann das Update
     public function updateSpiele(): void {
         $importedSpieleDAO = new Spiel_toBeImportedDAO($this->dbhandle);
         $spielDAO = new SpielDAO($this->dbhandle);
+        $dienstDAO = new DienstDAO($this->dbhandle);
 
         $spieleToBeImported = $importedSpieleDAO->fetchAllForUpdate();
         foreach($spieleToBeImported as $spielToBeImported){
-            $spiel = $spielDAO->fetch("id=$spielToBeImported->spielID_alt");
-            $spielToBeImported->updateSpiel($spiel);
-            $spielDAO->update($spiel->id, $spiel);
+            $spiel_vorher = $spielDAO->fetch("id=$spielToBeImported->spielID_alt");
+            $spiel_nachher = $spielToBeImported->updateSpiel($spiel_vorher);
+            $spielDAO->update($spiel_nachher->id, $spiel_nachher);
+
+            $dienste = $dienstDAO->fetchAll("spiel_id=$spiel_nachher->id");
+            foreach($dienste as $dienst){
+                $aenderung = DienstAenderung::create($dienst->id, $spiel_vorher);
+                // TODO Hier weiter
+            }
         }
     }
     

@@ -22,10 +22,12 @@ class Spiel_toBeImported{
         $this->importDatum = new DateTime();
     }
 
-    public function updateSpiel(Spiel $spiel): void{
-        $spiel->anwurf = $this->anwurf;
-        $spiel->halle = (int) $this->halle;
-        $spiel->heimspiel = $this->heimspiel;
+    public function updateSpiel(Spiel $spiel): Spiel{
+        $spiel_neu = clone $spiel;
+        $spiel_neu->anwurf = $this->anwurf;
+        $spiel_neu->halle = (int) $this->halle;
+        $spiel_neu->heimspiel = $this->heimspiel;
+        return $spiel_neu;
     }
 
     // TODO Umwandlung in ein Spiel-Objekt
