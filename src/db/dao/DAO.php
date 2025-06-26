@@ -246,6 +246,9 @@ abstract class DAO{
     }
     public function update(int $id, object $object){
         $values = $this->entityToArray($object);
+        $this->updateValues($id, $values);
+    }
+    public function updateValues(int $id, array $values){
         unset($values['id']);
         $this->dbhandle->update(self::tableName($this->dbhandle), $values, array('id' => $id));
     }
