@@ -159,7 +159,13 @@ class SpieleImport {
         }
     }
     public function updateSpiele(): void {
+        $importedSpieleDAO = new Spiel_toBeImportedDAO($this->dbhandle);
+        $spielDAO = new SpielDAO($this->dbhandle);
 
+        $spieleToBeImported = $importedSpieleDAO->fetchAllForUpdate();
+        foreach($spieleToBeImported as $spielToBeImported){
+            $spielDAO->updateValues($spielToBeImported->spielID_alt,$spielToBeImported->toUpdateArray() );
+        }
     }
     
     // TODO Importschritt neues Spiel anlegen, dabei neue Dienste anlegen und im Dienständerungsplan hinterlegen
