@@ -1077,6 +1077,59 @@ final class SpieleImportTest extends TestCase {
         }
     }
     public function test_updateSpiele_raeumtAuf(){
-        $this->fail("Diese Funktion ist noch nicht implementiert.");
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id1 = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id);
+        $spiel_id = $this->builder->createSpiel(
+            703, 
+            $meldung_id, 
+            $gegner_id1, 
+            new DateTime("2024-09-07 17:00:00"), 
+            "06057",
+            false,
+        );
+
+        $spiel_toBeImported_asUpdate = new Spiel_toBeImported();
+        $spiel_toBeImported_asUpdate->spielNr = 703;
+        $spiel_toBeImported_asUpdate->meldung_id = $meldung_id;
+        $spiel_toBeImported_asUpdate->gegnerName = "TuS 82 Opladen III";
+        $spiel_toBeImported_asUpdate->gegner_id = $gegner_id1;
+        $spiel_toBeImported_asUpdate->anwurf = new DateTime("2024-09-08 20:00:00");
+        $spiel_toBeImported_asUpdate->halle = "06058"; 
+        $spiel_toBeImported_asUpdate->heimspiel = true;
+        $spiel_toBeImported_asUpdate->istNeuesSpiel = false;
+        $spiel_toBeImported_asUpdate->spielID_alt = $spiel_id;
+        $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
+        $updateSpiel_id = $spiel_toBeImported_DAO->insert($spiel_toBeImported_asUpdate);
+
+        // Ein zweites Spiel, welches komplett neu ist
+        $gegner_id2 = $this->builder->createGegner("TuS 82 Opladen",1,$meldung_id);
+        $spiel_toBeImported_asNewOne = new Spiel_toBeImported();
+        $spiel_toBeImported_asNewOne->spielNr = 709;
+        $spiel_toBeImported_asNewOne->meldung_id = $meldung_id;
+        $spiel_toBeImported_asNewOne->gegnerName = "TuS 82 Opladen I";
+        $spiel_toBeImported_asNewOne->gegner_id = $gegner_id2;
+        $spiel_toBeImported_asNewOne->anwurf = new DateTime("2024-09-20 20:00:00");
+        $spiel_toBeImported_asNewOne->halle = "666666";   
+        $spiel_toBeImported_asNewOne->heimspiel = true; 
+        $spiel_toBeImported_asNewOne->istNeuesSpiel = true; // NEUES Spiel
+        // $spiel_toBeImported_asNewOne->spielID_alt = null;  // KEIN Spiel welches schon existierte
+        $newSpiel_id = $spiel_toBeImported_DAO->insert($spiel_toBeImported_asUpdate);
+
+        // act
+        $this->import->updateSpiele();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $updateSpiel_id", ARRAY_A);
+        $this->assertEmpty($rows, "Das Import-Spiel hätte gelöscht werden sollen");
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $newSpiel_id", ARRAY_A);
+        $this->assertNotEmpty($rows, "Das neue Import-Spiel hätte nicht gelöscht werden dürfen");    
     }
 }
