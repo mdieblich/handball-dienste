@@ -62,7 +62,7 @@ class NuLigaSpiel implements \JsonSerializable {
         
         $spiel->mannschaft = $meldung->mannschaft;
         $spiel->anwurf = $this->getAnwurf();
-        $spiel->halle = (int) $this->halle;
+        $spiel->halle = $this->halle;
         
         $heim = $this->sanitizeTeamname($this->heimmannschaft);
         $gast = $this->sanitizeTeamname($this->gastmannschaft);

@@ -13,7 +13,7 @@ final class NahgelegeneSpieleTest extends TestCase {
         $spiel->id = $this->nextID++;
         $spiel->anwurf = DateTime::createFromFormat("d.m.Y H:i", $anwurf);
         $spiel->heimspiel = true;
-        $spiel->halle = 3182; // Nippeser Tälchen
+        $spiel->halle = "3182"; // Nippeser Tälchen
         return $spiel;
     }
      

@@ -30,8 +30,9 @@ function dienste_datenbank_initialisieren() {
 
     if($previous_version && $previous_version < '1.9'){
         dienste_importklassen_anlegen($wpdb);
+        dienste_spieltabelle_halleString($wpdb);
     }
-
+    
     if(empty($previous_version)){
         error_log("Komplette Datenbankinitialisierung");
         dienste_mannschaft_initialisieren($wpdb);
@@ -103,6 +104,9 @@ function dienste_importklassen_anlegen($dbhandle){
     dbDelta( $sql );
     $sql = Spiel_toBeImportedDAO::tableCreation($dbhandle);
     dbDelta( $sql );
+}
+function dienste_spieltabelle_halleString($dbhandle){
+    dbDelta("ALTER TABLE ".SpielDAO::tableName($dbhandle)." MODIFY halle VARCHAR(1024)");
 }
 
 function dienste_nuliga_import_initialisieren($dbhandle){

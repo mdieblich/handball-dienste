@@ -24,8 +24,7 @@ class Spiel{
     public Gegner $gegner;                          public int $gegner_id;
 
     public ?DateTime $anwurf = null;
-    // TODO Die Halle kann führende Nullen haben und sollte daher ein String sein!
-    public int $halle;
+    public string $halle;
     public bool $heimspiel;
     
     // TODO prüfen: kann auf diese Referenz verzichtet werden?

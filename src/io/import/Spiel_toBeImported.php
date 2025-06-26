@@ -25,7 +25,7 @@ class Spiel_toBeImported{
     public function updateSpiel(Spiel $spiel): Spiel{
         $spiel_neu = clone $spiel;
         $spiel_neu->anwurf = $this->anwurf;
-        $spiel_neu->halle = (int) $this->halle;
+        $spiel_neu->halle = $this->halle;
         $spiel_neu->heimspiel = $this->heimspiel;
         return $spiel_neu;
     }
