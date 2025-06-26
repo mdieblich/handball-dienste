@@ -99,6 +99,13 @@ class MemoryDB {
         }
         return $results;
     }
+    public function get_row($query, $output = OBJECT) {
+        $results = $this->get_results($query, $output);
+        if (!$results || count($results) === 0) {
+            return null;
+        }
+        return $results[0];
+    }
 
     public function query($query) {
         // Only supports DELETE FROM $table
