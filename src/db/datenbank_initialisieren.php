@@ -7,6 +7,7 @@ require_once __DIR__.'/dao/MeisterschaftDAO.php';
 require_once __DIR__.'/dao/MannschaftsMeldungDAO.php';
 require_once __DIR__.'/dao/SpielDAO.php';
 require_once __DIR__.'/dao/DienstDAO.php';
+require_once __DIR__.'/dao/import//Spiel_toBeImportedDAO.php';
 require_once __DIR__.'/dao/import/nuliga/NuLigaSpielDAO.php';
 
 global $dienste_db_version;
@@ -99,6 +100,8 @@ function dienste_dienste_initialisieren($dbhandle){
 
 function dienste_importklassen_anlegen($dbhandle){
     $sql = NuLigaSpielDAO::tableCreation($dbhandle);
+    dbDelta( $sql );
+    $sql = Spiel_toBeImportedDAO::tableCreation($dbhandle);
     dbDelta( $sql );
 }
 
