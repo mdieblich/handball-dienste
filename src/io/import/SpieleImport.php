@@ -17,6 +17,7 @@ require_once __DIR__."/../../db/dao/MannschaftsMeldungDAO.php";
 require_once __DIR__."/../../db/dao/SpielDAO.php";
 require_once __DIR__."/../../db/dao/DienstDAO.php";
 require_once __DIR__."/../../db/dao/import/Spiel_toBeImportedDAO.php";
+require_once __DIR__."/../../db/dao/import/DienstAenderungDAO.php";
 require_once __DIR__."/../../db/dao/import/nuliga/NuLigaSpielDAO.php";
 
 require_once __DIR__."/../../db/service/MannschaftService.php";
@@ -33,6 +34,7 @@ class SpieleImport {
     private GegnerDAO $gegnerDAO;
     private SpielDAO $spielDAO;
     private DienstDAO $dienstDAO;
+    private DienstAenderungDAO $dienstAenderungDAO;
 
     public function __construct($dbhandle, Log $logfile=null, HttpClient $httpClient=null) {
         $this->dbhandle = $dbhandle;
@@ -45,6 +47,7 @@ class SpieleImport {
         $this->gegnerDAO = new GegnerDAO($this->dbhandle);
         $this->spielDAO = new SpielDAO($this->dbhandle);
         $this->dienstDAO = new DienstDAO($this->dbhandle);
+        $this->dienstAenderungDAO = new DienstAenderungDAO($this->dbhandle);
     }
     public function fetchAllNuligaSpielelisten(): array{
         $mannschaftsListe = $this->mannschaftService->loadMannschaftenMitMeldungen();
@@ -175,9 +178,9 @@ class SpieleImport {
             $dienste = $this->dienstDAO->fetchAll("spiel_id=$spiel_nachher->id");
             foreach($dienste as $dienst){
                 $aenderung = DienstAenderung::create($dienst->id, $spiel_vorher);
-
-                // TODO Hier weiter
+                $this->dienstAenderungDAO->insert($aenderung);
             }
+            // TODO Hier weiter
         }
     }
     
