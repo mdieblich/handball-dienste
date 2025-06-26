@@ -69,11 +69,21 @@ class MemoryDB {
         }
         $table = $matches[1];
         $where = [];
+        $nullChecks = [];
         if (isset($matches[3])) {
             $conds = explode('AND', $matches[3]);
             foreach ($conds as $cond) {
-                if (preg_match('/(\w+)\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|(\S+))/', trim($cond), $cm)) {
-                    // Wert kann in $cm[2] (doppelte Anführungszeichen), $cm[3] (einfache Anführungszeichen) oder $cm[4] (ohne Anführungszeichen) stehen
+                $cond = trim($cond);
+                // IS NULL / IS NOT NULL
+                if (preg_match('/(\w+)\s+is\s+(not\s+)?null/i', $cond, $cm)) {
+                    $nullChecks[] = [
+                        'col' => $cm[1],
+                        'not' => isset($cm[2]) && trim(strtolower($cm[2])) === 'not'
+                    ];
+                    continue;
+                }
+                // = Vergleich
+                if (preg_match('/(\w+)\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|(\S+))/', $cond, $cm)) {
                     $value = isset($cm[2]) && $cm[2] !== '' ? $cm[2]
                         : (isset($cm[3]) && $cm[3] !== '' ? $cm[3] : $cm[4]);
                     $where[$cm[1]] = $value;
@@ -94,11 +104,28 @@ class MemoryDB {
                 }
             }
             if ($match) {
+                // Prüfe IS NULL / IS NOT NULL Bedingungen
+                foreach ($nullChecks as $check) {
+                    $col = $check['col'];
+                    $isNot = $check['not'];
+                    $isNull = !isset($row[$col]) || $row[$col] === null;
+                    if ($isNot && $isNull) {
+                        $match = false;
+                        break;
+                    }
+                    if (!$isNot && !$isNull) {
+                        $match = false;
+                        break;
+                    }
+                }
+            }
+            if ($match) {
                 $results[] = ($output === ARRAY_A) ? $row : (object)$row;
             }
         }
         return $results;
     }
+    
     public function get_row($query, $output = OBJECT) {
         $results = $this->get_results($query, $output);
         if (!$results || count($results) === 0) {
