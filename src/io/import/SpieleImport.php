@@ -180,7 +180,7 @@ class SpieleImport {
                 $aenderung = DienstAenderung::create($dienst->id, $spiel_vorher);
                 $this->dienstAenderungDAO->insert($aenderung);
             }
-            // TODO Hier weiter
+            $this->spiel_toBeImportedDAO->delete(["id"=>$spielToBeImported->id]);
         }
     }
     

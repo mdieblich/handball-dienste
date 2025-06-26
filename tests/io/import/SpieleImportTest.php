@@ -1121,7 +1121,7 @@ final class SpieleImportTest extends TestCase {
         $spiel_toBeImported_asNewOne->heimspiel = true; 
         $spiel_toBeImported_asNewOne->istNeuesSpiel = true; // NEUES Spiel
         // $spiel_toBeImported_asNewOne->spielID_alt = null;  // KEIN Spiel welches schon existierte
-        $newSpiel_id = $spiel_toBeImported_DAO->insert($spiel_toBeImported_asUpdate);
+        $newSpiel_id = $spiel_toBeImported_DAO->insert($spiel_toBeImported_asNewOne);
 
         // act
         $this->import->updateSpiele();
