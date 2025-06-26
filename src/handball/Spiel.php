@@ -24,6 +24,7 @@ class Spiel{
     public Gegner $gegner;                          public int $gegner_id;
 
     public ?DateTime $anwurf = null;
+    // TODO Die Halle kann führende Nullen haben und sollte daher ein String sein!
     public int $halle;
     public bool $heimspiel;
     
