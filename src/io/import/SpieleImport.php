@@ -167,22 +167,32 @@ class SpieleImport {
         }
     }
 
-    // TODO Diese funktion aufsplitten: Erst DienstÄnderungen, dann das Update
+    public function createDienstAenderungen(): void {
+        $spieleToBeImported = $this->spiel_toBeImportedDAO->fetchAllForDienstAenderungen();
+        foreach($spieleToBeImported as $spielToBeImported){
+            $this->logfile->log("Erstelle Dienständerungsplan für Import-Spiel mit ID $spielToBeImported->id");
+            $spiel_vorher = $this->spielDAO->fetch("id=$spielToBeImported->spielID_alt");
+            $dienste = $this->dienstDAO->fetchAll("spiel_id=$spiel_vorher->id AND id NOT IN (select dienstID from wp_dienstaenderung)");
+            foreach($dienste as $dienst){
+                $this->logfile->log("$dienst->dienstart ist von Spieländerugen betroffen");
+                $aenderung = DienstAenderung::create($dienst->id, $spiel_vorher);
+                $this->dienstAenderungDAO->insert($aenderung);
+            }
+            $spielToBeImported->dienstAenderungenErstellt = true;
+            $this->spiel_toBeImportedDAO->update($spielToBeImported->id, $spielToBeImported);
+        }
+    }
+    
     public function updateSpiele(): void {
         $spieleToBeImported = $this->spiel_toBeImportedDAO->fetchAllForUpdate();
         foreach($spieleToBeImported as $spielToBeImported){
             $spiel_vorher = $this->spielDAO->fetch("id=$spielToBeImported->spielID_alt");
             $spiel_nachher = $spielToBeImported->updateSpiel($spiel_vorher);
             $this->spielDAO->update($spiel_nachher->id, $spiel_nachher);
-
-            $dienste = $this->dienstDAO->fetchAll("spiel_id=$spiel_nachher->id");
-            foreach($dienste as $dienst){
-                $aenderung = DienstAenderung::create($dienst->id, $spiel_vorher);
-                $this->dienstAenderungDAO->insert($aenderung);
-            }
             $this->spiel_toBeImportedDAO->delete(["id"=>$spielToBeImported->id]);
         }
     }
+
     
     // TODO Importschritt neues Spiel anlegen, dabei neue Dienste anlegen und im Dienständerungsplan hinterlegen
     // TODO Auf- und Abbau neu prüfen und im Dienständerungsplan hinterlegen

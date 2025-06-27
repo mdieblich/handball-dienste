@@ -18,6 +18,8 @@ class Spiel_toBeImported{
     public ?bool $istNeuesSpiel = null; // Flag, ob es sich um ein neues Spiel handelt, das noch nicht in der Datenbank ist
     public ?int $spielID_alt = null; // ID des alten Spiels, falls es aktualisiert wird
     
+    public bool $dienstAenderungenErstellt = false;
+    
     public function __construct(){
         $this->importDatum = new DateTime();
     }
