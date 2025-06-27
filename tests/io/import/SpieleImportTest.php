@@ -532,7 +532,7 @@ final class SpieleImportTest extends TestCase {
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
-        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id      );
+        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id, true);
 
         $spiel = new Spiel_toBeImported();
         $spiel-> spielNr = 703;
@@ -550,6 +550,7 @@ final class SpieleImportTest extends TestCase {
         // assert
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id", ARRAY_A);
         $this->assertEquals($gegner_id, $rows[0]['gegner_id'], "Der Gegner wurde nicht korrekt gefunden.");
+        $this->assertEquals(true, $rows[0]['gegnerStelltSekretaerBeiHeimspiel'], "Info, ob Sekretär gestellt wird, wurde nicht übernommen.");
     }
     public function test_sucheGegner_findetGegnerFuerMehrereSpiele(){
         // arrange

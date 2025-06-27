@@ -127,6 +127,7 @@ class SpieleImport {
             foreach($alleGegner as $gegner){
                 if($gegner->isSimilarTo($gegnerAusSpiel)){
                     $spiel->gegner_id = $gegner->id;
+                    $spiel->gegnerStelltSekretaerBeiHeimspiel = $gegner->stelltSekretaerBeiHeimspiel;
                     $this->spiel_toBeImportedDAO->update($spiel->id, $spiel);
                     $gegnerGefunden = true;
                     break;
