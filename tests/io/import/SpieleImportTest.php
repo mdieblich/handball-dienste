@@ -966,7 +966,7 @@ final class SpieleImportTest extends TestCase {
         $this->assertNull($rows[0]['spielID_alt'], "Es sollte keine alte Spiel-ID geben, da das Spiel noch nicht existiert.");
         $this->assertTrue($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
-        public function test_createDienstAenderungen_setztDienstaenderungsplan(){
+    public function test_createDienstAenderungen_setztDienstaenderungsplan(){
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
@@ -1006,7 +1006,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->createDienstAenderungen();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_dienstaenderung WHERE id in ($dienst1, $dienst2, $dienst3)", ARRAY_A);
+        $rows = $this->db->get_results("SELECT * FROM wp_dienstaenderung WHERE dienst_id in ($dienst1, $dienst2, $dienst3)", ARRAY_A);
         $this->assertCount(3, $rows, "Es sollten 3 Dienständerungen für das Spiel existieren.");
         foreach ($rows as $row) {
             $this->assertEquals(false, $row['istNeu'], "Die Dienständerung sollte nicht als neuer Dienst markiert sein.");
@@ -1015,7 +1015,7 @@ final class SpieleImportTest extends TestCase {
             $this->assertEquals("06057", $row['halleVorher'], "Die vorherige Halle sollte gespeichert sein.");
         }
     }
-        public function test_createDienstAenderungen_erstelltNixDoppelt(){
+    public function test_createDienstAenderungen_erstelltNixDoppelt(){
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
@@ -1157,5 +1157,250 @@ final class SpieleImportTest extends TestCase {
         $this->assertEmpty($rows, "Das Import-Spiel hätte gelöscht werden sollen");
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $newSpiel_id", ARRAY_A);
         $this->assertNotEmpty($rows, "Das neue Import-Spiel hätte nicht gelöscht werden dürfen");    
+    }
+    public function test_createNeueSpiele_erstelltNeuesSpiel() {
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id);
+
+        $spiel_toBeImported = new Spiel_toBeImported();
+        $spiel_toBeImported->spielNr = 703;
+        $spiel_toBeImported->meldung_id = $meldung_id;
+        $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
+        $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->anwurf = new DateTime("2024-09-08 20:00:00");
+        $spiel_toBeImported->halle = "06058";
+        $spiel_toBeImported->heimspiel = true;
+        $spiel_toBeImported->istNeuesSpiel = true;
+        $spiel_toBeImported->spielID_alt = null;
+        $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
+        $spiel_toBeImported_DAO->insert($spiel_toBeImported);
+
+        // act
+        $this->import->createNeueSpiele();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel WHERE spielNr=703", ARRAY_A);
+        $this->assertNotEmpty($rows, "Es sollte ein Spiel existieren");
+        $this->assertEquals(703, $rows[1]['spielNr'], "SpielNr");
+        $this->assertEquals($meldung_id, $rows[1]['mannschaftsMeldung_id'], "Meldung");
+        $this->assertEquals($mannschaft_id, $rows[1]['mannschaft_id'], "Mannschaft");
+        $this->assertEquals($gegner_id, $rows[1]['gegner_id'], "Gegner");
+        $this->assertEquals("2024-09-08 20:00:00", $rows[1]['anwurf'], "Anwurf");
+        $this->assertEquals("06058", $rows[1]['halle'], "Halle");
+        $this->assertEquals(true, $rows[1]['heimspiel'], "Heimspiel");
+    }
+    public function test_createNeueSpiele_erstelltDiensteFuerHeimspiel() {
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id);
+
+        $spiel_toBeImported = new Spiel_toBeImported();
+        $spiel_toBeImported->spielNr = 703;
+        $spiel_toBeImported->meldung_id = $meldung_id;
+        $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
+        $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->anwurf = new DateTime("2024-09-08 20:00:00");
+        $spiel_toBeImported->halle = "06058";
+        $spiel_toBeImported->heimspiel = true;
+        $spiel_toBeImported->istNeuesSpiel = true;
+        $spiel_toBeImported->spielID_alt = null;
+        $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
+        $spiel_toBeImported_DAO->insert($spiel_toBeImported);
+
+        // act
+        $this->import->createNeueSpiele();
+
+        // assert
+        $spiel_id = $this->db->get_var("Select id from wp_spiel where spielNr=703");
+        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart", ARRAY_A);
+        $this->assertCount(2, $rows, "Es sollten zwei Dienste sein");
+        // Die Dienste sind alphabetisch sortiert, also...:
+        $catering = $rows[0];
+        $zeitnehmer = $rows[1];
+        $this->assertEquals(Dienstart::CATERING, $catering['dienstart'], "Erster Dienst sollte Catering sein");
+        $this->assertEquals(Dienstart::ZEITNEHMER, $zeitnehmer['dienstart'], "Zweiter Dienst sollte Zeitnehmer sein");
+    }
+
+    public function test_createNeueSpiele_erstelltDiensteFuerAuswaertsspiel() {
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id);
+
+        $spiel_toBeImported = new Spiel_toBeImported();
+        $spiel_toBeImported->spielNr = 703;
+        $spiel_toBeImported->meldung_id = $meldung_id;
+        $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
+        $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->anwurf = new DateTime("2024-09-08 20:00:00");
+        $spiel_toBeImported->halle = "06058";
+        $spiel_toBeImported->heimspiel = false;
+        $spiel_toBeImported->istNeuesSpiel = true;
+        $spiel_toBeImported->spielID_alt = null;
+        $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
+        $spiel_toBeImported_DAO->insert($spiel_toBeImported);
+
+        // act
+        $this->import->createNeueSpiele();
+
+        // assert
+        $spiel_id = $this->db->get_var("Select id from wp_spiel where spielNr=703");
+        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart", ARRAY_A);
+        $this->assertCount(1, $rows, "Es sollte ein Dienst sein");
+        $sekretaer = $rows[0];
+        $this->assertEquals(Dienstart::SEKRETAER, $sekretaer['dienstart'], "Der Dienst sollte Sekretär sein");
+    }  
+    public function test_createNeueSpiele_erstelltDiensteFuerHeimspielMitSekretaer() {
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id, true);
+        
+        $spiel_toBeImported = new Spiel_toBeImported();
+        $spiel_toBeImported->spielNr = 703;
+        $spiel_toBeImported->meldung_id = $meldung_id;
+        $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
+        $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->anwurf = new DateTime("2024-09-08 20:00:00");
+        $spiel_toBeImported->halle = "06058";
+        $spiel_toBeImported->heimspiel = true;
+        $spiel_toBeImported->istNeuesSpiel = true;
+        $spiel_toBeImported->spielID_alt = null;
+        $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
+        $spiel_toBeImported_DAO->insert($spiel_toBeImported);
+        
+        // act
+        $this->import->createNeueSpiele();
+        
+        // assert
+        $spiel_id = $this->db->get_var("Select id from wp_spiel where spielNr=703");
+        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart", ARRAY_A);
+        $this->assertCount(3, $rows, "Es sollten drei Dienste sein");
+        // Die Dienste sind alphabetisch sortiert, also...:
+        $catering = $rows[0];
+        $sekretaer = $rows[1];
+        $zeitnehmer = $rows[2];
+        $this->assertEquals(Dienstart::CATERING, $catering['dienstart'], "Erster Dienst sollte Catering sein");
+        $this->assertEquals(Dienstart::SEKRETAER, $sekretaer['dienstart'], "Zweiter Dienst sollte Sekretär sein");
+        $this->assertEquals(Dienstart::ZEITNEHMER, $zeitnehmer['dienstart'], "Dritter Dienst sollte Zeitnehmer sein");
+    }
+    
+    public function test_createNeueSpiele_erstelltKeineDiensteFuerAuswaertsspiel() {
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id, true);
+
+        $spiel_toBeImported = new Spiel_toBeImported();
+        $spiel_toBeImported->spielNr = 703;
+        $spiel_toBeImported->meldung_id = $meldung_id;
+        $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
+        $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->anwurf = new DateTime("2024-09-08 20:00:00");
+        $spiel_toBeImported->halle = "06058";
+        $spiel_toBeImported->heimspiel = false;
+        $spiel_toBeImported->istNeuesSpiel = true;
+        $spiel_toBeImported->spielID_alt = null;
+        $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
+        $spiel_toBeImported_DAO->insert($spiel_toBeImported);
+
+        // act
+        $this->import->createNeueSpiele();
+
+        // assert
+        $spiel_id = $this->db->get_var("Select id from wp_spiel where spielNr=703");
+        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart", ARRAY_A);
+        $this->assertCount(0, $rows, "Es sollten keine Dienst da sein");
+    }
+
+    public function test_createNeueSpiele_raeumtAuf() {
+        
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $gegner_id1 = $this->builder->createGegner("TuS 82 Opladen",3,$meldung_id);
+        $spiel_id = $this->builder->createSpiel(
+            703, 
+            $meldung_id, 
+            $gegner_id1, 
+            new DateTime("2024-09-07 17:00:00"), 
+            "06057",
+            false,
+        );
+
+        $spiel_toBeImported_asUpdate = new Spiel_toBeImported();
+        $spiel_toBeImported_asUpdate->spielNr = 703;
+        $spiel_toBeImported_asUpdate->meldung_id = $meldung_id;
+        $spiel_toBeImported_asUpdate->gegnerName = "TuS 82 Opladen III";
+        $spiel_toBeImported_asUpdate->gegner_id = $gegner_id1;
+        $spiel_toBeImported_asUpdate->anwurf = new DateTime("2024-09-08 20:00:00");
+        $spiel_toBeImported_asUpdate->halle = "06058"; 
+        $spiel_toBeImported_asUpdate->heimspiel = true;
+        $spiel_toBeImported_asUpdate->istNeuesSpiel = false;
+        $spiel_toBeImported_asUpdate->spielID_alt = $spiel_id;
+        $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
+        $updateSpiel_id = $spiel_toBeImported_DAO->insert($spiel_toBeImported_asUpdate);
+
+        // Ein zweites Spiel, welches komplett neu ist
+        $gegner_id2 = $this->builder->createGegner("TuS 82 Opladen",1,$meldung_id);
+        $spiel_toBeImported_asNewOne = new Spiel_toBeImported();
+        $spiel_toBeImported_asNewOne->spielNr = 709;
+        $spiel_toBeImported_asNewOne->meldung_id = $meldung_id;
+        $spiel_toBeImported_asNewOne->gegnerName = "TuS 82 Opladen I";
+        $spiel_toBeImported_asNewOne->gegner_id = $gegner_id2;
+        $spiel_toBeImported_asNewOne->anwurf = new DateTime("2024-09-20 20:00:00");
+        $spiel_toBeImported_asNewOne->halle = "666666";   
+        $spiel_toBeImported_asNewOne->heimspiel = true; 
+        $spiel_toBeImported_asNewOne->istNeuesSpiel = true; // NEUES Spiel
+        // $spiel_toBeImported_asNewOne->spielID_alt = null;  // KEIN Spiel welches schon existierte
+        $newSpiel_id = $spiel_toBeImported_DAO->insert($spiel_toBeImported_asNewOne);
+
+        // act
+        $this->import->createNeueSpiele();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $updateSpiel_id", ARRAY_A);
+        $this->assertNotEmpty($rows, "Das alte Import-Spiel hätte nicht gelöscht werden dürfen");
+        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $newSpiel_id", ARRAY_A);
+        $this->assertEmpty($rows, "Das neue Import-Spiel hätte gelöscht werden müssen");   
     }
 }

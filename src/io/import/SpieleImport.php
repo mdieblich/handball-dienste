@@ -193,8 +193,9 @@ class SpieleImport {
         }
     }
 
-    
-    // TODO Importschritt neues Spiel anlegen, dabei neue Dienste anlegen und im Dienständerungsplan hinterlegen
+    public function createNeueSpiele(): void {
+
+    }
     // TODO Auf- und Abbau neu prüfen und im Dienständerungsplan hinterlegen
     // TODO  Dienständerungsplan als Emails versenden & aufräumen
 }
