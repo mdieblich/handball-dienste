@@ -58,7 +58,6 @@ final class SpieleImportTest extends TestCase {
         $this->assertCount(1, $files);
         $this->assertEquals("<html>Example-HTML</html>", file_get_contents($files[0]), "Die gespeicherte HTML-Datei stimmt nicht mit der erwarteten überein.");
     }
-    
     public function test_fetchAllNuligaSpielelisten_laedtMehrereMeldungen() {
         // arrange
         $meisterschaft1 = "KR 24/25"; // Köln/Rheinberg 2024/25
@@ -112,7 +111,6 @@ final class SpieleImportTest extends TestCase {
         $this->assertEquals("<html>Example-HTML 1</html>", file_get_contents($files[0]), "Die gespeicherte HTML-Datei stimmt nicht mit der erwarteten überein.");
         $this->assertEquals("<html>Example-HTML 2</html>", file_get_contents($files[1]), "Die gespeicherte HTML-Datei stimmt nicht mit der erwarteten überein.");
     }
-
     public function test_fetchAllNuligaSpielelisten_laedtMehrereMannschaften() {
         // arrange
         $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
@@ -202,7 +200,6 @@ final class SpieleImportTest extends TestCase {
         $this->assertEquals("Turnerkreis Nippes II", $spiel['gastmannschaft'], "Die Gastmannschaft stimmt nicht überein.");
         // restliche Felder wie "ErgebnisOderSchiris" sind egal
     }
-
     public function test_extractNuligaSpiele_speichertAlleSpiele() {
         // arrange
         $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
@@ -228,7 +225,6 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id", ARRAY_A);
         $this->assertCount( 26, $rows, "Es wurden nicht genug Spiele extrahiert.");
     }
-    
     public function test_extractNuligaSpiele_loeschtDateiAusCache() {
         // arrange
         $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
@@ -252,7 +248,6 @@ final class SpieleImportTest extends TestCase {
         // 
         $this->assertFileDoesNotExist( $cachedFile);
     }
-    
     public function test_extractNuligaSpiele_speichertSpieleAllerMannschaften() {
         // arrange
         $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
@@ -296,7 +291,6 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id2", ARRAY_A);
         $this->assertCount( 26, $rows, "Es wurden nicht genug Spiele für Team 2 extrahiert.");
     }
-
     public function test_convertSpiele_konvertiertEinSpiel(){
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
@@ -336,7 +330,6 @@ final class SpieleImportTest extends TestCase {
         $this->assertEquals("06057", $rows[0]['halle'], "Die Halle stimmt nicht überein.");
         $this->assertFalse($rows[0]['heimspiel'], "Das Spiel ist kein Heimspiel, aber es wurde als solches markiert.");
     }
-
     public function test_convertSpiele_konvertiertZweiSpiele(){
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
@@ -373,7 +366,6 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE meldung_id = $meldung_id", ARRAY_A);
         $this->assertCount(2, $rows);
     }
-
     public function test_convertSpiele_ignoriertSpielfrei(){
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
@@ -467,7 +459,6 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported", ARRAY_A);
         $this->assertEmpty($rows, "Es hätte kein Spiel angelegt werden dürfen.");
     }
-    
     public function test_convertSpiele_konvertiertOhneAnwurf(){
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
@@ -500,7 +491,6 @@ final class SpieleImportTest extends TestCase {
         $this->assertNotEmpty($rows, "Es wurde kein Spiel in der DB gespeichert.");
         $this->assertEmpty($rows[0]['anwurf'],  "Der Anwurf sollte leer sein, da es sich um einen Termin offen handelt.");
     }
-
     public function test_convertSpiele_loeschtNuligaSpiele(){
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
@@ -531,8 +521,7 @@ final class SpieleImportTest extends TestCase {
         // assert
         $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel", ARRAY_A);
         $this->assertEmpty($rows);
-    }
-    
+    } 
     public function test_sucheGegner_findetEinenGegner(){
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
@@ -562,7 +551,6 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id", ARRAY_A);
         $this->assertEquals($gegner_id, $rows[0]['gegner_id'], "Der Gegner wurde nicht korrekt gefunden.");
     }
-    
     public function test_sucheGegner_findetGegnerFuerMehrereSpiele(){
         // arrange
         $spielDAO = new Spiel_toBeImportedDAO($this->db);
@@ -606,8 +594,6 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id2", ARRAY_A);
         $this->assertEquals($gegner_id2, $rows[0]['gegner_id'], "Der 2. Gegner wurde nicht korrekt gefunden.");
     }
-
-    
     public function test_sucheGegner_gleicherGegnernameUnterschiedlicheLigen(){
         // arrange
         $spielDAO = new Spiel_toBeImportedDAO($this->db);
@@ -660,7 +646,6 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id2", ARRAY_A);
         $this->assertEquals($gegner_id2, $rows[0]['gegner_id'], "Der 2. Gegner wurde nicht korrekt gefunden.");
     }
-    
     public function test_sucheGegner_loeschtSpieleOhneGegner(){
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
@@ -691,7 +676,6 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id", ARRAY_A);
         $this->assertEmpty($rows);
     }
-
     public function test_findExistingSpiele_findetIdentischesSpiel() {
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
@@ -812,7 +796,6 @@ final class SpieleImportTest extends TestCase {
         $this->assertEquals($spiel_id, $rows[0]['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
         $this->assertFalse($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
-
     public function test_findExistingSpiele_findetSpielmitAndererHalleUndTauschHeimrecht() {
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
@@ -983,7 +966,6 @@ final class SpieleImportTest extends TestCase {
         $this->assertNull($rows[0]['spielID_alt'], "Es sollte keine alte Spiel-ID geben, da das Spiel noch nicht existiert.");
         $this->assertTrue($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
-
     public function test_updateSpiele_aktualisiertSpiele(){   
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
