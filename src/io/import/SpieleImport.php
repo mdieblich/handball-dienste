@@ -203,6 +203,7 @@ class SpieleImport {
             $this->spielDAO->insert($spiel);
             $spiel->createDienste($this->logfile, $spielToBeImported->gegnerStelltSekretaerBeiHeimspiel);
             $this->dienstDAO->insertAll($spiel->dienste);
+            $this->spiel_toBeImportedDAO->delete(['id'=>$spielToBeImported->id]);
         }
     }
     // TODO Auf- und Abbau neu prüfen und im Dienständerungsplan hinterlegen

@@ -1350,9 +1350,7 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart", ARRAY_A);
         $this->assertCount(0, $rows, "Es sollten keine Dienst da sein");
     }
-
     public function test_createNeueSpiele_raeumtAuf() {
-        
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
