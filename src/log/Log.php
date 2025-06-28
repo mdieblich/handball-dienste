@@ -49,5 +49,3 @@ class NoLog extends Log {
     public function log(string $message){}
     public function log_withoutNewline(string $message){}
 }
-
-?>

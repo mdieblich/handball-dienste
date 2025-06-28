@@ -6,6 +6,7 @@ require_once __DIR__."/../../../src/io/import/importer.php"; // for the function
 
 require_once __DIR__."/../../db/MemoryDB.php";
 require_once __DIR__."/../../db/DBBuilder.php";
+require_once __DIR__."/../../log/EchoLog.php";
 require_once __DIR__."/FakeHttpClient.php";
 
 final class SpieleImportTest extends TestCase {
@@ -23,7 +24,7 @@ final class SpieleImportTest extends TestCase {
         $this->db = new MemoryDB();
         $this->builder = new DBBuilder($this->db);
         $this->httpClient = new FakeHttpClient();
-        $this->logfile = new NoLog();
+        $this->logfile = new EchoLog();
         $this->import = new SpieleImport($this->db, $this->logfile, $this->httpClient);
     }
 
