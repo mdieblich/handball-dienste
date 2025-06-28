@@ -32,6 +32,14 @@ class Spiel_toBeImported{
         $spiel_neu->heimspiel = $this->heimspiel;
         return $spiel_neu;
     }
-
-    // TODO Umwandlung in ein Spiel-Objekt
+    public function createSpiel(): Spiel{
+        $spiel = new Spiel();
+        $spiel->spielNr = $this->spielNr;
+        $spiel->mannschaftsMeldung_id = $this->meldung_id;
+        $spiel->gegner_id = $this->gegner_id;
+        $spiel->anwurf = $this->anwurf;
+        $spiel->halle = $this->halle;
+        $spiel->heimspiel = $this->heimspiel;
+        return $spiel;
+    }
 }

@@ -1176,6 +1176,7 @@ final class SpieleImportTest extends TestCase {
         $spiel_toBeImported->meldung_id = $meldung_id;
         $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
         $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->gegnerStelltSekretaerBeiHeimspiel = false;
         $spiel_toBeImported->anwurf = new DateTime("2024-09-08 20:00:00");
         $spiel_toBeImported->halle = "06058";
         $spiel_toBeImported->heimspiel = true;
@@ -1215,6 +1216,7 @@ final class SpieleImportTest extends TestCase {
         $spiel_toBeImported->meldung_id = $meldung_id;
         $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
         $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->gegnerStelltSekretaerBeiHeimspiel = false;
         $spiel_toBeImported->anwurf = new DateTime("2024-09-08 20:00:00");
         $spiel_toBeImported->halle = "06058";
         $spiel_toBeImported->heimspiel = true;
@@ -1254,6 +1256,7 @@ final class SpieleImportTest extends TestCase {
         $spiel_toBeImported->meldung_id = $meldung_id;
         $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
         $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->gegnerStelltSekretaerBeiHeimspiel = false;
         $spiel_toBeImported->anwurf = new DateTime("2024-09-08 20:00:00");
         $spiel_toBeImported->halle = "06058";
         $spiel_toBeImported->heimspiel = false;
@@ -1289,6 +1292,7 @@ final class SpieleImportTest extends TestCase {
         $spiel_toBeImported->meldung_id = $meldung_id;
         $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
         $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->gegnerStelltSekretaerBeiHeimspiel = true;
         $spiel_toBeImported->anwurf = new DateTime("2024-09-08 20:00:00");
         $spiel_toBeImported->halle = "06058";
         $spiel_toBeImported->heimspiel = true;
@@ -1330,6 +1334,7 @@ final class SpieleImportTest extends TestCase {
         $spiel_toBeImported->meldung_id = $meldung_id;
         $spiel_toBeImported->gegnerName = "TuS 82 Opladen III";
         $spiel_toBeImported->gegner_id = $gegner_id;
+        $spiel_toBeImported->gegnerStelltSekretaerBeiHeimspiel = true;
         $spiel_toBeImported->anwurf = new DateTime("2024-09-08 20:00:00");
         $spiel_toBeImported->halle = "06058";
         $spiel_toBeImported->heimspiel = false;
@@ -1373,6 +1378,7 @@ final class SpieleImportTest extends TestCase {
         $spiel_toBeImported_asUpdate->meldung_id = $meldung_id;
         $spiel_toBeImported_asUpdate->gegnerName = "TuS 82 Opladen III";
         $spiel_toBeImported_asUpdate->gegner_id = $gegner_id1;
+        $spiel_toBeImported_asUpdate->gegnerStelltSekretaerBeiHeimspiel = false;
         $spiel_toBeImported_asUpdate->anwurf = new DateTime("2024-09-08 20:00:00");
         $spiel_toBeImported_asUpdate->halle = "06058"; 
         $spiel_toBeImported_asUpdate->heimspiel = true;
@@ -1388,6 +1394,7 @@ final class SpieleImportTest extends TestCase {
         $spiel_toBeImported_asNewOne->meldung_id = $meldung_id;
         $spiel_toBeImported_asNewOne->gegnerName = "TuS 82 Opladen I";
         $spiel_toBeImported_asNewOne->gegner_id = $gegner_id2;
+        $spiel_toBeImported_asNewOne->gegnerStelltSekretaerBeiHeimspiel = false;
         $spiel_toBeImported_asNewOne->anwurf = new DateTime("2024-09-20 20:00:00");
         $spiel_toBeImported_asNewOne->halle = "666666";   
         $spiel_toBeImported_asNewOne->heimspiel = true; 

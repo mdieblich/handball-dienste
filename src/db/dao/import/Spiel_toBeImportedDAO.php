@@ -12,4 +12,7 @@ class Spiel_toBeImportedDAO extends DAO{
     public function fetchAllForUpdate(): array{
         return $this->fetchAll("gegner_id is not null AND spielID_alt is not null and dienstAenderungenErstellt = 1");
     }
+    public function fetchAllNewOnes(): array{
+        return $this->fetchAll("gegner_id is not null AND istNeuesSpiel=1");
+    }
 }

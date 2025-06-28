@@ -187,6 +187,7 @@ class SpieleImport {
     public function updateSpiele(): void {
         $spieleToBeImported = $this->spiel_toBeImportedDAO->fetchAllForUpdate();
         foreach($spieleToBeImported as $spielToBeImported){
+            $this->logfile->log("Aktualisiere Spiel mit id $spielToBeImported->spielID_alt");
             $spiel_vorher = $this->spielDAO->fetch("id=$spielToBeImported->spielID_alt");
             $spiel_nachher = $spielToBeImported->updateSpiel($spiel_vorher);
             $this->spielDAO->update($spiel_nachher->id, $spiel_nachher);
@@ -195,7 +196,14 @@ class SpieleImport {
     }
 
     public function createNeueSpiele(): void {
-
+        $spieleToBeImported = $this->spiel_toBeImportedDAO->fetchAllNewOnes();
+        foreach($spieleToBeImported as $spielToBeImported){
+            $this->logfile->log("Lege Spiel neu an mit SpielNr $spielToBeImported->spielNr");
+            $spiel = $spielToBeImported->createSpiel();
+            $this->spielDAO->insert($spiel);
+            $spiel->createDienste($this->logfile, $spielToBeImported->gegnerStelltSekretaerBeiHeimspiel);
+            $this->dienstDAO->insertAll($spiel->dienste);
+        }
     }
     // TODO Auf- und Abbau neu prüfen und im Dienständerungsplan hinterlegen
     // TODO  Dienständerungsplan als Emails versenden & aufräumen
