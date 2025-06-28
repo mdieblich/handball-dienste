@@ -1191,13 +1191,12 @@ final class SpieleImportTest extends TestCase {
         // assert
         $rows = $this->db->get_results("SELECT * FROM wp_spiel WHERE spielNr=703", ARRAY_A);
         $this->assertNotEmpty($rows, "Es sollte ein Spiel existieren");
-        $this->assertEquals(703, $rows[1]['spielNr'], "SpielNr");
-        $this->assertEquals($meldung_id, $rows[1]['mannschaftsMeldung_id'], "Meldung");
-        $this->assertEquals($mannschaft_id, $rows[1]['mannschaft_id'], "Mannschaft");
-        $this->assertEquals($gegner_id, $rows[1]['gegner_id'], "Gegner");
-        $this->assertEquals("2024-09-08 20:00:00", $rows[1]['anwurf'], "Anwurf");
-        $this->assertEquals("06058", $rows[1]['halle'], "Halle");
-        $this->assertEquals(true, $rows[1]['heimspiel'], "Heimspiel");
+        $this->assertEquals(703, $rows[0]['spielNr'], "SpielNr");
+        $this->assertEquals($meldung_id, $rows[0]['mannschaftsMeldung_id'], "Meldung");
+        $this->assertEquals($gegner_id, $rows[0]['gegner_id'], "Gegner");
+        $this->assertEquals("2024-09-08 20:00:00", $rows[0]['anwurf'], "Anwurf");
+        $this->assertEquals("06058", $rows[0]['halle'], "Halle");
+        $this->assertEquals(true, $rows[0]['heimspiel'], "Heimspiel");
     }
     public function test_createNeueSpiele_erstelltDiensteFuerHeimspiel() {
         // arrange
