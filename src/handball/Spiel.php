@@ -133,21 +133,22 @@ class Spiel{
         return $this->halle === $other->halle;
     }
 
-    public function createDienste(Log $logfile=null): void{
+    public function createDienste(Log $logfile=null, ?bool $sekretaerBeiHeimspiel=null): void{
         if(empty($logfile)){
             $logfile = new NoLog();
         }
+        $sekretaerBeiHeimspiel ??=$this->gegner->stelltSekretaerBeiHeimspiel;
         if($this->heimspiel){
             $logfile->log("Heimspiel: Lege Zeitnehmer und Cateringienst an.");
             $this->createDienst(Dienstart::ZEITNEHMER);
             $this->createDienst(Dienstart::CATERING);
-            if($this->gegner->stelltSekretaerBeiHeimspiel){
+            if($sekretaerBeiHeimspiel){
                 // wenn der Gegner beim Heimspiel den Sekretär stellt, so müssen wir das auch
                 $logfile->log("Gegner stellt Sekretär: Lege Sekretärendienst an.");
                 $this->createDienst(Dienstart::SEKRETAER);
             }
         } else {
-            if(!$this->gegner->stelltSekretaerBeiHeimspiel){
+            if(!$sekretaerBeiHeimspiel){
                 $logfile->log("Auswärtsspiel: Lege Sekretärdienst an.");
                 $this->createDienst(Dienstart::SEKRETAER);
             }
