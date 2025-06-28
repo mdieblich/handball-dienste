@@ -64,12 +64,14 @@ class MemoryDB {
 
     public function get_results($query, $output = OBJECT) {
         // Only supports: SELECT * FROM $table WHERE ... AND ...
-        if (!preg_match('/SELECT \* FROM (\w+)( WHERE (.+))?/i', $query, $matches)) {
+        if (!preg_match('/SELECT \* FROM (\w+)( WHERE (.+?))?( ORDER BY (.+))?$/i', $query, $matches)) {
             return [];
         }
         $table = $matches[1];
         $where = [];
         $nullChecks = [];
+        $orderBy = isset($matches[5]) ? trim($matches[5]) : null;
+
         if (isset($matches[3])) {
             $conds = explode('AND', $matches[3]);
             foreach ($conds as $cond) {
@@ -123,6 +125,27 @@ class MemoryDB {
                 $results[] = ($output === ARRAY_A) ? $row : (object)$row;
             }
         }
+
+        // ORDER BY Unterstützung
+        if ($orderBy && count($results) > 1) {
+            // Unterstützt nur einfache Spaltennamen und ASC/DESC
+            $parts = preg_split('/\s*,\s*/', $orderBy);
+            usort($results, function($a, $b) use ($parts, $output) {
+                foreach ($parts as $part) {
+                    if (preg_match('/(\w+)(\s+DESC)?/i', $part, $pm)) {
+                        $col = $pm[1];
+                        $desc = isset($pm[2]) && stripos($pm[2], 'DESC') !== false;
+                        $va = is_array($a) ? ($a[$col] ?? null) : ($a->$col ?? null);
+                        $vb = is_array($b) ? ($b[$col] ?? null) : ($b->$col ?? null);
+                        if ($va == $vb) continue;
+                        if ($va < $vb) return $desc ? 1 : -1;
+                        if ($va > $vb) return $desc ? -1 : 1;
+                    }
+                }
+                return 0;
+            });
+        }
+
         return $results;
     }
     
