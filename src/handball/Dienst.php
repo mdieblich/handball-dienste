@@ -10,4 +10,3 @@ class Dienst {
     public string $dienstart;
     public ?Mannschaft $mannschaft; public ?int $mannschaft_id;
 }
-?>
