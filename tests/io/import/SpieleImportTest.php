@@ -1407,12 +1407,32 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $newSpiel_id", ARRAY_A);
         $this->assertEmpty($rows, "Das neue Import-Spiel hätte gelöscht werden müssen");   
     }
-    public function test_organisiereAufUndAbbau_erstelltAufbauBeiNeuemTag() {
-        
-        $this->fail("Not implemented");
-    }
-    public function test_organisiereAufUndAbbau_erstelltAbbauBeiNeuemTag() {
-        $this->fail("Not implemented");
+    public function test_organisiereAufUndAbbau_erstelltAufUndAbbauBeiNeuemTag() {
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $spieltag = "2024-09-07";
+        $spiel_id = $this->builder->createSpiel(100, $meldung_id, 200, new DateTime("$spieltag 17:00:00"), "0815", true);
+
+        // act
+        $this->import->organisiereAufUndAbbau();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart", ARRAY_A);
+        $this->assertCount(2, $rows,"Nicht genügend Dienste gefunden");
+        // alphabetisch sortierte Dienste
+        $abbau = $rows[0];
+        $aufbau = $rows[1];
+        $this->assertEquals(Dienstart::ABBAU, $abbau['dienstart'], "Abbau nicht gefunden");
+        $this->assertEquals($mannschaft_id, $abbau['mannschaft_id'], "Abbau wurde nicht der entsprechenden Mannschaft zugewiesen");
+        $this->assertEquals(Dienstart::AUFBAU, $aufbau['dienstart'], "Aufbau nicht gefunden");
+        $this->assertEquals($mannschaft_id, $aufbau['mannschaft_id'], "Aufbau wurde nicht der entsprechenden Mannschaft zugewiesen");
     }
     public function test_organisiereAufUndAbbau_weistAufbauAndererMannschaftZu() {
         $this->fail("Not implemented");

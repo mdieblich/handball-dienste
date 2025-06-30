@@ -206,6 +206,9 @@ class SpieleImport {
             $this->spiel_toBeImportedDAO->delete(['id'=>$spielToBeImported->id]);
         }
     }
-    // TODO Auf- und Abbau neu prüfen und im Dienständerungsplan hinterlegen
+
+    public function organisiereAufUndAbbau(): void {
+
+    }
     // TODO  Dienständerungsplan als Emails versenden & aufräumen
 }
