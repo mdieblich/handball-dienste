@@ -6,9 +6,6 @@ class DienstAenderung {
     public int $id;
     public int $dienstID;
 
-    // TODO istNeu in extra klasse
-    public bool $istNeu = false;
-
     public ?DateTime $anwurfVorher = null;
     public ?string $halleVorher = null;
 

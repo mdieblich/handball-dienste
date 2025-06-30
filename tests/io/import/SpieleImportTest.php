@@ -1011,7 +1011,6 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_dienstaenderung WHERE dienst_id in ($dienst1, $dienst2, $dienst3)", ARRAY_A);
         $this->assertCount(3, $rows, "Es sollten 3 Dienständerungen für das Spiel existieren.");
         foreach ($rows as $row) {
-            $this->assertEquals(false, $row['istNeu'], "Die Dienständerung sollte nicht als neuer Dienst markiert sein.");
             $this->assertEquals("2024-09-07 17:00:00", $row['anwurfVorher'], "Der vorherige Anwurf sollte gespeichert sein.");
             $this->assertEquals("06057", $row['halleVorher'], "Die vorherige Halle sollte gespeichert sein.");
         }
