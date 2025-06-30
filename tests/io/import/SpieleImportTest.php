@@ -1434,6 +1434,46 @@ final class SpieleImportTest extends TestCase {
         $this->assertEquals(Dienstart::AUFBAU, $aufbau['dienstart'], "Aufbau nicht gefunden");
         $this->assertEquals($mannschaft_id, $aufbau['mannschaft_id'], "Aufbau wurde nicht der entsprechenden Mannschaft zugewiesen");
     }
+    public function test_organisiereAufUndAbbau_erstelltAufUndAbbauFuerUnterschiedlicheSpiele() {
+        // arrange
+        $spieltag = "2024-09-07";
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id1 = $this->builder->createMannschaft(2);
+        $meldung_id1 = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id1,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $anwurf1 = new DateTime("$spieltag 17:00:00");
+        $spiel_id1 = $this->builder->createSpiel(100, $meldung_id1, 200, $anwurf1, "0815", true);
+        
+        $mannschaft_id2 = $this->builder->createMannschaft(3);
+        $meldung_id2 = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id2,
+            $meisterschaft_id,
+            364515, // irgendwas anderes
+            1987866 // irgendwas anderes
+        );
+        $anwurf2 = new DateTime("$spieltag 19:00:00");
+        $spiel_id2 = $this->builder->createSpiel(100, $meldung_id2, 200, $anwurf2,  "0815", true);
+
+        // act
+        $this->import->organisiereAufUndAbbau();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id1", ARRAY_A);
+        $this->assertCount(1, $rows,"Nicht genügend Dienste gefunden");
+        $aufbau = $rows[0];
+        $this->assertEquals(Dienstart::AUFBAU, $aufbau['dienstart'], "Aufbau nicht gefunden");
+        $this->assertEquals($mannschaft_id1, $aufbau['mannschaft_id'], "Aufbau wurde nicht der entsprechenden Mannschaft zugewiesen");
+        
+        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id2", ARRAY_A);
+        $this->assertCount(1, $rows,"Nicht genügend Dienste gefunden");
+        $abbau = $rows[0];
+        $this->assertEquals(Dienstart::ABBAU, $abbau['dienstart'], "Abbau nicht gefunden");
+        $this->assertEquals($mannschaft_id2, $abbau['mannschaft_id'], "Abbau wurde nicht der entsprechenden Mannschaft zugewiesen");
+    }
     public function test_organisiereAufUndAbbau_keineAenderungWennDienstSchonVorhanden() {
         $this->fail("Not implemented");
     }
