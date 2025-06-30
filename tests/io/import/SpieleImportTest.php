@@ -28,6 +28,17 @@ final class SpieleImportTest extends TestCase {
         $this->import = new SpieleImport($this->db, $this->logfile, $this->httpClient);
     }
 
+    public function fetchOneWithAssert(string $query): array{        
+        $rows = $this->db->get_results($query, ARRAY_A);
+        $this->assertNotEmpty( $rows, "Nix gefunden für $query");
+        return $rows[0];
+    }
+    public function fetchAllWithAssert(int $count, string $query): array{        
+        $rows = $this->db->get_results($query, ARRAY_A);
+        $this->assertCount( $count, $rows, "Falsche Anzahl für $query");
+        return $rows[0];
+    }
+
     public function test_fetchAllNuligaSpielelisten_laedtEineSeite() {
         // arrange
         $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
@@ -186,9 +197,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->extractNuligaSpiele();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id", ARRAY_A);
-        $this->assertNotEmpty( $rows, "Es wurde kein Spiel in der DB gespeichert.");
-        $spiel = $rows[0];
+        $spiel = $this->fetchOneWithAssert("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id");
         $this->assertEquals($team_id, $spiel['nuligaTeamID'], "Die nuliga TeamID stimmt nicht überein.");
         $this->assertEquals($gruppe, $spiel['nuligaLigaID'], "Die nuliga LigaID stimmt nicht überein.");
         $this->assertEquals("Sa.", $spiel['wochentag'], "Der Wochentag stimmt nicht überein.");
@@ -223,8 +232,7 @@ final class SpieleImportTest extends TestCase {
 
         // assert
         // Es sind 26 Spiele auf der Seite, davon zwei "Spielfrei"
-        $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id", ARRAY_A);
-        $this->assertCount( 26, $rows, "Es wurden nicht genug Spiele extrahiert.");
+        $this->fetchAllWithAssert(26,"SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id");
     }
     public function test_extractNuligaSpiele_loeschtDateiAusCache() {
         // arrange
@@ -285,12 +293,10 @@ final class SpieleImportTest extends TestCase {
 
         // assert
         // Es sind 26 Spiele auf der Seite, davon zwei "Spielfrei"
-        $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id1", ARRAY_A);
-        $this->assertCount( 26, $rows, "Es wurden nicht genug Spiele für Team 1 extrahiert.");
+        $this->fetchAllWithAssert(26, "SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id1");
 
         // Auch hier: Es sind 26 Spiele auf der Seite, davon zwei "Spielfrei"
-        $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id2", ARRAY_A);
-        $this->assertCount( 26, $rows, "Es wurden nicht genug Spiele für Team 2 extrahiert.");
+        $this->fetchAllWithAssert(26, "SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id2");
     }
     public function test_convertSpiele_konvertiertEinSpiel(){
         // arrange
@@ -320,16 +326,14 @@ final class SpieleImportTest extends TestCase {
         $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE spielNr = 703", ARRAY_A);
-        $this->assertNotEmpty($rows, "Es wurde kein Spiel in der DB gespeichert.");
-        
-        $this->assertNotNull($rows[0]['importDatum'], "Das Importdatum ist nicht gesetzt.");
-        $this->assertEquals(703, $rows[0]['spielNr'], "Die SpielNr stimmt nicht überein.");
-        $this->assertEquals($meldung_id, $rows[0]['meldung_id'], "Die Meldung-ID stimmt nicht überein.");
-        $this->assertEquals("TuS 82 Opladen III", $rows[0]['gegnerName'], "Der Gegner stimmt nicht überein.");
-        $this->assertEquals("2024-09-07 17:00:00", $rows[0]['anwurf'], "Der Anwurf stimmt nicht überein.");
-        $this->assertEquals("06057", $rows[0]['halle'], "Die Halle stimmt nicht überein.");
-        $this->assertFalse($rows[0]['heimspiel'], "Das Spiel ist kein Heimspiel, aber es wurde als solches markiert.");
+        $spiel = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE spielNr = 703");
+        $this->assertNotNull($spiel['importDatum'], "Das Importdatum ist nicht gesetzt.");
+        $this->assertEquals(703, $spiel['spielNr'], "Die SpielNr stimmt nicht überein.");
+        $this->assertEquals($meldung_id, $spiel['meldung_id'], "Die Meldung-ID stimmt nicht überein.");
+        $this->assertEquals("TuS 82 Opladen III", $spiel['gegnerName'], "Der Gegner stimmt nicht überein.");
+        $this->assertEquals("2024-09-07 17:00:00", $spiel['anwurf'], "Der Anwurf stimmt nicht überein.");
+        $this->assertEquals("06057", $spiel['halle'], "Die Halle stimmt nicht überein.");
+        $this->assertFalse($spiel['heimspiel'], "Das Spiel ist kein Heimspiel, aber es wurde als solches markiert.");
     }
     public function test_convertSpiele_konvertiertZweiSpiele(){
         // arrange
@@ -364,8 +368,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE meldung_id = $meldung_id", ARRAY_A);
-        $this->assertCount(2, $rows);
+        $this->fetchAllWithAssert(2, "SELECT * FROM wp_spiel_tobeimported WHERE meldung_id = $meldung_id");
     }
     public function test_convertSpiele_ignoriertSpielfrei(){
         // arrange
@@ -488,9 +491,8 @@ final class SpieleImportTest extends TestCase {
         $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported", ARRAY_A);
-        $this->assertNotEmpty($rows, "Es wurde kein Spiel in der DB gespeichert.");
-        $this->assertEmpty($rows[0]['anwurf'],  "Der Anwurf sollte leer sein, da es sich um einen Termin offen handelt.");
+        $spiel = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported");
+        $this->assertEmpty($spiel['anwurf'],  "Der Anwurf sollte leer sein, da es sich um einen Termin offen handelt.");
     }
     public function test_convertSpiele_loeschtNuligaSpiele(){
         // arrange
