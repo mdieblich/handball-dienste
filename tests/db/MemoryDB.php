@@ -10,7 +10,7 @@ class MemoryDB {
         if (!isset($this->tables[$table])) {
             $this->tables[$table] = [];
         }
-        $data['id'] = count($this->tables[$table]) + 1;
+        $data['id'] = rand();
         $this->tables[$table][] = $data;
         $this->insert_id = $data['id'];
         return true;
