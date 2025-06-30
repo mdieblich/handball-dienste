@@ -1434,10 +1434,7 @@ final class SpieleImportTest extends TestCase {
         $this->assertEquals(Dienstart::AUFBAU, $aufbau['dienstart'], "Aufbau nicht gefunden");
         $this->assertEquals($mannschaft_id, $aufbau['mannschaft_id'], "Aufbau wurde nicht der entsprechenden Mannschaft zugewiesen");
     }
-    public function test_organisiereAufUndAbbau_weistAufbauAndererMannschaftZu() {
-        $this->fail("Not implemented");
-    }
-    public function test_organisiereAufUndAbbau_weistAbbauAndererMannschaftZu() {
+    public function test_organisiereAufUndAbbau_keineAenderungWennDienstSchonVorhanden() {
         $this->fail("Not implemented");
     }
     public function test_organisiereAufUndAbbau_loeschtAufUndAbbauFuerOffeneTermine() {
@@ -1450,9 +1447,6 @@ final class SpieleImportTest extends TestCase {
         $this->fail("Not implemented");
     }
     public function test_organisiereAufUndAbbau_keinDienstBeiAuswaertsSpielen() {
-        $this->fail("Not implemented");
-    }
-    public function test_organisiereAufUndAbbau_keineAenderungWennDienstSchonVorhanden() {
         $this->fail("Not implemented");
     }
 }
