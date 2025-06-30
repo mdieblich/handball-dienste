@@ -1219,10 +1219,8 @@ final class SpieleImportTest extends TestCase {
         // assert
         $spiel = $this->fetchOneWithAssert("SELECT * FROM wp_spiel WHERE spielNr=703");
         $spiel_id = $spiel['id'];
-        $dienste = $this->fetchAllWithAssert(2, "SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart");
         // Die Dienste sind alphabetisch sortiert, also...:
-        $catering = $dienste[0];
-        $zeitnehmer = $dienste[1];
+        [$catering, $zeitnehmer] = $this->fetchAllWithAssert(2, "SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart");
         $this->assertEquals(Dienstart::CATERING, $catering['dienstart'], "Erster Dienst sollte Catering sein");
         $this->assertEquals(Dienstart::ZEITNEHMER, $zeitnehmer['dienstart'], "Zweiter Dienst sollte Zeitnehmer sein");
     }
@@ -1259,8 +1257,7 @@ final class SpieleImportTest extends TestCase {
         
         $spiel = $this->fetchOneWithAssert("SELECT * FROM wp_spiel WHERE spielNr=703");
         $spiel_id = $spiel['id'];
-        $dienste = $this->fetchAllWithAssert(1, "SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart");
-        $sekretaer = $dienste[0];
+        $sekretaer = $this->fetchOneWithAssert( "SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart");
         $this->assertEquals(Dienstart::SEKRETAER, $sekretaer['dienstart'], "Der Dienst sollte Sekretär sein");
     }  
     public function test_createNeueSpiele_erstelltDiensteFuerHeimspielMitSekretaer() {
@@ -1295,11 +1292,8 @@ final class SpieleImportTest extends TestCase {
         // assert
         $spiel = $this->fetchOneWithAssert("SELECT * FROM wp_spiel WHERE spielNr=703");
         $spiel_id = $spiel['id'];
-        $dienste = $this->fetchAllWithAssert(3, "SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart");
         // Die Dienste sind alphabetisch sortiert, also...:
-        $catering = $dienste[0];
-        $sekretaer = $dienste[1];
-        $zeitnehmer = $dienste[2];
+        [$catering, $sekretaer, $zeitnehmer] = $this->fetchAllWithAssert(3, "SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart");
         $this->assertEquals(Dienstart::CATERING, $catering['dienstart'], "Erster Dienst sollte Catering sein");
         $this->assertEquals(Dienstart::SEKRETAER, $sekretaer['dienstart'], "Zweiter Dienst sollte Sekretär sein");
         $this->assertEquals(Dienstart::ZEITNEHMER, $zeitnehmer['dienstart'], "Dritter Dienst sollte Zeitnehmer sein");
@@ -1413,10 +1407,8 @@ final class SpieleImportTest extends TestCase {
         $this->import->organisiereAufUndAbbau();
 
         // assert
-        $dienste = $this->fetchAllWithAssert(2, "SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart");
         // alphabetisch sortierte Dienste
-        $abbau = $dienste[0];
-        $aufbau = $dienste[1];
+        [$abbau, $aufbau] = $this->fetchAllWithAssert(2, "SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart");
         $this->assertEquals(Dienstart::AUFBAU, $aufbau['dienstart'], "Aufbau nicht gefunden");
         $this->assertEquals($mannschaft_id, $aufbau['mannschaft_id'], "Aufbau wurde nicht der entsprechenden Mannschaft zugewiesen");
         $this->assertEquals(Dienstart::ABBAU, $abbau['dienstart'], "Abbau nicht gefunden");
@@ -1477,10 +1469,8 @@ final class SpieleImportTest extends TestCase {
         $this->import->organisiereAufUndAbbau();
 
         // assert
-        $dienste = $this->fetchAllWithAssert(2, "SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart");
         // alphabetisch sortierte Dienste
-        $abbau = $dienste[0];
-        $aufbau = $dienste[1];
+        [$abbau, $aufbau] = $this->fetchAllWithAssert(2, "SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart");
         $this->assertEquals($aufbau_id, $aufbau['id'], "Aufbau-Dienst hätte gleich bleiben müssen.");
         $this->assertEquals($abbau_id, $abbau['id'], "Abbau-Dienst hätte gleich bleiben müssen.");
     }
