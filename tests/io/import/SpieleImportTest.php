@@ -1501,11 +1501,89 @@ final class SpieleImportTest extends TestCase {
         $this->assertEquals($aufbau_id, $aufbau['id'], "Aufbau-Dienst hätte gleich bleiben müssen.");
         $this->assertEquals($abbau_id, $abbau['id'], "Abbau-Dienst hätte gleich bleiben müssen.");
     }
+    public function test_organisiereAufUndAbbau_erstelltNixFuerOffeneTermine() {
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $spiel_id = $this->builder->createSpiel(100, $meldung_id, 200, null, "0815", true);
+
+        // act
+        $this->import->organisiereAufUndAbbau();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart", ARRAY_A);
+        $this->assertEmpty($rows,"Es hätte kein Dienst erzeugt werden müssen für Spiele mit unbekanntem Termin.");
+    }
     public function test_organisiereAufUndAbbau_loeschtAufUndAbbauFuerOffeneTermine() {
-        $this->fail("Not implemented");
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $spiel_id = $this->builder->createSpiel(100, $meldung_id, 200, null, "0815", true);
+        $aufbau_id = $this->builder->createDienst($spiel_id, Dienstart::AUFBAU, $mannschaft_id);
+        $abbau_id = $this->builder->createDienst($spiel_id, Dienstart::ABBAU, $mannschaft_id);
+
+        // act
+        $this->import->organisiereAufUndAbbau();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart", ARRAY_A);
+        $this->assertEmpty($rows,"Es hätte Auf- und Abbau gelöscht werden müssen für Spiele mit unbekanntem Termin.");
     }
     public function test_organisiereAufUndAbbau_dienstaenderungsplanAufbauVerschoben() {
-        $this->fail("Not implemented");
+        // arrange
+        $spieltag = "2024-09-07";
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_frueh_id = $this->builder->createMannschaft(2);
+        $meldung_frueh_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_frueh_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $mannschaft_spaet_id = $this->builder->createMannschaft(3);
+        $meldung_spaet_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_spaet_id,
+            $meisterschaft_id,
+            364515, // irgendwas anderes
+            1987866 // irgendwas anderes
+        );
+
+        // Verkehrte Welt: Das frühere Spiel hat den Abbau...
+        $anwurf_frueh = new DateTime("$spieltag 17:00:00");
+        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true);
+        $abbau_vorher_id = $this->builder->createDienst($spiel_frueh_id, Dienstart::ABBAU, $mannschaft_frueh_id);
+        // ... und das spätere Spiel den Aufbau.
+        $anwurf_spaet = new DateTime("$spieltag 19:00:00");
+        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true);
+        $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet_id, Dienstart::AUFBAU, $mannschaft_spaet_id);
+        
+        // act
+        $this->import->organisiereAufUndAbbau();
+
+        // assert
+        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_frueh_id", ARRAY_A);
+        $this->assertCount(1, $rows,"Nicht genügend Dienste gefunden");
+        $aufbau_nachher = $rows[0];
+        $this->assertEquals(Dienstart::AUFBAU, $aufbau_nachher['dienstart'], "Aufbau nicht gefunden");
+        $aufbau_nachher_id = $aufbau_nachher['id'];
+        
+        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id2", ARRAY_A);
+        $this->assertCount(1, $rows,"Nicht genügend Dienste gefunden");
+        $abbau_nachher = $rows[0];
+        $this->assertEquals(Dienstart::ABBAU, $abbau['dienstart'], "Abbau nicht gefunden");
+        $this->assertEquals($mannschaft_id2, $abbau['mannschaft_id'], "Abbau wurde nicht der entsprechenden Mannschaft zugewiesen");
     }
     public function test_organisiereAufUndAbbau_dienstaenderungsplanAbbauVerschoben() {
         $this->fail("Not implemented");
