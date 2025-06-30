@@ -8,8 +8,6 @@ class DienstAenderung {
 
     // TODO istNeu in extra klasse
     public bool $istNeu = false;
-    // TODO "entfaellt" löschen
-    public bool $entfaellt = false;
 
     public ?DateTime $anwurfVorher = null;
     public ?string $halleVorher = null;

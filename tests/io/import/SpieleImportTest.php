@@ -1012,7 +1012,6 @@ final class SpieleImportTest extends TestCase {
         $this->assertCount(3, $rows, "Es sollten 3 Dienständerungen für das Spiel existieren.");
         foreach ($rows as $row) {
             $this->assertEquals(false, $row['istNeu'], "Die Dienständerung sollte nicht als neuer Dienst markiert sein.");
-            $this->assertEquals(false, $row['entfaellt'], "Die Dienständerung sollte nicht als entfernter Dienst markiert sein.");    
             $this->assertEquals("2024-09-07 17:00:00", $row['anwurfVorher'], "Der vorherige Anwurf sollte gespeichert sein.");
             $this->assertEquals("06057", $row['halleVorher'], "Die vorherige Halle sollte gespeichert sein.");
         }
