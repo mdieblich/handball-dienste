@@ -1238,7 +1238,6 @@ final class SpieleImportTest extends TestCase {
         $this->assertEquals(Dienstart::CATERING, $catering['dienstart'], "Erster Dienst sollte Catering sein");
         $this->assertEquals(Dienstart::ZEITNEHMER, $zeitnehmer['dienstart'], "Zweiter Dienst sollte Zeitnehmer sein");
     }
-
     public function test_createNeueSpiele_erstelltDiensteFuerAuswaertsspiel() {
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
@@ -1316,7 +1315,6 @@ final class SpieleImportTest extends TestCase {
         $this->assertEquals(Dienstart::SEKRETAER, $sekretaer['dienstart'], "Zweiter Dienst sollte Sekretär sein");
         $this->assertEquals(Dienstart::ZEITNEHMER, $zeitnehmer['dienstart'], "Dritter Dienst sollte Zeitnehmer sein");
     }
-    
     public function test_createNeueSpiele_erstelltKeineDiensteFuerAuswaertsspiel() {
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
