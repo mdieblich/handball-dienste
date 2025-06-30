@@ -8,7 +8,7 @@ require_once __DIR__.'/dao/MannschaftsMeldungDAO.php';
 require_once __DIR__.'/dao/SpielDAO.php';
 require_once __DIR__.'/dao/DienstDAO.php';
 require_once __DIR__.'/dao/import/Spiel_toBeImportedDAO.php';
-require_once __DIR__.'/dao/import/DienstAenderungDAO.php';
+require_once __DIR__.'/dao/dienst/DienstAenderungDAO.php';
 require_once __DIR__.'/dao/import/nuliga/NuLigaSpielDAO.php';
 
 global $dienste_db_version;
