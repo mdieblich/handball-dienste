@@ -34,7 +34,7 @@ final class SpieleImportTest extends TestCase {
     public function fetchAllWithAssert(int $count, string $query): array{        
         $rows = $this->db->get_results($query, ARRAY_A);
         $this->assertCount( $count, $rows, "Falsche Anzahl für $query");
-        return $rows[0];
+        return $rows;
     }
 
     public function test_fetchAllNuligaSpielelisten_laedtEineSeite() {
