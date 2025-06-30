@@ -1407,4 +1407,25 @@ final class SpieleImportTest extends TestCase {
         $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $newSpiel_id", ARRAY_A);
         $this->assertEmpty($rows, "Das neue Import-Spiel hätte gelöscht werden müssen");   
     }
+    public function test_organisiereAufUndAbbau_erstelltAufbauBeiNeuemTag() {
+        $this->fail("Not implemented");
+    }
+    public function test_organisiereAufUndAbbau_erstelltAbbauBeiNeuemTag() {
+        $this->fail("Not implemented");
+    }
+    public function test_organisiereAufUndAbbau_weistAufbauAndererMannschaftZu() {
+        $this->fail("Not implemented");
+    }
+    public function test_organisiereAufUndAbbau_weistAbbauAndererMannschaftZu() {
+        $this->fail("Not implemented");
+    }
+    public function test_organisiereAufUndAbbau_loeschtAufUndAbbauFuerOffeneTermine() {
+        $this->fail("Not implemented");
+    }
+    public function test_organisiereAufUndAbbau_dienstaenderungsplanAufbauVerschoben() {
+        $this->fail("Not implemented");
+    }
+    public function test_organisiereAufUndAbbau_dienstaenderungsplanAbbauVerschoben() {
+        $this->fail("Not implemented");
+    }
 }
