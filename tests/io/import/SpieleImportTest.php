@@ -1452,4 +1452,7 @@ final class SpieleImportTest extends TestCase {
     public function test_organisiereAufUndAbbau_keinDienstBeiAuswaertsSpielen() {
         $this->fail("Not implemented");
     }
+    public function test_organisiereAufUndAbbau_keineAenderungWennDienstSchonVorhanden() {
+        $this->fail("Not implemented");
+    }
 }
