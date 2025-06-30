@@ -1408,6 +1408,7 @@ final class SpieleImportTest extends TestCase {
         $this->assertEmpty($rows, "Das neue Import-Spiel hätte gelöscht werden müssen");   
     }
     public function test_organisiereAufUndAbbau_erstelltAufbauBeiNeuemTag() {
+        
         $this->fail("Not implemented");
     }
     public function test_organisiereAufUndAbbau_erstelltAbbauBeiNeuemTag() {
@@ -1426,6 +1427,9 @@ final class SpieleImportTest extends TestCase {
         $this->fail("Not implemented");
     }
     public function test_organisiereAufUndAbbau_dienstaenderungsplanAbbauVerschoben() {
+        $this->fail("Not implemented");
+    }
+    public function test_organisiereAufUndAbbau_keinDienstBeiAuswaertsSpielen() {
         $this->fail("Not implemented");
     }
 }
