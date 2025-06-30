@@ -1,12 +1,14 @@
 <?php
 
-require_once __DIR__."/../../handball/Spiel.php";
+require_once __DIR__."/../Spiel.php";
 
 class DienstAenderung {
     public int $id;
     public int $dienstID;
 
+    // TODO istNeu in extra klasse
     public bool $istNeu = false;
+    // TODO "entfaellt" löschen
     public bool $entfaellt = false;
 
     public ?DateTime $anwurfVorher = null;

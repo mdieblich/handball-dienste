@@ -4,7 +4,7 @@
 require_once __DIR__."/../../log/Log.php";
 
 require_once __DIR__."/ImportSchritt.php";
-require_once __DIR__."/DienstAenderung.php";
+require_once __DIR__."/../../handball/dienst/DienstAenderung.php";
 require_once __DIR__."/../../handball/dienst/DienstAenderungsPlan.php";
 require_once __DIR__."/nuliga/entities/NuLigaSpiel.php";
 
