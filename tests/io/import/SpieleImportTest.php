@@ -28,10 +28,8 @@ final class SpieleImportTest extends TestCase {
         $this->import = new SpieleImport($this->db, $this->logfile, $this->httpClient);
     }
 
-    public function fetchOneWithAssert(string $query): array{        
-        $rows = $this->db->get_results($query, ARRAY_A);
-        $this->assertNotEmpty( $rows, "Nix gefunden für $query");
-        return $rows[0];
+    public function fetchOneWithAssert(string $query): array{      
+        return $this->fetchAllWithAssert(1, $query)[0];
     }
     public function fetchAllWithAssert(int $count, string $query): array{        
         $rows = $this->db->get_results($query, ARRAY_A);
@@ -551,9 +549,9 @@ final class SpieleImportTest extends TestCase {
         $this->import->sucheGegner();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id", ARRAY_A);
-        $this->assertEquals($gegner_id, $rows[0]['gegner_id'], "Der Gegner wurde nicht korrekt gefunden.");
-        $this->assertEquals(true, $rows[0]['gegnerStelltSekretaerBeiHeimspiel'], "Info, ob Sekretär gestellt wird, wurde nicht übernommen.");
+        $spiel_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id");
+        $this->assertEquals($gegner_id, $spiel_nachher['gegner_id'], "Der Gegner wurde nicht korrekt gefunden.");
+        $this->assertEquals(true, $spiel_nachher['gegnerStelltSekretaerBeiHeimspiel'], "Info, ob Sekretär gestellt wird, wurde nicht übernommen.");
     }
     public function test_sucheGegner_findetGegnerFuerMehrereSpiele(){
         // arrange
@@ -592,11 +590,11 @@ final class SpieleImportTest extends TestCase {
         $this->import->sucheGegner();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id1", ARRAY_A);
-        $this->assertEquals($gegner_id1, $rows[0]['gegner_id'], "Der 1. Gegner wurde nicht korrekt gefunden.");
+        $spiel1_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id1");
+        $this->assertEquals($gegner_id1, $spiel1_nachher['gegner_id'], "Der 1. Gegner wurde nicht korrekt gefunden.");
 
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id2", ARRAY_A);
-        $this->assertEquals($gegner_id2, $rows[0]['gegner_id'], "Der 2. Gegner wurde nicht korrekt gefunden.");
+        $spiel2_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id2");
+        $this->assertEquals($gegner_id2, $spiel2_nachher['gegner_id'], "Der 2. Gegner wurde nicht korrekt gefunden.");
     }
     public function test_sucheGegner_gleicherGegnernameUnterschiedlicheLigen(){
         // arrange
@@ -644,11 +642,11 @@ final class SpieleImportTest extends TestCase {
         $this->import->sucheGegner();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id1", ARRAY_A);
-        $this->assertEquals($gegner_id1, $rows[0]['gegner_id'], "Der 1. Gegner wurde nicht korrekt gefunden.");
+        $spiel1_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id1");
+        $this->assertEquals($gegner_id1, $spiel1_nachher['gegner_id'], "Der 1. Gegner wurde nicht korrekt gefunden.");
 
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id2", ARRAY_A);
-        $this->assertEquals($gegner_id2, $rows[0]['gegner_id'], "Der 2. Gegner wurde nicht korrekt gefunden.");
+        $spiel2_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id2");
+        $this->assertEquals($gegner_id2, $spiel2_nachher['gegner_id'], "Der 2. Gegner wurde nicht korrekt gefunden.");
     }
     public function test_sucheGegner_loeschtSpieleOhneGegner(){
         // arrange
@@ -715,10 +713,9 @@ final class SpieleImportTest extends TestCase {
         $this->import->findExistingSpiele();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id", ARRAY_A);
-        $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
-        $this->assertEquals($spiel_id, $rows[0]['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
-        $this->assertFalse($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
+        $spiel_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id");
+        $this->assertEquals($spiel_id, $spiel_nachher['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
+        $this->assertFalse($spiel_nachher['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
     public function test_findExistingSpiele_findetSpielmitAnderemDatum() {
         // arrange
@@ -755,10 +752,9 @@ final class SpieleImportTest extends TestCase {
         $this->import->findExistingSpiele();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id", ARRAY_A);
-        $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
-        $this->assertEquals($spiel_id, $rows[0]['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
-        $this->assertFalse($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
+        $spiel_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id");
+        $this->assertEquals($spiel_id, $spiel_nachher['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
+        $this->assertFalse($spiel_nachher['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
     public function test_findExistingSpiele_findetSpielmitAndererHalle() {
         // arrange
@@ -795,10 +791,9 @@ final class SpieleImportTest extends TestCase {
         $this->import->findExistingSpiele();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id", ARRAY_A);
-        $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
-        $this->assertEquals($spiel_id, $rows[0]['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
-        $this->assertFalse($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
+        $spiel_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id");
+        $this->assertEquals($spiel_id, $spiel_nachher['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
+        $this->assertFalse($spiel_nachher['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
     public function test_findExistingSpiele_findetSpielmitAndererHalleUndTauschHeimrecht() {
         // arrange
@@ -835,10 +830,9 @@ final class SpieleImportTest extends TestCase {
         $this->import->findExistingSpiele();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id", ARRAY_A);
-        $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
-        $this->assertEquals($spiel_id, $rows[0]['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
-        $this->assertFalse($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
+        $spiel_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id");
+        $this->assertEquals($spiel_id, $spiel_nachher['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
+        $this->assertFalse($spiel_nachher['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
     public function test_findExistingSpiele_findetSpielUnterMehreren() {
         // arrange
@@ -903,10 +897,9 @@ final class SpieleImportTest extends TestCase {
         $this->import->findExistingSpiele();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id", ARRAY_A);
-        $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
-        $this->assertEquals($spiel_id, $rows[0]['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
-        $this->assertFalse($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
+        $spiel_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id");
+        $this->assertEquals($spiel_id, $spiel_nachher['spielID_alt'], "Die Spiel-ID sollte mit der ID des bereits existierenden Spiels übereinstimmen.");
+        $this->assertFalse($spiel_nachher['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
     public function test_findExistingSpiele_markiertNeueSpiele() {
         
@@ -965,10 +958,9 @@ final class SpieleImportTest extends TestCase {
         $this->import->findExistingSpiele();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id", ARRAY_A);
-        $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
-        $this->assertNull($rows[0]['spielID_alt'], "Es sollte keine alte Spiel-ID geben, da das Spiel noch nicht existiert.");
-        $this->assertTrue($rows[0]['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
+        $spiel_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE id = $spiel_toBeImported_id");
+        $this->assertNull($spiel_nachher['spielID_alt'], "Es sollte keine alte Spiel-ID geben, da das Spiel noch nicht existiert.");
+        $this->assertTrue($spiel_nachher['istNeuesSpiel'], "Das Spiel sollte als bereits existierend markiert sein.");
     }
     public function test_createDienstAenderungen_setztDienstaenderungsplan(){
         // arrange
@@ -1010,11 +1002,10 @@ final class SpieleImportTest extends TestCase {
         $this->import->createDienstAenderungen();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_dienstaenderung WHERE dienst_id in ($dienst1, $dienst2, $dienst3)", ARRAY_A);
-        $this->assertCount(3, $rows, "Es sollten 3 Dienständerungen für das Spiel existieren.");
-        foreach ($rows as $row) {
-            $this->assertEquals("2024-09-07 17:00:00", $row['anwurfVorher'], "Der vorherige Anwurf sollte gespeichert sein.");
-            $this->assertEquals("06057", $row['halleVorher'], "Die vorherige Halle sollte gespeichert sein.");
+        $dienstAenderungen = $this->fetchAllWithAssert(3, "SELECT * FROM wp_dienstaenderung WHERE dienst_id in ($dienst1, $dienst2, $dienst3)");
+        foreach ($dienstAenderungen as $dienstAenderung) {
+            $this->assertEquals("2024-09-07 17:00:00", $dienstAenderung['anwurfVorher'], "Der vorherige Anwurf sollte gespeichert sein.");
+            $this->assertEquals("06057", $dienstAenderung['halleVorher'], "Die vorherige Halle sollte gespeichert sein.");
         }
     }
     public function test_createDienstAenderungen_erstelltNixDoppelt(){
@@ -1058,8 +1049,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->createDienstAenderungen();   // Zweite Ausführung
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_dienstaenderung WHERE id in ($dienst1, $dienst2, $dienst3)", ARRAY_A);
-        $this->assertCount(3, $rows, "Es sollten nur 3 Dienständerungen für das Spiel existieren.");
+        $this->fetchAllWithAssert(3, "SELECT * FROM wp_dienstaenderung WHERE id in ($dienst1, $dienst2, $dienst3)");
     }
     public function test_updateSpiele_aktualisiertSpiele(){   
         // arrange
@@ -1098,11 +1088,10 @@ final class SpieleImportTest extends TestCase {
         $this->import->updateSpiele();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel WHERE id = $spiel_id", ARRAY_A);
-        $this->assertNotEmpty($rows, "Das Spiel ist nicht mehr in der Datenbank...?");
-        $this->assertEquals("2024-09-08 20:00:00", $rows[0]['anwurf'], "Der Anwurf sollte aktualisiert worden sein.");
-        $this->assertEquals("06058", $rows[0]['halle'], "Die Halle sollte aktualisiert worden sein.");
-        $this->assertEquals(true, $rows[0]['heimspiel'], "Das Heimrecht sollte aktualisiert worden sein.");
+        $spiel_aktualisiert = $this->fetchOneWithAssert("SELECT * FROM wp_spiel WHERE id = $spiel_id");
+        $this->assertEquals("2024-09-08 20:00:00", $spiel_aktualisiert['anwurf'], "Der Anwurf sollte aktualisiert worden sein.");
+        $this->assertEquals("06058", $spiel_aktualisiert['halle'], "Die Halle sollte aktualisiert worden sein.");
+        $this->assertEquals(true, $spiel_aktualisiert['heimspiel'], "Das Heimrecht sollte aktualisiert worden sein.");
     }
     public function test_updateSpiele_raeumtAuf(){
         // arrange
@@ -1190,14 +1179,13 @@ final class SpieleImportTest extends TestCase {
         $this->import->createNeueSpiele();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel WHERE spielNr=703", ARRAY_A);
-        $this->assertNotEmpty($rows, "Es sollte ein Spiel existieren");
-        $this->assertEquals(703, $rows[0]['spielNr'], "SpielNr");
-        $this->assertEquals($meldung_id, $rows[0]['mannschaftsMeldung_id'], "Meldung");
-        $this->assertEquals($gegner_id, $rows[0]['gegner_id'], "Gegner");
-        $this->assertEquals("2024-09-08 20:00:00", $rows[0]['anwurf'], "Anwurf");
-        $this->assertEquals("06058", $rows[0]['halle'], "Halle");
-        $this->assertEquals(true, $rows[0]['heimspiel'], "Heimspiel");
+        $spiel_neu = $this->fetchOneWithAssert("SELECT * FROM wp_spiel WHERE spielNr=703");
+        $this->assertEquals(703, $spiel_neu['spielNr'], "SpielNr");
+        $this->assertEquals($meldung_id, $spiel_neu['mannschaftsMeldung_id'], "Meldung");
+        $this->assertEquals($gegner_id, $spiel_neu['gegner_id'], "Gegner");
+        $this->assertEquals("2024-09-08 20:00:00", $spiel_neu['anwurf'], "Anwurf");
+        $this->assertEquals("06058", $spiel_neu['halle'], "Halle");
+        $this->assertEquals(true, $spiel_neu['heimspiel'], "Heimspiel");
     }
     public function test_createNeueSpiele_erstelltDiensteFuerHeimspiel() {
         // arrange
@@ -1229,12 +1217,12 @@ final class SpieleImportTest extends TestCase {
         $this->import->createNeueSpiele();
 
         // assert
-        $spiel_id = $this->db->get_var("Select id from wp_spiel where spielNr=703");
-        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart", ARRAY_A);
-        $this->assertCount(2, $rows, "Es sollten zwei Dienste sein");
+        $spiel = $this->fetchOneWithAssert("SELECT * FROM wp_spiel WHERE spielNr=703");
+        $spiel_id = $spiel['id'];
+        $dienste = $this->fetchAllWithAssert(2, "SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart");
         // Die Dienste sind alphabetisch sortiert, also...:
-        $catering = $rows[0];
-        $zeitnehmer = $rows[1];
+        $catering = $dienste[0];
+        $zeitnehmer = $dienste[1];
         $this->assertEquals(Dienstart::CATERING, $catering['dienstart'], "Erster Dienst sollte Catering sein");
         $this->assertEquals(Dienstart::ZEITNEHMER, $zeitnehmer['dienstart'], "Zweiter Dienst sollte Zeitnehmer sein");
     }
@@ -1268,10 +1256,11 @@ final class SpieleImportTest extends TestCase {
         $this->import->createNeueSpiele();
 
         // assert
-        $spiel_id = $this->db->get_var("Select id from wp_spiel where spielNr=703");
-        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart", ARRAY_A);
-        $this->assertCount(1, $rows, "Es sollte ein Dienst sein");
-        $sekretaer = $rows[0];
+        
+        $spiel = $this->fetchOneWithAssert("SELECT * FROM wp_spiel WHERE spielNr=703");
+        $spiel_id = $spiel['id'];
+        $dienste = $this->fetchAllWithAssert(1, "SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart");
+        $sekretaer = $dienste[0];
         $this->assertEquals(Dienstart::SEKRETAER, $sekretaer['dienstart'], "Der Dienst sollte Sekretär sein");
     }  
     public function test_createNeueSpiele_erstelltDiensteFuerHeimspielMitSekretaer() {
@@ -1304,13 +1293,13 @@ final class SpieleImportTest extends TestCase {
         $this->import->createNeueSpiele();
         
         // assert
-        $spiel_id = $this->db->get_var("Select id from wp_spiel where spielNr=703");
-        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart", ARRAY_A);
-        $this->assertCount(3, $rows, "Es sollten drei Dienste sein");
+        $spiel = $this->fetchOneWithAssert("SELECT * FROM wp_spiel WHERE spielNr=703");
+        $spiel_id = $spiel['id'];
+        $dienste = $this->fetchAllWithAssert(3, "SELECT * FROM wp_dienst WHERE spiel_id=$spiel_id ORDER BY dienstart");
         // Die Dienste sind alphabetisch sortiert, also...:
-        $catering = $rows[0];
-        $sekretaer = $rows[1];
-        $zeitnehmer = $rows[2];
+        $catering = $dienste[0];
+        $sekretaer = $dienste[1];
+        $zeitnehmer = $dienste[2];
         $this->assertEquals(Dienstart::CATERING, $catering['dienstart'], "Erster Dienst sollte Catering sein");
         $this->assertEquals(Dienstart::SEKRETAER, $sekretaer['dienstart'], "Zweiter Dienst sollte Sekretär sein");
         $this->assertEquals(Dienstart::ZEITNEHMER, $zeitnehmer['dienstart'], "Dritter Dienst sollte Zeitnehmer sein");
@@ -1424,11 +1413,10 @@ final class SpieleImportTest extends TestCase {
         $this->import->organisiereAufUndAbbau();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart", ARRAY_A);
-        $this->assertCount(2, $rows,"Nicht genügend Dienste gefunden");
+        $dienste = $this->fetchAllWithAssert(2, "SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart");
         // alphabetisch sortierte Dienste
-        $abbau = $rows[0];
-        $aufbau = $rows[1];
+        $abbau = $dienste[0];
+        $aufbau = $dienste[1];
         $this->assertEquals(Dienstart::AUFBAU, $aufbau['dienstart'], "Aufbau nicht gefunden");
         $this->assertEquals($mannschaft_id, $aufbau['mannschaft_id'], "Aufbau wurde nicht der entsprechenden Mannschaft zugewiesen");
         $this->assertEquals(Dienstart::ABBAU, $abbau['dienstart'], "Abbau nicht gefunden");
@@ -1462,15 +1450,11 @@ final class SpieleImportTest extends TestCase {
         $this->import->organisiereAufUndAbbau();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id1", ARRAY_A);
-        $this->assertCount(1, $rows,"Nicht genügend Dienste gefunden");
-        $aufbau = $rows[0];
+        $aufbau = $this->fetchOneWithAssert("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id1");
         $this->assertEquals(Dienstart::AUFBAU, $aufbau['dienstart'], "Aufbau nicht gefunden");
         $this->assertEquals($mannschaft_id1, $aufbau['mannschaft_id'], "Aufbau wurde nicht der entsprechenden Mannschaft zugewiesen");
         
-        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id2", ARRAY_A);
-        $this->assertCount(1, $rows,"Nicht genügend Dienste gefunden");
-        $abbau = $rows[0];
+        $abbau = $this->fetchOneWithAssert("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id2");
         $this->assertEquals(Dienstart::ABBAU, $abbau['dienstart'], "Abbau nicht gefunden");
         $this->assertEquals($mannschaft_id2, $abbau['mannschaft_id'], "Abbau wurde nicht der entsprechenden Mannschaft zugewiesen");
     }
@@ -1493,11 +1477,10 @@ final class SpieleImportTest extends TestCase {
         $this->import->organisiereAufUndAbbau();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart", ARRAY_A);
-        $this->assertCount(2, $rows,"Nicht exakt 2 Dienste gefunden. Entweder wurde was gelöscht oder erstellt, was nicht erstellt werden sollte.");
+        $dienste = $this->fetchAllWithAssert(2, "SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart");
         // alphabetisch sortierte Dienste
-        $abbau = $rows[0];
-        $aufbau = $rows[1];
+        $abbau = $dienste[0];
+        $aufbau = $dienste[1];
         $this->assertEquals($aufbau_id, $aufbau['id'], "Aufbau-Dienst hätte gleich bleiben müssen.");
         $this->assertEquals($abbau_id, $abbau['id'], "Abbau-Dienst hätte gleich bleiben müssen.");
     }
