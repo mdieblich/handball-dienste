@@ -38,12 +38,15 @@ final class SpieleImportTest extends TestCase {
     }
 
     public const NOT_NULL = "SpieleImportTest.php NOT NULL";
+    public const NULL = "SpieleImportTest.php NULL";
 
     public function assertObjectInDB(string $query, array $values): void {
         $objectInDB = $this->fetchOneWithAssert($query);
         foreach($values as $key => $value) {
             if($value === self::NOT_NULL) {
                 $this->assertNotNull($objectInDB[$key],"$key hätte nicht null sein dürfen");
+            } else if($value === self::NULL) {
+                $this->assertNull($objectInDB[$key],"$key hätte nicht null sein dürfen");
             } else {
                 $this->assertEquals($value, $objectInDB[$key],"$key ist falsch.");
             }
@@ -503,8 +506,9 @@ final class SpieleImportTest extends TestCase {
         $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
-        $spiel = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported");
-        $this->assertEmpty($spiel['anwurf'],  "Der Anwurf sollte leer sein, da es sich um einen Termin offen handelt.");
+        $this->assertObjectInDb("SELECT * FROM wp_spiel_tobeimported", [
+            'anwurf' => self::NULL
+        ]);
     }
     public function test_convertSpiele_loeschtNuligaSpiele(){
         // arrange
