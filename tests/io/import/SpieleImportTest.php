@@ -1631,15 +1631,62 @@ final class SpieleImportTest extends TestCase {
             'grund'         => self::NOT_NULL
         ]);
     }
-    public function test_organisiereAufUndAbbau_EntfallenesErstesSpiel_DienstAenderungsplan() {
-        $this->fail("Not implemented");
+    public function test_organisiereAufUndAbbau_AufUndAbbauVerschoben_DienstAenderungsplan() {
+        // arrange
+        $spieltag = "2024-09-07";
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_frueh_id = $this->builder->createMannschaft(2);
+        $meldung_frueh_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_frueh_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $mannschaft_spaet_id = $this->builder->createMannschaft(3);
+        $meldung_spaet_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_spaet_id,
+            $meisterschaft_id,
+            364515, // irgendwas anderes
+            1987866 // irgendwas anderes
+        );
+
+        // Verkehrte Welt: Das frühere Spiel hat den Abbau...
+        $anwurf_frueh = new DateTime("$spieltag 17:00:00");
+        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true);
+        $abbau_vorher_id = $this->builder->createDienst($spiel_frueh_id, Dienstart::ABBAU, $mannschaft_frueh_id);
+        // ... und das spätere Spiel den Aufbau.
+        $anwurf_spaet = new DateTime("$spieltag 19:00:00");
+        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true);
+        $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet_id, Dienstart::AUFBAU, $mannschaft_spaet_id);
+        
+        // act
+        $this->import->organisiereAufUndAbbau();
+
+        // assert
+        // Das frühere Spiel sollte den Abbau nicht mehr haben...
+        $this->assertObjectInDb("SELECT * FROM wp_entfallenerdienst WHERE spiel_id = $spiel_frueh_id", [
+            'dienstart' => Dienstart::ABBAU,
+            'mannschaft_id' => $mannschaft_frueh_id,
+            'grund' => self::NOT_NULL
+        ]);
+        // dafür aber den Aufbau als neuen Dienst
+        $aufbau_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_frueh_id");
+        $this->assertObjectInDb("SELECT * FROM wp_neuerdienst WHERE dienst_id = {$aufbau_nachher['id']}",[
+            'grund' => self::NOT_NULL
+        ]);
+        
+        // Beim späten Spiel genau anders herum:
+        $this->assertObjectInDb("SELECT * FROM wp_entfallenerdienst WHERE spiel_id = $spiel_spaet_id", [
+            'dienstart' => Dienstart::AUFBAU,
+            'mannschaft_id' => $mannschaft_spaet_id,
+            'grund' => self::NOT_NULL
+        ]);
+        $abbau_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_spaet_id");
+        $this->assertObjectInDb("SELECT * FROM wp_neuerdienst WHERE dienst_id = {$abbau_nachher['id']}",[
+            'grund' => self::NOT_NULL
+        ]);
     }
-    public function test_organisiereAufUndAbbau_NeuesLetztesSpiel_DienstAenderungsplan() {
-        $this->fail("Not implemented");
-    }
-    public function test_organisiereAufUndAbbau_EntfallenesLetztesSpiel_DienstAenderungsplan() {
-        $this->fail("Not implemented");
-    }
+
     public function test_organisiereAufUndAbbau_keinDienstBeiAuswaertsSpielen() {
         $this->fail("Not implemented");
     }
