@@ -1682,6 +1682,24 @@ final class SpieleImportTest extends TestCase {
     }
 
     public function test_organisiereAufUndAbbau_keinDienstBeiAuswaertsSpielen() {
-        $this->fail("Not implemented");
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft_id = $this->builder->createMannschaft(2);
+        $meldung_id = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $spieltag = "2024-09-07";
+        $spiel_id = $this->builder->createSpiel(100, $meldung_id, 200, new DateTime("$spieltag 17:00:00"), "0815", 
+            heimspiel: false);
+
+        // act
+        $this->import->organisiereAufUndAbbau();
+
+        // assert
+        // alphabetisch sortierte Dienste
+        $this->assertNotInDB("SELECT * from wp_dienst WHERE spiel_id=$spiel_id");
     }
 }
