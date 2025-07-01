@@ -53,6 +53,11 @@ final class SpieleImportTest extends TestCase {
         }
     }
 
+    public function assertNotInDB(String $query): void {
+        $rows = $this->db->get_results($query, ARRAY_A);
+        $this->assertEmpty($rows, "Es hätte nix da sein dürfen für $query");
+    }
+
     public function test_fetchAllNuligaSpielelisten_laedtEineSeite() {
         // arrange
         $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
@@ -413,8 +418,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported", ARRAY_A);
-        $this->assertEmpty($rows, "Es hätte kein Spiel angelegt werden dürfen.");
+        $this->assertNotInDB("SELECT * FROM wp_spiel_tobeimported");
     }
     public function test_convertSpiele_ignoriertOhneHalle(){
         // arrange
@@ -444,8 +448,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported", ARRAY_A);
-        $this->assertEmpty($rows, "Es hätte kein Spiel angelegt werden dürfen.");
+        $this->assertNotInDB("SELECT * FROM wp_spiel_tobeimported");
     }
     public function test_convertSpiele_ignoriertOhneSpielNr(){
         // arrange
@@ -475,8 +478,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported", ARRAY_A);
-        $this->assertEmpty($rows, "Es hätte kein Spiel angelegt werden dürfen.");
+        $this->assertNotInDB("SELECT * FROM wp_spiel_tobeimported");
     }
     public function test_convertSpiele_konvertiertOhneAnwurf(){
         // arrange
@@ -538,8 +540,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_nuligaspiel", ARRAY_A);
-        $this->assertEmpty($rows);
+        $this->assertNotInDB("SELECT * FROM wp_nuligaspiel");
     } 
     public function test_sucheGegner_findetEinenGegner(){
         // arrange
@@ -698,8 +699,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->sucheGegner();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id", ARRAY_A);
-        $this->assertEmpty($rows);
+        $this->assertNotInDB("SELECT * FROM wp_spiel_tobeimported WHERE id=$spiel_id");
     }
     public function test_findExistingSpiele_findetIdentischesSpiel() {
         // arrange
@@ -1174,10 +1174,8 @@ final class SpieleImportTest extends TestCase {
         $this->import->updateSpiele();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $updateSpiel_id", ARRAY_A);
-        $this->assertEmpty($rows, "Das Import-Spiel hätte gelöscht werden sollen");
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $newSpiel_id", ARRAY_A);
-        $this->assertNotEmpty($rows, "Das neue Import-Spiel hätte nicht gelöscht werden dürfen");    
+        $this->assertNotInDB("SELECT * FROM wp_spiel_tobeimported WHERE id = $updateSpiel_id");
+        $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE id = $newSpiel_id");    
     }
     public function test_createNeueSpiele_erstelltNeuesSpiel() {
         // arrange
@@ -1416,10 +1414,8 @@ final class SpieleImportTest extends TestCase {
         $this->import->createNeueSpiele();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $updateSpiel_id", ARRAY_A);
-        $this->assertNotEmpty($rows, "Das alte Import-Spiel hätte nicht gelöscht werden dürfen");
-        $rows = $this->db->get_results("SELECT * FROM wp_spiel_tobeimported WHERE id = $newSpiel_id", ARRAY_A);
-        $this->assertEmpty($rows, "Das neue Import-Spiel hätte gelöscht werden müssen");   
+        $this->assertNotInDB("SELECT * FROM wp_spiel_tobeimported WHERE id = $updateSpiel_id");
+        $this->assertNotInDB("SELECT * FROM wp_spiel_tobeimported WHERE id = $newSpiel_id");   
     }
     public function test_organisiereAufUndAbbau_erstelltAufUndAbbauBeiNeuemTag() {
         // arrange
@@ -1522,8 +1518,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->organisiereAufUndAbbau();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart", ARRAY_A);
-        $this->assertEmpty($rows,"Es hätte kein Dienst erzeugt werden müssen für Spiele mit unbekanntem Termin.");
+        $this->assertNotInDB("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart");
     }
     public function test_organisiereAufUndAbbau_loeschtAufUndAbbauFuerOffeneTermine() {
         // arrange
@@ -1543,8 +1538,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->organisiereAufUndAbbau();
 
         // assert
-        $rows = $this->db->get_results("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart", ARRAY_A);
-        $this->assertEmpty($rows,"Es hätte Auf- und Abbau gelöscht werden müssen für Spiele mit unbekanntem Termin.");
+        $this->assertNotInDB("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart");
     }
     public function test_organisiereAufUndAbbau_AufUndAbbauVerschoben() {
         // arrange
