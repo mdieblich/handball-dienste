@@ -37,6 +37,19 @@ final class SpieleImportTest extends TestCase {
         return $rows;
     }
 
+    public const NOT_NULL = "SpieleImportTest.php NOT NULL";
+
+    public function assertObjectInDB(string $query, array $values): void {
+        $objectInDB = $this->fetchOneWithAssert($query);
+        foreach($values as $key => $value) {
+            if($value === self::NOT_NULL) {
+                $this->assertNotNull($objectInDB[$key],"$key hätte nicht null sein dürfen");
+            } else {
+                $this->assertEquals($value, $objectInDB[$key],"$key ist falsch.");
+            }
+        }
+    }
+
     public function test_fetchAllNuligaSpielelisten_laedtEineSeite() {
         // arrange
         $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
@@ -195,17 +208,17 @@ final class SpieleImportTest extends TestCase {
         $this->import->extractNuligaSpiele();
 
         // assert
-        $spiel = $this->fetchOneWithAssert("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id");
-        $this->assertEquals($team_id, $spiel['nuligaTeamID'], "Die nuliga TeamID stimmt nicht überein.");
-        $this->assertEquals($gruppe, $spiel['nuligaLigaID'], "Die nuliga LigaID stimmt nicht überein.");
-        $this->assertEquals("Sa.", $spiel['wochentag'], "Der Wochentag stimmt nicht überein.");
-        $this->assertEquals("Sa.", $spiel['wochentag'], "Der Wochentag stimmt nicht überein.");
-        $this->assertEquals("07.09.2024", $spiel['datum'], "Das Datum stimmt nicht überein.");
-        $this->assertEquals("17:00", $spiel['uhrzeit'], "Die Uhrzeit stimmt nicht überein.");
-        $this->assertEquals("06057", $spiel['halle'], "Die Halle stimmt nicht überein.");
-        $this->assertEquals("703", $spiel['spielNr'], "Die SpielNr stimmt nicht überein.");
-        $this->assertEquals("TuS 82 Opladen III", $spiel['heimmannschaft'], "Die Heimmannschaft stimmt nicht überein.");
-        $this->assertEquals("Turnerkreis Nippes II", $spiel['gastmannschaft'], "Die Gastmannschaft stimmt nicht überein.");
+        $this->assertObjectInDB("SELECT * FROM wp_nuligaspiel WHERE nuligaTeamID = $team_id AND spielNr=703", [
+            'nuligaTeamID' => $team_id,
+            'nuligaLigaID' => $gruppe,
+            'wochentag' => "Sa.",
+            'datum' => "07.09.2024",
+            'uhrzeit' => "17:00",
+            'halle' => "06057",
+            'spielNr' => "703",
+            'heimmannschaft' => "TuS 82 Opladen III",
+            'gastmannschaft' => "Turnerkreis Nippes II"
+        ]);
         // restliche Felder wie "ErgebnisOderSchiris" sind egal
     }
     public function test_extractNuligaSpiele_speichertAlleSpiele() {
@@ -324,14 +337,15 @@ final class SpieleImportTest extends TestCase {
         $this->import->convertSpiele("Turnerkreis Nippes");
 
         // assert
-        $spiel = $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE spielNr = 703");
-        $this->assertNotNull($spiel['importDatum'], "Das Importdatum ist nicht gesetzt.");
-        $this->assertEquals(703, $spiel['spielNr'], "Die SpielNr stimmt nicht überein.");
-        $this->assertEquals($meldung_id, $spiel['meldung_id'], "Die Meldung-ID stimmt nicht überein.");
-        $this->assertEquals("TuS 82 Opladen III", $spiel['gegnerName'], "Der Gegner stimmt nicht überein.");
-        $this->assertEquals("2024-09-07 17:00:00", $spiel['anwurf'], "Der Anwurf stimmt nicht überein.");
-        $this->assertEquals("06057", $spiel['halle'], "Die Halle stimmt nicht überein.");
-        $this->assertFalse($spiel['heimspiel'], "Das Spiel ist kein Heimspiel, aber es wurde als solches markiert.");
+        $this->assertObjectInDb("SELECT * FROM wp_spiel_tobeimported WHERE spielNr = 703", [
+            'importDatum' => self::NOT_NULL,
+            'spielNr'=> 703,
+            'meldung_id' =>  $meldung_id,
+            'gegnerName' => "TuS 82 Opladen III",
+            'anwurf' => '2024-09-07 17:00:00',
+            'halle' => '06057',
+            'heimspiel' => false
+        ]);
     }
     public function test_convertSpiele_konvertiertZweiSpiele(){
         // arrange
