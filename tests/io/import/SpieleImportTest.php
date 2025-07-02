@@ -1702,4 +1702,59 @@ final class SpieleImportTest extends TestCase {
         // alphabetisch sortierte Dienste
         $this->assertNotInDB("SELECT * from wp_dienst WHERE spiel_id=$spiel_id");
     }
+    public function test_organisiereAufUndAbbau_mehrereSpieltage() {
+        // arrange
+        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $mannschaft1 = $this->builder->createMannschaft(2);
+        $meldung1 = $this->builder->createMannschaftsMeldung(
+            $mannschaft1,
+            $meisterschaft_id,
+            363515, // Regionsliga Männer
+            1986866 // Turnerkreis Nippes II
+        );
+        $mannschaft2 = $this->builder->createMannschaft(3);
+        $meldung2 = $this->builder->createMannschaftsMeldung(
+            $mannschaft2,
+            $meisterschaft_id,
+            364515, // irgendwas anderes
+            1987866 // irgendwas anderes
+        );
+        
+        // Erst spielt Mannschaft 1, dann Mannschaft 2
+        $tag1 = "2024-09-07";
+        $tag1_anwurf_frueh = new DateTime("$tag1 17:00:00");
+        $tag1_spiel_frueh_id = $this->builder->createSpiel(100, $meldung1, 200, $tag1_anwurf_frueh, "0815", true);
+        $tag1_anwurf_spaet = new DateTime("$tag1 19:00:00");
+        $tag1_spiel_spaet_id = $this->builder->createSpiel(100, $meldung2, 200, $tag1_anwurf_spaet,  "0815", true);
+        
+        // Und heute spielt zuerst Mannschaft 2, dann 1
+        $tag2 = "2024-09-14";
+        $tag2_anwurf_frueh = new DateTime("$tag2 17:00:00");
+        $tag2_spiel_frueh_id = $this->builder->createSpiel(100, $meldung2, 200, $tag2_anwurf_frueh, "0815", true);
+        $tag2_anwurf_spaet = new DateTime("$tag2 19:00:00");
+        $tag2_spiel_spaet_id = $this->builder->createSpiel(100, $meldung1, 200, $tag2_anwurf_spaet,  "0815", true);
+        
+        // act
+        $this->import->organisiereAufUndAbbau();
+
+        // assert
+        // Tag 1
+        $this->assertObjectInDb("SELECT * from wp_dienst where spiel_id=$tag1_spiel_frueh_id", [
+            'dienstart'     => Dienstart::AUFBAU,
+            'mannschaft_id' => $mannschaft1
+        ]);
+        $this->assertObjectInDb("SELECT * from wp_dienst where spiel_id=$tag1_spiel_spaet_id", [
+            'dienstart'     => Dienstart::ABBAU,
+            'mannschaft_id' => $mannschaft2
+        ]);
+        // Tag 2
+        $this->assertObjectInDb("SELECT * from wp_dienst where spiel_id=$tag2_spiel_frueh_id", [
+            'dienstart'     => Dienstart::AUFBAU,
+            'mannschaft_id' => $mannschaft2
+        ]);
+        $this->assertObjectInDb("SELECT * from wp_dienst where spiel_id=$tag2_spiel_spaet_id", [
+            'dienstart'     => Dienstart::ABBAU,
+            'mannschaft_id' => $mannschaft1
+        ]);
+    }
 }
