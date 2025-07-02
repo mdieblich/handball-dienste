@@ -3,6 +3,7 @@
 require_once __DIR__."/Spiel.php";
 require_once __DIR__."/Dienstart.php";
 require_once __DIR__."/Dienst.php";
+require_once __DIR__."/Dienst/Spieltag.php";
 require_once __DIR__."/NahgelegeneSpiele.php";
 
 class SpieleListe{
@@ -94,6 +95,22 @@ class SpieleListe{
                 $spieleProTag[$spieltag] = new SpieleListe();
             }
             $spieleProTag[$spieltag]->spiele[] = $spiel;
+        }
+
+        return $spieleProTag;
+    }
+    public function groupBySpielTag(): array{
+        $spieleProTag = array();
+        foreach($this->spiele as $spiel){
+            if(empty($spiel->anwurf)){
+                $spieltag = "";
+            } else {
+                $spieltag = $spiel->anwurf->format("d.m.Y");
+            }
+            if(!array_key_exists($spieltag, $spieleProTag)){
+                $spieleProTag[$spieltag] = new SpielTag($spieltag);
+            }
+            $spieleProTag[$spieltag]->addSpiel($spiel);
         }
 
         return $spieleProTag;
