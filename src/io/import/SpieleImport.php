@@ -20,6 +20,7 @@ require_once __DIR__."/../../db/dao/dienst/DienstAenderungDAO.php";
 require_once __DIR__."/../../db/dao/import/Spiel_toBeImportedDAO.php";
 require_once __DIR__."/../../db/dao/import/nuliga/NuLigaSpielDAO.php";
 
+require_once __DIR__."/../../db/service/SpielService.php";
 require_once __DIR__."/../../db/service/MannschaftService.php";
 require_once __DIR__."/../../db/service/GegnerService.php";
 
@@ -29,6 +30,7 @@ class SpieleImport {
     private HttpClient $httpClient;
 
     private MannschaftService $mannschaftService;
+    private SpielService $spielService;
     private NuligaSpielDAO $nuligaSpielDAO;
     private Spiel_toBeImportedDAO $spiel_toBeImportedDAO;
     private GegnerDAO $gegnerDAO;
@@ -42,6 +44,7 @@ class SpieleImport {
         $this->httpClient = $httpClient ?? new CurlHttpClient($this->logfile);
 
         $this->mannschaftService = new MannschaftService($this->dbhandle);
+        $this->spielService = new SpielService($this->dbhandle);
         $this->nuligaSpielDAO = new NuligaSpielDAO($this->dbhandle);
         $this->spiel_toBeImportedDAO = new Spiel_toBeImportedDAO($this->dbhandle);
         $this->gegnerDAO = new GegnerDAO($this->dbhandle);
@@ -209,6 +212,15 @@ class SpieleImport {
 
     public function organisiereAufUndAbbau(): void {
 
+        $heimSpieleProHalle = $this->spielService->fetchSpieleProHalle("heimspiel = 1");
+        foreach($heimSpieleProHalle as $halle => $spieleInDerHalle){
+            $this->logfile->log("Organisiere Auf- und Abbau für die Halle $halle");
+            $spieleProTag = $spieleInDerHalle->groupBySpielTagOld();
+            foreach($spieleProTag as $tag => $spieltag){
+                $this->logfile->log("Organisiere Auf- und Abbau für Halle $halle am $tag");
+                hier weiter
+            }
+        }
     }
     // TODO  Dienständerungsplan als Emails versenden & aufräumen
 }
