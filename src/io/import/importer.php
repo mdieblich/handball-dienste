@@ -380,7 +380,7 @@ Importer::$SPIELE_IMPORTIEREN = new ImportSchritt(8, "Spiele importieren", funct
     // Auf- und Abbau organisieren
     $heimSpieleProHalle = $spielService->fetchSpieleProHalle("heimspiel = 1");
     foreach($heimSpieleProHalle as $halle => $spieleInDerHalle){
-        $spieleProTag = $spieleInDerHalle->groupBySpielTag();
+        $spieleProTag = $spieleInDerHalle->groupBySpielTagOld();
         foreach($spieleProTag as $spieltag => $spieleAmSpielTag){
             if($spieltag === ""){
                 continue; // Spieltag nicht gesetzt

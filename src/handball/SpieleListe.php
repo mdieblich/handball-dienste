@@ -82,7 +82,7 @@ class SpieleListe{
         return $mannschaften;
     }
 
-    public function groupBySpielTag(): array{
+    public function groupBySpielTagOld(): array{
         $spieleProTag = array();
         foreach($this->spiele as $spiel){
             if(empty($spiel->anwurf)){
