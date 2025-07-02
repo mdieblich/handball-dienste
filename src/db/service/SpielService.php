@@ -129,5 +129,3 @@ class SpielService{
         return $spieleProHalle;
     }
 }
-
-?>

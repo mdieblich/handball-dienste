@@ -37,7 +37,5 @@ class SpielDAO extends DAO{
             $spieleProHalle[$spiel->halle]->spiele[] = $spiel;
         }
         return $spieleProHalle;
-    }
-    
+    }   
 }
-?>
