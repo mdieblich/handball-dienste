@@ -1414,7 +1414,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->createNeueSpiele();
 
         // assert
-        $this->assertNotInDB("SELECT * FROM wp_spiel_tobeimported WHERE id = $updateSpiel_id");
+        $this->fetchOneWithAssert("SELECT * FROM wp_spiel_tobeimported WHERE id = $updateSpiel_id");
         $this->assertNotInDB("SELECT * FROM wp_spiel_tobeimported WHERE id = $newSpiel_id");   
     }
     public function test_organisiereAufUndAbbau_erstelltAufUndAbbauBeiNeuemTag() {
