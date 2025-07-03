@@ -171,9 +171,9 @@ class Spiel{
         $gegnerName = $this->gegner->getName();
         
         if($this->heimspiel){
-            return "$anwurf HEIM (".$this->halle.") $mannschaftsName vs. $gegnerName";
+            return "$anwurf HEIM ($this->halle) $mannschaftsName vs. $gegnerName";
         } else{
-            return "$anwurf AUSWÄRTS (".$this->halle.") $gegnerName vs. $mannschaftsName";
+            return "$anwurf AUSWÄRTS ($this->halle) $gegnerName vs. $mannschaftsName";
         }   
     }
 }
