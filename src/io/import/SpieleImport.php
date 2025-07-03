@@ -215,10 +215,11 @@ class SpieleImport {
         $heimSpieleProHalle = $this->spielService->fetchSpieleProHalle("heimspiel = 1");
         foreach($heimSpieleProHalle as $halle => $spieleInDerHalle){
             $this->logfile->log("Organisiere Auf- und Abbau für die Halle $halle");
-            $spieleProTag = $spieleInDerHalle->groupBySpielTagOld();
+            $spieleProTag = $spieleInDerHalle->groupBySpielTag($this->logfile);
             foreach($spieleProTag as $tag => $spieltag){
                 $this->logfile->log("Organisiere Auf- und Abbau für Halle $halle am $tag");
                 hier weiter
+                $spieltag->get
             }
         }
     }

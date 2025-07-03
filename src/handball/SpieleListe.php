@@ -5,6 +5,7 @@ require_once __DIR__."/Dienstart.php";
 require_once __DIR__."/Dienst.php";
 require_once __DIR__."/Dienst/Spieltag.php";
 require_once __DIR__."/NahgelegeneSpiele.php";
+require_once __DIR__."/../log/Log.php";
 
 class SpieleListe{
 
@@ -84,7 +85,7 @@ class SpieleListe{
     }
 
     public function groupBySpielTagOld(): array{
-        $spieleProTag = array();
+        $spieleProTag = [];
         foreach($this->spiele as $spiel){
             if(empty($spiel->anwurf)){
                 $spieltag = "";
@@ -99,8 +100,8 @@ class SpieleListe{
 
         return $spieleProTag;
     }
-    public function groupBySpielTag(): array{
-        $spieleProTag = array();
+    public function groupBySpielTag(Log $logfile=null): array{
+        $spieleProTag = [];
         foreach($this->spiele as $spiel){
             if(empty($spiel->anwurf)){
                 $spieltag = "";
@@ -108,7 +109,7 @@ class SpieleListe{
                 $spieltag = $spiel->anwurf->format("d.m.Y");
             }
             if(!array_key_exists($spieltag, $spieleProTag)){
-                $spieleProTag[$spieltag] = new SpielTag($spieltag);
+                $spieleProTag[$spieltag] = new SpielTag($spieltag, $logfile);
             }
             $spieleProTag[$spieltag]->addSpiel($spiel);
         }
