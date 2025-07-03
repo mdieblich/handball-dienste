@@ -27,9 +27,11 @@ class Spieltag {
         if(empty($this->neueDienste)) {
             $this->organisiereDienste();
         }
-        return $this->neueDienste;
+        return $this->entfalleneDienste;
     }
     private function organisiereDienste(): void {
+        $this->neueDienste = [];
+        $this->entfalleneDienste = [];
         if($this->tag === ""){
             $this->loescheAufUndAbbau("Das Spiel ist keinem Tag zugeordnet.");
             return;
@@ -39,14 +41,36 @@ class Spieltag {
     }
     private function loescheAufUndAbbau(string $grund): void {
         foreach($this->spiele as $spiel){
-            $this->loesche($spiel, Dienstart::AUFBAU, $grund);
-            $this->loesche($spiel, Dienstart::ABBAU, $grund);
+            $this->loescheDienst($spiel, Dienstart::AUFBAU, $grund);
+            $this->loescheDienst($spiel, Dienstart::ABBAU, $grund);
         }
     }
-    private function loesche(Spiel $spiel, string $dienstart, string $grund): void {
+    private function loescheDienst(Spiel $spiel, string $dienstart, string $grund): void {
         $dienst = $spiel->getDienst($dienstart);
         if(!isset($dienst)) return;
-        $entfallenerDienst = new EntfallenerDienst($dienst, $grund);
+        $spiel->
+        $this->entfalleneDienste[] = new EntfallenerDienst($dienst, $grund);
     }
-    // Hier weiter
+    private function organisiereAufbau(): void {
+        $erstesSpiel = $this->spiele[0];
+        $this->erstelleDienst($erstesSpiel, Dienstart::AUFBAU, "Erstes Spiel des Tages");
+        for($i = 1; $i < count($this->spiele); $i++){
+            $this->loescheDienst($this->spiele[$i], Dienstart::AUFBAU, "Nicht mehr erstes Spiel des Tages");
+        }
+    }
+    private function erstelleDienst(Spiel $spiel, string $dienstart, string $grund): void {
+        $dienst = $spiel->getDienst($dienstart);
+        if(isset($dienst)) return;
+
+        $dienst = $spiel->createDienst($dienstart);
+        $this->neueDienste[] = new NeuerDienst($dienst, $grund);
+    }
+    
+    private function organisiereAbbau(): void {
+        $letztesSpiel = $this->spiele[count($this->spiele) -1];
+        $this->erstelleDienst($letztesSpiel, Dienstart::ABBAU, "Letztes Spiel des Tages");
+        for($i = 0; $i < count($this->spiele)-1; $i++){
+            $this->loescheDienst($this->spiele[$i], Dienstart::ABBAU, "Nicht mehr letztes Spiel des Tages");
+        }
+    }
 }
