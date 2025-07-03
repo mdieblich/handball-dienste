@@ -165,8 +165,15 @@ class Spiel{
         unset($this->dienste[$dienstart]);
     }
 
+    public function getAnwurfAsString(): string{
+        if(isset($this->anwurf)){
+            return $this->anwurf->format("d.m.Y H:i");
+        }
+        return "(ohne festen Termin)";
+    }
+
     public function getBegegnungsbezeichnung(): string{
-        $anwurf = $this->anwurf->format("d.m.Y H:i");
+        $anwurf = $this->getAnwurfAsString();
         $mannschaftsName = $this->mannschaft->getName();
         $gegnerName = $this->gegner->getName();
         
