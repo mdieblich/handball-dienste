@@ -61,22 +61,42 @@ class MemoryDB {
         }
         return null;
     }
-
+    
     public function get_results($query, $output = OBJECT) {
-        // Only supports: SELECT * FROM $table WHERE ... AND ...
         if (!preg_match('/SELECT \* FROM (\w+)( WHERE (.+?))?( ORDER BY (.+))?$/i', $query, $matches)) {
             return [];
         }
         $table = $matches[1];
-        $where = [];
-        $nullChecks = [];
         $orderBy = isset($matches[5]) ? trim($matches[5]) : null;
 
-        if (isset($matches[3])) {
-            $conds = explode('AND', $matches[3]);
+        [$where, $nullChecks] = $this->parseWhere(isset($matches[3]) ? $matches[3] : null);
+
+        if (!isset($this->tables[$table])) {
+            echo "WARNING: Table '$table' does not exist in MemoryDB.\n";
+            return [];
+        }
+
+        $results = [];
+        foreach ($this->tables[$table] as $row) {
+            if ($this->rowMatches($row, $where, $nullChecks)) {
+                $results[] = ($output === ARRAY_A) ? $row : (object)$row;
+            }
+        }
+
+        if ($orderBy && count($results) > 1) {
+            $this->sortResults($results, $orderBy, $output);
+        }
+
+        return $results;
+    }
+
+    private function parseWhere($whereString) {
+        $where = [];
+        $nullChecks = [];
+        if ($whereString) {
+            $conds = explode('AND', $whereString);
             foreach ($conds as $cond) {
                 $cond = trim($cond);
-                // IS NULL / IS NOT NULL
                 if (preg_match('/(\w+)\s+is\s+(not\s+)?null/i', $cond, $cm)) {
                     $nullChecks[] = [
                         'col' => $cm[1],
@@ -84,7 +104,6 @@ class MemoryDB {
                     ];
                     continue;
                 }
-                // = Vergleich
                 if (preg_match('/(\w+)\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|(\S+))/', $cond, $cm)) {
                     $value = isset($cm[2]) && $cm[2] !== '' ? $cm[2]
                         : (isset($cm[3]) && $cm[3] !== '' ? $cm[3] : $cm[4]);
@@ -92,61 +111,45 @@ class MemoryDB {
                 }
             }
         }
-        $results = [];
-        if (!isset($this->tables[$table])) {
-            echo "WARNING: Table '$table' does not exist in MemoryDB.\n";
-            return [];
-        }
-        foreach ($this->tables[$table] as $row) {
-            $match = true;
-            foreach ($where as $k => $v) {
-                if (!isset($row[$k]) || $row[$k] != $v) {
-                    $match = false;
-                    break;
-                }
-            }
-            if ($match) {
-                // Prüfe IS NULL / IS NOT NULL Bedingungen
-                foreach ($nullChecks as $check) {
-                    $col = $check['col'];
-                    $isNot = $check['not'];
-                    $isNull = !isset($row[$col]) || $row[$col] === null;
-                    if ($isNot && $isNull) {
-                        $match = false;
-                        break;
-                    }
-                    if (!$isNot && !$isNull) {
-                        $match = false;
-                        break;
-                    }
-                }
-            }
-            if ($match) {
-                $results[] = ($output === ARRAY_A) ? $row : (object)$row;
-            }
-        }
+        return [$where, $nullChecks];
+    }
 
-        // ORDER BY Unterstützung
-        if ($orderBy && count($results) > 1) {
-            // Unterstützt nur einfache Spaltennamen und ASC/DESC
-            $parts = preg_split('/\s*,\s*/', $orderBy);
-            usort($results, function($a, $b) use ($parts, $output) {
-                foreach ($parts as $part) {
-                    if (preg_match('/(\w+)(\s+DESC)?/i', $part, $pm)) {
-                        $col = $pm[1];
-                        $desc = isset($pm[2]) && stripos($pm[2], 'DESC') !== false;
-                        $va = is_array($a) ? ($a[$col] ?? null) : ($a->$col ?? null);
-                        $vb = is_array($b) ? ($b[$col] ?? null) : ($b->$col ?? null);
-                        if ($va == $vb) continue;
-                        if ($va < $vb) return $desc ? 1 : -1;
-                        if ($va > $vb) return $desc ? -1 : 1;
-                    }
-                }
-                return 0;
-            });
+    private function rowMatches($row, $where, $nullChecks) {
+        foreach ($where as $k => $v) {
+            if (!isset($row[$k]) || $row[$k] != $v) {
+                return false;
+            }
         }
+        foreach ($nullChecks as $check) {
+            $col = $check['col'];
+            $isNot = $check['not'];
+            $isNull = !isset($row[$col]) || $row[$col] === null;
+            if ($isNot && $isNull) {
+                return false;
+            }
+            if (!$isNot && !$isNull) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-        return $results;
+    private function sortResults(&$results, $orderBy, $output) {
+        $parts = preg_split('/\s*,\s*/', $orderBy);
+        usort($results, function($a, $b) use ($parts, $output) {
+            foreach ($parts as $part) {
+                if (preg_match('/(\w+)(\s+DESC)?/i', $part, $pm)) {
+                    $col = $pm[1];
+                    $desc = isset($pm[2]) && stripos($pm[2], 'DESC') !== false;
+                    $va = is_array($a) ? ($a[$col] ?? null) : ($a->$col ?? null);
+                    $vb = is_array($b) ? ($b[$col] ?? null) : ($b->$col ?? null);
+                    if ($va == $vb) continue;
+                    if ($va < $vb) return $desc ? 1 : -1;
+                    if ($va > $vb) return $desc ? -1 : 1;
+                }
+            }
+            return 0;
+        });
     }
     
     public function get_row($query, $output = OBJECT) {
