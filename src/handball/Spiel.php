@@ -161,6 +161,9 @@ class Spiel{
         $this->dienste[$dienstart] = $dienst;
         return $dienst;
     }
+    public function deleteDienst(string $dienstart): void{
+        unset($this->dienste[$dienstart]);
+    }
 
     public function getBegegnungsbezeichnung(): string{
         $anwurf = $this->anwurf->format("d.m.Y H:i");
