@@ -23,6 +23,8 @@ require_once __DIR__."/../../db/dao/import/nuliga/NuLigaSpielDAO.php";
 require_once __DIR__."/../../db/service/SpielService.php";
 require_once __DIR__."/../../db/service/MannschaftService.php";
 require_once __DIR__."/../../db/service/GegnerService.php";
+require_once __DIR__."/../../db/service/NeuerDienstService.php";
+require_once __DIR__."/../../db/service/EntfallenerDienstService.php";
 
 class SpieleImport {
     private $dbhandle;
@@ -37,6 +39,8 @@ class SpieleImport {
     private SpielDAO $spielDAO;
     private DienstDAO $dienstDAO;
     private DienstAenderungDAO $dienstAenderungDAO;
+    private EntfallenerDienstService $entfallenerDienstService;
+    private NeuerDienstService $neuerDienstService;
 
     public function __construct($dbhandle, Log $logfile=null, HttpClient $httpClient=null) {
         $this->dbhandle = $dbhandle;
@@ -50,7 +54,10 @@ class SpieleImport {
         $this->gegnerDAO = new GegnerDAO($this->dbhandle);
         $this->spielDAO = new SpielDAO($this->dbhandle);
         $this->dienstDAO = new DienstDAO($this->dbhandle);
+
         $this->dienstAenderungDAO = new DienstAenderungDAO($this->dbhandle);
+        $this->entfallenerDienstService = new EntfallenerDienstService($this->dbhandle);
+        $this->neuerDienstService = new NeuerDienstService($this->dbhandle);
     }
     public function fetchAllNuligaSpielelisten(): array{
         $mannschaftsListe = $this->mannschaftService->loadMannschaftenMitMeldungen();
@@ -218,9 +225,12 @@ class SpieleImport {
             $spieleProTag = $spieleInDerHalle->groupBySpielTag($this->logfile);
             foreach($spieleProTag as $tag => $spieltag){
                 $this->logfile->log("Organisiere Auf- und Abbau für Halle $halle am $tag");
+                
                 $neueDienste = $spieltag->getNeueDienste();
+                $this->neuerDienstService->insertAll($neueDienste);
+
                 $entfalleneDienste = $spieltag->getEntfalleneDienste();
-                hier weiter
+                $this->entfallenerDienstService->replaceAll($entfalleneDienste);
             }
         }
     }
