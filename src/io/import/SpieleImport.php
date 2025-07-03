@@ -218,8 +218,9 @@ class SpieleImport {
             $spieleProTag = $spieleInDerHalle->groupBySpielTag($this->logfile);
             foreach($spieleProTag as $tag => $spieltag){
                 $this->logfile->log("Organisiere Auf- und Abbau für Halle $halle am $tag");
+                $neueDienste = $spieltag->getNeueDienste();
+                $entfalleneDienste = $spieltag->getEntfalleneDienste();
                 hier weiter
-                $spieltag->get
             }
         }
     }
