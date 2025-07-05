@@ -5,6 +5,7 @@ define('ARRAY_A', 'ARRAY_A');
 class MemoryDB {
     public $prefix = 'wp_';
     private $tables = [];
+    public int $insert_id;
 
     public function insert($table, $data) {
         if (!isset($this->tables[$table])) {
