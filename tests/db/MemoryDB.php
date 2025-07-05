@@ -63,41 +63,15 @@ class MemoryDB {
         return null;
     }
     
-    public function get_results($query, $output = OBJECT) {
-        if (!preg_match('/SELECT \* FROM (\w+)( WHERE (.+?))?( ORDER BY (.+))?$/i', $query, $matches)) {
-            return [];
-        }
-        $table = $matches[1];
-        $orderBy = isset($matches[5]) ? trim($matches[5]) : null;
-
-        [$where, $nullChecks] = $this->parseWhere(isset($matches[3]) ? $matches[3] : null);
-
-        if (!isset($this->tables[$table])) {
-            echo "WARNING: Table '$table' does not exist in MemoryDB.\n";
-            return [];
-        }
-
-        $results = [];
-        foreach ($this->tables[$table] as $row) {
-            if ($this->rowMatches($row, $where, $nullChecks)) {
-                $results[] = ($output === ARRAY_A) ? $row : (object)$row;
-            }
-        }
-
-        if ($orderBy && count($results) > 1) {
-            $this->sortResults($results, $orderBy, $output);
-        }
-
-        return $results;
-    }
-
     private function parseWhere($whereString) {
         $where = [];
         $nullChecks = [];
+        $inChecks = [];
         if ($whereString) {
             $conds = explode('AND', $whereString);
             foreach ($conds as $cond) {
                 $cond = trim($cond);
+                // IS NULL / IS NOT NULL
                 if (preg_match('/(\w+)\s+is\s+(not\s+)?null/i', $cond, $cm)) {
                     $nullChecks[] = [
                         'col' => $cm[1],
@@ -105,6 +79,21 @@ class MemoryDB {
                     ];
                     continue;
                 }
+                // IN (...)
+                if (preg_match('/(\w+)\s+IN\s*\(([^)]+)\)/i', $cond, $im)) {
+                    $col = $im[1];
+                    $values = array_map('trim', explode(',', $im[2]));
+                    // Entferne evtl. Anführungszeichen
+                    $values = array_map(function($v) {
+                        return trim($v, " '\"");
+                    }, $values);
+                    $inChecks[] = [
+                        'col' => $col,
+                        'values' => $values
+                    ];
+                    continue;
+                }
+                // = Vergleich
                 if (preg_match('/(\w+)\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|(\S+))/', $cond, $cm)) {
                     $value = isset($cm[2]) && $cm[2] !== '' ? $cm[2]
                         : (isset($cm[3]) && $cm[3] !== '' ? $cm[3] : $cm[4]);
@@ -112,10 +101,11 @@ class MemoryDB {
                 }
             }
         }
-        return [$where, $nullChecks];
+        return [$where, $nullChecks, $inChecks];
     }
 
-    private function rowMatches($row, $where, $nullChecks) {
+    // Ergänze die rowMatches-Methode, damit sie $inChecks unterstützt:
+    private function rowMatches($row, $where, $nullChecks, $inChecks = []) {
         foreach ($where as $k => $v) {
             if (!isset($row[$k]) || $row[$k] != $v) {
                 return false;
@@ -132,9 +122,43 @@ class MemoryDB {
                 return false;
             }
         }
+        foreach ($inChecks as $check) {
+            $col = $check['col'];
+            if (!isset($row[$col]) || !in_array($row[$col], $check['values'])) {
+                return false;
+            }
+        }
         return true;
     }
 
+    // Passe den Aufruf in get_results an:
+    public function get_results($query, $output = OBJECT) {
+        if (!preg_match('/SELECT \* FROM (\w+)( WHERE (.+?))?( ORDER BY (.+))?$/i', $query, $matches)) {
+            return [];
+        }
+        $table = $matches[1];
+        $orderBy = isset($matches[5]) ? trim($matches[5]) : null;
+
+        [$where, $nullChecks, $inChecks] = $this->parseWhere(isset($matches[3]) ? $matches[3] : null);
+
+        if (!isset($this->tables[$table])) {
+            echo "WARNING: Table '$table' does not exist in MemoryDB.\n";
+            return [];
+        }
+
+        $results = [];
+        foreach ($this->tables[$table] as $row) {
+            if ($this->rowMatches($row, $where, $nullChecks, $inChecks)) {
+                $results[] = ($output === ARRAY_A) ? $row : (object)$row;
+            }
+        }
+
+        if ($orderBy && count($results) > 1) {
+            $this->sortResults($results, $orderBy, $output);
+        }
+
+        return $results;
+    }
     private function sortResults(&$results, $orderBy, $output) {
         $parts = preg_split('/\s*,\s*/', $orderBy);
         usort($results, function($a, $b) use ($parts, $output) {
