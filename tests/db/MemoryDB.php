@@ -1,11 +1,17 @@
 <?php
+require_once __DIR__."/../../src/log/Log.php";
 
 define('ARRAY_A', 'ARRAY_A');
 
 class MemoryDB {
+    private Log $logfile;
     public $prefix = 'wp_';
     private $tables = [];
     public int $insert_id;
+
+    public function __construct(Log $logfile = null) {
+        $this->logfile = $logfile ?? new NoLog();
+    }
 
     public function insert($table, $data) {
         if (!isset($this->tables[$table])) {
