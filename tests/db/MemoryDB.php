@@ -88,6 +88,11 @@ class MemoryDB {
                 // IN (...)
                 if (preg_match('/(\w+)\s+IN\s*\(([^)]+)\)/i', $cond, $im)) {
                     $col = $im[1];
+                    // if(str_starts_with(trim($im[2]), 'SELECT')){
+                    //     $subselect = trim($im[2]);
+                    //     $subresults = $this->get_results($subselect, ARRAY_A);
+                    //     $relevant_key = preg_match('/SELECT (.*) FROM .*/', $subselect, $matches);
+                    // }
                     $values = array_map('trim', explode(',', $im[2]));
                     // Entferne evtl. Anführungszeichen
                     $values = array_map(function($v) {
@@ -164,6 +169,63 @@ class MemoryDB {
         }
 
         return $results;
+    }
+
+    public function get_results_new($query, $output = OBJECT): array {
+        if (!preg_match('/SELECT (.*) FROM (\w+) WHERE (.+?)(?: ORDER BY (.*))?$/i', $query, $matches)) {
+            $this->logfile->log("FEHLER: Query passt nicht zu Format: $query");
+            return [];
+        }
+        $columnNames = $matches[1];
+        $tableName = $matches[2];
+        $whereClauses = $matches[3];
+        $orderByClauses = $matches[4];
+
+        // step 1: pick table
+        $table = $this->tables[$tableName];
+        if(!isset($table)){
+            $this->logfile->log("WARNUNG: Tabelle $tableName existiert nicht.");
+            return [];
+        }
+        
+        // step 2: fetch data according to where clause
+        // step 2a: prepare where clause
+        if(str_contains($whereClauses, 'OR')){
+            $this->logfile->log("FEHLER: 'OR' wird in der WHERE-Klausel nicht unterstützt: $whereClauses");
+            return [];
+        }
+        $whereClauseParts = split(' AND ', $whereClauses);
+        $exactConditions = [];      // "id=3" oder "aktiv=1" oder "spielOld is null"
+        $setConditions = [];        // "id in (1,2,3)"
+        $notNullConditions = [];    // "anwurf is not null"
+        foreach($whereClauseParts as $whereClausePart){
+            if(str_contains($whereClausePart,'=')){
+                $keyAndValue = explode('=', $whereClausePart, 2);
+                if(count($keyAndValue) != 2){
+                    $this->logfile->log("FEHLER: Bedingung $whereClausePart fehlerhaft");
+                    return [];
+                }
+                $key = trim($keyAndValue[0]);
+                $value = trum($keyAndValue[1]);
+                $exactConditions[$key] = $value;
+            } else if (str_contains($whereClausePart,"in")){
+                $keyAndValues = explode('in', $whereClausePart, 2);
+                if(count($keyAndValues) != 2){
+                    $this->logfile->log("FEHLER: Bedingung $whereClausePart fehlerhaft");
+                    return [];
+                }
+                $key = trim($keyAndValues[0]);
+                $values = trum($keyAndValues[1]);
+                if(!str_starts_with($values, '(') || !str_starts_with($values,')')){
+                    $this->logfile->log("FEHLER: rechter Teil der Bedingung von $whereClausePart fehlerhaft");
+                    return [];
+                }
+                hier weiter
+            }
+
+        }
+
+        hier weiter
     }
     private function sortResults(&$results, $orderBy, $output) {
         $parts = preg_split('/\s*,\s*/', $orderBy);
