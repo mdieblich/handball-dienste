@@ -247,9 +247,10 @@ class MemoryDB {
             
             // check set conditions are met
             // check null conditions are met
+            // TODO hier weiter
 
         }
-        hier weiter
+        // TODO hier weiter
     }
     private function sortResults(&$results, $orderBy, $output) {
         $parts = preg_split('/\s*,\s*/', $orderBy);
