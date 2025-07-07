@@ -197,8 +197,10 @@ class MemoryDB {
         $whereClauseParts = split(' AND ', $whereClauses);
         $exactConditions = [];      // "id=3" oder "aktiv=1" oder "spielOld is null"
         $setConditions = [];        // "id in (1,2,3)"
-        $notNullConditions = [];    // "anwurf is not null"
+        $nullConditions = [];       // "anwurf is not null"
+        // TODO "Ungleich"-Bedingungen "íd != 5"
         foreach($whereClauseParts as $whereClausePart){
+            $whereClausePart_lowerCase = strtolower($whereClausePart);
             if(str_contains($whereClausePart,'=')){
                 $keyAndValue = explode('=', $whereClausePart, 2);
                 if(count($keyAndValue) != 2){
@@ -206,25 +208,40 @@ class MemoryDB {
                     return [];
                 }
                 $key = trim($keyAndValue[0]);
-                $value = trum($keyAndValue[1]);
+                $value = trim($keyAndValue[1]);
                 $exactConditions[$key] = $value;
-            } else if (str_contains($whereClausePart,"in")){
+            } else if (str_contains($whereClausePart_lowerCase,"in")){
                 $keyAndValues = explode('in', $whereClausePart, 2);
                 if(count($keyAndValues) != 2){
                     $this->logfile->log("FEHLER: Bedingung $whereClausePart fehlerhaft");
                     return [];
                 }
                 $key = trim($keyAndValues[0]);
-                $values = trum($keyAndValues[1]);
+                $values = trim($keyAndValues[1]);
                 if(!str_starts_with($values, '(') || !str_starts_with($values,')')){
-                    $this->logfile->log("FEHLER: rechter Teil der Bedingung von $whereClausePart fehlerhaft");
+                    $this->logfile->log("FEHLER: rechter Teil der Bedingung von $whereClausePart muss in runden Klammern sein");
                     return [];
                 }
-                hier weiter
+                $values = substr($values,1, -1);
+                // subselects erst abfrühstücken
+                if(str_starts_with(strtolower($values), 'select')){
+                    $subselect = $values;
+                    $subselect_result = $this->get_results_new($subselect, ARRAY_A);
+                    $valueArray = array_column($subselect_result,0);
+                } else {
+                    $valueArray = explode(',', $values);
+                }
+                $setConditions[$key] = $valueArray;
+            } else if (preg_match('/(\w*) is( not)? null/i', $whereClausePart, $whereClausePartMatches)){
+                $key = $whereClausePartMatches[1];
+                $checkIsNull = !isset($whereClausePartMatches[2]);
+                $nullConditions[$key] = $checkIsNull;
+            } else {
+                $this->logfile->log("WARNUNG: Teil der Where-Clause nicht unterstützt - wird ignoriert: $whereClausePart");
             }
-
         }
 
+        // steb 2b: check every row if it matches the conditions
         hier weiter
     }
     private function sortResults(&$results, $orderBy, $output) {
