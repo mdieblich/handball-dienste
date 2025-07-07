@@ -48,7 +48,17 @@ final class WhereClauseTest extends TestCase {
         $this->assertEquals(['id' => ['3', '5', '12']], $where->getSetConditions());
         $this->assertEmpty( $where->getNullChecks());
     }
-    public function test_nullcheck() {}
-    public function test_notnullcheck() {}
+    public function test_nullcheck() {
+        $where = new WhereClause("name is null");
+        $this->assertEmpty( $where->getExactConditions());
+        $this->assertEmpty( $where->getSetConditions());
+        $this->assertEquals(['name' => true], $where->getNullChecks());
+    }
+    public function test_notnullcheck() {
+        $where = new WhereClause("name is not null");
+        $this->assertEmpty( $where->getExactConditions());
+        $this->assertEmpty( $where->getSetConditions());
+        $this->assertEquals(['name' => false], $where->getNullChecks());
+    }
 
 }
