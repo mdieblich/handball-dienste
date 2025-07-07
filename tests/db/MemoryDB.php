@@ -242,6 +242,13 @@ class MemoryDB {
         }
 
         // steb 2b: check every row if it matches the conditions
+        foreach($table as $row){
+            // check exakt conditions are met
+            
+            // check set conditions are met
+            // check null conditions are met
+
+        }
         hier weiter
     }
     private function sortResults(&$results, $orderBy, $output) {
