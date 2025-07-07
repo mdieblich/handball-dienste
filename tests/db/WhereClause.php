@@ -21,9 +21,11 @@ class WhereClause {
         return $this->exactConditions;
     }
     public function getSetConditions(): array {
-        return [];
+        if($this->setConditions == null) { $this->parse(); }
+        return $this->setConditions;
     }
     public function getNullChecks(): array {
-        return [];
+        if($this->nullChecks == null) { $this->parse(); }
+        return $this->nullChecks;
     }
 }
