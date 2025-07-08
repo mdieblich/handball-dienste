@@ -45,7 +45,7 @@ class WhereClause {
                 if(!str_starts_with($values, '(') || !str_ends_with($values,')')){
                     throw new Exception("FEHLER: rechter Teil der Bedingung von $whereClausePart muss in runden Klammern sein");
                 }
-                $values = substr($values,1, -1);
+                $values = trim(substr($values,1, -1));
                 // subselects erst abfrühstücken
                 if(str_starts_with(strtolower($values), 'select')){
                     $subselect = $values;
@@ -53,7 +53,11 @@ class WhereClause {
                         throw new Exception("FEHLER: Subselect vorhanden ($subselect), aber kein Subselect-Resolver im Konstruktor gesetzt");
                     }
                     $subselect_result = $this->subselect_resolver->call($this, $subselect, ARRAY_A);
-                    $valueArray = array_column($subselect_result,0);    // muss hier 'id' in?
+                    foreach($subselect_result as $subselect_result_row){
+                        foreach($subselect_result_row as $k => $v){
+                            $valueArray[] = $v;
+                        }
+                    }
                 } else {
                     $valueArray = explode(',', $values);
                 }
