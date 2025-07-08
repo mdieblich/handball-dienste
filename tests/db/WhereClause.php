@@ -120,6 +120,7 @@ class WhereClause {
     public function matches(array $row): bool {
         return $this->matchesExactConditions($row) 
         && $this->matchesSetCondtions($row)
+        && $this->matchesNullChecks($row)
         ;
     }
 
@@ -141,6 +142,22 @@ class WhereClause {
             }
             if(!in_array($row[$key], $valueArray)) {
                 return false;
+            }
+        }
+        return true;
+    }
+    private function matchesNullChecks(array $row): bool {
+        foreach ($this->getNullChecks() as $key => $mustBeNull){
+            if($mustBeNull){
+                if(isset($row[$key]) && $row[$key] != null){
+                    return false;
+                } 
+            } else { // must not be null
+                if(!isset($row[$key])){
+                    return false;
+                } else if ($row[$key] == null){
+                    return false;
+                }
             }
         }
         return true;
