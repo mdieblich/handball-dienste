@@ -6,6 +6,15 @@ function str_surrounded_by(string $start, string $haystack, string $end): bool {
     return str_starts_with($haystack, $start) 
         && str_ends_with  ($haystack, $end  );
 }
+
+function remove_quotes(string $text): string {
+    if(str_surrounded_by('\'', $text,'\'') || 
+       str_surrounded_by('"', $text,'"')
+    ){
+        return substr($text,1,-1);
+    }
+    return $text;
+}
 class WhereClause {
     private string $where;
     private ?Closure $subselect_resolver;
@@ -48,11 +57,7 @@ class WhereClause {
         }
         $key = trim($keyAndValue[0]);
         $value = trim($keyAndValue[1]);
-        if(str_surrounded_by('\'', $value,'\'')
-            ||(str_surrounded_by('"', $value,'"'))
-        ){
-            $value = substr($value,1,-1);
-        }
+        $value = remove_quotes($value);
         $this->exactConditions[$key] = $value;
     }
 
