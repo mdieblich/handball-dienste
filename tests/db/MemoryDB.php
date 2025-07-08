@@ -178,77 +178,24 @@ class MemoryDB {
         }
         $columnNames = $matches[1];
         $tableName = $matches[2];
-        $whereClauses = $matches[3];
+        $whereClause = new WhereClause(
+            $matches[3],
+            Closure::fromCallable([$this, 'get_results_new'])
+        );
         $orderByClauses = $matches[4];
 
-        // step 1: pick table
         $table = $this->tables[$tableName];
         if(!isset($table)){
             $this->logfile->log("WARNUNG: Tabelle $tableName existiert nicht.");
             return [];
-        }
-        
-        // step 2: fetch data according to where clause
-        // step 2a: prepare where clause
-        if(str_contains($whereClauses, 'OR')){
-            $this->logfile->log("FEHLER: 'OR' wird in der WHERE-Klausel nicht unterstützt: $whereClauses");
-            return [];
-        }
-        $whereClauseParts = split(' AND ', $whereClauses);
-        $exactConditions = [];      // "id=3" oder "aktiv=1" oder "spielOld is null"
-        $setConditions = [];        // "id in (1,2,3)"
-        $nullConditions = [];       // "anwurf is not null"
-        // TODO "Ungleich"-Bedingungen "íd != 5"
-        foreach($whereClauseParts as $whereClausePart){
-            $whereClausePart_lowerCase = strtolower($whereClausePart);
-            if(str_contains($whereClausePart,'=')){
-                $keyAndValue = explode('=', $whereClausePart, 2);
-                if(count($keyAndValue) != 2){
-                    $this->logfile->log("FEHLER: Bedingung $whereClausePart fehlerhaft");
-                    return [];
-                }
-                $key = trim($keyAndValue[0]);
-                $value = trim($keyAndValue[1]);
-                $exactConditions[$key] = $value;
-            } else if (str_contains($whereClausePart_lowerCase,"in")){
-                $keyAndValues = explode('in', $whereClausePart, 2);
-                if(count($keyAndValues) != 2){
-                    $this->logfile->log("FEHLER: Bedingung $whereClausePart fehlerhaft");
-                    return [];
-                }
-                $key = trim($keyAndValues[0]);
-                $values = trim($keyAndValues[1]);
-                if(!str_starts_with($values, '(') || !str_starts_with($values,')')){
-                    $this->logfile->log("FEHLER: rechter Teil der Bedingung von $whereClausePart muss in runden Klammern sein");
-                    return [];
-                }
-                $values = substr($values,1, -1);
-                // subselects erst abfrühstücken
-                if(str_starts_with(strtolower($values), 'select')){
-                    $subselect = $values;
-                    $subselect_result = $this->get_results_new($subselect, ARRAY_A);
-                    $valueArray = array_column($subselect_result,0);
-                } else {
-                    $valueArray = explode(',', $values);
-                }
-                $setConditions[$key] = $valueArray;
-            } else if (preg_match('/(\w*) is( not)? null/i', $whereClausePart, $whereClausePartMatches)){
-                $key = $whereClausePartMatches[1];
-                $checkIsNull = !isset($whereClausePartMatches[2]);
-                $nullConditions[$key] = $checkIsNull;
-            } else {
-                $this->logfile->log("WARNUNG: Teil der Where-Clause nicht unterstützt - wird ignoriert: $whereClausePart");
-            }
-        }
+        }        
 
-        // steb 2b: check every row if it matches the conditions
+        // steb 2: check every row if it matches the conditions
+        $possibleRows = [];
         foreach($table as $row){
-            // check exakt conditions are met
-            
-            // check set conditions are met
-            // check null conditions are met
-            // TODO hier weiter
-
+            if($whereClause->matches($row)){
+                $possibleRows[] = $row;
+            }
         }
         // TODO hier weiter
     }

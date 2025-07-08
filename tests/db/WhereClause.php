@@ -31,6 +31,9 @@ class WhereClause {
     private ?array $setConditions;
     private ?array $nullChecks;
     public function __construct(string $where, Closure $subselect_resolver = null) {
+        if(str_contains($where, 'OR')){
+            throw new Exception("FEHLER: 'OR' wird in der WHERE-Klausel nicht unterstützt: $where");
+        }
         $this->where = $where;
         $this->subselect_resolver = $subselect_resolver;
     }
