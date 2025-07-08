@@ -76,7 +76,7 @@ class WhereClause {
         }
         $key = trim($keyAndValues[0]);
         $values = trim($keyAndValues[1]);
-        
+
         if(!str_surrounded_by( '(', $values,')')){
             throw new Exception("FEHLER: rechter Teil der Bedingung von $whereClausePart muss in runden Klammern sein");
         }
@@ -115,5 +115,9 @@ class WhereClause {
     public function getNullChecks(): array {
         if(!isset($this->nullChecks)) { $this->parse(); }
         return $this->nullChecks;
+    }
+
+    public function matches(array $row): bool {
+        return false;
     }
 }
