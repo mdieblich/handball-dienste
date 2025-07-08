@@ -61,4 +61,19 @@ final class WhereClauseTest extends TestCase {
         $this->assertEquals(['name' => false], $where->getNullChecks());
     }
 
+    public function test_matches_oneCondition() {
+        $where = new WhereClause("id=3");
+        $this->fail("Not implemented");
+    }
+
+    public function test_matches_oneFailingCondition() {$this->fail("Not implemented");}
+    public function test_matches_twoConditions() {$this->fail("Not implemented");}
+    public function test_matches_twoFailingConditions() {$this->fail("Not implemented");}
+    public function test_matches_setCondition() {$this->fail("Not implemented");}
+    public function test_matches_failingSetCondition() {$this->fail("Not implemented");}
+    public function test_matches_nullCheck() {$this->fail("Not implemented");}
+    public function test_matches_failingNullCheck() {$this->fail("Not implemented");}
+    public function test_matches_notNullCheck() {$this->fail("Not implemented");}
+    public function test_matches_failingNotNullCheck() {$this->fail("Not implemented");}
+    
 }
