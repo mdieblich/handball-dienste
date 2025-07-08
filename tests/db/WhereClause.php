@@ -1,5 +1,7 @@
 <?php
 
+define('ARRAY_A', 'ARRAY_A');
+
 class WhereClause {
     private string $where;
     private ?Closure $subselect_resolver;
