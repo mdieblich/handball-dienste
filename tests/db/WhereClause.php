@@ -118,6 +118,18 @@ class WhereClause {
     }
 
     public function matches(array $row): bool {
-        return false;
+        return $this->matchesExactConditions($row);
+    }
+
+    private function matchesExactConditions(array $row): bool {
+        foreach($this->getExactConditions() as $key => $value){
+            if(!isset($row[$key])){
+                return false;
+            }
+            if($value != $row[$key]) {
+                return false;
+            }
+        }
+        return true;
     }
 }
