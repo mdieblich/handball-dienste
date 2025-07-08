@@ -53,7 +53,7 @@ class WhereClause {
                         throw new Exception("FEHLER: Subselect vorhanden ($subselect), aber kein Subselect-Resolver im Konstruktor gesetzt");
                     }
                     $subselect_result = $this->subselect_resolver->call($this, $subselect, ARRAY_A);
-                    $valueArray = array_column($subselect_result,0);
+                    $valueArray = array_column($subselect_result,0);    // muss hier 'id' in?
                 } else {
                     $valueArray = explode(',', $values);
                 }
@@ -66,7 +66,7 @@ class WhereClause {
                 $checkIsNull = !isset($whereClausePartMatches[2]);
                 $this->nullChecks[$key] = $checkIsNull;
             } else {
-                // $this->logfile->log("WARNUNG: Teil der Where-Clause nicht unterstützt - wird ignoriert: $whereClausePart");
+                throw new Exception("Nicht unterstützter Teil der Where-Clause: $whereClausePart");
             }
         }
 
