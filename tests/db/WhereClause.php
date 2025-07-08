@@ -118,7 +118,9 @@ class WhereClause {
     }
 
     public function matches(array $row): bool {
-        return $this->matchesExactConditions($row);
+        return $this->matchesExactConditions($row) 
+        && $this->matchesSetCondtions($row)
+        ;
     }
 
     private function matchesExactConditions(array $row): bool {
@@ -127,6 +129,17 @@ class WhereClause {
                 return false;
             }
             if($value != $row[$key]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private function matchesSetCondtions(array $row): bool {
+        foreach($this->getSetConditions() as $key => $valueArray){
+            if(!isset($row[$key])){
+                return false;
+            }
+            if(!in_array($row[$key], $valueArray)) {
                 return false;
             }
         }
