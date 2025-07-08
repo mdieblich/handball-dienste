@@ -191,7 +191,14 @@ class MemoryDB {
         }        
 
         $possibleRows = $whereClause->filterRows($table);
-        // TODO hier weiter
+        if(isset($orderByClauses)){
+            // TODO in eigene Klasse besser alles hier und dann ordentlich testen
+            usort($possibleRows, function($a, $b){
+                
+            });
+        }
+        // TODO sortieren
+        // TODO spalten reduzieren
     }
     private function sortResults(&$results, $orderBy, $output) {
         $parts = preg_split('/\s*,\s*/', $orderBy);
