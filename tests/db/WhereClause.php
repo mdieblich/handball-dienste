@@ -55,6 +55,9 @@ class WhereClause {
                 } else {
                     $valueArray = explode(',', $values);
                 }
+                foreach($valueArray as $valueIndex => $value){
+                    $valueArray[$valueIndex] = trim($value);
+                }
                 $this->setConditions[$key] = $valueArray;
             } else if (preg_match('/(\w*) is( not)? null/i', $whereClausePart, $whereClausePartMatches)){
                 $key = $whereClausePartMatches[1];
