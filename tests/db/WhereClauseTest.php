@@ -63,17 +63,64 @@ final class WhereClauseTest extends TestCase {
 
     public function test_matches_oneCondition() {
         $where = new WhereClause("id=3");
-        $this->fail("Not implemented");
+        $row = ["id" => 3];
+        $this->assertTrue($where->matches($row));
     }
 
-    public function test_matches_oneFailingCondition() {$this->fail("Not implemented");}
-    public function test_matches_twoConditions() {$this->fail("Not implemented");}
-    public function test_matches_twoFailingConditions() {$this->fail("Not implemented");}
-    public function test_matches_setCondition() {$this->fail("Not implemented");}
-    public function test_matches_failingSetCondition() {$this->fail("Not implemented");}
-    public function test_matches_nullCheck() {$this->fail("Not implemented");}
-    public function test_matches_failingNullCheck() {$this->fail("Not implemented");}
-    public function test_matches_notNullCheck() {$this->fail("Not implemented");}
-    public function test_matches_failingNotNullCheck() {$this->fail("Not implemented");}
+    public function test_matches_oneFailingCondition() {
+        $where = new WhereClause("id=3");
+        $row = ["id" => 4];
+        $this->assertFalse($where->matches($row));
+    }
+    public function test_matches_twoConditions() {
+        $where = new WhereClause("id=3 AND name='albert'");
+        $row = ["id" => 3, 'name' => 'albert'];
+        $this->assertTrue($where->matches($row));
+    }
+    public function test_matches_twoFailingConditions() {
+        $where = new WhereClause("id=3 AND name='albert'");
+        $row = ["id" => 3, 'name' => 'zwalbert'];
+        $this->assertFalse($where->matches($row));
+    }
+    public function test_matches_setCondition() {
+        $where = new WhereClause("id in (3,5,12)");
+        $row = ["id" => 5];
+        $this->assertTrue($where->matches($row));
+    }
+    public function test_matches_failingSetCondition() {
+        $where = new WhereClause("id in (3,5,12)");
+        $row = ["id" => 6];
+        $this->assertFalse($where->matches($row));
+    }
+    public function test_matches_nullCheck() {
+        $where = new WhereClause("name is null");
+        $row = ["name" => null];
+        $this->assertTrue($where->matches($row));
+    }
+    public function test_matches_nullCheck_columnNotPresent() {
+        $where = new WhereClause("name is null");
+        $row = ["id" => 3];
+        $this->assertTrue($where->matches($row));
+    }
+    public function test_matches_failingNullCheck() {        
+        $where = new WhereClause("name is null");
+        $row = ["name" => 'albert'];
+        $this->assertFalse($where->matches($row));
+    }
+    public function test_matches_notNullCheck() {  
+        $where = new WhereClause("name IS NOT null");
+        $row = ["name" => 'albert'];
+        $this->assertTrue($where->matches($row));
+    }
+    public function test_matches_failingNotNullCheck() {    
+        $where = new WhereClause("name IS NOT null");
+        $row = ["name" => null];
+        $this->assertFalse($where->matches($row));
+    }
+    public function test_matches_failingNotNullCheck_columnNotPresent() {    
+        $where = new WhereClause("name IS NOT null");
+        $row = ["id" => 3];
+        $this->assertFalse($where->matches($row));
+    }
     
 }
