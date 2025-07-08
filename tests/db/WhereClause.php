@@ -40,7 +40,7 @@ class WhereClause {
                 }
                 $key = trim($keyAndValues[0]);
                 $values = trim($keyAndValues[1]);
-                if(!str_starts_with($values, '(') || !str_starts_with($values,')')){
+                if(!str_starts_with($values, '(') || !str_ends_with($values,')')){
                     throw new Exception("FEHLER: rechter Teil der Bedingung von $whereClausePart muss in runden Klammern sein");
                 }
                 $values = substr($values,1, -1);
