@@ -68,22 +68,13 @@ class WhereClause {
         }
         $key = trim($keyAndValues[0]);
         $values = trim($keyAndValues[1]);
-        if(!str_starts_with($values, '(') || !str_ends_with($values,')')){
+        if(!str_surrounded_by( '(', $values,')')){
             throw new Exception("FEHLER: rechter Teil der Bedingung von $whereClausePart muss in runden Klammern sein");
         }
         $values = trim(substr($values,1, -1));
         // subselects erst abfrühstücken
         if(str_starts_with(strtolower($values), 'select')){
-            $subselect = $values;
-            if(!$this->subselect_resolver){
-                throw new Exception("FEHLER: Subselect vorhanden ($subselect), aber kein Subselect-Resolver im Konstruktor gesetzt");
-            }
-            $subselect_result = $this->subselect_resolver->call($this, $subselect, ARRAY_A);
-            foreach($subselect_result as $subselect_result_row){
-                foreach($subselect_result_row as $k => $v){
-                    $valueArray[] = $v;
-                }
-            }
+            $valueArray = $this->resolveSubselect($values);
         } else {
             $valueArray = explode(',', $values);
         }
@@ -92,6 +83,20 @@ class WhereClause {
         }
         $this->setConditions[$key] = $valueArray;
 
+    }
+
+    private function resolveSubselect(string $subselect): array {
+        $valueArray = [];
+        if(!$this->subselect_resolver){
+            throw new Exception("FEHLER: Subselect vorhanden ($subselect), aber kein Subselect-Resolver im Konstruktor gesetzt");
+        }
+        $subselect_result = $this->subselect_resolver->call($this, $subselect, ARRAY_A);
+        foreach($subselect_result as $subselect_result_row){
+            foreach($subselect_result_row as $k => $v){
+                $valueArray[] = $v;
+            }
+        }
+        return $valueArray;
     }
 
     public function getExactConditions(): array {
