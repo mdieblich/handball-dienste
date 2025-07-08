@@ -27,6 +27,11 @@ class WhereClause {
                 }
                 $key = trim($keyAndValue[0]);
                 $value = trim($keyAndValue[1]);
+                if((str_starts_with($value,'\'') && str_ends_with($value,'\''))
+                 ||(str_starts_with($value,'"') && str_ends_with($value,'"'))
+                ){
+                    $value = substr($value,1,-1);
+                }
                 $this->exactConditions[$key] = $value;
             } else if (str_contains($whereClausePart_lowerCase,"in")){
                 $keyAndValues = explode('in', $whereClausePart, 2);
