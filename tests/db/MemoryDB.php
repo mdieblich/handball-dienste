@@ -190,13 +190,7 @@ class MemoryDB {
             return [];
         }        
 
-        // steb 2: check every row if it matches the conditions
-        $possibleRows = [];
-        foreach($table as $row){
-            if($whereClause->matches($row)){
-                $possibleRows[] = $row;
-            }
-        }
+        $possibleRows = $whereClause->filterRows($table);
         // TODO hier weiter
     }
     private function sortResults(&$results, $orderBy, $output) {

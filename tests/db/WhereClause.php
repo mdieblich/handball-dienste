@@ -165,4 +165,13 @@ class WhereClause {
         }
         return true;
     }
+    public function filterRows(array $rows): array{
+        $possibleRows = [];
+        foreach($rows as $row){
+            if($this->matches($row)){
+                $possibleRows[] = $row;
+            }
+        }
+        return $possibleRows;
+    }
 }
