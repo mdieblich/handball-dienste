@@ -15,6 +15,14 @@ function remove_quotes(string $text): string {
     }
     return $text;
 }
+function trim_elements(array $array): array {
+    $newArray = [];
+    foreach($array as $key => $value){
+        $newArray[$key] = trim($value);
+    }
+    return $newArray;
+}
+
 class WhereClause {
     private string $where;
     private ?Closure $subselect_resolver;
@@ -68,21 +76,18 @@ class WhereClause {
         }
         $key = trim($keyAndValues[0]);
         $values = trim($keyAndValues[1]);
+        
         if(!str_surrounded_by( '(', $values,')')){
             throw new Exception("FEHLER: rechter Teil der Bedingung von $whereClausePart muss in runden Klammern sein");
         }
         $values = trim(substr($values,1, -1));
-        // subselects erst abfrühstücken
+
         if(str_starts_with(strtolower($values), 'select')){
             $valueArray = $this->resolveSubselect($values);
         } else {
             $valueArray = explode(',', $values);
         }
-        foreach($valueArray as $valueIndex => $value){
-            $valueArray[$valueIndex] = trim($value);
-        }
-        $this->setConditions[$key] = $valueArray;
-
+        $this->setConditions[$key] = trim_elements($valueArray);
     }
 
     private function resolveSubselect(string $subselect): array {
