@@ -37,20 +37,32 @@ class OrderByClause {
         return $this->orderKeys;
     }
 
-    public function sort(array $rows): void{
+    public function sort(array &$rows): void{
         usort($rows, function ($a, $b){
-            foreach($this->getOrderKeys() as $orderKey){
-                $key = $orderKey[0];
-                $direction = $orderKey[1];
-                if($a[$key] > $b[$key]){ 
-                    return $direction == OrderByClause::ASC ? +1 : -1;
-                }
-                if($a[$key] < $b[$key]){ 
-                    return $direction == OrderByClause::ASC ? -1 : +1;
-                }
-                // else continue with next order key
-            }
-            return 0;
+            return $this->compare($a, $b);
         });
+    }
+
+    public function compare(array $a, array $b): int {
+        foreach($this->getOrderKeys() as $orderKey){
+            $key = $orderKey[0];
+            $direction = $orderKey[1];
+            if($a[$key] > $b[$key]){ 
+                if($direction == OrderByClause::ASC) {
+                    return +1;
+                } else {
+                    return -1;
+                }
+            }
+            if($a[$key] < $b[$key]){
+                if($direction == OrderByClause::ASC) {
+                    return -1;
+                } else {
+                    return +1;
+                }
+            }
+            // else continue with next order key
+        }
+        return 0;
     }
 }
