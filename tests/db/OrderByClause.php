@@ -36,4 +36,8 @@ class OrderByClause {
         }
         return $this->orderKeys;
     }
+
+    public function sort(array $rows): void{
+        
+    }
 }

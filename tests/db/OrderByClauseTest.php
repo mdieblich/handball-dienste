@@ -33,21 +33,118 @@ final class OrderByClauseTest extends TestCase {
     }
     public function test_sort_oneASC() {
         $orderBy = new OrderByClause("id ASC");
-        $rows = [
+        $original = [
             ['id' =>  5, 'name' => 'Albert'],
             ['id' => 12, 'name' => 'Talulah'],
-            ['id' =>  9, 'name' => 'Noob']
+            ['id' =>  9, 'name' => 'Noob'],
         ];
+        $sorted = unserialize(serialize($original));
 
-        $sorted = $orderBy->sort($rows);
+        $orderBy->sort($sorted);
         
-        $this->assertNotEquals($rows, $sorted);
-        $this->assertEquals($rows, $sorted);
+        $this->assertNotEquals($original, $sorted);
+        $this->assertEquals([
+            ['id' =>  5, 'name' => 'Albert'],
+            ['id' =>  9, 'name' => 'Noob'],
+            ['id' => 12, 'name' => 'Talulah'],
+        ], $sorted);
     }
-    public function test_sort_twoASC() {$this->fail("Not implemented");}
-    public function test_sort_oneDESC() {$this->fail("Not implemented");}
-    public function test_sort_twoDESC() {$this->fail("Not implemented");}
-    public function test_sort_ASCandDESC() {$this->fail("Not implemented");}
-    public function test_sort_DESCandASC() {$this->fail("Not implemented");}
-    
+    public function test_sort_twoASC() {
+        $orderBy = new OrderByClause("id ASC, name ASC");
+        $original = [
+            ['id' =>  5, 'name' => 'Bertiane'],
+            ['id' => 12, 'name' => 'Talulah'],
+            ['id' =>  5, 'name' => 'Albert'],
+            ['id' =>  9, 'name' => 'Noob'],
+        ];
+        $sorted = unserialize(serialize($original));
+        
+        $orderBy->sort($sorted);
+        
+        $this->assertNotEquals($original, $sorted);
+        $this->assertEquals([
+            ['id' =>  5, 'name' => 'Albert'],
+            ['id' =>  5, 'name' => 'Bertiane'],
+            ['id' =>  9, 'name' => 'Noob'],
+            ['id' => 12, 'name' => 'Talulah'],
+        ], $sorted);
+    }
+    public function test_sort_oneDESC() {
+        $orderBy = new OrderByClause("id DESC");
+        $original = [
+            ['id' =>  5, 'name' => 'Albert'],
+            ['id' => 12, 'name' => 'Talulah'],
+            ['id' =>  9, 'name' => 'Noob'],
+        ];
+        $sorted = unserialize(serialize($original));
+
+        $orderBy->sort($sorted);
+        
+        $this->assertNotEquals($original, $sorted);
+        $this->assertEquals([
+            ['id' => 12, 'name' => 'Talulah'],
+            ['id' =>  9, 'name' => 'Noob'],
+            ['id' =>  5, 'name' => 'Albert'],
+        ], $sorted);
+    }
+    public function test_sort_twoDESC() {
+        $orderBy = new OrderByClause("id DESC, name DESC");
+        $original = [
+            ['id' =>  5, 'name' => 'Bertiane'],
+            ['id' => 12, 'name' => 'Talulah'],
+            ['id' =>  5, 'name' => 'Albert'],
+            ['id' =>  9, 'name' => 'Noob'],
+        ];
+        $sorted = unserialize(serialize($original));
+        
+        $orderBy->sort($sorted);
+        
+        $this->assertNotEquals($original, $sorted);
+        $this->assertEquals([
+            ['id' => 12, 'name' => 'Talulah'],
+            ['id' =>  9, 'name' => 'Noob'],
+            ['id' =>  5, 'name' => 'Bertiane'],
+            ['id' =>  5, 'name' => 'Albert'],
+        ], $sorted);
+    }
+    public function test_sort_ASCandDESC() {
+        $orderBy = new OrderByClause("id ASC, name DESC");
+        $original = [
+            ['id' =>  5, 'name' => 'Albert'],
+            ['id' => 12, 'name' => 'Talulah'],
+            ['id' =>  5, 'name' => 'Bertiane'],
+            ['id' =>  9, 'name' => 'Noob'],
+        ];
+        $sorted = unserialize(serialize($original));
+        
+        $orderBy->sort($sorted);
+        
+        $this->assertNotEquals($original, $sorted);
+        $this->assertEquals([
+            ['id' =>  5, 'name' => 'Bertiane'],
+            ['id' =>  5, 'name' => 'Albert'],
+            ['id' =>  9, 'name' => 'Noob'],
+            ['id' => 12, 'name' => 'Talulah'],
+        ], $sorted);
+    }
+    public function test_sort_DESCandASC() {
+        $orderBy = new OrderByClause("id DESC, name ASC");
+        $original = [
+            ['id' =>  5, 'name' => 'Bertiane'],
+            ['id' => 12, 'name' => 'Talulah'],
+            ['id' =>  9, 'name' => 'Noob'],
+            ['id' =>  5, 'name' => 'Albert'],
+        ];
+        $sorted = unserialize(serialize($original));
+        
+        $orderBy->sort($sorted);
+        
+        $this->assertNotEquals($original, $sorted);
+        $this->assertEquals([
+            ['id' => 12, 'name' => 'Talulah'],
+            ['id' =>  9, 'name' => 'Noob'],
+            ['id' =>  5, 'name' => 'Albert'],
+            ['id' =>  5, 'name' => 'Bertiane'],
+        ], $sorted);
+    }
 }
