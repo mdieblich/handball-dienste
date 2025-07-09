@@ -2,8 +2,8 @@
 
 class OrderByClause {
 
-    public const ASC = "ASC";
-    public const DESC = "DESC";
+    public const ASC = +1;
+    public const DESC = -1;
     
     private string $orderBy;
     private ?array $orderKeys;
@@ -47,19 +47,12 @@ class OrderByClause {
         foreach($this->getOrderKeys() as $orderKey){
             $key = $orderKey[0];
             $direction = $orderKey[1];
-            if($a[$key] > $b[$key]){ 
-                if($direction == OrderByClause::ASC) {
-                    return +1;
-                } else {
-                    return -1;
-                }
+            
+            if($a[$key] > $b[$key]){
+                return $direction;
             }
             if($a[$key] < $b[$key]){
-                if($direction == OrderByClause::ASC) {
-                    return -1;
-                } else {
-                    return +1;
-                }
+                return -$direction;
             }
             // else continue with next order key
         }
