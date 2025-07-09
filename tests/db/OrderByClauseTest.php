@@ -31,7 +31,19 @@ final class OrderByClauseTest extends TestCase {
             ['id', OrderByClause::ASC]
         ], $orderBy->getOrderKeys());
     }
-    public function test_sort_oneASC() {$this->fail("Not implemented");}
+    public function test_sort_oneASC() {
+        $orderBy = new OrderByClause("id ASC");
+        $rows = [
+            ['id' =>  5, 'name' => 'Albert'],
+            ['id' => 12, 'name' => 'Talulah'],
+            ['id' =>  9, 'name' => 'Noob']
+        ];
+
+        $sorted = $orderBy->sort($rows);
+        
+        $this->assertNotEquals($rows, $sorted);
+        $this->assertEquals($rows, $sorted);
+    }
     public function test_sort_twoASC() {$this->fail("Not implemented");}
     public function test_sort_oneDESC() {$this->fail("Not implemented");}
     public function test_sort_twoDESC() {$this->fail("Not implemented");}
