@@ -25,7 +25,7 @@ class OrderByClause {
                 $columnName = trim(substr($orderByPart, 0, -4));
                 $this->orderKeys[] = [$columnName, OrderByClause::DESC];
             } else {
-                throw new Exception ("Order BY-ANweisungen müssen mit ASC oder DESC enden");
+                throw new Exception ("Order By-Anweisungen müssen mit ASC oder DESC enden");
             }
         }
     }
@@ -38,6 +38,19 @@ class OrderByClause {
     }
 
     public function sort(array $rows): void{
-        
+        usort($rows, function ($a, $b){
+            foreach($this->getOrderKeys() as $orderKey){
+                $key = $orderKey[0];
+                $direction = $orderKey[1];
+                if($a[$key] > $b[$key]){ 
+                    return $direction == OrderByClause::ASC ? +1 : -1;
+                }
+                if($a[$key] < $b[$key]){ 
+                    return $direction == OrderByClause::ASC ? -1 : +1;
+                }
+                // else continue with next order key
+            }
+            return 0;
+        });
     }
 }
