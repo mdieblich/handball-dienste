@@ -1,6 +1,9 @@
 <?php
 require_once __DIR__."/../../src/log/Log.php";
 
+require_once __DIR__."/WhereClause.php";
+require_once __DIR__."/OrderByClause.php";
+
 define('ARRAY_A', 'ARRAY_A');
 
 class MemoryDB {
@@ -182,7 +185,7 @@ class MemoryDB {
             $matches[3],
             Closure::fromCallable([$this, 'get_results_new'])
         );
-        $orderByClauses = $matches[4];
+        $orderByClause = new OrderByClause($matches[4]);
 
         $table = $this->tables[$tableName];
         if(!isset($table)){
@@ -190,14 +193,8 @@ class MemoryDB {
             return [];
         }        
 
-        $possibleRows = $whereClause->filterRows($table);
-        if(isset($orderByClauses)){
-            // TODO in eigene Klasse besser alles hier und dann ordentlich testen
-            usort($possibleRows, function($a, $b){
-                
-            });
-        }
-        // TODO sortieren
+        $fullRows = $whereClause->filterRows($table);
+        $orderByClause->sort($fullRows);
         // TODO spalten reduzieren
     }
     private function sortResults(&$results, $orderBy, $output) {
