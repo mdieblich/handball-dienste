@@ -48,11 +48,11 @@ class WhereClause {
         $whereClauseParts = preg_split('/ AND /i', $this->where);
         foreach($whereClauseParts as $whereClausePart){
             $whereClausePart_lowerCase = strtolower($whereClausePart);
-            if(str_contains($whereClausePart,'=')){
+            if(preg_match('/^(\w+)\s*=/', $whereClausePart)){
                 $this->extractExactCondition($whereClausePart);
             } else if (str_contains($whereClausePart_lowerCase,"in")){
                 $this->extractSetCondition($whereClausePart);
-            } else if (preg_match('/(\w*) is( not)? null/i', $whereClausePart, $whereClausePartMatches)){
+            } else if (preg_match('/(\w+) is( not)? null/i', $whereClausePart, $whereClausePartMatches)){
                 $key = $whereClausePartMatches[1];
                 $checkIsNull = !isset($whereClausePartMatches[2]);
                 $this->nullChecks[$key] = $checkIsNull;
