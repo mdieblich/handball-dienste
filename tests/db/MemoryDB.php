@@ -75,8 +75,7 @@ class MemoryDB {
     
     public function get_results($query, $output = OBJECT): array {
         if (!preg_match('/SELECT\s+((?:(?! FROM ).)+) FROM (\w+)(?: WHERE (.+?))?(?: ORDER BY (.*))?$/i', $query, $matches)) {
-            $this->logfile->log("FEHLER: Query passt nicht zu Format: $query");
-            return [];
+            throw new Exception("FEHLER: Query passt nicht zu Format: $query");
         }
 
         $columnNameClause = new ColumnNameClause($matches[1]);
