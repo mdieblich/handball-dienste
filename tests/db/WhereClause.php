@@ -29,6 +29,7 @@ class WhereClause {
 
     private ?array $exactConditions;
     private ?array $setConditions;
+    private ?array $excludingSetConditions;
     private ?array $nullChecks;
     public function __construct(?string $where, Closure $subselect_resolver = null) {
         if(str_contains($where, 'OR')){
@@ -42,6 +43,7 @@ class WhereClause {
         
         $this->exactConditions = [];      // "id=3" oder "aktiv=1" oder "spielOld is null"
         $this->setConditions = [];        // "id in (1,2,3)"
+        $this->excludingSetConditions = []; // id not in (1,2,3)
         $this->nullChecks = [];       // "anwurf is not null"
         // TODO "Ungleich"-Bedingungen "íd != 5"
 
@@ -54,9 +56,10 @@ class WhereClause {
             $whereClausePart_lowerCase = strtolower($whereClausePart);
             if(preg_match('/^(\w+)\s*=/', $whereClausePart)){
                 $this->extractExactCondition($whereClausePart);
-            } else if (str_contains($whereClausePart_lowerCase,"in")){
+            } else if (preg_match('/^(\w+)( NOT)? IN/i', $whereClausePart)){
+            // } else if (str_contains($whereClausePart_lowerCase,"in")){
                 $this->extractSetCondition($whereClausePart);
-            } else if (preg_match('/(\w+) is( not)? null/i', $whereClausePart, $whereClausePartMatches)){
+            } else if (preg_match('/(\w+) IS( NOT)? null/i', $whereClausePart, $whereClausePartMatches)){
                 $key = $whereClausePartMatches[1];
                 $checkIsNull = !isset($whereClausePartMatches[2]);
                 $this->nullChecks[$key] = $checkIsNull;
@@ -77,18 +80,23 @@ class WhereClause {
     }
 
     private function extractSetCondition($whereClausePart): void {
-        if(!preg_match('/(\w+) IN \((.*)\)/i', $whereClausePart, $keyAndValues)){
+        if(!preg_match('/(\w+)( NOT)? IN \((.*)\)/i', $whereClausePart, $keyAndValues)){
             throw new Exception("FEHLER: Bedingung $whereClausePart fehlerhaft");
         }
         $key = trim($keyAndValues[1]);
-        $values = trim($keyAndValues[2]);
+        $isExcluding = $keyAndValues[2] !== "";
+        $values = trim($keyAndValues[3]);
 
         if(str_starts_with(strtolower($values), 'select')){
             $valueArray = $this->resolveSubselect($values);
         } else {
             $valueArray = explode(',', $values);
         }
-        $this->setConditions[$key] = trim_elements($valueArray);
+        if($isExcluding){
+            $this->excludingSetConditions[$key] = trim_elements($valueArray);
+        } else {
+            $this->setConditions[$key] = trim_elements($valueArray);
+        }
     }
 
     private function resolveSubselect(string $subselect): array {
@@ -113,6 +121,10 @@ class WhereClause {
         if(!isset($this->setConditions)) { $this->parse(); }
         return $this->setConditions;
     }
+    public function getExcludingSetConditions(): array {
+        if(!isset($this->excludingSetConditions)) { $this->parse(); }
+        return $this->excludingSetConditions;
+    }
     public function getNullChecks(): array {
         if(!isset($this->nullChecks)) { $this->parse(); }
         return $this->nullChecks;
@@ -121,6 +133,7 @@ class WhereClause {
     public function matches(array $row): bool {
         return $this->matchesExactConditions($row) 
         && $this->matchesSetCondtions($row)
+        && $this->matchesExlcudingSetCondtions($row)
         && $this->matchesNullChecks($row)
         ;
     }
@@ -142,6 +155,17 @@ class WhereClause {
                 return false;
             }
             if(!in_array($row[$key], $valueArray)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private function matchesExlcudingSetCondtions(array $row): bool {
+        foreach($this->getExcludingSetConditions() as $key => $valueArray){
+            if(!isset($row[$key])){
+                continue;
+            }
+            if(in_array($row[$key], $valueArray)) {
                 return false;
             }
         }
