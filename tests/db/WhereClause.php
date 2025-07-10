@@ -73,17 +73,11 @@ class WhereClause {
     }
 
     private function extractSetCondition($whereClausePart): void {
-        $keyAndValues = explode('in', $whereClausePart, 2);
-        if(count($keyAndValues) != 2){
+        if(!preg_match('/(\w+) IN \((.*)\)/i', $whereClausePart, $keyAndValues)){
             throw new Exception("FEHLER: Bedingung $whereClausePart fehlerhaft");
         }
-        $key = trim($keyAndValues[0]);
-        $values = trim($keyAndValues[1]);
-
-        if(!str_surrounded_by( '(', $values,')')){
-            throw new Exception("FEHLER: rechter Teil der Bedingung von $whereClausePart muss in runden Klammern sein");
-        }
-        $values = trim(substr($values,1, -1));
+        $key = trim($keyAndValues[1]);
+        $values = trim($keyAndValues[2]);
 
         if(str_starts_with(strtolower($values), 'select')){
             $valueArray = $this->resolveSubselect($values);
