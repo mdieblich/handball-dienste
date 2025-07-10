@@ -42,13 +42,12 @@ class ColumnNameClause {
     }
 
     public function filterColumns(array $rows): array {
-    //     if($this->isWildcard){
-    //         return $rows;
-    //     }
-    //     return array_map(
-    // fn($row) => array_intersect_key($row, array_flip($this->getColoumNames())),
-    // $rows
-        // );
-        return [];
+        if($this->isWildcard()){
+            return $rows;
+        }
+        return array_map(
+    fn($row) => array_intersect_key($row, array_flip($this->getColoumNames())),
+    $rows
+        );
     }
 }
