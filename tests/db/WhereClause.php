@@ -92,7 +92,7 @@ class WhereClause {
         if(!$this->subselect_resolver){
             throw new Exception("FEHLER: Subselect vorhanden ($subselect), aber kein Subselect-Resolver im Konstruktor gesetzt");
         }
-        $subselect_result = $this->subselect_resolver->call($this, $subselect, ARRAY_A);
+        $subselect_result = ($this->subselect_resolver)($subselect, ARRAY_A);
         foreach($subselect_result as $subselect_result_row){
             foreach($subselect_result_row as $k => $v){
                 $valueArray[] = $v;
