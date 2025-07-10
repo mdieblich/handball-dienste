@@ -96,8 +96,8 @@ final class MemoryDBTest extends TestCase {
         // assert
         $this->assertCount(2, $results);
         $ligen = array_column($results, 'liga');
-        $this->assertContains( 'Oberliga Männer', $ligen);
-        $this->assertContains( 'Kreisliga Männer', $ligen);
+        $this->assertContains( 'Oberliga Frauen', $ligen);
+        $this->assertContains( 'Kreisliga Frauen', $ligen);
     }
 
 }
