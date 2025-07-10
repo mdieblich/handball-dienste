@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__."/../../src/log/Log.php";
 
+require_once __DIR__."/ColumnNameClause.php";
 require_once __DIR__."/WhereClause.php";
 require_once __DIR__."/OrderByClause.php";
 
@@ -179,7 +180,8 @@ class MemoryDB {
             $this->logfile->log("FEHLER: Query passt nicht zu Format: $query");
             return [];
         }
-        $columnNames = $matches[1];
+
+        $columnNameClause = new ColumnNameClause($matches[1]);
         $tableName = $matches[2];
         $whereClause = new WhereClause(
             $matches[3],
@@ -195,7 +197,8 @@ class MemoryDB {
 
         $fullRows = $whereClause->filterRows($table);
         $orderByClause->sort($fullRows);
-        // TODO spalten reduzieren
+        $reducedRows = $columnNameClause->filterColumns($fullRows);
+        return $reducedRows;
     }
     private function sortResults(&$results, $orderBy, $output) {
         $parts = preg_split('/\s*,\s*/', $orderBy);
