@@ -73,109 +73,7 @@ class MemoryDB {
         return null;
     }
     
-    private function parseWhere($whereString) {
-        $where = [];
-        $nullChecks = [];
-        $inChecks = [];
-        if ($whereString) {
-            $conds = explode('AND', $whereString);
-            foreach ($conds as $cond) {
-                $cond = trim($cond);
-                // IS NULL / IS NOT NULL
-                if (preg_match('/(\w+)\s+is\s+(not\s+)?null/i', $cond, $cm)) {
-                    $nullChecks[] = [
-                        'col' => $cm[1],
-                        'not' => isset($cm[2]) && trim(strtolower($cm[2])) === 'not'
-                    ];
-                    continue;
-                }
-                // IN (...)
-                if (preg_match('/(\w+)\s+IN\s*\(([^)]+)\)/i', $cond, $im)) {
-                    $col = $im[1];
-                    // if(str_starts_with(trim($im[2]), 'SELECT')){
-                    //     $subselect = trim($im[2]);
-                    //     $subresults = $this->get_results($subselect, ARRAY_A);
-                    //     $relevant_key = preg_match('/SELECT (.*) FROM .*/', $subselect, $matches);
-                    // }
-                    $values = array_map('trim', explode(',', $im[2]));
-                    // Entferne evtl. Anführungszeichen
-                    $values = array_map(function($v) {
-                        return trim($v, " '\"");
-                    }, $values);
-                    $inChecks[] = [
-                        'col' => $col,
-                        'values' => $values
-                    ];
-                    continue;
-                }
-                // = Vergleich
-                if (preg_match('/(\w+)\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|(\S+))/', $cond, $cm)) {
-                    $value = isset($cm[2]) && $cm[2] !== '' ? $cm[2]
-                        : (isset($cm[3]) && $cm[3] !== '' ? $cm[3] : $cm[4]);
-                    $where[$cm[1]] = $value;
-                }
-            }
-        }
-        return [$where, $nullChecks, $inChecks];
-    }
-
-    // Ergänze die rowMatches-Methode, damit sie $inChecks unterstützt:
-    private function rowMatches($row, $where, $nullChecks, $inChecks = []) {
-        foreach ($where as $k => $v) {
-            if (!isset($row[$k]) || $row[$k] != $v) {
-                return false;
-            }
-        }
-        foreach ($nullChecks as $check) {
-            $col = $check['col'];
-            $isNot = $check['not'];
-            $isNull = !isset($row[$col]) || $row[$col] === null;
-            if ($isNot && $isNull) {
-                return false;
-            }
-            if (!$isNot && !$isNull) {
-                return false;
-            }
-        }
-        foreach ($inChecks as $check) {
-            $col = $check['col'];
-            if (!isset($row[$col]) || !in_array($row[$col], $check['values'])) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // Passe den Aufruf in get_results an:
-    public function get_results($query, $output = OBJECT) {
-        if (!preg_match('/SELECT \* FROM (\w+)( WHERE (.+?))?( ORDER BY (.+))?$/i', $query, $matches)) {
-            return [];
-        }
-        $table = $matches[1];
-        $orderBy = isset($matches[5]) ? trim($matches[5]) : null;
-
-        [$where, $nullChecks, $inChecks] = $this->parseWhere(isset($matches[3]) ? $matches[3] : null);
-
-        if (!isset($this->tables[$table])) {
-            echo "WARNING: Table '$table' does not exist in MemoryDB.\n";
-            return [];
-        }
-
-        $results = [];
-        foreach ($this->tables[$table] as $row) {
-            if ($this->rowMatches($row, $where, $nullChecks, $inChecks)) {
-                $results[] = ($output === ARRAY_A) ? $row : (object)$row;
-            }
-        }
-
-        if ($orderBy && count($results) > 1) {
-            $this->sortResults($results, $orderBy, $output);
-        }
-
-        return $results;
-    }
-
-    public function get_results_new($query, $output = OBJECT): array {
+    public function get_results($query, $output = OBJECT): array {
         if (!preg_match('/SELECT\s+((?:(?! FROM ).)+) FROM (\w+) WHERE (.+?)(?: ORDER BY (.*))?$/i', $query, $matches)) {
             $this->logfile->log("FEHLER: Query passt nicht zu Format: $query");
             return [];
@@ -185,7 +83,7 @@ class MemoryDB {
         $tableName = $matches[2];
         $whereClause = new WhereClause(
             $matches[3],
-            Closure::fromCallable([$this, 'get_results_new'])
+            Closure::fromCallable([$this, 'get_results'])
         );
         $orderByClause = new OrderByClause($matches[4]);
 
@@ -199,23 +97,6 @@ class MemoryDB {
         $orderByClause->sort($fullRows);
         $reducedRows = $columnNameClause->filterColumns($fullRows);
         return $reducedRows;
-    }
-    private function sortResults(&$results, $orderBy, $output) {
-        $parts = preg_split('/\s*,\s*/', $orderBy);
-        usort($results, function($a, $b) use ($parts, $output) {
-            foreach ($parts as $part) {
-                if (preg_match('/(\w+)(\s+DESC)?/i', $part, $pm)) {
-                    $col = $pm[1];
-                    $desc = isset($pm[2]) && stripos($pm[2], 'DESC') !== false;
-                    $va = is_array($a) ? ($a[$col] ?? null) : ($a->$col ?? null);
-                    $vb = is_array($b) ? ($b[$col] ?? null) : ($b->$col ?? null);
-                    if ($va == $vb) continue;
-                    if ($va < $vb) return $desc ? 1 : -1;
-                    if ($va > $vb) return $desc ? -1 : 1;
-                }
-            }
-            return 0;
-        });
     }
     
     public function get_row($query, $output = OBJECT) {
