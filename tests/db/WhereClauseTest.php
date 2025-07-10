@@ -48,6 +48,19 @@ final class WhereClauseTest extends TestCase {
         $this->assertEquals(['id' => ['3', '5', '12']], $where->getSetConditions());
         $this->assertEmpty( $where->getNullChecks());
     }
+    
+    public function test_subselect_withEquals() {
+        $subselect_resolver = function(string $subselect): array {
+            if($subselect == 'SELECT id FROM subtable where a=b'){
+                return [['id'=>'3'], ['id' => '5'],['id'=>'12']];
+            }
+            return [];
+        };
+        $where = new WhereClause("id in (SELECT id FROM subtable where a=b)", $subselect_resolver);
+        $this->assertEmpty( $where->getExactConditions());
+        $this->assertEquals(['id' => ['3', '5', '12']], $where->getSetConditions());
+        $this->assertEmpty( $where->getNullChecks());
+    }
     public function test_nullcheck() {
         $where = new WhereClause("name is null");
         $this->assertEmpty( $where->getExactConditions());
