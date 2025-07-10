@@ -38,7 +38,7 @@ final class MemoryDBTest extends TestCase {
         ]);
         $damen2_id = $this->db->insert_id;
         // act
-        $results = $this->db->get_results("SELECT * FROM mannschaft WHERE id IN ($herren1_id, $damen2_id))", ARRAY_A);
+        $results = $this->db->get_results("SELECT * FROM mannschaft WHERE id IN ($herren1_id, $damen2_id)", ARRAY_A);
 
         // assert
         $this->assertCount(2, $results);
