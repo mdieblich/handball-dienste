@@ -11,6 +11,20 @@ class ColumnNameClause {
     }
 
     private function parse(): void {
+        $this->isWildcard = false;
+        $this->coloumNames = [];
+
+        $parts = explode(",", $this->columnNameClause);
+        foreach($parts as $part) {
+            $name = trim($part);
+            if($name === "*") {
+                $this->isWildcard = true;
+                $this->coloumNames = [];
+                break;
+            } else {
+                $this->coloumNames[] = $name;
+            }
+        }
     }
 
     public function isWildcard(): bool {
