@@ -176,7 +176,7 @@ class MemoryDB {
     }
 
     public function get_results_new($query, $output = OBJECT): array {
-        if (!preg_match('/SELECT (.*) FROM (\w+) WHERE (.+?)(?: ORDER BY (.*))?$/i', $query, $matches)) {
+        if (!preg_match('/SELECT\s+((?:(?! FROM ).)+) FROM (\w+) WHERE (.+?)(?: ORDER BY (.*))?$/i', $query, $matches)) {
             $this->logfile->log("FEHLER: Query passt nicht zu Format: $query");
             return [];
         }
