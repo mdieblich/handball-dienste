@@ -5,15 +5,19 @@ class OrderByClause {
     public const ASC = +1;
     public const DESC = -1;
     
-    private string $orderBy;
+    private ?string $orderBy;
     private ?array $orderKeys;
 
-    public function __construct(string $orderBy) {
+    public function __construct(?string $orderBy) {
         $this->orderBy = $orderBy;
     }
 
     private function parse(): void {
         $this->orderKeys = [];
+        if($this->orderBy == null) {
+            return;
+        }
+
         $orderByParts = preg_split("/,/", $this->orderBy);
         foreach($orderByParts as $orderByPart){
             $orderByPart = trim($orderByPart);
@@ -38,6 +42,9 @@ class OrderByClause {
     }
 
     public function sort(array &$rows): void{
+        if($this->orderBy == null) {
+            return;
+        }
         usort($rows, function ($a, $b){
             return $this->compare($a, $b);
         });

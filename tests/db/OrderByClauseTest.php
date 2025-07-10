@@ -31,6 +31,10 @@ final class OrderByClauseTest extends TestCase {
             ['id', OrderByClause::ASC]
         ], $orderBy->getOrderKeys());
     }
+    public function test_canHandleNull() {   
+        $orderBy = new OrderByClause(null);
+        $this->assertEmpty($orderBy->getOrderKeys());
+    }
     public function test_sort_oneASC() {
         $orderBy = new OrderByClause("id ASC");
         $original = [
@@ -146,5 +150,19 @@ final class OrderByClauseTest extends TestCase {
             ['id' =>  5, 'name' => 'Albert'],
             ['id' =>  5, 'name' => 'Bertiane'],
         ], $sorted);
+    }
+    
+    public function test_sort_nothing() {
+        $orderBy = new OrderByClause(null);
+        $original = [
+            ['id' =>  5, 'name' => 'Albert'],
+            ['id' => 12, 'name' => 'Talulah'],
+            ['id' =>  9, 'name' => 'Noob'],
+        ];
+        $sorted = unserialize(serialize($original));
+
+        $orderBy->sort($sorted);
+        
+        $this->assertEquals($original, $sorted);
     }
 }
