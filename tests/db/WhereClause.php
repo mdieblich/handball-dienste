@@ -24,13 +24,13 @@ function trim_elements(array $array): array {
 }
 
 class WhereClause {
-    private string $where;
+    private ?string $where;
     private ?Closure $subselect_resolver;
 
     private ?array $exactConditions;
     private ?array $setConditions;
     private ?array $nullChecks;
-    public function __construct(string $where, Closure $subselect_resolver = null) {
+    public function __construct(?string $where, Closure $subselect_resolver = null) {
         if(str_contains($where, 'OR')){
             throw new Exception("FEHLER: 'OR' wird in der WHERE-Klausel nicht unterstützt: $where");
         }
@@ -44,6 +44,10 @@ class WhereClause {
         $this->setConditions = [];        // "id in (1,2,3)"
         $this->nullChecks = [];       // "anwurf is not null"
         // TODO "Ungleich"-Bedingungen "íd != 5"
+
+        if($this->where == null) {
+            return;
+        }
 
         $whereClauseParts = preg_split('/ AND /i', $this->where);
         foreach($whereClauseParts as $whereClausePart){

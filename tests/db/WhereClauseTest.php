@@ -29,7 +29,6 @@ final class WhereClauseTest extends TestCase {
         $this->assertEmpty( $where->getSetConditions());
         $this->assertEmpty( $where->getNullChecks());
     }
-
     public function test_setCondition() {
         $where = new WhereClause("id in (3, 5,12)");
         $this->assertEmpty( $where->getExactConditions());
@@ -72,6 +71,12 @@ final class WhereClauseTest extends TestCase {
         $this->assertEmpty( $where->getExactConditions());
         $this->assertEmpty( $where->getSetConditions());
         $this->assertEquals(['name' => false], $where->getNullChecks());
+    }
+    public function test_empty() {
+        $where = new WhereClause(null);
+        $this->assertEmpty( $where->getExactConditions());
+        $this->assertEmpty( $where->getSetConditions());
+        $this->assertEmpty( $where->getNullChecks());
     }
 
     public function test_matches_oneCondition() {
@@ -134,6 +139,11 @@ final class WhereClauseTest extends TestCase {
         $where = new WhereClause("name IS NOT null");
         $row = ["id" => 3];
         $this->assertFalse($where->matches($row));
+    }
+    public function test_matches_emptyMatchesEverything() {    
+        $where = new WhereClause(null);
+        $row = ["id" => 3];
+        $this->assertTrue($where->matches($row));
     }
     
 }
