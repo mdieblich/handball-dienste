@@ -69,6 +69,7 @@ class Spieltag {
 
         $this->logfile->log("Erstelle $dienstart von Spiel {$spiel->getBegegnungsbezeichnung()}, Grund: $grund");
         $dienst = $spiel->createDienst($dienstart);
+        $dienst->mannschaft_id = $spiel->mannschaft_id;
         $this->neueDienste[] = new NeuerDienst($dienst, $grund);
     }
     
