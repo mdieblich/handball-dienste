@@ -1078,7 +1078,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->createDienstAenderungen();   // Zweite Ausführung
 
         // assert
-        $this->fetchAllWithAssert(3, "SELECT * FROM wp_dienstaenderung WHERE id in ($dienst1, $dienst2, $dienst3)");
+        $this->fetchAllWithAssert(3, "SELECT * FROM wp_dienstaenderung WHERE dienst_id in ($dienst1, $dienst2, $dienst3)");
     }
     public function test_updateSpiele_aktualisiertSpiele(){   
         // arrange
