@@ -16,6 +16,8 @@ class EntfallenerDienst {
         $this->dienst = $dienst;
         $this->dienst_id = $dienst->id;
 
+        $this->dienstart = $dienst->dienstart;
+
         $this->spiel = $dienst->spiel;
         $this->spiel_id = $dienst->getSpielID();
         
