@@ -28,7 +28,7 @@ class Spiel{
     public bool $heimspiel;
     
     // TODO prüfen: kann auf diese Referenz verzichtet werden?
-    public array $dienste = array();
+    public array $dienste = [];
     
     // Zuweisung von Diensten
     public function getDienst(string $dienstart): ?Dienst{
