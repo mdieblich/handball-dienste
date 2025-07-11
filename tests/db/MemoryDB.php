@@ -6,6 +6,7 @@ require_once __DIR__."/WhereClause.php";
 require_once __DIR__."/OrderByClause.php";
 
 define('ARRAY_A', 'ARRAY_A');
+define( 'OBJECT', 'OBJECT' );
 
 class MemoryDB {
     private Log $logfile;
@@ -22,11 +23,20 @@ class MemoryDB {
             $this->tables[$table] = [];
         }
         $data['id'] = rand();
+        $this->convertBool($data);
         $this->tables[$table][] = $data;
         $this->insert_id = $data['id'];
         return true;
     }
-
+    
+    private function convertBool(&$data): void {
+        foreach ($data as $key => $value) {
+            if (is_bool($value)) {
+                $data[$key] = $value ?1:0;
+            }
+        }
+    }
+    
     public function update($table, $data, $where) {
         if (!isset($this->tables[$table])) return false;
         foreach ($this->tables[$table] as &$row) {
@@ -38,6 +48,7 @@ class MemoryDB {
                 }
             }
             if ($match) {
+                $this->convertBool($data);
                 foreach ($data as $k => $v) {
                     $row[$k] = $v;
                 }
