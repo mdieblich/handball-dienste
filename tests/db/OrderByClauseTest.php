@@ -11,6 +11,12 @@ final class OrderByClauseTest extends TestCase {
             ['id', OrderByClause::ASC]
         ], $orderBy->getOrderKeys());
     }
+    public function test_noDirectionIsASC() {
+        $orderBy = new OrderByClause("id");
+        $this->assertEquals([
+            ['id', OrderByClause::ASC]
+        ], $orderBy->getOrderKeys());
+    }
     public function test_detectsOneDESC() {
         $orderBy = new OrderByClause("id DESC");
         $this->assertEquals([

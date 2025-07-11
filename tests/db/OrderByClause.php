@@ -29,7 +29,9 @@ class OrderByClause {
                 $columnName = trim(substr($orderByPart, 0, -4));
                 $this->orderKeys[] = [$columnName, OrderByClause::DESC];
             } else {
-                throw new Exception ("Order By-Anweisungen müssen mit ASC oder DESC enden");
+                // gar nix = ASC
+                $columnName = trim($orderByPart);
+                $this->orderKeys[] = [$columnName, OrderByClause::ASC];
             }
         }
     }
