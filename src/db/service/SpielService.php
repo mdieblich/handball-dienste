@@ -3,19 +3,39 @@
 require_once __dir__."/../dao/SpielDAO.php";
 require_once __dir__."/../dao/DienstDAO.php";
 require_once __dir__."/../dao/MannschaftDAO.php";
+require_once __dir__."/../dao/MannschaftsMeldungDAO.php";
 require_once __dir__."/../dao/GegnerDAO.php";
 
 class SpielService{
+    private MannschaftDAO $mannschaftDAO;
+    private MannschaftsMeldungDAO $meldungDAO;
+    private GegnerDAO $gegnerDAO;
     private SpielDAO $spielDAO;
     private DienstDAO $dienstDAO;
-    private MannschaftDAO $mannschaftDAO;
-    private GegnerDAO $gegnerDAO;
 
     public function __construct($dbhandle=null){
+        $this->mannschaftDAO = new MannschaftDAO($dbhandle);
+        $this->meldungDAO = new MannschaftsMeldungDAO($dbhandle);
+        $this->gegnerDAO = new GegnerDAO($dbhandle);
         $this->spielDAO = new SpielDAO($dbhandle);
         $this->dienstDAO = new DienstDAO($dbhandle);
-        $this->mannschaftDAO = new MannschaftDAO($dbhandle);
-        $this->gegnerDAO = new GegnerDAO($dbhandle);
+    }
+
+    public function fetchCompletely(string $where): Spiel{
+        $spiel = $this->spielDAO->fetch($where);
+        $alleMannschaften = $this->mannschaftDAO->fetchAll();
+        $spiel->mannschaft = $alleMannschaften[$spiel->mannschaft_id];
+        $spiel->mannschaftsMeldung = $this->meldungDAO->fetch("id=$spiel->mannschaftsMeldung_id");
+        $spiel->gegner = $this->gegnerDAO->fetch("id=$spiel->gegner_id");
+        $dienste = $this->dienstDAO->fetchAll("spiel_id=$spiel->id");
+        foreach($dienste as $dienst){
+            $spiel->dienste[] = $dienst;
+            $dienst->spiel = $spiel;
+            if(isset($dienst->mannschaft_id)){
+                $dienst->mannschaft = $alleMannschaften[$dienst->mannschaft_id];
+            }
+        }
+        return $spiel;
     }
     
     // TODO umbenennen zu loadSpiele
