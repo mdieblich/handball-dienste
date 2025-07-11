@@ -164,8 +164,9 @@ class WhereClause {
 
     public function matches(array $row): bool {
         return $this->matchesExactConditions($row) 
+        && $this->matchesRangeConditions($row)
         && $this->matchesSetCondtions($row)
-        && $this->matchesExlcudingSetCondtions($row)
+        && $this->matchesExcludingSetCondtions($row)
         && $this->matchesNullChecks($row)
         ;
     }
@@ -181,6 +182,42 @@ class WhereClause {
         }
         return true;
     }
+    private function matchesRangeConditions(array $row): bool {
+        foreach($this->getRangeConditions() as $key => $comparatorAndValue){
+            if(!isset($row[$key])){
+                return false;
+            }
+            $comparator = $comparatorAndValue[0];
+            $value = $comparatorAndValue[1];
+            switch($comparator){
+                case WhereClause::LT:{
+                    if($row[$key] >= $value){
+                        return false;
+                    }
+                    break;
+                }
+                case WhereClause::LTE:{
+                    if($row[$key] > $value){
+                        return false;
+                    }
+                    break;
+                }
+                case WhereClause::GTE:{
+                    if($row[$key] < $value){
+                        return false;
+                    }
+                    break;
+                }
+                case WhereClause::GT:{
+                    if($row[$key] <= $value){
+                        return false;
+                    }
+                    break;
+                }
+            }
+        }
+        return true;
+    }
     private function matchesSetCondtions(array $row): bool {
         foreach($this->getSetConditions() as $key => $valueArray){
             if(!isset($row[$key])){
@@ -192,7 +229,7 @@ class WhereClause {
         }
         return true;
     }
-    private function matchesExlcudingSetCondtions(array $row): bool {
+    private function matchesExcludingSetCondtions(array $row): bool {
         foreach($this->getExcludingSetConditions() as $key => $valueArray){
             if(!isset($row[$key])){
                 continue;
