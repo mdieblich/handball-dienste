@@ -44,11 +44,11 @@ final class SpieleImportTest extends TestCase {
         $objectInDB = $this->fetchOneWithAssert($query);
         foreach($values as $key => $value) {
             if($value === self::NOT_NULL) {
-                $this->assertNotNull($objectInDB[$key],"$key hätte nicht null sein dürfen");
+                $this->assertNotNull($objectInDB[$key],"$key hätte nicht null sein dürfen, Query: $query");
             } else if($value === self::NULL) {
-                $this->assertNull($objectInDB[$key],"$key hätte nicht null sein dürfen");
+                $this->assertNull($objectInDB[$key],"$key hätte nicht null sein dürfen. Query: $query");
             } else {
-                $this->assertEquals($value, $objectInDB[$key],"$key ist falsch.");
+                $this->assertEquals($value, $objectInDB[$key],"$key ist falsch. Query: $query");
             }
         }
     }
