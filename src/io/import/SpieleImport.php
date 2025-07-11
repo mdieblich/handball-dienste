@@ -219,7 +219,7 @@ class SpieleImport {
 
     public function organisiereAufUndAbbau(): void {
 
-        $heimSpieleProHalle = $this->spielService->fetchSpieleProHalle("heimspiel = 1");
+        $heimSpieleProHalle = $this->spielService->fetchSpieleMitDienstenProHalle("heimspiel = 1");
         foreach($heimSpieleProHalle as $halle => $spieleInDerHalle){
             $this->logfile->log("Organisiere Auf- und Abbau für die Halle $halle");
             $spieleProTag = $spieleInDerHalle->groupBySpielTag($this->logfile);

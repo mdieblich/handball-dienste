@@ -128,4 +128,25 @@ class SpielService{
         }
         return $spieleProHalle;
     }
+
+    public function fetchSpieleMitDienstenProHalle(string $where = "anwurf > current_timestamp", string $orderBy = "anwurf"): array{
+        $spieleProHalle = [];
+        
+        
+        $spieleListe = $this->spielDAO->loadSpiele($where, $orderBy);
+        if(count($spieleListe->spiele) == 0){
+            return [];
+        }
+        
+        $mannschaftsListe = $this->mannschaftDAO->loadMannschaften();
+        $this->appendDienste($spieleListe, $mannschaftsListe);
+
+        foreach($spieleListe->spiele as $spiel){
+            if(!array_key_exists($spiel->halle, $spieleProHalle)){
+                $spieleProHalle[$spiel->halle] = new SpieleListe();
+            }
+            $spieleProHalle[$spiel->halle]->spiele[] = $spiel;
+        }
+        return $spieleProHalle;
+    }
 }
