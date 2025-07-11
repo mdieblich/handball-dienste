@@ -17,10 +17,10 @@ class EntfallenerDienst {
         $this->dienst_id = $dienst->id;
 
         $this->spiel = $dienst->spiel;
-        $this->spiel_id = $dienst->spiel_id;
+        $this->spiel_id = $dienst->getSpielID();
         
         $this->mannschaft = $dienst->mannschaft;
-        $this->mannschaft_id = $dienst->mannschaft_id;
+        $this->mannschaft_id = $dienst->getMannschaftID();
 
         $this->grund = $grund;
     }
