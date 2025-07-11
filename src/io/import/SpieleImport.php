@@ -182,9 +182,10 @@ class SpieleImport {
         $spieleToBeImported = $this->spiel_toBeImportedDAO->fetchAllForDienstAenderungen();
         foreach($spieleToBeImported as $spielToBeImported){
             $this->logfile->log("Erstelle Dienständerungsplan für Import-Spiel mit ID $spielToBeImported->id");
-            $spiel_vorher = $this->spielDAO->fetch("id=$spielToBeImported->spielID_alt");
-            $dienste = $this->dienstDAO->fetchAll("spiel_id=$spiel_vorher->id AND id NOT IN (select dienst_id from wp_dienstaenderung)");
-            foreach($dienste as $dienst){
+            $spiel_vorher = $this->spielService->fetchCompletely("id=$spielToBeImported->spielID_alt");
+            // $spiel_vorher = $this->spielDAO->fetch("id=$spielToBeImported->spielID_alt");
+            // $dienste = $this->dienstDAO->fetchAll("spiel_id=$spiel_vorher->id AND id NOT IN (select dienst_id from wp_dienstaenderung)");
+            foreach($spiel_vorher->dienste as $dienst){
                 $this->logfile->log("$dienst->dienstart ist von Spieländerugen betroffen");
                 $aenderung = new DienstAenderung($dienst, $spiel_vorher);
                 $this->dienstAenderungDAO->insert($aenderung);
