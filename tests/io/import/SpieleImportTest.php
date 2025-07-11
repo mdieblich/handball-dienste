@@ -1154,6 +1154,7 @@ final class SpieleImportTest extends TestCase {
         $spiel_toBeImported_asUpdate->heimspiel = true;
         $spiel_toBeImported_asUpdate->istNeuesSpiel = false;
         $spiel_toBeImported_asUpdate->spielID_alt = $spiel_id;
+        $spiel_toBeImported_asUpdate->dienstAenderungenErstellt = true;
         $spiel_toBeImported_DAO = new Spiel_toBeImportedDAO($this->db);
         $updateSpiel_id = $spiel_toBeImported_DAO->insert($spiel_toBeImported_asUpdate);
 
