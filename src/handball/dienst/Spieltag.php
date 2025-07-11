@@ -20,13 +20,13 @@ class Spieltag {
     }
 
     public function getNeueDienste(): array {
-        if(empty($this->neueDienste)) {
+        if(!isset($this->neueDienste)) {
             $this->organisiereDienste();
         }
         return $this->neueDienste;
     }
     public function getEntfalleneDienste(): array {
-        if(empty($this->neueDienste)) {
+        if(!isset($this->entfalleneDienste)) {
             $this->organisiereDienste();
         }
         return $this->entfalleneDienste;
