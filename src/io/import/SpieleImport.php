@@ -183,7 +183,7 @@ class SpieleImport {
         foreach($spieleToBeImported as $spielToBeImported){
             $this->logfile->log("Erstelle Dienständerungsplan für Import-Spiel mit ID $spielToBeImported->id");
             $spiel_vorher = $this->spielDAO->fetch("id=$spielToBeImported->spielID_alt");
-            $dienste = $this->dienstDAO->fetchAll("spiel_id=$spiel_vorher->id AND id NOT IN (select dienstID from wp_dienstaenderung)");
+            $dienste = $this->dienstDAO->fetchAll("spiel_id=$spiel_vorher->id AND id NOT IN (select dienst_id from wp_dienstaenderung)");
             foreach($dienste as $dienst){
                 $this->logfile->log("$dienst->dienstart ist von Spieländerugen betroffen");
                 $aenderung = DienstAenderung::create($dienst->id, $spiel_vorher);
