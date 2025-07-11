@@ -1,20 +1,21 @@
 <?php
 
+require_once __DIR__."/../Dienst.php";
 require_once __DIR__."/../Spiel.php";
+require_once __DIR__."/../Mannschaft.php";
 
 class DienstAenderung {
     public int $id;
-    public int $dienst_id;
+    public Dienst $dienst; public int $dienst_id;
+    public Mannschaft $mannschaft; public int $mannschaft_id; 
 
     public ?DateTime $anwurfVorher = null;
     public ?string $halleVorher = null;
 
-    public static function create(int $dienst_id, Spiel $spiel_vorher): DienstAenderung {
-        $aenderung = new DienstAenderung();
-        $aenderung->dienst_id = $dienst_id;
-        $aenderung->anwurfVorher = $spiel_vorher->anwurf;
-        $aenderung->halleVorher = $spiel_vorher->halle;
-        return $aenderung;
+    public function __construct(Dienst $dienst, Spiel $spiel_vorher){
+        $this->dienst = $dienst;
+        $this->mannschaft = $dienst->mannschaft;
+        $this->anwurfVorher = $spiel_vorher->anwurf;
+        $this->halleVorher = $spiel_vorher->halle;
     }
-
 }

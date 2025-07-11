@@ -186,7 +186,7 @@ class SpieleImport {
             $dienste = $this->dienstDAO->fetchAll("spiel_id=$spiel_vorher->id AND id NOT IN (select dienst_id from wp_dienstaenderung)");
             foreach($dienste as $dienst){
                 $this->logfile->log("$dienst->dienstart ist von Spieländerugen betroffen");
-                $aenderung = DienstAenderung::create($dienst->id, $spiel_vorher);
+                $aenderung = new DienstAenderung($dienst, $spiel_vorher);
                 $this->dienstAenderungDAO->insert($aenderung);
             }
             $spielToBeImported->dienstAenderungenErstellt = true;
