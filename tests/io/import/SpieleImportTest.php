@@ -1009,6 +1009,7 @@ final class SpieleImportTest extends TestCase {
             new DateTime("2024-09-07 17:00:00"), 
             "06057",
             false,
+            $mannschaft_id
         );
         $dienst1 = $this->builder->createDienst($spiel_id,Dienstart::ZEITNEHMER);
         $dienst2 = $this->builder->createDienst($spiel_id,Dienstart::SEKRETAER);
@@ -1055,6 +1056,7 @@ final class SpieleImportTest extends TestCase {
             new DateTime("2024-09-07 17:00:00"), 
             "06057",
             false,
+            $mannschaft_id
         );
         $dienst1 = $this->builder->createDienst($spiel_id,Dienstart::ZEITNEHMER);
         $dienst2 = $this->builder->createDienst($spiel_id,Dienstart::SEKRETAER);
