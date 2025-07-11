@@ -1455,7 +1455,7 @@ final class SpieleImportTest extends TestCase {
             1986866 // Turnerkreis Nippes II
         );
         $anwurf1 = new DateTime("$spieltag 17:00:00");
-        $spiel_id1 = $this->builder->createSpiel(100, $meldung_id1, 200, $anwurf1, "0815", true);
+        $spiel_id1 = $this->builder->createSpiel(100, $meldung_id1, 200, $anwurf1, "0815", true, $mannschaft_id1);
         
         $mannschaft_id2 = $this->builder->createMannschaft(3);
         $meldung_id2 = $this->builder->createMannschaftsMeldung(
@@ -1465,7 +1465,7 @@ final class SpieleImportTest extends TestCase {
             1987866 // irgendwas anderes
         );
         $anwurf2 = new DateTime("$spieltag 19:00:00");
-        $spiel_id2 = $this->builder->createSpiel(100, $meldung_id2, 200, $anwurf2,  "0815", true);
+        $spiel_id2 = $this->builder->createSpiel(100, $meldung_id2, 200, $anwurf2,  "0815", true, $mannschaft_id2);
 
         // act
         $this->import->organisiereAufUndAbbau();
