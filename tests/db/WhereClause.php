@@ -189,6 +189,13 @@ class WhereClause {
             }
             $comparator = $comparatorAndValue[0];
             $value = $comparatorAndValue[1];
+            if($row[$key] instanceof DateTime){
+                if(strtoupper($value) === "CURRENT_TIMESTAMP"){
+                    $value = new DateTime("now");
+                } else {
+                    $value = new DateTime($value);
+                }
+            }
             switch($comparator){
                 case WhereClause::LT:{
                     if($row[$key] >= $value){
