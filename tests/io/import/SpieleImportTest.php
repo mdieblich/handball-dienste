@@ -1532,7 +1532,7 @@ final class SpieleImportTest extends TestCase {
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
-        $spiel_id = $this->builder->createSpiel(100, $meldung_id, 200, null, "0815", true);
+        $spiel_id = $this->builder->createSpiel(100, $meldung_id, 200, null, "0815", true, $mannschaft_id);
         $aufbau_id = $this->builder->createDienst($spiel_id, Dienstart::AUFBAU, $mannschaft_id);
         $abbau_id = $this->builder->createDienst($spiel_id, Dienstart::ABBAU, $mannschaft_id);
 
@@ -1563,11 +1563,11 @@ final class SpieleImportTest extends TestCase {
 
         // Verkehrte Welt: Das frühere Spiel hat den Abbau...
         $anwurf_frueh = new DateTime("$spieltag 17:00:00");
-        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true);
+        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true, $mannschaft_frueh_id);
         $abbau_vorher_id = $this->builder->createDienst($spiel_frueh_id, Dienstart::ABBAU, $mannschaft_frueh_id);
         // ... und das spätere Spiel den Aufbau.
         $anwurf_spaet = new DateTime("$spieltag 19:00:00");
-        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true);
+        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true, $mannschaft_spaet_id);
         $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet_id, Dienstart::AUFBAU, $mannschaft_spaet_id);
         
         // act
@@ -1604,10 +1604,10 @@ final class SpieleImportTest extends TestCase {
 
         
         $anwurf_frueh = new DateTime("$spieltag 17:00:00");
-        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true);
+        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true, $mannschaft_frueh_id);
         
         $anwurf_spaet = new DateTime("$spieltag 19:00:00");
-        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true);
+        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true, $mannschaft_spaet_id);
         $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet_id, Dienstart::AUFBAU, $mannschaft_spaet_id);
         
         // act
@@ -1648,11 +1648,11 @@ final class SpieleImportTest extends TestCase {
 
         // Verkehrte Welt: Das frühere Spiel hat den Abbau...
         $anwurf_frueh = new DateTime("$spieltag 17:00:00");
-        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true);
+        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true, $mannschaft_frueh_id);
         $abbau_vorher_id = $this->builder->createDienst($spiel_frueh_id, Dienstart::ABBAU, $mannschaft_frueh_id);
         // ... und das spätere Spiel den Aufbau.
         $anwurf_spaet = new DateTime("$spieltag 19:00:00");
-        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true);
+        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true, $mannschaft_spaet_id);
         $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet_id, Dienstart::AUFBAU, $mannschaft_spaet_id);
         
         // act
@@ -1707,16 +1707,16 @@ final class SpieleImportTest extends TestCase {
     public function test_organisiereAufUndAbbau_mehrereSpieltage() {
         // arrange
         $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft1 = $this->builder->createMannschaft(2);
-        $meldung1 = $this->builder->createMannschaftsMeldung(
-            $mannschaft1,
+        $mannschaft_id1 = $this->builder->createMannschaft(2);
+        $meldung_id1 = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id1,
             $meisterschaft_id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
-        $mannschaft2 = $this->builder->createMannschaft(3);
-        $meldung2 = $this->builder->createMannschaftsMeldung(
-            $mannschaft2,
+        $mannschaft_id2 = $this->builder->createMannschaft(3);
+        $meldung_id2 = $this->builder->createMannschaftsMeldung(
+            $mannschaft_id2,
             $meisterschaft_id,
             364515, // irgendwas anderes
             1987866 // irgendwas anderes
@@ -1725,16 +1725,16 @@ final class SpieleImportTest extends TestCase {
         // Erst spielt Mannschaft 1, dann Mannschaft 2
         $tag1 = "2024-09-07";
         $tag1_anwurf_frueh = new DateTime("$tag1 17:00:00");
-        $tag1_spiel_frueh_id = $this->builder->createSpiel(100, $meldung1, 200, $tag1_anwurf_frueh, "0815", true);
+        $tag1_spiel_frueh_id = $this->builder->createSpiel(100, $meldung_id1, 200, $tag1_anwurf_frueh, "0815", true, $mannschaft_id1);
         $tag1_anwurf_spaet = new DateTime("$tag1 19:00:00");
-        $tag1_spiel_spaet_id = $this->builder->createSpiel(100, $meldung2, 200, $tag1_anwurf_spaet,  "0815", true);
+        $tag1_spiel_spaet_id = $this->builder->createSpiel(100, $meldung_id2, 200, $tag1_anwurf_spaet,  "0815", true, $mannschaft_id2);
         
         // Und heute spielt zuerst Mannschaft 2, dann 1
         $tag2 = "2024-09-14";
         $tag2_anwurf_frueh = new DateTime("$tag2 17:00:00");
-        $tag2_spiel_frueh_id = $this->builder->createSpiel(100, $meldung2, 200, $tag2_anwurf_frueh, "0815", true);
+        $tag2_spiel_frueh_id = $this->builder->createSpiel(100, $meldung_id2, 200, $tag2_anwurf_frueh, "0815", true, $mannschaft_id2);
         $tag2_anwurf_spaet = new DateTime("$tag2 19:00:00");
-        $tag2_spiel_spaet_id = $this->builder->createSpiel(100, $meldung1, 200, $tag2_anwurf_spaet,  "0815", true);
+        $tag2_spiel_spaet_id = $this->builder->createSpiel(100, $meldung_id1, 200, $tag2_anwurf_spaet,  "0815", true, $mannschaft_id1);
         
         // act
         $this->import->organisiereAufUndAbbau();
@@ -1743,20 +1743,20 @@ final class SpieleImportTest extends TestCase {
         // Tag 1
         $this->assertObjectInDb("SELECT * from wp_dienst where spiel_id=$tag1_spiel_frueh_id", [
             'dienstart'     => Dienstart::AUFBAU,
-            'mannschaft_id' => $mannschaft1
+            'mannschaft_id' => $mannschaft_id1
         ]);
         $this->assertObjectInDb("SELECT * from wp_dienst where spiel_id=$tag1_spiel_spaet_id", [
             'dienstart'     => Dienstart::ABBAU,
-            'mannschaft_id' => $mannschaft2
+            'mannschaft_id' => $mannschaft_id2
         ]);
         // Tag 2
         $this->assertObjectInDb("SELECT * from wp_dienst where spiel_id=$tag2_spiel_frueh_id", [
             'dienstart'     => Dienstart::AUFBAU,
-            'mannschaft_id' => $mannschaft2
+            'mannschaft_id' => $mannschaft_id2
         ]);
         $this->assertObjectInDb("SELECT * from wp_dienst where spiel_id=$tag2_spiel_spaet_id", [
             'dienstart'     => Dienstart::ABBAU,
-            'mannschaft_id' => $mannschaft1
+            'mannschaft_id' => $mannschaft_id1
         ]);
     }
 }
