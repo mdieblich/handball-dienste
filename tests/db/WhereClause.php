@@ -24,10 +24,16 @@ function trim_elements(array $array): array {
 }
 
 class WhereClause {
+
+    public const LT = "<";
+    public const LTE = "<=";
+    public const GTE = ">=";
+    public const GT = ">";
     private ?string $where;
     private ?Closure $subselect_resolver;
 
     private ?array $exactConditions;
+    private ?array $rangeConditions;
     private ?array $setConditions;
     private ?array $excludingSetConditions;
     private ?array $nullChecks;
@@ -41,7 +47,8 @@ class WhereClause {
 
     private function parse(): void {
         
-        $this->exactConditions = [];      // "id=3" oder "aktiv=1" oder "spielOld is null"
+        $this->exactConditions = [];      // "id=3" oder "aktiv=1"
+        $this->rangeConditions = [];      // "id>3" oder "aktiv>=1"
         $this->setConditions = [];        // "id in (1,2,3)"
         $this->excludingSetConditions = []; // id not in (1,2,3)
         $this->nullChecks = [];       // "anwurf is not null"
@@ -55,6 +62,8 @@ class WhereClause {
         foreach($whereClauseParts as $whereClausePart){
             if(preg_match('/^(\w+)\s*=/', $whereClausePart)){
                 $this->extractExactCondition($whereClausePart);
+            } else if(preg_match('/^(\w+)\s*[<>]=?/', $whereClausePart)){
+                $this->extractRangeCondition($whereClausePart);
             } else if (preg_match('/^(\w+)( NOT)? IN/i', $whereClausePart)){
                 $this->extractSetCondition($whereClausePart);
             } else if (preg_match('/(\w+) IS( NOT)? null/i', $whereClausePart, $whereClausePartMatches)){
@@ -75,6 +84,27 @@ class WhereClause {
         $value = trim($keyAndValue[1]);
         $value = remove_quotes($value);
         $this->exactConditions[$key] = $value;
+    }
+    private function extractRangeCondition(string $whereClausePart): void {
+        if(str_contains($whereClausePart,"<=")){
+            $operator = WhereClause::LTE;
+        } else if(str_contains($whereClausePart,">=")){
+            $operator = WhereClause::GTE;
+        } else if(str_contains($whereClausePart,"<")){
+            $operator = WhereClause::LT;
+        } else if(str_contains($whereClausePart,">")){
+            $operator = WhereClause::GT;
+        } else {
+            throw new Exception("FEHLER: Konnte Vergleichsoperator nicht finden in $whereClausePart");
+        }
+        $keyAndValue = preg_split('/[<>]=?/', $whereClausePart);
+        if(count($keyAndValue) != 2){
+            throw new Exception("FEHLER: Bedingung $whereClausePart fehlerhaft");
+        }
+        $key = trim($keyAndValue[0]);
+        $value = trim($keyAndValue[1]);
+        $value = remove_quotes($value);
+        $this->rangeConditions[$key] = [$operator, $value];
     }
 
     private function extractSetCondition($whereClausePart): void {
@@ -114,6 +144,10 @@ class WhereClause {
     public function getExactConditions(): array {
         if(!isset($this->exactConditions)) { $this->parse(); }
         return $this->exactConditions;
+    }
+    public function getRangeConditions(): array {
+        if(!isset($this->rangeConditions)) { $this->parse(); }
+        return $this->rangeConditions;
     }
     public function getSetConditions(): array {
         if(!isset($this->setConditions)) { $this->parse(); }
