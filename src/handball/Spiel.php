@@ -174,8 +174,8 @@ class Spiel{
 
     public function getBegegnungsbezeichnung(): string{
         $anwurf = $this->getAnwurfAsString();
-        $mannschaftsName = $this->mannschaft->getName();
-        $gegnerName = $this->gegner->getName();
+        $mannschaftsName = isset($this->mannschaft)?$this->mannschaft->getName():"Mannschaft #$this->mannschaft_id";
+        $gegnerName = isset($this->gegner)?$this->gegner->getName():"Gegner #$this->gegner_id";
         
         if($this->heimspiel){
             return "$anwurf HEIM ($this->halle) $mannschaftsName vs. $gegnerName";
