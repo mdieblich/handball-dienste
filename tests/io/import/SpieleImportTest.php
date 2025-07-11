@@ -1430,7 +1430,7 @@ final class SpieleImportTest extends TestCase {
             1986866 // Turnerkreis Nippes II
         );
         $spieltag = "2024-09-07";
-        $spiel_id = $this->builder->createSpiel(100, $meldung_id, 200, new DateTime("$spieltag 17:00:00"), "0815", true);
+        $spiel_id = $this->builder->createSpiel(100, $meldung_id, 200, new DateTime("$spieltag 17:00:00"), "0815", true, $mannschaft_id );
 
         // act
         $this->import->organisiereAufUndAbbau();
