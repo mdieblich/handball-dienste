@@ -99,5 +99,36 @@ final class MemoryDBTest extends TestCase {
         $this->assertContains( 'Oberliga Frauen', $ligen);
         $this->assertContains( 'Kreisliga Frauen', $ligen);
     }
+    
+    public function test_insert_convertsBoolToInt() {
+        // act
+        $this->db->insert('test', [
+            'i_am_true' => true,
+            'i_am_false' => false,
+        ]);
+        
+        // assert
+        $results = $this->db->get_row("SELECT * from test", ARRAY_A);
+        $this->assertSame(1, $results['i_am_true']);
+        $this->assertSame(0, $results['i_am_false']);
+    }
+    public function test_update_convertsBoolToInt() {
+        // arrange
+        $this->db->insert('test', [
+            'i_am_true' => 1,
+            'i_am_false' => 0,
+        ]);
+        $id = $this->db->insert_id;
+        // act
+        $this->db->update('test', [
+            'i_am_true' => true,
+            'i_am_false' => false,
+        ], "id=$id");
+        
+        // assert
+        $results = $this->db->get_row("SELECT * from test", ARRAY_A);
+        $this->assertSame(1, $results['i_am_true']);
+        $this->assertSame(0, $results['i_am_false']);
+    }
 
 }
