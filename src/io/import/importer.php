@@ -140,7 +140,7 @@ Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen",
     $table_nuliga_mannschaftseinteilung = $dbhandle->prefix . 'nuliga_mannschaftseinteilung';
 
     $mannschaftDAO = new MannschaftDAO($dbhandle);
-    $mannschaftsListe = $mannschaftDAO->loadMannschaften();
+    $mannschaftsListe = $mannschaftDAO->getAllWithGlobalCache();
     $nuligaBezeichnungen = $mannschaftsListe->createNuLigaMannschaftsBezeichnungen();
     $logfile->log(print_r($nuligaBezeichnungen), true);
 
@@ -164,7 +164,7 @@ Importer::$MANNSCHAFTEN_ZUORDNEN = new ImportSchritt(3, "Mannschaften zuordnen",
 Importer::$NULIGA_TEAM_IDS_LESEN = new ImportSchritt(4, "Team-IDs aus nuLiga auslesen", function ($dbhandle, Log $logfile){
     $vereinsname = get_option('vereinsname');
     $mannschaftDAO = new MannschaftDAO($dbhandle);
-    $mannschaftsListe = $mannschaftDAO->loadMannschaften();
+    $mannschaftsListe = $mannschaftDAO->getAllWithGlobalCache();
 
     $table_name = $dbhandle->prefix . 'nuliga_mannschaftseinteilung';
     $results = $dbhandle->get_results("SELECT * FROM $table_name WHERE mannschaft IS NOT NULL AND team_id IS NULL", ARRAY_A);

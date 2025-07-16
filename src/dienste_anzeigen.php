@@ -18,7 +18,7 @@ function dienste_tabellen_ersetzen(array $matches){
     $innerHTML = $matches[2];
 
     $mannschaftDAO = new MannschaftDAO();
-    $mannschaftsListe = $mannschaftDAO->loadMannschaften();
+    $mannschaftsListe = $mannschaftDAO->getAllWithGlobalCache();
 
     preg_match_all("/(\w*)=\"([\w\d\s\.]*)\"/", $attributString, $attributeArray);
     $attributeKeys = $attributeArray[1];

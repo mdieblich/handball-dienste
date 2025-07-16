@@ -61,7 +61,7 @@ function addDiensteMannschaftsKonfiguration(){
 
 function displayDiensteMannschaften(){
     $mannschaftDAO = new MannschaftDAO();
-    $mannschaftsListe = $mannschaftDAO->loadMannschaften();
+    $mannschaftsListe = $mannschaftDAO->getAllWithGlobalCache();
 
     ?>
     <script>

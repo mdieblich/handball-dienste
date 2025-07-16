@@ -15,7 +15,7 @@ class MannschaftService{
     }
     
     public function loadMannschaftenMitMeldungen(): MannschaftsListe{
-        $mannschaftsListe = $this->mannschaftDAO->loadMannschaften();
+        $mannschaftsListe = $this->mannschaftDAO->getAllWithGlobalCache();
 
         if(count($mannschaftsListe->mannschaften) === 0){
             return $mannschaftsListe;

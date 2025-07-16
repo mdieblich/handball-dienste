@@ -47,7 +47,7 @@ function displayDiensteZuweisen(){
     $mannschaftDAO = new MannschaftDAO();
     $spielService = new SpielService();
 
-    $mannschaftsListe = $mannschaftDAO->loadMannschaften();
+    $mannschaftsListe = $mannschaftDAO->getAllWithGlobalCache();
     $from = new DateTime('yesterday');
     if(isset($_GET['seit'])){
         $enteredDate = DateTime::createFromFormat('d.m.Y', $_GET['seit']);

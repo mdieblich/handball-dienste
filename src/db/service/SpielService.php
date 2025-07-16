@@ -48,7 +48,7 @@ class SpielService{
             return $spieleListe;
         }
         
-        $mannschaftsListe = $this->mannschaftDAO->loadMannschaften();
+        $mannschaftsListe = $this->mannschaftDAO->getAllWithGlobalCache();
         $this->appendMannschaften($spieleListe, $mannschaftsListe);
         $this->appendGegner($spieleListe);
         $this->appendDienste($spieleListe, $mannschaftsListe);
@@ -78,7 +78,7 @@ class SpielService{
             return null;
         }
         
-        $mannschaftsListe = $this->mannschaftDAO->loadMannschaften();
+        $mannschaftsListe = $this->mannschaftDAO->getAllWithGlobalCache();
         $mannschaft = $mannschaftsListe->mannschaften[$oldSpiel->mannschaft_id];
         $oldSpiel->mannschaft = $mannschaft;
         unset($oldSpiel->mannschaft_id);
@@ -158,7 +158,7 @@ class SpielService{
             return [];
         }
         
-        $mannschaftsListe = $this->mannschaftDAO->loadMannschaften();
+        $mannschaftsListe = $this->mannschaftDAO->getAllWithGlobalCache();
         $this->appendDienste($spieleListe, $mannschaftsListe);
 
         foreach($spieleListe->spiele as $spiel){
