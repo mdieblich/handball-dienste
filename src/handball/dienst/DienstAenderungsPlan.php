@@ -9,15 +9,13 @@ require_once __DIR__."/../Dienst.php";
 require_once __DIR__."/../../io/NippesMailer.php";
 
 class DienstAenderungsPlan{
-    private DienstDAO $dao;
-    private array $mannschaften;
+    private array $mannschften;
     private $geaenderteDienste = [];
     private $geaenderteSpiele = [];
     private $entfalleneDienste = [];
     private $neueDienste = [];
 
     public function __construct(array $mannschaften){
-        $this->dao = new DienstDAO();
         $this->mannschaften = $mannschaften;
         
         foreach($mannschaften as $mannschaft){
