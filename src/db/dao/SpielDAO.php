@@ -6,8 +6,6 @@ require_once __DIR__."/DAO.php";
 require_once __DIR__."/MannschaftsMeldungDAO.php";
 
 class SpielDAO extends DAO{
-    // TODO function zum erstellen der DB-Tabelle
-    // TODO spaltennamen als Klassenkonstanten
 
     public function findSpiel(int $mannschaftsmeldung, int $spielnr, int $mannschaft_id, int $gegner_id, int $isHeimspiel): ?Spiel{
         return $this->fetch("mannschaftsmeldung_id=$mannschaftsmeldung AND spielnr=$spielnr AND mannschaft_id=$mannschaft_id AND gegner_id=$gegner_id AND heimspiel=$isHeimspiel");

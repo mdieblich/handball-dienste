@@ -13,7 +13,6 @@ class ImportSchritt{
         $this->method = $method;
     }
     
-    // TODO dbHandle als parameter hereinreichen
     public function run($dbhandle): ?array{
         $this->initImportStatus();
         

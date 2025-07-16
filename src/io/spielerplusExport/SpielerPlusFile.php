@@ -67,7 +67,7 @@ class SpielerPlusFile {
                 $spiel->getRueckkehr()->format("H:i:s"),                     // End-Zeit (Optional)
                 $spiel->heimspiel?"ja":"nein",                           // Heimspiel
                 "In der Halle",                 // Gelände / Räumlichkeiten
-                "", // Adresse (optional), TODO: Hallenadresses auslesen
+                "", // Adresse (optional), TODO: Hallenadressen auslesen
                 "Nuliga-Halle: ".$spiel->halle,   // Infos zum Spiel
                 "Spieler müssen zusagen",       // Teilnahme
                 "",             // Nominierung

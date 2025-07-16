@@ -53,7 +53,6 @@ function dienste_tabellen_ersetzen(array $matches){
     $kopfzeile .= "</tr>";
 
     global $wpdb;
-    // TODO DAOs für Tabellennamen nutzen
     $table_name_spiel = SpielDAO::tableName($wpdb);
     $table_name_dienst = DienstDAO::tableName($wpdb);
     $filter = array();
