@@ -100,7 +100,7 @@ class DienstAenderungsPlan{
 
     private function createMessageForMannschaft(Mannschaft $mannschaft): string{
         $message = 
-            "<p>Hallo ".$mannschaft->getName().",</p>"
+            "<p>Hallo {$mannschaft->getName()},</p>"
             ."<p>es haben sich Spiele geändert, bei denen ihr Dienste übernehmt:</p>";
         
         $spieleUndDienste = $this->getGeaenderteSpieleUndDienste($mannschaft);
@@ -120,18 +120,18 @@ class DienstAenderungsPlan{
             }
 
             $message .= "<div style='padding-left:2em'>";
-            $message .= "<b>".$betroffenesSpiel->getBegegnungsbezeichnung()."</b>";
+            $message .= "<b>{$betroffenesSpiel->getBegegnungsbezeichnung()}</b>";
             
             $message .= "<ul>";
             if(isset($spielAenderung)){
-                $message .= "<li>ÄNDERUNG: ".$spielAenderung->getAenderung()."</li>";
+                $message .= "<li>ÄNDERUNG: {$spielAenderung->getAenderung()}</li>";
             }
             $message .= "<li>EURE DIENSTE: ".implode(", ", $dienstarten)."</li>";
             if(isset($entfallenerDienst)){
-                $message .= "<li>ES ENTFÄLLT: ".$entfallenerDienst->dienstart."</li>";
+                $message .= "<li>ES ENTFÄLLT: $entfallenerDienst->dienstart</li>";
             }
             if(isset($neuerDienst)){
-                $message .= "<li>DABEI NEU: ".$neuerDienst->dienstart."</li>";
+                $message .= "<li>DABEI NEU: $neuerDienst->dienstart</li>";
             }
             $message .= "</ul>";
             $message .= "</div>";
