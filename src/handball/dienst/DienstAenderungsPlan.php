@@ -11,19 +11,19 @@ require_once __DIR__."/../../io/NippesMailer.php";
 class DienstAenderungsPlan{
     private DienstDAO $dao;
     private array $mannschaften;
-    private $geaenderteDienste = array();
-    private $geaenderteSpiele = array();
-    private $entfalleneDienste = array();
-    private $neueDienste = array();
+    private $geaenderteDienste = [];
+    private $geaenderteSpiele = [];
+    private $entfalleneDienste = [];
+    private $neueDienste = [];
 
     public function __construct(array $mannschaften){
         $this->dao = new DienstDAO();
         $this->mannschaften = $mannschaften;
         
         foreach($mannschaften as $mannschaft){
-            $this->geaenderteDienste[$mannschaft->id] = array();
-            $this->entfalleneDienste[$mannschaft->id] = array();
-            $this->neueDienste[$mannschaft->id] = array();
+            $this->geaenderteDienste[$mannschaft->id] = [];
+            $this->entfalleneDienste[$mannschaft->id] = [];
+            $this->neueDienste[$mannschaft->id] = [];
         }
     }
 
@@ -146,7 +146,7 @@ class DienstAenderungsPlan{
 
     private function getGeaenderteSpieleUndDienste(Mannschaft $mannschaft): array{
         
-        $spieleUndDienste = array();
+        $spieleUndDienste = [];
 
         // Geänderte Spiele
         foreach($this->geaenderteDienste[$mannschaft->id] as $dienst){
@@ -161,7 +161,7 @@ class DienstAenderungsPlan{
         foreach($this->entfalleneDienste[$mannschaft->id] as $entfallenerDienst){
             $spielID = $entfallenerDienst->spiel->id;
             if(empty($spieleUndDienste[$spielID])){
-                $spieleUndDienste[$spielID] = array();
+                $spieleUndDienste[$spielID] = [];
             }
             array_push($spieleUndDienste[$spielID], $entfallenerDienst->dienstart);
         }
@@ -170,7 +170,7 @@ class DienstAenderungsPlan{
         foreach($this->neueDienste[$mannschaft->id] as $neuerDienst){
             $spielID = $neuerDienst->spiel->id;
             if(empty($spieleUndDienste[$spielID])){
-                $spieleUndDienste[$spielID] = array();
+                $spieleUndDienste[$spielID] = [];
             }
             array_push($spieleUndDienste[$spielID], $neuerDienst->dienstart);
         }
@@ -178,4 +178,3 @@ class DienstAenderungsPlan{
         return $spieleUndDienste;
     }
 }
-?>
