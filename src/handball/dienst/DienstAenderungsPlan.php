@@ -9,11 +9,11 @@ require_once __DIR__."/../Dienst.php";
 require_once __DIR__."/../../io/NippesMailer.php";
 
 class DienstAenderungsPlan{
-    private array $mannschften;
-    private $geaenderteDienste = [];
-    private $geaenderteSpiele = [];
-    private $entfalleneDienste = [];
-    private $neueDienste = [];
+    public array $mannschaften;
+    public $geaenderteDienste = [];
+    public $geaenderteSpiele = [];
+    public $entfalleneDienste = [];
+    public $neueDienste = [];
 
     public function __construct(array $mannschaften){
         $this->mannschaften = $mannschaften;
