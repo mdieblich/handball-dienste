@@ -3,6 +3,7 @@
 require_once __DIR__."/../../src/handball/Meisterschaft.php";
 require_once __DIR__."/../../src/handball/Mannschaft.php";
 require_once __DIR__."/../../src/handball/MannschaftsMeldung.php";
+require_once __DIR__."/../../src/handball/Gegner.php";
 
 class DBBuilder{    
     private $db;
@@ -48,14 +49,20 @@ class DBBuilder{
         $meldung->nuligaTeamID = $nuligaTeamID;
         return $meldung;
     }
-    public function createGegner(string $verein, int $nummer, int $meldung_id, bool $stelltSekretaer = false): int {
+    public function createGegner(string $verein, int $nummer, MannschaftsMeldung $meldung, bool $stelltSekretaer = false): Gegner {
         $this->db->insert("wp_gegner", [
             "verein" => $verein,
             "nummer" => $nummer,
-            "zugehoerigeMeldung_id" => $meldung_id,
+            "zugehoerigeMeldung_id" => $meldung->id,
             "stelltSekretaerBeiHeimspiel" => $stelltSekretaer?1:0 // Defaultwert, kann später angepasst werden
         ]);
-        return $this->db->insert_id;
+        $gegner = new Gegner();
+        $gegner->id = $this->db->insert_id;
+        $gegner->verein = $verein;
+        $gegner->nummer = $nummer;
+        $gegner->zugehoerigeMeldung = $meldung;
+        $gegner->stelltSekretaerBeiHeimspiel = $stelltSekretaer;
+        return $gegner;
     }
 
     public function createSpiel(int $spielNr, int $meldung_id, int $gegner_id, ?DateTime $anwurf, string $halle, bool $heimspiel, ?int $mannschaft_id = null): int {
