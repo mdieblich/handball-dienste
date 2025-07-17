@@ -37,8 +37,9 @@ final class DienstAenderungsPlanServiceTest extends TestCase {
         $mannschaft_spiel = $this->builder->createMannschaft(3);
         $mannschaft_dienst = $this->builder->createMannschaft(2);
         $meldung = $this->builder->createMannschaftsMeldung($mannschaft_spiel, $meisterschaft, 0, 0);
-        $spiel_id = $this->builder->createSpiel(703, $meldung->id, 0, new DateTime('2023-09-15 17:30:00'), '4711', true, $mannschaft_spiel->id);
-        $dienst_id = $this->builder->createDienst($spiel_id, Dienstart::ZEITNEHMER, $mannschaft_dienst->id);
+        $gegner = $this->builder->createGegner("Pulheimer SC", 3, $meldung);
+        $spiel = $this->builder->createSpiel(703, $meldung, $gegner, new DateTime('2023-09-15 17:30:00'), '4711', true, $mannschaft_spiel);
+        $dienst_id = $this->builder->createDienst($spiel->id, Dienstart::ZEITNEHMER, $mannschaft_dienst->id);
         $this->db->insert('wp_dienstaenderung', [
             'id' => 3, 
             'dienst_id' => $dienst_id,

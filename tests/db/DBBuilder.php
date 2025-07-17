@@ -4,6 +4,7 @@ require_once __DIR__."/../../src/handball/Meisterschaft.php";
 require_once __DIR__."/../../src/handball/Mannschaft.php";
 require_once __DIR__."/../../src/handball/MannschaftsMeldung.php";
 require_once __DIR__."/../../src/handball/Gegner.php";
+require_once __DIR__."/../../src/handball/Spiel.php";
 
 class DBBuilder{    
     private $db;
@@ -65,17 +66,28 @@ class DBBuilder{
         return $gegner;
     }
 
-    public function createSpiel(int $spielNr, int $meldung_id, int $gegner_id, ?DateTime $anwurf, string $halle, bool $heimspiel, ?int $mannschaft_id = null): int {
+    public function createSpiel(int $spielNr, MannschaftsMeldung $meldung, Gegner $gegner, ?DateTime $anwurf, string $halle, bool $heimspiel, ?Mannschaft $mannschaft = null): Spiel {
         $this->db->insert("wp_spiel", [
             "spielNr" => $spielNr,
-            "mannschaftsMeldung_id" => $meldung_id,
-            "mannschaft_id" => $mannschaft_id,
-            "gegner_id" => $gegner_id,
+            "mannschaftsMeldung_id" => $meldung->id,
+            "mannschaft_id" => $mannschaft?->id,
+            "gegner_id" => $gegner->id,
             "anwurf" => $anwurf?->format('Y-m-d H:i:s'),
             "halle" => $halle,
-            "heimspiel" => $heimspiel
+            "heimspiel" => $heimspiel?1:0
         ]);
-        return $this->db->insert_id;
+        $spiel = new Spiel();
+        $spiel->id = $this->db->insert_id;
+        $spiel->spielNr = $spielNr;
+        $spiel->mannschaftsMeldung = $meldung;
+        if(isset($mannschaft)){
+            $spiel->mannschaft = $mannschaft;
+        }
+        $spiel->gegner = $gegner;
+        $spiel->anwurf = $anwurf;
+        $spiel->halle = $halle;
+        $spiel->heimspiel = $heimspiel;
+        return $spiel;
     }
 
     public function createDienst(int $spiel_id, string $dienstart, ?int $mannschaft_id = null): int {
