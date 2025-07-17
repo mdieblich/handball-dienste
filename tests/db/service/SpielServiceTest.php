@@ -30,8 +30,8 @@ final class SpielServiceTest extends TestCase {
         $this->spielDAO->insert($original_spiel);
         
         $mannschaft2 = $this->builder->createMannschaft(2);
-        $this->builder->createDienst($original_spiel->id, Dienstart::ZEITNEHMER, $mannschaft2->id);
-        $this->builder->createDienst($original_spiel->id, Dienstart::SEKRETAER, $mannschaft2->id);
+        $this->builder->createDienst($original_spiel, Dienstart::ZEITNEHMER, $mannschaft2);
+        $this->builder->createDienst($original_spiel, Dienstart::SEKRETAER, $mannschaft2);
         
         // act
         $foundSpiel = $this->spielService->fetchCompletely("id=$original_spiel->id");

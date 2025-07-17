@@ -5,6 +5,7 @@ require_once __DIR__."/../../src/handball/Mannschaft.php";
 require_once __DIR__."/../../src/handball/MannschaftsMeldung.php";
 require_once __DIR__."/../../src/handball/Gegner.php";
 require_once __DIR__."/../../src/handball/Spiel.php";
+require_once __DIR__."/../../src/handball/Dienst.php";
 
 class DBBuilder{    
     private $db;
@@ -90,12 +91,19 @@ class DBBuilder{
         return $spiel;
     }
 
-    public function createDienst(int $spiel_id, string $dienstart, ?int $mannschaft_id = null): int {
+    public function createDienst(Spiel $spiel, string $dienstart, ?Mannschaft $mannschaft = null): Dienst {
         $this->db->insert("wp_dienst", [
-            "spiel_id" => $spiel_id,
+            "spiel_id" => $spiel->id,
             "dienstart" => $dienstart,
-            "mannschaft_id" => $mannschaft_id
+            "mannschaft_id" => $mannschaft?->id
         ]);
-        return $this->db->insert_id;
+        $dienst = new Dienst();
+        $dienst->id = $this->db->insert_id;
+        $dienst->spiel = $spiel;
+        $dienst->dienstart = $dienstart;
+        if(isset($mannschaft)){
+            $dienst->mannschaft = $mannschaft;
+        }
+        return $dienst;
     }
 }

@@ -1025,9 +1025,9 @@ final class SpieleImportTest extends TestCase {
             false,
             $mannschaft
         );
-        $dienst1 = $this->builder->createDienst($spiel->id,Dienstart::ZEITNEHMER);
-        $dienst2 = $this->builder->createDienst($spiel->id,Dienstart::SEKRETAER);
-        $dienst3 = $this->builder->createDienst($spiel->id,Dienstart::CATERING);
+        $dienst1 = $this->builder->createDienst($spiel,Dienstart::ZEITNEHMER);
+        $dienst2 = $this->builder->createDienst($spiel,Dienstart::SEKRETAER);
+        $dienst3 = $this->builder->createDienst($spiel,Dienstart::CATERING);
 
         $spiel_toBeImported = new Spiel_toBeImported();
         $spiel_toBeImported->spielNr = 703;
@@ -1046,7 +1046,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->createDienstAenderungen();
 
         // assert
-        $dienstAenderungen = $this->fetchAllWithAssert(3, "SELECT * FROM wp_dienstaenderung WHERE dienst_id in ($dienst1, $dienst2, $dienst3)");
+        $dienstAenderungen = $this->fetchAllWithAssert(3, "SELECT * FROM wp_dienstaenderung WHERE dienst_id in ($dienst1->id, $dienst2->id, $dienst3->id)");
         foreach ($dienstAenderungen as $dienstAenderung) {
             $this->assertEquals("2024-09-07 17:00:00", $dienstAenderung['anwurfVorher'], "Der vorherige Anwurf sollte gespeichert sein.");
             $this->assertEquals("06057", $dienstAenderung['halleVorher'], "Die vorherige Halle sollte gespeichert sein.");
@@ -1072,9 +1072,9 @@ final class SpieleImportTest extends TestCase {
             false,
             $mannschaft
         );
-        $dienst1 = $this->builder->createDienst($spiel->id,Dienstart::ZEITNEHMER);
-        $dienst2 = $this->builder->createDienst($spiel->id,Dienstart::SEKRETAER);
-        $dienst3 = $this->builder->createDienst($spiel->id,Dienstart::CATERING);
+        $dienst1 = $this->builder->createDienst($spiel, Dienstart::ZEITNEHMER);
+        $dienst2 = $this->builder->createDienst($spiel, Dienstart::SEKRETAER);
+        $dienst3 = $this->builder->createDienst($spiel, Dienstart::CATERING);
 
         $spiel_toBeImported = new Spiel_toBeImported();
         $spiel_toBeImported->spielNr = 703;
@@ -1094,7 +1094,7 @@ final class SpieleImportTest extends TestCase {
         $this->import->createDienstAenderungen();   // Zweite Ausführung
 
         // assert
-        $this->fetchAllWithAssert(3, "SELECT * FROM wp_dienstaenderung WHERE dienst_id in ($dienst1, $dienst2, $dienst3)");
+        $this->fetchAllWithAssert(3, "SELECT * FROM wp_dienstaenderung WHERE dienst_id in ($dienst1->id, $dienst2->id, $dienst3->id)");
     }
     public function test_updateSpiele_aktualisiertSpiele(){   
         // arrange
@@ -1512,8 +1512,8 @@ final class SpieleImportTest extends TestCase {
         $gegner = $this->builder->createGegner("Brezelbuben",3,$meldung);
         $spieltag = "2024-09-07";
         $spiel = $this->builder->createSpiel(100, $meldung, $gegner, new DateTime("$spieltag 17:00:00"), "0815", true);
-        $aufbau_id = $this->builder->createDienst($spiel->id, Dienstart::AUFBAU, $mannschaft->id);
-        $abbau_id = $this->builder->createDienst($spiel->id, Dienstart::ABBAU, $mannschaft->id);
+        $aufbau_vorher = $this->builder->createDienst($spiel, Dienstart::AUFBAU, $mannschaft);
+        $abbau_vorher = $this->builder->createDienst($spiel, Dienstart::ABBAU, $mannschaft);
 
         // act
         $this->import->organisiereAufUndAbbau();
@@ -1521,8 +1521,8 @@ final class SpieleImportTest extends TestCase {
         // assert
         // alphabetisch sortierte Dienste
         [$abbau, $aufbau] = $this->fetchAllWithAssert(2, "SELECT * FROM wp_dienst WHERE spiel_id = $spiel->id ORDER BY dienstart");
-        $this->assertEquals($aufbau_id, $aufbau['id'], "Aufbau-Dienst hätte gleich bleiben müssen.");
-        $this->assertEquals($abbau_id, $abbau['id'], "Abbau-Dienst hätte gleich bleiben müssen.");
+        $this->assertEquals($aufbau_vorher->id, $aufbau['id'], "Aufbau-Dienst hätte gleich bleiben müssen.");
+        $this->assertEquals($abbau_vorher->id, $abbau['id'], "Abbau-Dienst hätte gleich bleiben müssen.");
     }
     public function test_organisiereAufUndAbbau_erstelltNixFuerOffeneTermine() {
         // arrange
@@ -1555,8 +1555,8 @@ final class SpieleImportTest extends TestCase {
         );
         $gegner = $this->builder->createGegner("Brezelbuben",3,$meldung);
         $spiel = $this->builder->createSpiel(100, $meldung, $gegner, null, "0815", true, $mannschaft);
-        $aufbau_id = $this->builder->createDienst($spiel->id, Dienstart::AUFBAU, $mannschaft->id);
-        $abbau_id = $this->builder->createDienst($spiel->id, Dienstart::ABBAU, $mannschaft->id);
+        $aufbau = $this->builder->createDienst($spiel, Dienstart::AUFBAU, $mannschaft);
+        $abbau = $this->builder->createDienst($spiel, Dienstart::ABBAU, $mannschaft);
 
         // act
         $this->import->organisiereAufUndAbbau();
@@ -1588,11 +1588,11 @@ final class SpieleImportTest extends TestCase {
         // Verkehrte Welt: Das frühere Spiel hat den Abbau...
         $anwurf_frueh = new DateTime("$spieltag 17:00:00");
         $spiel_frueh = $this->builder->createSpiel(100, $meldung_frueh, $gegner_frueh, $anwurf_frueh, "0815", true, $mannschaft_frueh);
-        $abbau_vorher_id = $this->builder->createDienst($spiel_frueh->id, Dienstart::ABBAU, $mannschaft_frueh->id);
+        $abbau_vorher = $this->builder->createDienst($spiel_frueh, Dienstart::ABBAU, $mannschaft_frueh);
         // ... und das spätere Spiel den Aufbau.
         $anwurf_spaet = new DateTime("$spieltag 19:00:00");
         $spiel_spaet = $this->builder->createSpiel(100, $meldung_spaet, $gegner_spaet, $anwurf_spaet,  "0815", true, $mannschaft_spaet);
-        $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet->id, Dienstart::AUFBAU, $mannschaft_spaet->id);
+        $aufbau_vorher = $this->builder->createDienst($spiel_spaet, Dienstart::AUFBAU, $mannschaft_spaet);
         
         // act
         $this->import->organisiereAufUndAbbau();
@@ -1601,11 +1601,11 @@ final class SpieleImportTest extends TestCase {
         // Der frühere Spiel sollte jetzt den Aufbau haben
         $aufbau_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_frueh->id");
         $this->assertEquals(Dienstart::AUFBAU, $aufbau_nachher['dienstart'], "Aufbau nicht gefunden");
-        $this->assertNotEquals($aufbau_vorher_id, $aufbau_nachher["id"],"der alte Dienst sollte entfallen");
+        $this->assertNotEquals($aufbau_vorher->id, $aufbau_nachher["id"],"der alte Dienst sollte entfallen");
         
         $abbau_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_spaet->id");
         $this->assertEquals(Dienstart::ABBAU, $abbau_nachher['dienstart'], "Abbau nicht gefunden");
-        $this->assertNotEquals($abbau_vorher_id, $abbau_nachher["id"],"der alte Dienst sollte entfallen");
+        $this->assertNotEquals($abbau_vorher->id, $abbau_nachher["id"],"der alte Dienst sollte entfallen");
     }
     public function test_organisiereAufUndAbbau_NeuesErstesSpiel_DienstAenderungsplan() {
         // arrange
@@ -1633,7 +1633,7 @@ final class SpieleImportTest extends TestCase {
         
         $anwurf_spaet = new DateTime("$spieltag 19:00:00");
         $spiel_spaet = $this->builder->createSpiel(100, $meldung_spaet, $gegner_spaet, $anwurf_spaet,  "0815", true, $mannschaft_spaet);
-        $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet->id, Dienstart::AUFBAU, $mannschaft_spaet->id);
+        $aufbau_vorher = $this->builder->createDienst($spiel_spaet, Dienstart::AUFBAU, $mannschaft_spaet);
         
         // act
         $this->import->organisiereAufUndAbbau();
@@ -1676,11 +1676,11 @@ final class SpieleImportTest extends TestCase {
         // Verkehrte Welt: Das frühere Spiel hat den Abbau...
         $anwurf_frueh = new DateTime("$spieltag 17:00:00");
         $spiel_frueh = $this->builder->createSpiel(100, $meldung_frueh, $gegner_frueh, $anwurf_frueh, "0815", true, $mannschaft_frueh);
-        $abbau_vorher_id = $this->builder->createDienst($spiel_frueh->id, Dienstart::ABBAU, $mannschaft_frueh->id);
+        $abbau_vorher = $this->builder->createDienst($spiel_frueh, Dienstart::ABBAU, $mannschaft_frueh);
         // ... und das spätere Spiel den Aufbau.
         $anwurf_spaet = new DateTime("$spieltag 19:00:00");
         $spiel_spaet = $this->builder->createSpiel(100, $meldung_spaet, $gegner_spaet, $anwurf_spaet,  "0815", true, $mannschaft_spaet);
-        $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet->id, Dienstart::AUFBAU, $mannschaft_spaet->id);
+        $aufbau_vorher = $this->builder->createDienst($spiel_spaet, Dienstart::AUFBAU, $mannschaft_spaet);
         
         // act
         $this->import->organisiereAufUndAbbau();
