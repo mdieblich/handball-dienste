@@ -2,6 +2,7 @@
 
 require_once __DIR__."/../../src/handball/Meisterschaft.php";
 require_once __DIR__."/../../src/handball/Mannschaft.php";
+require_once __DIR__."/../../src/handball/MannschaftsMeldung.php";
 
 class DBBuilder{    
     private $db;
@@ -30,15 +31,22 @@ class DBBuilder{
         $mannschaft->id = $this->db->insert_id;
         return $mannschaft;
     }
-    public function createMannschaftsMeldung(int $mannschaft_id, int $meisterschaft_id, int $nuligaLigaID, int $nuligaTeamID): int {
+    public function createMannschaftsMeldung(Mannschaft $mannschaft, Meisterschaft $meisterschaft, int $nuligaLigaID, int $nuligaTeamID): MannschaftsMeldung{
         $this->db->insert("wp_mannschaftsmeldung", [
             "aktiv" => 1,
-            "mannschaft_id" => $mannschaft_id,
-            "meisterschaft_id" => $meisterschaft_id,
+            "mannschaft_id" => $mannschaft->id,
+            "meisterschaft_id" => $meisterschaft->id,
             "nuligaLigaID" => $nuligaLigaID,
             "nuligaTeamID" => $nuligaTeamID
         ]);
-        return $this->db->insert_id;
+        $meldung = new MannschaftsMeldung();
+        $meldung->id = $this->db->insert_id;
+        $meldung->aktiv = true;
+        $meldung->mannschaft = $mannschaft;
+        $meldung->meisterschaft = $meisterschaft;
+        $meldung->nuligaLigaID = $nuligaLigaID;
+        $meldung->nuligaTeamID = $nuligaTeamID;
+        return $meldung;
     }
     public function createGegner(string $verein, int $nummer, int $meldung_id, bool $stelltSekretaer = false): int {
         $this->db->insert("wp_gegner", [

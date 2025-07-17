@@ -33,10 +33,11 @@ final class DienstAenderungsPlanServiceTest extends TestCase {
     }
     public function test_load_laedtDienstAenderung() {
         // 
+        $meisterschaft = $this->builder->createMeisterschaft("EGAL");
         $mannschaft_spiel = $this->builder->createMannschaft(3);
         $mannschaft_dienst = $this->builder->createMannschaft(2);
-        $meldung_id = $this->builder->createMannschaftsMeldung($mannschaft_spiel->id, 0, 0, 0);
-        $spiel_id = $this->builder->createSpiel(703, $meldung_id, 0, new DateTime('2023-09-15 17:30:00'), '4711', true, $mannschaft_spiel->id);
+        $meldung = $this->builder->createMannschaftsMeldung($mannschaft_spiel, $meisterschaft, 0, 0);
+        $spiel_id = $this->builder->createSpiel(703, $meldung->id, 0, new DateTime('2023-09-15 17:30:00'), '4711', true, $mannschaft_spiel->id);
         $dienst_id = $this->builder->createDienst($spiel_id, Dienstart::ZEITNEHMER, $mannschaft_dienst->id);
         $this->db->insert('wp_dienstaenderung', [
             'id' => 3, 
