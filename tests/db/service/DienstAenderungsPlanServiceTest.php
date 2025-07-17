@@ -51,8 +51,8 @@ final class DienstAenderungsPlanServiceTest extends TestCase {
 
         // assert
         $this->assertCount(1,$plan->geaenderteDienste[$mannschaft_dienst_id]);
-        $diensAenderung = $plan->geaenderteDienste[$mannschaft_dienst_id][0];
-        $this->
+        $dienstAenderung = $plan->geaenderteDienste[$mannschaft_dienst_id][0];
+        // $this->
         $this->fail("Not implemented yet");
     }
     public function test_load_laedtNeueDienste() {

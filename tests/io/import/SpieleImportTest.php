@@ -60,15 +60,15 @@ final class SpieleImportTest extends TestCase {
 
     public function test_fetchAllNuligaSpielelisten_laedtEineSeite() {
         // arrange
-        $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
+        $meisterschaft_name = "KR 24/25"; // Köln/Rheinberg 2024/25
         $gruppe = 363515;   // Regionsliga Männer
         $team_id = 1986866; // Turnerkreis Nippes 2 (Herren)
 
-        $meisterschaft_id = $this->builder->createMeisterschaft($meisterschaft);
+        $meisterschaft = $this->builder->createMeisterschaft($meisterschaft_name);
         $mannschaft_id = $this->builder->createMannschaft(2);
         $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             $gruppe,
             $team_id
         );
@@ -77,7 +77,7 @@ final class SpieleImportTest extends TestCase {
             NuLiga_SpiellisteTeam::$BASE_URL
                 ."teamtable=$team_id&"
                 ."pageState=vorrunde&"
-                ."championship=".urlencode($meisterschaft)."&"
+                ."championship=".urlencode($meisterschaft_name)."&"
                 ."group=$gruppe",
             "<html>Example-HTML</html>"
         );
@@ -91,19 +91,19 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_fetchAllNuligaSpielelisten_laedtMehrereMeldungen() {
         // arrange
-        $meisterschaft1 = "KR 24/25"; // Köln/Rheinberg 2024/25
+        $meisterschaft1_name = "KR 24/25"; // Köln/Rheinberg 2024/25
         $gruppe1 = 363515;   // Regionsliga Männer
         $team_id1 = 1986866; // Turnerkreis Nippes 2 (Herren)
         
-        $meisterschaft2 = "KR 25/26"; // Köln/Rheinberg 2025/26
+        $meisterschaft2_name = "KR 25/26"; // Köln/Rheinberg 2025/26
         $gruppe2 = 424075;   // Regionsliga Männer
         $team_id2 = 2095123; // Turnerkreis Nippes 2 (Herren)
         
-        $meisterschaft_id1 = $this->builder->createMeisterschaft($meisterschaft1);
+        $meisterschaft1 = $this->builder->createMeisterschaft($meisterschaft1_name);
         $mannschaft_id = $this->builder->createMannschaft(2);
         $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id1,
+            $meisterschaft1->id,
             $gruppe1,
             $team_id1
         );
@@ -112,15 +112,15 @@ final class SpieleImportTest extends TestCase {
             NuLiga_SpiellisteTeam::$BASE_URL
             ."teamtable=$team_id1&"
             ."pageState=vorrunde&"
-            ."championship=".urlencode($meisterschaft1)."&"
+            ."championship=".urlencode($meisterschaft1_name)."&"
             ."group=$gruppe1",
             "<html>Example-HTML 1</html>"
         );
         
-        $meisterschaft_id2 = $this->builder->createMeisterschaft($meisterschaft2);
+        $meisterschaft2 = $this->builder->createMeisterschaft($meisterschaft2_name);
         $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id2,
+            $meisterschaft2->id,
             $gruppe2,
             $team_id2
         );
@@ -129,7 +129,7 @@ final class SpieleImportTest extends TestCase {
             NuLiga_SpiellisteTeam::$BASE_URL
             ."teamtable=$team_id2&"
             ."pageState=vorrunde&"
-            ."championship=".urlencode($meisterschaft2)."&"
+            ."championship=".urlencode($meisterschaft2_name)."&"
             ."group=$gruppe2",
             "<html>Example-HTML 2</html>"
         );
@@ -144,18 +144,18 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_fetchAllNuligaSpielelisten_laedtMehrereMannschaften() {
         // arrange
-        $meisterschaft = "KR 24/25"; // Köln/Rheinberg 2024/25
+        $meisterschaft_name = "KR 24/25"; // Köln/Rheinberg 2024/25
         $gruppe1 = 363515;   // Regionsliga Männer
         $team_id1 = 1986866; // Turnerkreis Nippes 2 (Herren)
 
         $gruppe2 = 363729;   // Regionsklasse Männer
         $team_id2 = 1986887; // Turnerkreis Nippes 3 (Herren)
 
-        $meisterschaft_id = $this->builder->createMeisterschaft($meisterschaft);
+        $meisterschaft = $this->builder->createMeisterschaft($meisterschaft_name);
         $mannschaft_id1 = $this->builder->createMannschaft(2);
         $this->builder->createMannschaftsMeldung(
             $mannschaft_id1,
-            $meisterschaft_id,
+            $meisterschaft->id,
             $gruppe1,
             $team_id1
         );
@@ -172,7 +172,7 @@ final class SpieleImportTest extends TestCase {
         $mannschaft_id2 = $this->builder->createMannschaft(3);
         $this->builder->createMannschaftsMeldung(
             $mannschaft_id2,
-            $meisterschaft_id,
+            $meisterschaft->id,
             $gruppe2,
             $team_id2
         );
@@ -319,11 +319,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_convertSpiele_konvertiertEinSpiel(){
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -357,11 +357,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_convertSpiele_konvertiertZweiSpiele(){
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -392,11 +392,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_convertSpiele_ignoriertSpielfrei(){
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -422,11 +422,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_convertSpiele_ignoriertOhneHalle(){
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -452,11 +452,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_convertSpiele_ignoriertOhneSpielNr(){
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -482,11 +482,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_convertSpiele_konvertiertOhneAnwurf(){
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -514,11 +514,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_convertSpiele_loeschtNuligaSpiele(){
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -544,11 +544,11 @@ final class SpieleImportTest extends TestCase {
     } 
     public function test_sucheGegner_findetEinenGegner(){
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -577,11 +577,11 @@ final class SpieleImportTest extends TestCase {
         // arrange
         $spielDAO = new Spiel_toBeImportedDAO($this->db);
 
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -622,11 +622,11 @@ final class SpieleImportTest extends TestCase {
         // arrange
         $spielDAO = new Spiel_toBeImportedDAO($this->db);
 
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id1 = $this->builder->createMannschaft(2);
         $meldung_id1 = $this->builder->createMannschaftsMeldung(
             $mannschaft_id1,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -643,7 +643,7 @@ final class SpieleImportTest extends TestCase {
         $mannschaft_id2 = $this->builder->createMannschaft(2, 'w');
         $meldung_id2 = $this->builder->createMannschaftsMeldung(
             $mannschaft_id2,
-            $meisterschaft_id,
+            $meisterschaft->id,
             333333, // irgendwas anderes
             1919191 // irgendwas anderes
         );
@@ -674,11 +674,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_sucheGegner_loeschtSpieleOhneGegner(){
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -703,11 +703,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_findExistingSpiele_findetIdentischesSpiel() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -743,11 +743,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_findExistingSpiele_findetSpielmitAnderemDatum() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -783,11 +783,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_findExistingSpiele_findetSpielmitAndererHalle() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -823,11 +823,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_findExistingSpiele_findetSpielmitAndererHalleUndTauschHeimrecht() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -863,11 +863,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_findExistingSpiele_findetSpielUnterMehreren() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -932,11 +932,11 @@ final class SpieleImportTest extends TestCase {
     public function test_findExistingSpiele_markiertNeueSpiele() {
         
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -993,11 +993,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_createDienstAenderungen_setztDienstaenderungsplan(){
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1040,11 +1040,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_createDienstAenderungen_erstelltNixDoppelt(){
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1084,11 +1084,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_updateSpiele_aktualisiertSpiele(){   
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1128,11 +1128,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_updateSpiele_raeumtAuf(){
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1183,11 +1183,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_createNeueSpiele_erstelltNeuesSpiel() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1222,11 +1222,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_createNeueSpiele_erstelltDiensteFuerHeimspiel() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1259,11 +1259,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_createNeueSpiele_erstelltDiensteFuerAuswaertsspiel() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1295,11 +1295,11 @@ final class SpieleImportTest extends TestCase {
     }  
     public function test_createNeueSpiele_erstelltDiensteFuerHeimspielMitSekretaer() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1333,11 +1333,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_createNeueSpiele_erstelltKeineDiensteFuerAuswaertsspiel() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1367,11 +1367,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_createNeueSpiele_raeumtAuf() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1423,11 +1423,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_organisiereAufUndAbbau_erstelltAufUndAbbauBeiNeuemTag() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1448,11 +1448,11 @@ final class SpieleImportTest extends TestCase {
     public function test_organisiereAufUndAbbau_erstelltAufUndAbbauFuerUnterschiedlicheSpiele() {
         // arrange
         $spieltag = "2024-09-07";
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id1 = $this->builder->createMannschaft(2);
         $meldung_id1 = $this->builder->createMannschaftsMeldung(
             $mannschaft_id1,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1462,7 +1462,7 @@ final class SpieleImportTest extends TestCase {
         $mannschaft_id2 = $this->builder->createMannschaft(3);
         $meldung_id2 = $this->builder->createMannschaftsMeldung(
             $mannschaft_id2,
-            $meisterschaft_id,
+            $meisterschaft->id,
             364515, // irgendwas anderes
             1987866 // irgendwas anderes
         );
@@ -1484,11 +1484,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_organisiereAufUndAbbau_keineAenderungWennDienstSchonVorhanden() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1508,11 +1508,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_organisiereAufUndAbbau_erstelltNixFuerOffeneTermine() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1526,11 +1526,11 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_organisiereAufUndAbbau_loeschtAufUndAbbauFuerOffeneTermine() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1547,18 +1547,18 @@ final class SpieleImportTest extends TestCase {
     public function test_organisiereAufUndAbbau_AufUndAbbauVerschoben() {
         // arrange
         $spieltag = "2024-09-07";
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_frueh_id = $this->builder->createMannschaft(2);
         $meldung_frueh_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_frueh_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
         $mannschaft_spaet_id = $this->builder->createMannschaft(3);
         $meldung_spaet_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_spaet_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             364515, // irgendwas anderes
             1987866 // irgendwas anderes
         );
@@ -1588,18 +1588,18 @@ final class SpieleImportTest extends TestCase {
     public function test_organisiereAufUndAbbau_NeuesErstesSpiel_DienstAenderungsplan() {
         // arrange
         $spieltag = "2024-09-07";
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_frueh_id = $this->builder->createMannschaft(2);
         $meldung_frueh_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_frueh_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
         $mannschaft_spaet_id = $this->builder->createMannschaft(3);
         $meldung_spaet_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_spaet_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             364515, // irgendwas anderes
             1987866 // irgendwas anderes
         );
@@ -1632,18 +1632,18 @@ final class SpieleImportTest extends TestCase {
     public function test_organisiereAufUndAbbau_AufUndAbbauVerschoben_DienstAenderungsplan() {
         // arrange
         $spieltag = "2024-09-07";
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_frueh_id = $this->builder->createMannschaft(2);
         $meldung_frueh_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_frueh_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
         $mannschaft_spaet_id = $this->builder->createMannschaft(3);
         $meldung_spaet_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_spaet_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             364515, // irgendwas anderes
             1987866 // irgendwas anderes
         );
@@ -1687,11 +1687,11 @@ final class SpieleImportTest extends TestCase {
 
     public function test_organisiereAufUndAbbau_keinDienstBeiAuswaertsSpielen() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
             $mannschaft_id,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
@@ -1708,18 +1708,18 @@ final class SpieleImportTest extends TestCase {
     }
     public function test_organisiereAufUndAbbau_mehrereSpieltage() {
         // arrange
-        $meisterschaft_id = $this->builder->createMeisterschaft("KR 24/25");
+        $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
         $mannschaft_id1 = $this->builder->createMannschaft(2);
         $meldung_id1 = $this->builder->createMannschaftsMeldung(
             $mannschaft_id1,
-            $meisterschaft_id,
+            $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
         $mannschaft_id2 = $this->builder->createMannschaft(3);
         $meldung_id2 = $this->builder->createMannschaftsMeldung(
             $mannschaft_id2,
-            $meisterschaft_id,
+            $meisterschaft->id,
             364515, // irgendwas anderes
             1987866 // irgendwas anderes
         );

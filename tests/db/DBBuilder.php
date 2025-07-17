@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__."/../../src/handball/Meisterschaft.php";
+
 class DBBuilder{    
     private $db;
 
@@ -7,11 +9,14 @@ class DBBuilder{
         $this->db = $db;
     }
 
-    public function createMeisterschaft(string $kuerzel): int {
+    public function createMeisterschaft(string $kuerzel): Meisterschaft {
         $this->db->insert("wp_meisterschaft", [
             "kuerzel" => $kuerzel
         ]);
-        return $this->db->insert_id;
+        $meisterschaft = new Meisterschaft();
+        $meisterschaft->id = $this->db->insert_id;
+        $meisterschaft->kuerzel = $kuerzel;
+        return $meisterschaft;
     }
     public function createMannschaft(int $nummer, string $geschlecht = "m"): int {
         $this->db->insert("wp_mannschaft", [

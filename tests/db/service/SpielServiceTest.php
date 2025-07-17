@@ -23,9 +23,9 @@ final class SpielServiceTest extends TestCase {
     public function test_fetchCompletely() {
         // arrange
         $original_spiel = new Spiel();
-        $meisterschaft_id = $this->builder->createMeisterschaft("Wacken 2016");
+        $meisterschaft = $this->builder->createMeisterschaft("Wacken 2016");
         $original_spiel->mannschaft_id = $this->builder->createMannschaft(1);
-        $original_spiel->mannschaftsMeldung_id = $this->builder->createMannschaftsMeldung($original_spiel->mannschaft_id, $meisterschaft_id, 123, 456);
+        $original_spiel->mannschaftsMeldung_id = $this->builder->createMannschaftsMeldung($original_spiel->mannschaft_id, $meisterschaft->id, 123, 456);
         $original_spiel->gegner_id = $this->builder->createGegner("Pulheimer SC", 3, $original_spiel->mannschaftsMeldung_id);        
         $this->spielDAO->insert($original_spiel);
         
