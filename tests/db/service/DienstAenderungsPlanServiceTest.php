@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
-use function PHPUnit\Framework\assertArrayHasKey;
 
 require_once __DIR__."/../../../src/db/service/DienstAenderungsPlanService.php";
 
@@ -38,6 +37,9 @@ final class DienstAenderungsPlanServiceTest extends TestCase {
         $mannschaft_dienst = $this->builder->createMannschaft(2);
         $meldung = $this->builder->createMannschaftsMeldung($mannschaft_spiel, $meisterschaft, 0, 0);
         $gegner = $this->builder->createGegner("Pulheimer SC", 3, $meldung);
+        $spiel_vorher = new Spiel();
+        $spiel_vorher->anwurf = new DateTime('2023-10-01 10:00:00');
+        $spiel_vorher->halle = '0815';
         $spiel = $this->builder->createSpiel(703, $meldung, $gegner, new DateTime('2023-09-15 17:30:00'), '4711', true, $mannschaft_spiel);
         $dienst = $this->builder->createDienst($spiel, Dienstart::ZEITNEHMER, $mannschaft_dienst);
         $this->db->insert('wp_dienstaenderung', [
@@ -47,15 +49,15 @@ final class DienstAenderungsPlanServiceTest extends TestCase {
             'anwurfVorher' => '2023-10-01 10:00:00',
             'halleVorher' => '0815'
         ]);
-
+        
         // act
         $plan = $this->planService->loadFromDB();
-
+        
         // assert
         $this->assertCount(1,$plan->geaenderteDienste[$mannschaft_dienst->id]);
-        $dienstAenderung = $plan->geaenderteDienste[$mannschaft_dienst->id][0];
-        // $this->
-        $this->fail("Not implemented yet");
+        $expected = new DienstAenderung($dienst, $spiel_vorher);
+        $actual = $plan->geaenderteDienste[$mannschaft_dienst->id][0];
+        $this->assertEquals($expected, $actual);
     }
     public function test_load_laedtNeueDienste() {
         $this->fail("Not implemented yet");
