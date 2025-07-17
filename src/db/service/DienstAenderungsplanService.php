@@ -12,10 +12,7 @@ class DienstAenderungsPlanService{
     //     $this->entfallenerDienstDAO = new EntfallenerDienstDAO($dbhandle);
     }
 
-    // public function replaceAll(array $entfalleneDienste): void{
-    //     foreach($entfalleneDienste as $entfallenerDienst){
-    //         $this->entfallenerDienstDAO->insert($entfallenerDienst);
-    //         $this->dienstDAO->delete(['id' => $entfallenerDienst->dienst->id]);
-    //     }
-    // }
+    public function loadFromDB(): DienstAenderungsPlan {
+        return new DienstAenderungsPlan([]);
+    }
 }
