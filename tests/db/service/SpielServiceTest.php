@@ -24,14 +24,14 @@ final class SpielServiceTest extends TestCase {
         // arrange
         $original_spiel = new Spiel();
         $meisterschaft = $this->builder->createMeisterschaft("Wacken 2016");
-        $original_spiel->mannschaft_id = $this->builder->createMannschaft(1);
-        $original_spiel->mannschaftsMeldung_id = $this->builder->createMannschaftsMeldung($original_spiel->mannschaft_id, $meisterschaft->id, 123, 456);
+        $original_spiel->mannschaft = $this->builder->createMannschaft(1);
+        $original_spiel->mannschaftsMeldung_id = $this->builder->createMannschaftsMeldung($original_spiel->mannschaft->id, $meisterschaft->id, 123, 456);
         $original_spiel->gegner_id = $this->builder->createGegner("Pulheimer SC", 3, $original_spiel->mannschaftsMeldung_id);        
         $this->spielDAO->insert($original_spiel);
         
-        $mannschaft2_id = $this->builder->createMannschaft(2);
-        $this->builder->createDienst($original_spiel->id, Dienstart::ZEITNEHMER, $mannschaft2_id);
-        $this->builder->createDienst($original_spiel->id, Dienstart::SEKRETAER, $mannschaft2_id);
+        $mannschaft2 = $this->builder->createMannschaft(2);
+        $this->builder->createDienst($original_spiel->id, Dienstart::ZEITNEHMER, $mannschaft2->id);
+        $this->builder->createDienst($original_spiel->id, Dienstart::SEKRETAER, $mannschaft2->id);
         
         // act
         $foundSpiel = $this->spielService->fetchCompletely("id=$original_spiel->id");

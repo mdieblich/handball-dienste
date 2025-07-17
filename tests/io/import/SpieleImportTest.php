@@ -65,9 +65,9 @@ final class SpieleImportTest extends TestCase {
         $team_id = 1986866; // Turnerkreis Nippes 2 (Herren)
 
         $meisterschaft = $this->builder->createMeisterschaft($meisterschaft_name);
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             $gruppe,
             $team_id
@@ -100,9 +100,9 @@ final class SpieleImportTest extends TestCase {
         $team_id2 = 2095123; // Turnerkreis Nippes 2 (Herren)
         
         $meisterschaft1 = $this->builder->createMeisterschaft($meisterschaft1_name);
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft1->id,
             $gruppe1,
             $team_id1
@@ -119,7 +119,7 @@ final class SpieleImportTest extends TestCase {
         
         $meisterschaft2 = $this->builder->createMeisterschaft($meisterschaft2_name);
         $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft2->id,
             $gruppe2,
             $team_id2
@@ -152,9 +152,9 @@ final class SpieleImportTest extends TestCase {
         $team_id2 = 1986887; // Turnerkreis Nippes 3 (Herren)
 
         $meisterschaft = $this->builder->createMeisterschaft($meisterschaft_name);
-        $mannschaft_id1 = $this->builder->createMannschaft(2);
+        $mannschaft1 = $this->builder->createMannschaft(2);
         $this->builder->createMannschaftsMeldung(
-            $mannschaft_id1,
+            $mannschaft1->id,
             $meisterschaft->id,
             $gruppe1,
             $team_id1
@@ -164,14 +164,14 @@ final class SpieleImportTest extends TestCase {
             NuLiga_SpiellisteTeam::$BASE_URL
                 ."teamtable=$team_id1&"
                 ."pageState=vorrunde&"
-                ."championship=".urlencode($meisterschaft)."&"
+                ."championship=".urlencode($meisterschaft_name)."&"
                 ."group=$gruppe1",
             "<html>Example-HTML 1</html>"
         );
 
-        $mannschaft_id2 = $this->builder->createMannschaft(3);
+        $mannschaft2 = $this->builder->createMannschaft(3);
         $this->builder->createMannschaftsMeldung(
-            $mannschaft_id2,
+            $mannschaft2->id,
             $meisterschaft->id,
             $gruppe2,
             $team_id2
@@ -181,7 +181,7 @@ final class SpieleImportTest extends TestCase {
             NuLiga_SpiellisteTeam::$BASE_URL
                 ."teamtable=$team_id2&"
                 ."pageState=vorrunde&"
-                ."championship=".urlencode($meisterschaft)."&"
+                ."championship=".urlencode($meisterschaft_name)."&"
                 ."group=$gruppe2",
             "<html>Example-HTML 2</html>"
         );
@@ -320,9 +320,9 @@ final class SpieleImportTest extends TestCase {
     public function test_convertSpiele_konvertiertEinSpiel(){
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -358,9 +358,9 @@ final class SpieleImportTest extends TestCase {
     public function test_convertSpiele_konvertiertZweiSpiele(){
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -393,9 +393,9 @@ final class SpieleImportTest extends TestCase {
     public function test_convertSpiele_ignoriertSpielfrei(){
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -423,9 +423,9 @@ final class SpieleImportTest extends TestCase {
     public function test_convertSpiele_ignoriertOhneHalle(){
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -453,9 +453,9 @@ final class SpieleImportTest extends TestCase {
     public function test_convertSpiele_ignoriertOhneSpielNr(){
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -483,9 +483,9 @@ final class SpieleImportTest extends TestCase {
     public function test_convertSpiele_konvertiertOhneAnwurf(){
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -515,9 +515,9 @@ final class SpieleImportTest extends TestCase {
     public function test_convertSpiele_loeschtNuligaSpiele(){
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -545,9 +545,9 @@ final class SpieleImportTest extends TestCase {
     public function test_sucheGegner_findetEinenGegner(){
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -578,9 +578,9 @@ final class SpieleImportTest extends TestCase {
         $spielDAO = new Spiel_toBeImportedDAO($this->db);
 
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -623,9 +623,9 @@ final class SpieleImportTest extends TestCase {
         $spielDAO = new Spiel_toBeImportedDAO($this->db);
 
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id1 = $this->builder->createMannschaft(2);
+        $mannschaft1 = $this->builder->createMannschaft(2);
         $meldung_id1 = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id1,
+            $mannschaft1->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -640,9 +640,9 @@ final class SpieleImportTest extends TestCase {
         $spiel1->heimspiel = false;
         $spiel_id1 = $spielDAO->insert($spiel1);
         
-        $mannschaft_id2 = $this->builder->createMannschaft(2, 'w');
+        $mannschaft2 = $this->builder->createMannschaft(2, 'w');
         $meldung_id2 = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id2,
+            $mannschaft2->id,
             $meisterschaft->id,
             333333, // irgendwas anderes
             1919191 // irgendwas anderes
@@ -675,9 +675,9 @@ final class SpieleImportTest extends TestCase {
     public function test_sucheGegner_loeschtSpieleOhneGegner(){
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -704,9 +704,9 @@ final class SpieleImportTest extends TestCase {
     public function test_findExistingSpiele_findetIdentischesSpiel() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -744,9 +744,9 @@ final class SpieleImportTest extends TestCase {
     public function test_findExistingSpiele_findetSpielmitAnderemDatum() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -784,9 +784,9 @@ final class SpieleImportTest extends TestCase {
     public function test_findExistingSpiele_findetSpielmitAndererHalle() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -824,9 +824,9 @@ final class SpieleImportTest extends TestCase {
     public function test_findExistingSpiele_findetSpielmitAndererHalleUndTauschHeimrecht() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -864,9 +864,9 @@ final class SpieleImportTest extends TestCase {
     public function test_findExistingSpiele_findetSpielUnterMehreren() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -933,9 +933,9 @@ final class SpieleImportTest extends TestCase {
         
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -994,9 +994,9 @@ final class SpieleImportTest extends TestCase {
     public function test_createDienstAenderungen_setztDienstaenderungsplan(){
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -1009,7 +1009,7 @@ final class SpieleImportTest extends TestCase {
             new DateTime("2024-09-07 17:00:00"), 
             "06057",
             false,
-            $mannschaft_id
+            $mannschaft->id
         );
         $dienst1 = $this->builder->createDienst($spiel_id,Dienstart::ZEITNEHMER);
         $dienst2 = $this->builder->createDienst($spiel_id,Dienstart::SEKRETAER);
@@ -1041,9 +1041,9 @@ final class SpieleImportTest extends TestCase {
     public function test_createDienstAenderungen_erstelltNixDoppelt(){
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -1056,7 +1056,7 @@ final class SpieleImportTest extends TestCase {
             new DateTime("2024-09-07 17:00:00"), 
             "06057",
             false,
-            $mannschaft_id
+            $mannschaft->id
         );
         $dienst1 = $this->builder->createDienst($spiel_id,Dienstart::ZEITNEHMER);
         $dienst2 = $this->builder->createDienst($spiel_id,Dienstart::SEKRETAER);
@@ -1085,9 +1085,9 @@ final class SpieleImportTest extends TestCase {
     public function test_updateSpiele_aktualisiertSpiele(){   
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -1129,9 +1129,9 @@ final class SpieleImportTest extends TestCase {
     public function test_updateSpiele_raeumtAuf(){
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -1184,9 +1184,9 @@ final class SpieleImportTest extends TestCase {
     public function test_createNeueSpiele_erstelltNeuesSpiel() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -1223,9 +1223,9 @@ final class SpieleImportTest extends TestCase {
     public function test_createNeueSpiele_erstelltDiensteFuerHeimspiel() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -1260,9 +1260,9 @@ final class SpieleImportTest extends TestCase {
     public function test_createNeueSpiele_erstelltDiensteFuerAuswaertsspiel() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -1296,9 +1296,9 @@ final class SpieleImportTest extends TestCase {
     public function test_createNeueSpiele_erstelltDiensteFuerHeimspielMitSekretaer() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -1334,9 +1334,9 @@ final class SpieleImportTest extends TestCase {
     public function test_createNeueSpiele_erstelltKeineDiensteFuerAuswaertsspiel() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -1368,9 +1368,9 @@ final class SpieleImportTest extends TestCase {
     public function test_createNeueSpiele_raeumtAuf() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -1424,15 +1424,15 @@ final class SpieleImportTest extends TestCase {
     public function test_organisiereAufUndAbbau_erstelltAufUndAbbauBeiNeuemTag() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
         $spieltag = "2024-09-07";
-        $spiel_id = $this->builder->createSpiel(100, $meldung_id, 200, new DateTime("$spieltag 17:00:00"), "0815", true, $mannschaft_id );
+        $spiel_id = $this->builder->createSpiel(100, $meldung_id, 200, new DateTime("$spieltag 17:00:00"), "0815", true, $mannschaft->id );
 
         // act
         $this->import->organisiereAufUndAbbau();
@@ -1441,33 +1441,33 @@ final class SpieleImportTest extends TestCase {
         // alphabetisch sortierte Dienste
         [$abbau, $aufbau] = $this->fetchAllWithAssert(2, "SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id ORDER BY dienstart");
         $this->assertEquals(Dienstart::AUFBAU, $aufbau['dienstart'], "Aufbau nicht gefunden");
-        $this->assertEquals($mannschaft_id, $aufbau['mannschaft_id'], "Aufbau wurde nicht der entsprechenden Mannschaft zugewiesen");
+        $this->assertEquals($mannschaft->id, $aufbau['mannschaft_id'], "Aufbau wurde nicht der entsprechenden Mannschaft zugewiesen");
         $this->assertEquals(Dienstart::ABBAU, $abbau['dienstart'], "Abbau nicht gefunden");
-        $this->assertEquals($mannschaft_id, $abbau['mannschaft_id'], "Abbau wurde nicht der entsprechenden Mannschaft zugewiesen");
+        $this->assertEquals($mannschaft->id, $abbau['mannschaft_id'], "Abbau wurde nicht der entsprechenden Mannschaft zugewiesen");
     }
     public function test_organisiereAufUndAbbau_erstelltAufUndAbbauFuerUnterschiedlicheSpiele() {
         // arrange
         $spieltag = "2024-09-07";
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id1 = $this->builder->createMannschaft(2);
+        $mannschaft1 = $this->builder->createMannschaft(2);
         $meldung_id1 = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id1,
+            $mannschaft1->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
         $anwurf1 = new DateTime("$spieltag 17:00:00");
-        $spiel_id1 = $this->builder->createSpiel(100, $meldung_id1, 200, $anwurf1, "0815", true, $mannschaft_id1);
+        $spiel_id1 = $this->builder->createSpiel(100, $meldung_id1, 200, $anwurf1, "0815", true, $mannschaft1->id);
         
-        $mannschaft_id2 = $this->builder->createMannschaft(3);
+        $mannschaft2 = $this->builder->createMannschaft(3);
         $meldung_id2 = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id2,
+            $mannschaft2->id,
             $meisterschaft->id,
             364515, // irgendwas anderes
             1987866 // irgendwas anderes
         );
         $anwurf2 = new DateTime("$spieltag 19:00:00");
-        $spiel_id2 = $this->builder->createSpiel(100, $meldung_id2, 200, $anwurf2,  "0815", true, $mannschaft_id2);
+        $spiel_id2 = $this->builder->createSpiel(100, $meldung_id2, 200, $anwurf2,  "0815", true, $mannschaft2->id);
 
         // act
         $this->import->organisiereAufUndAbbau();
@@ -1475,27 +1475,27 @@ final class SpieleImportTest extends TestCase {
         // assert
         $this->assertObjectInDb("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id1", [
             'dienstart'     => Dienstart::AUFBAU,
-            'mannschaft_id' => $mannschaft_id1
+            'mannschaft_id' => $mannschaft1->id
         ]);
         $this->assertObjectInDb("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_id2", [
             'dienstart'     => Dienstart::ABBAU,
-            'mannschaft_id' => $mannschaft_id2
+            'mannschaft_id' => $mannschaft2->id
         ]);
     }
     public function test_organisiereAufUndAbbau_keineAenderungWennDienstSchonVorhanden() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
         $spieltag = "2024-09-07";
         $spiel_id = $this->builder->createSpiel(100, $meldung_id, 200, new DateTime("$spieltag 17:00:00"), "0815", true);
-        $aufbau_id = $this->builder->createDienst($spiel_id, Dienstart::AUFBAU, $mannschaft_id);
-        $abbau_id = $this->builder->createDienst($spiel_id, Dienstart::ABBAU, $mannschaft_id);
+        $aufbau_id = $this->builder->createDienst($spiel_id, Dienstart::AUFBAU, $mannschaft->id);
+        $abbau_id = $this->builder->createDienst($spiel_id, Dienstart::ABBAU, $mannschaft->id);
 
         // act
         $this->import->organisiereAufUndAbbau();
@@ -1509,9 +1509,9 @@ final class SpieleImportTest extends TestCase {
     public function test_organisiereAufUndAbbau_erstelltNixFuerOffeneTermine() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -1527,16 +1527,16 @@ final class SpieleImportTest extends TestCase {
     public function test_organisiereAufUndAbbau_loeschtAufUndAbbauFuerOffeneTermine() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
-        $spiel_id = $this->builder->createSpiel(100, $meldung_id, 200, null, "0815", true, $mannschaft_id);
-        $aufbau_id = $this->builder->createDienst($spiel_id, Dienstart::AUFBAU, $mannschaft_id);
-        $abbau_id = $this->builder->createDienst($spiel_id, Dienstart::ABBAU, $mannschaft_id);
+        $spiel_id = $this->builder->createSpiel(100, $meldung_id, 200, null, "0815", true, $mannschaft->id);
+        $aufbau_id = $this->builder->createDienst($spiel_id, Dienstart::AUFBAU, $mannschaft->id);
+        $abbau_id = $this->builder->createDienst($spiel_id, Dienstart::ABBAU, $mannschaft->id);
 
         // act
         $this->import->organisiereAufUndAbbau();
@@ -1548,16 +1548,16 @@ final class SpieleImportTest extends TestCase {
         // arrange
         $spieltag = "2024-09-07";
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_frueh_id = $this->builder->createMannschaft(2);
+        $mannschaft_frueh = $this->builder->createMannschaft(2);
         $meldung_frueh_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_frueh_id,
+            $mannschaft_frueh->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
-        $mannschaft_spaet_id = $this->builder->createMannschaft(3);
+        $mannschaft_spaet = $this->builder->createMannschaft(3);
         $meldung_spaet_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_spaet_id,
+            $mannschaft_spaet->id,
             $meisterschaft->id,
             364515, // irgendwas anderes
             1987866 // irgendwas anderes
@@ -1565,12 +1565,12 @@ final class SpieleImportTest extends TestCase {
 
         // Verkehrte Welt: Das frühere Spiel hat den Abbau...
         $anwurf_frueh = new DateTime("$spieltag 17:00:00");
-        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true, $mannschaft_frueh_id);
-        $abbau_vorher_id = $this->builder->createDienst($spiel_frueh_id, Dienstart::ABBAU, $mannschaft_frueh_id);
+        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true, $mannschaft_frueh->id);
+        $abbau_vorher_id = $this->builder->createDienst($spiel_frueh_id, Dienstart::ABBAU, $mannschaft_frueh->id);
         // ... und das spätere Spiel den Aufbau.
         $anwurf_spaet = new DateTime("$spieltag 19:00:00");
-        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true, $mannschaft_spaet_id);
-        $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet_id, Dienstart::AUFBAU, $mannschaft_spaet_id);
+        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true, $mannschaft_spaet->id);
+        $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet_id, Dienstart::AUFBAU, $mannschaft_spaet->id);
         
         // act
         $this->import->organisiereAufUndAbbau();
@@ -1589,16 +1589,16 @@ final class SpieleImportTest extends TestCase {
         // arrange
         $spieltag = "2024-09-07";
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_frueh_id = $this->builder->createMannschaft(2);
+        $mannschaft_frueh = $this->builder->createMannschaft(2);
         $meldung_frueh_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_frueh_id,
+            $mannschaft_frueh->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
-        $mannschaft_spaet_id = $this->builder->createMannschaft(3);
+        $mannschaft_spaet = $this->builder->createMannschaft(3);
         $meldung_spaet_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_spaet_id,
+            $mannschaft_spaet->id,
             $meisterschaft->id,
             364515, // irgendwas anderes
             1987866 // irgendwas anderes
@@ -1606,11 +1606,11 @@ final class SpieleImportTest extends TestCase {
 
         
         $anwurf_frueh = new DateTime("$spieltag 17:00:00");
-        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true, $mannschaft_frueh_id);
+        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true, $mannschaft_frueh->id);
         
         $anwurf_spaet = new DateTime("$spieltag 19:00:00");
-        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true, $mannschaft_spaet_id);
-        $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet_id, Dienstart::AUFBAU, $mannschaft_spaet_id);
+        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true, $mannschaft_spaet->id);
+        $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet_id, Dienstart::AUFBAU, $mannschaft_spaet->id);
         
         // act
         $this->import->organisiereAufUndAbbau();
@@ -1625,7 +1625,7 @@ final class SpieleImportTest extends TestCase {
         // Nun prüfen ob der Dienständerungsplan auch beim späten Spiel gesetzt ist:
         $this->assertObjectInDb("SELECT * FROM wp_entfallenerdienst WHERE spiel_id = $spiel_spaet_id", [
             'dienstart'     => Dienstart::AUFBAU,
-            'mannschaft_id' => $mannschaft_spaet_id,
+            'mannschaft_id' => $mannschaft_spaet->id,
             'grund'         => self::NOT_NULL
         ]);
     }
@@ -1633,16 +1633,16 @@ final class SpieleImportTest extends TestCase {
         // arrange
         $spieltag = "2024-09-07";
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_frueh_id = $this->builder->createMannschaft(2);
+        $mannschaft_frueh = $this->builder->createMannschaft(2);
         $meldung_frueh_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_frueh_id,
+            $mannschaft_frueh->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
-        $mannschaft_spaet_id = $this->builder->createMannschaft(3);
+        $mannschaft_spaet = $this->builder->createMannschaft(3);
         $meldung_spaet_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_spaet_id,
+            $mannschaft_spaet->id,
             $meisterschaft->id,
             364515, // irgendwas anderes
             1987866 // irgendwas anderes
@@ -1650,12 +1650,12 @@ final class SpieleImportTest extends TestCase {
 
         // Verkehrte Welt: Das frühere Spiel hat den Abbau...
         $anwurf_frueh = new DateTime("$spieltag 17:00:00");
-        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true, $mannschaft_frueh_id);
-        $abbau_vorher_id = $this->builder->createDienst($spiel_frueh_id, Dienstart::ABBAU, $mannschaft_frueh_id);
+        $spiel_frueh_id = $this->builder->createSpiel(100, $meldung_frueh_id, 200, $anwurf_frueh, "0815", true, $mannschaft_frueh->id);
+        $abbau_vorher_id = $this->builder->createDienst($spiel_frueh_id, Dienstart::ABBAU, $mannschaft_frueh->id);
         // ... und das spätere Spiel den Aufbau.
         $anwurf_spaet = new DateTime("$spieltag 19:00:00");
-        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true, $mannschaft_spaet_id);
-        $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet_id, Dienstart::AUFBAU, $mannschaft_spaet_id);
+        $spiel_spaet_id = $this->builder->createSpiel(100, $meldung_spaet_id, 200, $anwurf_spaet,  "0815", true, $mannschaft_spaet->id);
+        $aufbau_vorher_id = $this->builder->createDienst($spiel_spaet_id, Dienstart::AUFBAU, $mannschaft_spaet->id);
         
         // act
         $this->import->organisiereAufUndAbbau();
@@ -1664,7 +1664,7 @@ final class SpieleImportTest extends TestCase {
         // Das frühere Spiel sollte den Abbau nicht mehr haben...
         $this->assertObjectInDb("SELECT * FROM wp_entfallenerdienst WHERE spiel_id = $spiel_frueh_id", [
             'dienstart' => Dienstart::ABBAU,
-            'mannschaft_id' => $mannschaft_frueh_id,
+            'mannschaft_id' => $mannschaft_frueh->id,
             'grund' => self::NOT_NULL
         ]);
         // dafür aber den Aufbau als neuen Dienst
@@ -1676,7 +1676,7 @@ final class SpieleImportTest extends TestCase {
         // Beim späten Spiel genau anders herum:
         $this->assertObjectInDb("SELECT * FROM wp_entfallenerdienst WHERE spiel_id = $spiel_spaet_id", [
             'dienstart' => Dienstart::AUFBAU,
-            'mannschaft_id' => $mannschaft_spaet_id,
+            'mannschaft_id' => $mannschaft_spaet->id,
             'grund' => self::NOT_NULL
         ]);
         $abbau_nachher = $this->fetchOneWithAssert("SELECT * FROM wp_dienst WHERE spiel_id = $spiel_spaet_id");
@@ -1688,9 +1688,9 @@ final class SpieleImportTest extends TestCase {
     public function test_organisiereAufUndAbbau_keinDienstBeiAuswaertsSpielen() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id = $this->builder->createMannschaft(2);
+        $mannschaft = $this->builder->createMannschaft(2);
         $meldung_id = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id,
+            $mannschaft->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
@@ -1709,16 +1709,16 @@ final class SpieleImportTest extends TestCase {
     public function test_organisiereAufUndAbbau_mehrereSpieltage() {
         // arrange
         $meisterschaft = $this->builder->createMeisterschaft("KR 24/25");
-        $mannschaft_id1 = $this->builder->createMannschaft(2);
+        $mannschaft1 = $this->builder->createMannschaft(2);
         $meldung_id1 = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id1,
+            $mannschaft1->id,
             $meisterschaft->id,
             363515, // Regionsliga Männer
             1986866 // Turnerkreis Nippes II
         );
-        $mannschaft_id2 = $this->builder->createMannschaft(3);
+        $mannschaft2 = $this->builder->createMannschaft(3);
         $meldung_id2 = $this->builder->createMannschaftsMeldung(
-            $mannschaft_id2,
+            $mannschaft2->id,
             $meisterschaft->id,
             364515, // irgendwas anderes
             1987866 // irgendwas anderes
@@ -1727,16 +1727,16 @@ final class SpieleImportTest extends TestCase {
         // Erst spielt Mannschaft 1, dann Mannschaft 2
         $tag1 = "2024-09-07";
         $tag1_anwurf_frueh = new DateTime("$tag1 17:00:00");
-        $tag1_spiel_frueh_id = $this->builder->createSpiel(100, $meldung_id1, 200, $tag1_anwurf_frueh, "0815", true, $mannschaft_id1);
+        $tag1_spiel_frueh_id = $this->builder->createSpiel(100, $meldung_id1, 200, $tag1_anwurf_frueh, "0815", true, $mannschaft1->id);
         $tag1_anwurf_spaet = new DateTime("$tag1 19:00:00");
-        $tag1_spiel_spaet_id = $this->builder->createSpiel(100, $meldung_id2, 200, $tag1_anwurf_spaet,  "0815", true, $mannschaft_id2);
+        $tag1_spiel_spaet_id = $this->builder->createSpiel(100, $meldung_id2, 200, $tag1_anwurf_spaet,  "0815", true, $mannschaft2->id);
         
         // Und heute spielt zuerst Mannschaft 2, dann 1
         $tag2 = "2024-09-14";
         $tag2_anwurf_frueh = new DateTime("$tag2 17:00:00");
-        $tag2_spiel_frueh_id = $this->builder->createSpiel(100, $meldung_id2, 200, $tag2_anwurf_frueh, "0815", true, $mannschaft_id2);
+        $tag2_spiel_frueh_id = $this->builder->createSpiel(100, $meldung_id2, 200, $tag2_anwurf_frueh, "0815", true, $mannschaft2->id);
         $tag2_anwurf_spaet = new DateTime("$tag2 19:00:00");
-        $tag2_spiel_spaet_id = $this->builder->createSpiel(100, $meldung_id1, 200, $tag2_anwurf_spaet,  "0815", true, $mannschaft_id1);
+        $tag2_spiel_spaet_id = $this->builder->createSpiel(100, $meldung_id1, 200, $tag2_anwurf_spaet,  "0815", true, $mannschaft1->id);
         
         // act
         $this->import->organisiereAufUndAbbau();
@@ -1745,20 +1745,20 @@ final class SpieleImportTest extends TestCase {
         // Tag 1
         $this->assertObjectInDb("SELECT * from wp_dienst where spiel_id=$tag1_spiel_frueh_id", [
             'dienstart'     => Dienstart::AUFBAU,
-            'mannschaft_id' => $mannschaft_id1
+            'mannschaft_id' => $mannschaft1->id
         ]);
         $this->assertObjectInDb("SELECT * from wp_dienst where spiel_id=$tag1_spiel_spaet_id", [
             'dienstart'     => Dienstart::ABBAU,
-            'mannschaft_id' => $mannschaft_id2
+            'mannschaft_id' => $mannschaft2->id
         ]);
         // Tag 2
         $this->assertObjectInDb("SELECT * from wp_dienst where spiel_id=$tag2_spiel_frueh_id", [
             'dienstart'     => Dienstart::AUFBAU,
-            'mannschaft_id' => $mannschaft_id2
+            'mannschaft_id' => $mannschaft2->id
         ]);
         $this->assertObjectInDb("SELECT * from wp_dienst where spiel_id=$tag2_spiel_spaet_id", [
             'dienstart'     => Dienstart::ABBAU,
-            'mannschaft_id' => $mannschaft_id1
+            'mannschaft_id' => $mannschaft1->id
         ]);
     }
 }

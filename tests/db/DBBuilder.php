@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__."/../../src/handball/Meisterschaft.php";
+require_once __DIR__."/../../src/handball/Mannschaft.php";
 
 class DBBuilder{    
     private $db;
@@ -18,12 +19,16 @@ class DBBuilder{
         $meisterschaft->kuerzel = $kuerzel;
         return $meisterschaft;
     }
-    public function createMannschaft(int $nummer, string $geschlecht = "m"): int {
+    public function createMannschaft(int $nummer, string $geschlecht = "m"): Mannschaft {
         $this->db->insert("wp_mannschaft", [
             "nummer" => $nummer,
             "geschlecht" => $geschlecht
         ]);
-        return $this->db->insert_id;
+        $mannschaft = new Mannschaft();
+        $mannschaft->nummer = $nummer;
+        $mannschaft->geschlecht = $geschlecht;
+        $mannschaft->id = $this->db->insert_id;
+        return $mannschaft;
     }
     public function createMannschaftsMeldung(int $mannschaft_id, int $meisterschaft_id, int $nuligaLigaID, int $nuligaTeamID): int {
         $this->db->insert("wp_mannschaftsmeldung", [
